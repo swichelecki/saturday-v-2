@@ -1,0 +1,44 @@
+@import './variables';
+
+button,
+span.add-item__create-button,
+span.list-item__details-edit-button,
+span.details-form__cancel-button {
+  min-width: 73px;
+  border-radius: 20px;
+  padding: 8px 12px;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  color: $color-white;
+  font-size: 1rem; // 16px
+  letter-spacing: 0.5px;
+  box-shadow: 0px 0px 6px 2px $color-shadow;
+  font-weight: 400;
+  text-align: center;
+}
+
+button.add-item__add-button,
+span.add-item__create-button,
+button.list-item__details-button {
+  background-color: $button-purple;
+}
+
+button.list-item__edit-button,
+button.add-item__update-button {
+  background-color: $button-blue;
+}
+
+button.list-item__cancel-button,
+span.details-form__cancel-button {
+  background-color: $button-orange;
+}
+
+span.list-item__details-edit-button,
+button.details-form__save-button {
+  background-color: $button-green;
+}
+
+button.list-item__delete-button {
+  background-color: $button-red;
+}

@@ -1,0 +1,38 @@
+.details-form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 48px;
+  background-color: $color-white;
+  box-shadow: 0px 0px 6px 2px $color-shadow;
+  &__form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 32px;
+    label {
+      margin-bottom: 6px;
+      font-family: 'Montserrat', sans-serif;
+    }
+    input {
+      border: none;
+      padding: 8px 12px;
+      font: inherit;
+      border: 1px solid $color-shadow;
+      &:disabled {
+        background-color: $color-shadow;
+      }
+    }
+    textarea {
+      min-height: 150px;
+      font: inherit;
+      padding: 8px 12px;
+      border: 1px solid $color-shadow;
+    }
+    &:last-of-type {
+      padding-bottom: 16px;
+    }
+  }
+  button.details-form__save-button {
+    margin-right: 12px;
+  }
+}
