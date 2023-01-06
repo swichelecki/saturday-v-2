@@ -30,7 +30,7 @@ const ContentRight = () => {
     setUpcomingEvents(taskSortedWithDateStrings);
   }, [globalContextTasks]);
 
-  if (!upcomingEvents) {
+  if (!upcomingEvents.length) {
     return null;
   }
 
