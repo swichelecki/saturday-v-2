@@ -4,6 +4,9 @@ button,
 span.add-item__create-button,
 span.list-item__details-edit-button,
 span.details-form__cancel-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 73px;
   border-radius: 20px;
   padding: 8px 12px;

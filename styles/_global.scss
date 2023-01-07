@@ -36,6 +36,25 @@ a {
   text-decoration: none;
 }
 
+.loader {
+  border: 2px solid $color-white;
+  border-radius: 50%;
+  border-top: 2px solid transparent;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  animation: spin 1.3s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 @media screen and (max-width: 800px) {
   .container {
     padding: 24px;

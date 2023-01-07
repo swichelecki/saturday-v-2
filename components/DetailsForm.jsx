@@ -1,13 +1,10 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { submitTask, updateTask } from '../services';
-//import { TasksContext } from '../context/tasksContext';
 import moment from 'moment-timezone';
 
 const DetailsForm = ({ task }) => {
-  //const { globalContextTasks } = useContext(TasksContext);
-
   const [title, setTitle] = useState(task?.title || '');
   const [description, setDescription] = useState(task?.description || '');
   const [date, setDate] = useState(task?.date || '');
@@ -18,6 +15,7 @@ const DetailsForm = ({ task }) => {
           .format('yyyy-MM-DDThh:mm')
       : ''
   );
+  const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
   const router = useRouter();
   const { asPath } = router;
@@ -46,11 +44,12 @@ const DetailsForm = ({ task }) => {
       taskObject = {
         title,
         description,
-        date: dateAndTime.split('T')[0],
         dateAndTime: new Date(dateAndTime).toISOString(),
         priority,
       };
     }
+
+    setIsAwaitingSaveResponse(true);
 
     typeof asPath.split('/')[2] === 'string'
       ? updateTask(task?.id, taskObject).then((res) => router.push('/'))
@@ -98,12 +97,15 @@ const DetailsForm = ({ task }) => {
           onChange={(e) => setDateAndTime(e.target.value)}
         />
       </div>
-      <button type='submit' className='details-form__save-button'>
-        Save
-      </button>
-      <Link href='/'>
-        <span className='details-form__cancel-button'>Cancel</span>
-      </Link>
+      <div className='details-form__buttons-wrapper'>
+        <button type='submit' className='details-form__save-button'>
+          {isAwaitingSaveResponse && <div className='loader'></div>}
+          Save
+        </button>
+        <Link href='/'>
+          <span className='details-form__cancel-button'>Cancel</span>
+        </Link>
+      </div>
     </form>
   );
 };

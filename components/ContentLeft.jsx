@@ -17,6 +17,11 @@ const ContentLeft = () => {
   const [taskToEditId, setTaskToEditId] = useState('');
   const [taskToEdit, setTaskToEdit] = useState({});
   const [dragging, setDragging] = useState(false);
+  const [isAwaitingAddResponse, setIsAwaitingAddResponse] = useState(false);
+  const [isAwaitingUpdateResponse, setIsAwaitingUpdateResponse] =
+    useState(false);
+  const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
+
   const priority =
     globalContextTasks.length > 0 ? globalContextTasks.length + 1 : 1;
 
@@ -42,8 +47,10 @@ const ContentLeft = () => {
       priority,
     };
 
+    setIsAwaitingAddResponse(true);
     submitTask(taskObject).then((res) => {
       setGlobalContextTasks((current) => [...current, res.createTask]);
+      setIsAwaitingAddResponse(false);
     });
 
     setTitle('');
@@ -58,15 +65,18 @@ const ContentLeft = () => {
 
   const handleCancelEdit = () => {
     setIsUpdating(false);
+    setTaskToEditId('');
     setTitle('');
   };
 
   const handleEditTask = (id) => {
-    setIsUpdating(true);
+    setIsAwaitingEditResponse(true);
+    setTaskToEditId(id);
     getTask(id).then((res) => {
       setTitle(res?.title);
       setTaskToEdit(res);
-      setTaskToEditId(id);
+      setIsUpdating(true);
+      setIsAwaitingEditResponse(false);
     });
   };
 
@@ -74,6 +84,8 @@ const ContentLeft = () => {
     if (!title) {
       return;
     }
+
+    setIsAwaitingUpdateResponse(true);
     updateTask(taskToEditId, { ...taskToEdit, title }).then((res) => {
       setGlobalContextTasks(
         globalContextTasks.map((item) => {
@@ -87,9 +99,11 @@ const ContentLeft = () => {
           }
         })
       );
+      setIsAwaitingUpdateResponse(false);
+      setIsUpdating(false);
+      setTaskToEditId('');
     });
     setTitle('');
-    setIsUpdating(false);
   };
 
   const handleDragStart = (index) => {
@@ -155,10 +169,12 @@ const ContentLeft = () => {
             onClick={handleEditSubmit}
             className='add-item__update-button'
           >
+            {isAwaitingUpdateResponse && <div className='loader'></div>}
             Update
           </button>
         ) : (
           <button onClick={handleOnSubmit} className='add-item__add-button'>
+            {isAwaitingAddResponse && <div className='loader'></div>}
             Add
           </button>
         )}
@@ -180,6 +196,8 @@ const ContentLeft = () => {
           handleDeleteGlobalContextTask={handleDeleteGlobalContextTask}
           handleEditTask={handleEditTask}
           handleCancelEdit={handleCancelEdit}
+          isAwaitingEditResponse={isAwaitingEditResponse}
+          taskToEditId={taskToEditId}
           key={`list-item__${index}`}
           index={index}
           dragging={dragging}

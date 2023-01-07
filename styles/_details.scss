@@ -32,7 +32,10 @@
       padding-bottom: 16px;
     }
   }
-  button.details-form__save-button {
-    margin-right: 12px;
+  &__buttons-wrapper {
+    display: flex;
+    button.details-form__save-button {
+      margin-right: 12px;
+    }
   }
 }

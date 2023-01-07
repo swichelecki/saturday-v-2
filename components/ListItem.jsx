@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 import moment from 'moment-timezone';
 import { deleteTask } from '../services';
@@ -8,6 +8,8 @@ const ItemList = ({
   handleDeleteGlobalContextTask,
   handleEditTask,
   handleCancelEdit,
+  isAwaitingEditResponse,
+  taskToEditId,
   index,
   dragging,
   handleDragStyles,
@@ -19,11 +21,8 @@ const ItemList = ({
   const detailsRefCurrent = detailsRef?.current;
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  useEffect(() => {
-    setIsUpdating(false);
-  }, [item]);
+  const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
+    useState(false);
 
   const handleShowDetails = () => {
     setIsOpen((prevState) => !prevState);
@@ -52,19 +51,11 @@ const ItemList = ({
     return height;
   };
 
-  const handleEditButton = (id) => {
-    setIsUpdating(true);
-    handleEditTask(id);
-  };
-
-  const handleCancelButton = () => {
-    setIsUpdating(false);
-    handleCancelEdit();
-  };
-
   const handleDeleteTask = (id) => {
+    setIsAwaitingDeleteResponse(true);
     deleteTask(id).then((res) => {
       handleDeleteGlobalContextTask(id);
+      setIsAwaitingDeleteResponse(false);
     });
   };
 
@@ -92,16 +83,19 @@ const ItemList = ({
             >
               Details
             </button>
-          ) : !isUpdating ? (
+          ) : taskToEditId !== item?.id || isAwaitingEditResponse ? (
             <button
-              onClick={() => handleEditButton(item?.id)}
+              onClick={() => handleEditTask(item?.id)}
               className='list-item__edit-button'
             >
+              {isAwaitingEditResponse && taskToEditId === item?.id && (
+                <div className='loader'></div>
+              )}
               Edit
             </button>
           ) : (
             <button
-              onClick={handleCancelButton}
+              onClick={handleCancelEdit}
               className='list-item__cancel-button'
             >
               Cancel
@@ -113,6 +107,7 @@ const ItemList = ({
           onClick={() => handleDeleteTask(item?.id)}
           className='list-item__delete-button'
         >
+          {isAwaitingDeleteResponse && <div className='loader'></div>}
           Delete
         </button>
       </div>
