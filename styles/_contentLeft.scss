@@ -132,6 +132,7 @@
 
 @media screen and (max-width: 800px) {
   .content-left-container {
-    flex: 0 1 auto;
+    max-width: 690px;
+    width: 100%;
   }
 }

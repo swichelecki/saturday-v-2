@@ -16,11 +16,11 @@ const ContentRight = () => {
       return { ...item, date: new Date(item.date) };
     });
 
-    const TasksSortedDateDesc = taskWithDateObjects.sort(
-      (objA, objB) => Number(objB.date) - Number(objA.date)
+    const TasksSortedDateAsc = taskWithDateObjects.sort(
+      (objA, objB) => Number(objA.date) - Number(objB.date)
     );
 
-    const taskSortedWithDateStrings = TasksSortedDateDesc.map((item) => {
+    const taskSortedWithDateStrings = TasksSortedDateAsc.map((item) => {
       return {
         ...item,
         date: new Date(item.date).toISOString().split('T')[0],
