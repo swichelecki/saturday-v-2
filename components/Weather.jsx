@@ -19,6 +19,10 @@ const Weather = () => {
     getWeather();
   }, []);
 
+  if (!temperature) {
+    return null;
+  }
+
   return (
     <div className='weather'>
       <p className='weather__temp'>

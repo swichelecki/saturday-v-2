@@ -35,6 +35,7 @@ const DetailsForm = ({ task }) => {
       taskObject = {
         title,
         description,
+        dateAndTime: null,
         date,
         priority,
       };
@@ -44,6 +45,7 @@ const DetailsForm = ({ task }) => {
       taskObject = {
         title,
         description,
+        date: null,
         dateAndTime: new Date(dateAndTime).toISOString(),
         priority,
       };

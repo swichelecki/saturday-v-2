@@ -7,14 +7,14 @@ export default function Home({ tasks }) {
   const [globalContextTasks, setGlobalContextTasks] = useState(tasks);
 
   return (
-    <main className='content-container'>
+    <div className='content-container'>
       <TasksContext.Provider
         value={{ globalContextTasks, setGlobalContextTasks }}
       >
         <ContentLeft />
         <ContentRight />
       </TasksContext.Provider>
-    </main>
+    </div>
   );
 }
 

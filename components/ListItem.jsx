@@ -52,6 +52,9 @@ const ItemList = ({
   };
 
   const handleDeleteTask = (id) => {
+    if (isOpen) {
+      setIsOpen((prevState) => !prevState);
+    }
     setIsAwaitingDeleteResponse(true);
     deleteTask(id).then((res) => {
       handleDeleteGlobalContextTask(id);

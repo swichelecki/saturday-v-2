@@ -45,3 +45,12 @@ button.details-form__save-button {
 button.list-item__delete-button {
   background-color: $button-red;
 }
+
+@media screen and (max-width: 600px) {
+  button,
+  span.add-item__create-button,
+  span.list-item__details-edit-button,
+  span.details-form__cancel-button {
+    padding: 6px 8px;
+  }
+}

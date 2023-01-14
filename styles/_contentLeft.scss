@@ -136,3 +136,31 @@
     width: 100%;
   }
 }
+
+@media screen and (max-width: 600px) {
+  .add-item {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .list-item {
+    &__interface {
+      padding: 12px;
+    }
+    &__controls-left {
+      & > p {
+        margin: 0;
+      }
+    }
+    &__controls-left,
+    &__details-controls-left {
+      gap: 12px;
+    }
+    &__details-padding {
+      padding: 12px;
+      & > p {
+        margin-top: 12px;
+      }
+    }
+  }
+}

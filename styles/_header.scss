@@ -15,21 +15,20 @@
     max-width: 1296px;
     padding: 12px 48px;
   }
-}
-
-.weather {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  p {
-    margin: 0;
-  }
-  &__temp {
-    font-size: 1.875rem; // 30px
-  }
-  &__location {
-    font-size: 1.125rem; // 18px
+  .weather {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    p {
+      margin: 0;
+    }
+    &__temp {
+      font-size: 1.875rem; // 30px
+    }
+    &__location {
+      font-size: 1.125rem; // 18px
+    }
   }
 }
 
@@ -41,13 +40,22 @@
     &__inner-wrapper {
       padding: 12px 24px;
     }
-  }
-  .weather {
-    &__temp {
-      font-size: 1.5rem; // 24px
+    .weather {
+      &__temp {
+        font-size: 1.5rem; // 24px
+      }
+      &__location {
+        font-size: 1rem; // 16px
+      }
     }
-    &__location {
-      font-size: 1rem; // 16px
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .header {
+    .weather {
+      flex-direction: row;
+      gap: 6px;
     }
   }
 }

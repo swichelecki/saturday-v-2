@@ -12,7 +12,21 @@ const ContentRight = () => {
       (item) => item.date !== null
     );
 
-    const taskWithDateObjects = tasksWithDates?.map((item) => {
+    const formattedTasksWithDateAndTime = [...globalContextTasks].filter(
+      (item) => {
+        if (item.dateAndTime !== null) {
+          const formattedDateAndTime = item.dateAndTime.split('T')[0];
+          return { ...item, formattedDateAndTime };
+        }
+      }
+    );
+
+    const allTasksWithDates = [
+      ...tasksWithDates,
+      ...formattedTasksWithDateAndTime,
+    ];
+
+    const taskWithDateObjects = allTasksWithDates?.map((item) => {
       return { ...item, date: new Date(item.date) };
     });
 
