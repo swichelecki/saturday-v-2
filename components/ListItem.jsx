@@ -140,7 +140,7 @@ const ItemList = ({
               <p>{moment(item?.date).format('dddd, MMMM D, YYYY')}</p>
             )}
           </div>
-          <p>{item?.description}</p>
+          {item?.description && <p>{item?.description}</p>}
         </div>
       </div>
     </div>
