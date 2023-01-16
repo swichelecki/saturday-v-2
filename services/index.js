@@ -112,3 +112,46 @@ export const updateTask = async (id, task) => {
     return error;
   }
 };
+
+export const getBirthdays = async () => {
+  const query = gql`
+    query GetBirthdays() {
+      birthdays(orderBy: date_ASC, stage: DRAFT) {
+        id
+        name
+        date
+      }
+    }
+  `;
+
+  try {
+    const result = await request(graphqlAPI, query);
+    return result.birthdays;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updateBirthdays = async (birthday) => {
+  const { id, name, date } = birthday;
+
+  const query = gql`
+    mutation UpdateBirthday($id: ID, $name: String, $date: Date) {
+      updateBirthday(where: { id: $id }, data: { name: $name, date: $date }) {
+        id
+      }
+    }
+  `;
+
+  try {
+    const result = await request(graphqlAPI, query, {
+      id,
+      name,
+      date,
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
