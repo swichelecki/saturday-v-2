@@ -14,7 +14,7 @@ const Upcoming = () => {
 
     const formattedTasksWithDateAndTime = [...globalContextTasks].filter(
       (item) => {
-        if (item.dateAndTime !== null) {
+        if (item.dateAndTime && item.dateAndTime !== null) {
           const formattedDateAndTime = item.dateAndTime.split('T')[0];
           return { ...item, formattedDateAndTime };
         }

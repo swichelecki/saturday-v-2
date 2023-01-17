@@ -32,6 +32,7 @@ export default async function addTask(req, res) {
         title
         id
         date
+        dateAndTime
       }
     }
   `;
