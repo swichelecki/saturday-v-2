@@ -1,5 +1,5 @@
 .details-form {
-  max-width: 600px;
+  max-width: 700px;
   width: 100%;
   margin: 0 auto;
   padding: 48px;
@@ -37,6 +37,23 @@
     button.details-form__save-button {
       margin-right: 12px;
     }
+  }
+}
+
+.quill {
+  .ql-toolbar.ql-snow,
+  .ql-container.ql-snow {
+    border: 1px solid $color-shadow;
+    .ql-formats button {
+      min-width: unset;
+      box-shadow: unset;
+    }
+  }
+  .ql-container.ql-snow,
+  .ql-editor.ql-blank {
+    font-size: 1.125rem; // 18px
+    min-height: 200px;
+    font-family: inherit;
   }
 }
 

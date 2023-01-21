@@ -116,6 +116,22 @@
       margin: 0;
     }
   }
+  &__details-quill-wrapper {
+    padding: 24px 0 0;
+    p,
+    ul,
+    ol {
+      margin: 0;
+    }
+    a {
+      color: $button-purple;
+      font-weight: 400;
+      text-decoration: underline;
+    }
+    h1 {
+      margin: 22px 0;
+    }
+  }
 }
 
 .list-item-on-drag {

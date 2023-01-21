@@ -140,7 +140,12 @@ const ItemList = ({
               <p>{moment(item?.date).format('dddd, MMMM D, YYYY')}</p>
             )}
           </div>
-          {item?.description && <p>{item?.description}</p>}
+          {item?.description && (
+            <div
+              className='list-item__details-quill-wrapper'
+              dangerouslySetInnerHTML={{ __html: item?.description }}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -36,6 +36,10 @@ a {
   text-decoration: none;
 }
 
+input:disabled {
+  cursor: no-drop;
+}
+
 .loader {
   border: 2px solid $color-white;
   border-radius: 50%;

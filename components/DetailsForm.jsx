@@ -3,6 +3,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { submitTask, updateTask } from '../services';
 import moment from 'moment-timezone';
+import dynamic from 'next/dynamic';
+import 'react-quill/dist/quill.snow.css';
+
+const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 const DetailsForm = ({ task }) => {
   const [title, setTitle] = useState(task?.title || '');
@@ -73,10 +77,10 @@ const DetailsForm = ({ task }) => {
       </div>
       <div className='details-form__form-row'>
         <label htmlFor='description'>Description</label>
-        <textarea
-          id='description'
+        <ReactQuill
+          theme='snow'
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={setDescription}
         />
       </div>
       <div className='details-form__form-row'>
