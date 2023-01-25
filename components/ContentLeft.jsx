@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ListItem } from './';
 import { submitTask, getTask, updateTask } from '../services';
 
-const ContentLeft = () => {
+const ContentLeft = ({ hasContent }) => {
   const { globalContextTasks, setGlobalContextTasks } =
     useContext(TasksContext);
 
@@ -152,7 +152,11 @@ const ContentLeft = () => {
   };
 
   return (
-    <section className='content-left-container'>
+    <section
+      className={`content-left-container${
+        !hasContent ? ' content-left-container--no-right-column' : ''
+      }`}
+    >
       <div className='add-item'>
         <input
           type='text'

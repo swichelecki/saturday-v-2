@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ContentLeft, ContentRight } from '../components';
+import { Content } from '../components';
 import { getTasks } from '../services';
 import { TasksContext } from '../context/tasksContext';
 
@@ -11,8 +11,7 @@ export default function Home({ tasks }) {
       <TasksContext.Provider
         value={{ globalContextTasks, setGlobalContextTasks }}
       >
-        <ContentLeft />
-        <ContentRight />
+        <Content />
       </TasksContext.Provider>
     </div>
   );

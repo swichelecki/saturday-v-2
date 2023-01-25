@@ -8,14 +8,14 @@ export const getUpcomingEvents = () => {
 
   useEffect(() => {
     const tasksWithDates = [...globalContextTasks].filter(
-      (item) => item.date !== null
+      (item) => item.date !== null && !item.dateAndTime
     );
 
     const formattedTasksWithDateAndTime = [...globalContextTasks].filter(
       (item) => {
-        if (item.dateAndTime && item.dateAndTime !== null) {
-          const formattedDateAndTime = item.dateAndTime.split('T')[0];
-          return { ...item, formattedDateAndTime };
+        if (item.dateAndTime !== null) {
+          item.date = item.dateAndTime.split('T')[0];
+          return item;
         }
       }
     );

@@ -1,3 +1,4 @@
+export { default as Content } from './Content';
 export { default as ContentLeft } from './ContentLeft';
 export { default as ContentRight } from './ContentRight';
 export { default as Header } from './Header';
