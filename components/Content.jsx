@@ -4,14 +4,14 @@ import { getUpcomingEvents, getUpcomingBirthdays } from '../utilities';
 const Content = () => {
   const upcomingEvents = getUpcomingEvents();
   const upcomingBirthdays = getUpcomingBirthdays();
-  const hasContent =
+  const hasContentRight =
     upcomingEvents?.length > 0 || upcomingBirthdays?.length > 0;
 
   return (
     <>
-      <ContentLeft hasContent={hasContent} />
+      <ContentLeft hasContentRight={hasContentRight} />
       <ContentRight
-        hasContent={hasContent}
+        hasContentRight={hasContentRight}
         upcomingEvents={upcomingEvents}
         upcomingBirthdays={upcomingBirthdays}
       />

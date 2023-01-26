@@ -1,11 +1,15 @@
 import Upcoming from './Upcoming';
 import Birthdays from './Birthdays';
 
-const ContentRight = ({ hasContent, upcomingEvents, upcomingBirthdays }) => {
+const ContentRight = ({
+  hasContentRight,
+  upcomingEvents,
+  upcomingBirthdays,
+}) => {
   return (
     <section
       className={`content-right-container${
-        !hasContent ? ' content-right-container--display-none' : ''
+        !hasContentRight ? ' content-right-container--display-none' : ''
       }`}
     >
       <Upcoming upcomingEvents={upcomingEvents} />
