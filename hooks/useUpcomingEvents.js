@@ -14,8 +14,8 @@ export const useUpcomingEvents = () => {
     const formattedTasksWithDateAndTime = [...globalContextTasks].filter(
       (item) => {
         if (item.dateAndTime !== null) {
-          item.date = item.dateAndTime.split('T')[0];
-          return item;
+          const date = item.dateAndTime.split('T')[0];
+          return { ...item, date };
         }
       }
     );
