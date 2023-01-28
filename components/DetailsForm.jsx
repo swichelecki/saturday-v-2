@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { submitTask, updateTask } from '../services';
@@ -9,16 +9,24 @@ import 'react-quill/dist/quill.snow.css';
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 const DetailsForm = ({ task }) => {
-  const [title, setTitle] = useState(task?.title || '');
-  const [description, setDescription] = useState(task?.description || '');
-  const [date, setDate] = useState(task?.date || '');
-  const [dateAndTime, setDateAndTime] = useState(
-    task?.dateAndTime
-      ? moment(task?.dateAndTime)
-          .tz('America/Chicago')
-          .format('yyyy-MM-DDThh:mm')
-      : ''
-  );
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [date, setDate] = useState('');
+  const [dateAndTime, setDateAndTime] = useState('');
+
+  useEffect(() => {
+    setTitle(task?.title ?? '');
+    setDescription(task?.description ?? '');
+    setDate(task?.date ?? '');
+    setDateAndTime(
+      task?.dateAndTime
+        ? moment(task?.dateAndTime)
+            .tz('America/Chicago')
+            .format('yyyy-MM-DDThh:mm')
+        : ''
+    );
+  }, [task]);
+
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
   const router = useRouter();

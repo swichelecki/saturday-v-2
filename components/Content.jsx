@@ -1,9 +1,9 @@
 import { ContentLeft, ContentRight } from '../components';
-import { getUpcomingEvents, getUpcomingBirthdays } from '../utilities';
+import { useUpcomingEvents, useUpcomingBirthdays } from '../hooks';
 
 const Content = () => {
-  const upcomingEvents = getUpcomingEvents();
-  const upcomingBirthdays = getUpcomingBirthdays();
+  const upcomingEvents = useUpcomingEvents();
+  const upcomingBirthdays = useUpcomingBirthdays();
   const hasContentRight =
     upcomingEvents?.length > 0 || upcomingBirthdays?.length > 0;
 
