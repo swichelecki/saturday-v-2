@@ -22,7 +22,7 @@ const DetailsForm = ({ task }) => {
       task?.dateAndTime
         ? moment(task?.dateAndTime)
             .tz('America/Chicago')
-            .format('yyyy-MM-DDThh:mm')
+            .format('yyyy-MM-DDTHH:mm')
         : ''
     );
   }, [task]);
