@@ -11,14 +11,12 @@ export const useUpcomingEvents = () => {
       (item) => item.date !== null && !item.dateAndTime
     );
 
-    const formattedTasksWithDateAndTime = [...globalContextTasks].filter(
-      (item) => {
-        if (item.dateAndTime !== null) {
-          const date = item.dateAndTime.split('T')[0];
-          return { ...item, date };
-        }
-      }
-    );
+    const formattedTasksWithDateAndTime = [...globalContextTasks]
+      .filter((item) => item.dateAndTime !== null)
+      .map((item) => {
+        const date = item.dateAndTime.split('T')[0];
+        return { ...item, date };
+      });
 
     const allTasksWithDates = [
       ...tasksWithDates,
