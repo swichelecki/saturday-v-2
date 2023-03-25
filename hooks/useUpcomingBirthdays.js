@@ -7,8 +7,8 @@ export const useUpcomingBirthdays = () => {
 
   useEffect(() => {
     const date = new Date();
-    const addSixDaysToDate = date.setDate(date.getDate() + 6);
-    const todayPlusSixDays = new Date(addSixDaysToDate);
+    const addThirteenDaysToDate = date.setDate(date.getDate() + 13);
+    const todayPlusThirteenDays = new Date(addThirteenDaysToDate);
     const upcomingBirthdays = [];
     const pastBirthdays = [];
 
@@ -17,7 +17,7 @@ export const useUpcomingBirthdays = () => {
         const birthdayDate = new Date(item?.date);
         if (
           birthdayDate.getTime() >= Date.now() - 86400000 &&
-          birthdayDate.getTime() <= todayPlusSixDays.getTime()
+          birthdayDate.getTime() <= todayPlusThirteenDays.getTime()
         ) {
           upcomingBirthdays.push(item);
         } else if (birthdayDate.getTime() < Date.now() - 86400000) {

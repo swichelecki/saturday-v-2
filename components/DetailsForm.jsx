@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { submitTask, updateTask } from '../services';
@@ -9,30 +9,23 @@ import 'react-quill/dist/quill.snow.css';
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 const DetailsForm = ({ task }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
-  const [dateAndTime, setDateAndTime] = useState('');
-
-  useEffect(() => {
-    setTitle(task?.title ?? '');
-    setDescription(task?.description ?? '');
-    setDate(task?.date ?? '');
-    setDateAndTime(
-      task?.dateAndTime
-        ? moment(task?.dateAndTime)
-            .tz('America/Chicago')
-            .format('yyyy-MM-DDTHH:mm')
-        : ''
-    );
-  }, [task]);
+  const [title, setTitle] = useState(task?.title ?? '');
+  const [description, setDescription] = useState(task?.description ?? '');
+  const [date, setDate] = useState(task?.date?.split('T')[0] ?? '');
+  const [dateAndTime, setDateAndTime] = useState(
+    task?.dateAndTime
+      ? moment(task?.dateAndTime)
+          .tz('America/Chicago')
+          .format('yyyy-MM-DDTHH:mm')
+      : ''
+  );
 
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
   const router = useRouter();
   const { asPath } = router;
 
-  const priority = parseInt(asPath.split('=')[1]);
+  const priority = task ? task?.priority : parseInt(asPath.split('=')[1]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -45,16 +38,18 @@ const DetailsForm = ({ task }) => {
 
     if (date) {
       taskObject = {
+        _id: task?._id,
         title,
         description,
         dateAndTime: null,
-        date,
+        date: `${date}T00:00:00.000+00:00`,
         priority,
       };
     }
 
     if (dateAndTime) {
       taskObject = {
+        _id: task?._id,
         title,
         description,
         date: null,
@@ -66,7 +61,7 @@ const DetailsForm = ({ task }) => {
     setIsAwaitingSaveResponse(true);
 
     typeof asPath.split('/')[2] === 'string'
-      ? updateTask(task?.id, taskObject).then((res) => router.push('/'))
+      ? updateTask(taskObject).then((res) => router.push('/'))
       : submitTask(taskObject).then((res) => {
           router.push('/');
         });

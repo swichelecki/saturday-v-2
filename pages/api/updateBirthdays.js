@@ -1,12 +1,19 @@
 import connectDB from '../../config/db';
 import Task from '../../models/Task';
 
-export default async function addTask(req, res) {
+export default async function updateBirthdays(req, res) {
   await connectDB();
 
   try {
-    const result = await Task.create(req.body);
-    return res.status(200).send(result);
+    const { _id, name, date } = req.body;
+
+    await Task.updateOne(
+      { _id: _id },
+      {
+        name,
+        date,
+      }
+    );
   } catch (error) {
     console.log(error);
     return res.status(500).send(error);

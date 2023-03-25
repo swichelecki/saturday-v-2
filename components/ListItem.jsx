@@ -86,12 +86,12 @@ const ItemList = ({
             >
               Details
             </button>
-          ) : taskToEditId !== item?.id || isAwaitingEditResponse ? (
+          ) : taskToEditId !== item?._id || isAwaitingEditResponse ? (
             <button
-              onClick={() => handleEditTask(item?.id)}
+              onClick={() => handleEditTask(item?._id)}
               className='list-item__edit-button'
             >
-              {isAwaitingEditResponse && taskToEditId === item?.id && (
+              {isAwaitingEditResponse && taskToEditId === item?._id && (
                 <div className='loader'></div>
               )}
               Edit
@@ -107,7 +107,7 @@ const ItemList = ({
           <p>{item?.title}</p>
         </div>
         <button
-          onClick={() => handleDeleteTask(item?.id)}
+          onClick={() => handleDeleteTask(item?._id)}
           className='list-item__delete-button'
         >
           {isAwaitingDeleteResponse && <div className='loader'></div>}
@@ -127,7 +127,7 @@ const ItemList = ({
       >
         <div className='list-item__details-padding'>
           <div className='list-item__details-controls-left'>
-            <Link href={`/details/${item?.id}`}>
+            <Link href={`/details/${item?._id}`}>
               <span className='list-item__details-edit-button'>Edit</span>
             </Link>
             {item?.dateAndTime ? (
@@ -137,7 +137,11 @@ const ItemList = ({
                   .format('dddd, MMMM D, h:mm A')}
               </p>
             ) : (
-              <p>{moment(item?.date).format('dddd, MMMM D, YYYY')}</p>
+              <p>
+                {moment(item?.date?.split('T')[0])
+                  .tz('America/Chicago')
+                  .format('dddd, MMMM D')}
+              </p>
             )}
           </div>
           {item?.description && (

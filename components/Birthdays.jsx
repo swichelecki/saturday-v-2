@@ -15,7 +15,7 @@ const Birthdays = ({ upcomingBirthdays }) => {
       {upcomingBirthdays.map((item, index) => (
         <div className='upcoming-item' key={`upcoming-item_${index}`}>
           <p className='upcoming-item__date'>
-            {moment(item?.date).format('dddd, MMMM D')}
+            {moment(item?.date?.split('T')[0]).format('dddd, MMMM D')}
           </p>
           <p className='upcoming-item__title'>{item?.name}</p>
           <span></span>

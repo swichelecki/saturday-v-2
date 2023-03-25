@@ -23,7 +23,7 @@ const ContentLeft = ({ hasContentRight }) => {
   const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
 
   const priority =
-    globalContextTasks.length > 0 ? globalContextTasks.length + 1 : 1;
+    globalContextTasks?.length > 0 ? globalContextTasks?.length + 1 : 1;
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -45,11 +45,14 @@ const ContentLeft = ({ hasContentRight }) => {
     const taskObject = {
       title,
       priority,
+      description: null,
+      date: null,
+      dateAndTime: null,
     };
 
     setIsAwaitingAddResponse(true);
     submitTask(taskObject).then((res) => {
-      setGlobalContextTasks((current) => [...current, res.createTask]);
+      setGlobalContextTasks((current) => [...current, res]);
       setIsAwaitingAddResponse(false);
     });
 
@@ -58,7 +61,7 @@ const ContentLeft = ({ hasContentRight }) => {
 
   const handleDeleteGlobalContextTask = (id) => {
     const filteredTasksArray = globalContextTasks.filter(
-      (item) => item.id !== id
+      (item) => item._id !== id
     );
     setGlobalContextTasks(filteredTasksArray);
   };
@@ -86,13 +89,13 @@ const ContentLeft = ({ hasContentRight }) => {
     }
 
     setIsAwaitingUpdateResponse(true);
-    updateTask(taskToEditId, { ...taskToEdit, title }).then((res) => {
+    updateTask({ ...taskToEdit, title }).then((res) => {
       setGlobalContextTasks(
-        globalContextTasks.map((item) => {
-          if (item?.id === taskToEditId) {
+        globalContextTasks?.map((item) => {
+          if (item?._id === taskToEditId) {
             return {
               ...item,
-              title: res?.updateTask?.title,
+              title: res?.title,
             };
           } else {
             return item;
@@ -136,13 +139,13 @@ const ContentLeft = ({ hasContentRight }) => {
     dragOverItemRef.current = null;
 
     const copyGlobalContextTasks = [...globalContextTasks];
-    const tasksWithNewPriorities = copyGlobalContextTasks.map(
+    const tasksWithNewPriorities = copyGlobalContextTasks?.map(
       (item, index) => ({
         ...item,
         priority: index + 1,
       })
     );
-    tasksWithNewPriorities.forEach((item) => updateTask(item.id, item));
+    tasksWithNewPriorities?.forEach((item) => updateTask(item));
   };
 
   const handleDragStyles = (index) => {

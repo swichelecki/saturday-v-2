@@ -1,6 +1,7 @@
+import connectDB from '../config/db';
+import Task from '../models/Task';
 import { useState } from 'react';
 import { Content } from '../components';
-import { getTasks } from '../services';
 import { TasksContext } from '../context/tasksContext';
 
 export default function Home({ tasks }) {
@@ -18,9 +19,15 @@ export default function Home({ tasks }) {
 }
 
 export async function getServerSideProps() {
-  const tasks = (await getTasks()) || [];
+  await connectDB();
 
-  return {
-    props: { tasks },
-  };
+  try {
+    const tasks = await Task.find().sort({ priority: 1 });
+
+    return {
+      props: { tasks: JSON.parse(JSON.stringify(tasks)) } ?? [],
+    };
+  } catch (error) {
+    console.log(error);
+  }
 }
