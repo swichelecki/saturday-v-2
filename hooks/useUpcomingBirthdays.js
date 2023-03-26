@@ -13,7 +13,7 @@ export const useUpcomingBirthdays = () => {
     const pastBirthdays = [];
 
     getBirthdays().then((res) => {
-      res.forEach((item) => {
+      res?.forEach((item) => {
         const birthdayDate = new Date(item?.date);
         if (
           birthdayDate.getTime() >= Date.now() - 86400000 &&
@@ -40,11 +40,17 @@ export const useUpcomingBirthdays = () => {
       const addOneYear = (date) => {
         const nextBirthday = new Date(date);
         nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-        return nextBirthday.toISOString();
+        const nextBirthdayISOFormat = nextBirthday.toISOString();
+        const nextBirthdayBSONFormat = nextBirthdayISOFormat.replace(
+          'Z',
+          '+00:00'
+        );
+
+        return nextBirthdayBSONFormat;
       };
       const updatedBirthdays = pastBirthdays.map((item) => ({
         ...item,
-        date: addOneYear(item?.date),
+        date: addOneYear(item?.date.split('T')[0]),
       }));
       updatedBirthdays.forEach((item) => updateBirthdays(item));
     }
