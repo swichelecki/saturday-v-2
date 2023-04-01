@@ -68,3 +68,15 @@ export const updateBirthdays = async (obj) => {
 
   return result.json();
 };
+
+export const loginUser = async (obj) => {
+  const result = await fetch('/api/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(obj),
+  });
+
+  return result;
+};

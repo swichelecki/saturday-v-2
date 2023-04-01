@@ -6,8 +6,21 @@ const EditDetails = ({ task }) => {
   return <DetailsForm task={task} />;
 };
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps(context) {
   await connectDB();
+
+  const { params } = context;
+
+  const userCookie = context.req.cookies['saturday'];
+
+  if (!userCookie) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
 
   try {
     const id = params.id;
