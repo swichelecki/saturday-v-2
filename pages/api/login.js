@@ -10,7 +10,9 @@ export default async function login(req, res) {
     if (!result) {
       return res.status(403).send();
     } else {
-      setCookie('saturday', 'youareme', { req, res, maxAge: 60 * 60 * 24 });
+      // TODO: build secure login
+      // example https://dev.to/mgranados/how-to-build-a-simple-login-with-nextjs-and-react-hooks-255
+      setCookie('saturday', 'youareme', { req, res });
       return res.status(200).send();
     }
   } catch (error) {
