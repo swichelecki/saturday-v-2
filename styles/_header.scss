@@ -1,12 +1,9 @@
-@import './variables';
-
 .header {
   background-color: $color-header-background;
   color: $color-white;
   h1 {
     color: $color-white;
     cursor: pointer;
-    font-weight: 400;
   }
   &__inner-wrapper {
     display: flex;
@@ -35,9 +32,6 @@
 
 @media screen and (max-width: 800px) {
   .header {
-    h1 {
-      font-size: 1.875rem; // 30px
-    }
     &__inner-wrapper {
       padding: 12px 24px;
     }
@@ -54,9 +48,6 @@
 
 @media screen and (max-width: 600px) {
   .header {
-    h1 {
-      font-weight: 300;
-    }
     .weather {
       flex-direction: row;
       gap: 6px;

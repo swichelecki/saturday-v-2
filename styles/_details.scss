@@ -2,9 +2,9 @@
   max-width: 700px;
   width: 100%;
   margin: 0 auto;
-  padding: 48px;
+  padding: 48px 60px;
   background-color: $color-white;
-  box-shadow: 0px 0px 6px 2px $color-shadow;
+  box-shadow: 0 0 6px 2px $color-shadow;
   &__form-row {
     display: flex;
     flex-direction: column;
@@ -12,12 +12,16 @@
     label {
       margin-bottom: 6px;
       font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 1rem; // 16px
+      letter-spacing: 0.5px;
     }
     input {
       border: none;
-      padding: 8px 12px;
+      padding: 12px;
       font: inherit;
       border: 1px solid $color-shadow;
+      border-radius: 9px;
       &:disabled {
         background-color: $color-shadow;
       }
@@ -55,11 +59,22 @@
     min-height: 200px;
     font-family: inherit;
   }
+  .ql-container.ql-snow {
+    border-bottom-right-radius: 9px;
+    border-bottom-left-radius: 9px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .details-form {
+    padding: 48px;
+    max-width: unset;
+  }
 }
 
 @media screen and (max-width: 600px) {
   .details-form {
-    padding: 24px;
+    padding: 48px 24px;
     &__form-row {
       margin-bottom: 22px;
     }

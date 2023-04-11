@@ -19,7 +19,6 @@ const DetailsForm = ({ task }) => {
           .format('yyyy-MM-DDTHH:mm')
       : ''
   );
-
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
   const router = useRouter();

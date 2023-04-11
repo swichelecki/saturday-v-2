@@ -1,5 +1,3 @@
-@import './variables';
-
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&family=Source+Sans+Pro:wght@300;400&display=swap');
 
 * {
@@ -23,6 +21,7 @@ body {
 .container {
   margin: 0 auto;
   max-width: 1296px;
+  width: 100%;
   padding: 48px 48px;
 }
 
@@ -72,6 +71,9 @@ input:disabled {
 
 @media screen and (max-width: 600px) {
   .container {
-    padding: 12px;
+    padding: 0;
+  }
+  .content-container {
+    gap: 0;
   }
 }
