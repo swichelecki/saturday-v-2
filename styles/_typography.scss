@@ -11,6 +11,10 @@ h2 {
   font-weight: 400;
 }
 
+p {
+  margin: 0;
+}
+
 @media screen and (max-width: 800px) {
   h1 {
     font-size: 1.875rem; // 30px

@@ -11,17 +11,6 @@ export async function getServerSideProps(context) {
 
   const { params } = context;
 
-  const userCookie = context.req.cookies['saturday'];
-
-  if (!userCookie) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-
   try {
     const id = params.id;
     const task = await Task.find({ _id: id });

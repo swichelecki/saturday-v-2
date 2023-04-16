@@ -69,12 +69,13 @@
   .details-form {
     padding: 48px;
     max-width: unset;
+    box-shadow: unset;
   }
 }
 
 @media screen and (max-width: 600px) {
   .details-form {
-    padding: 48px 24px;
+    padding: 24px;
     &__form-row {
       margin-bottom: 22px;
     }

@@ -1,6 +1,8 @@
 import connectDB from '../../config/db';
 import User from '../../models/User';
 import { setCookie } from 'cookies-next';
+import { SignJWT } from 'jose';
+const jwtSecret = process.env.JWT_SECRET;
 
 export default async function login(req, res) {
   await connectDB();
@@ -10,9 +12,10 @@ export default async function login(req, res) {
     if (!result) {
       return res.status(403).send();
     } else {
-      // TODO: build secure login
-      // example https://dev.to/mgranados/how-to-build-a-simple-login-with-nextjs-and-react-hooks-255
-      setCookie('saturday', 'youareme', { req, res });
+      const token = await new SignJWT({ hasToken: true })
+        .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
+        .sign(new TextEncoder().encode(jwtSecret));
+      setCookie('saturday', token, { req, res });
       return res.status(200).send();
     }
   } catch (error) {

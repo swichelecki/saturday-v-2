@@ -3,7 +3,7 @@ import { loginUser } from '../../services';
 import { useRouter } from 'next/router';
 import { RiAlertFill } from 'react-icons/ri';
 
-const DetailsForm = () => {
+const Login = () => {
   const router = useRouter();
 
   const [username, setUsername] = useState('');
@@ -89,4 +89,4 @@ const DetailsForm = () => {
   );
 };
 
-export default DetailsForm;
+export default Login;

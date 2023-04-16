@@ -11,6 +11,7 @@
   "dependencies": {
     "cookies-next": "^2.1.1",
     "html-react-parser": "^3.0.4",
+    "jose": "^4.14.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.39",
     "mongoose": "^7.0.2",

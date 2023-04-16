@@ -18,19 +18,8 @@ export default function Home({ tasks }) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   await connectDB();
-
-  const userCookie = context.req.cookies['saturday'];
-
-  if (!userCookie) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
 
   try {
     const tasks = await Task.find().sort({ priority: 1 });
