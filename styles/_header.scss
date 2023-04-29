@@ -6,14 +6,15 @@
     cursor: pointer;
   }
   &__inner-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    position: relative;
     margin: 0 auto;
     max-width: 1296px;
-    padding: 12px 48px;
+    padding: 20px 48px;
   }
   .weather {
+    position: absolute;
+    top: 10px;
+    right: 48px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -33,9 +34,10 @@
 @media screen and (max-width: 800px) {
   .header {
     &__inner-wrapper {
-      padding: 12px 24px;
+      padding: 20px 24px;
     }
     .weather {
+      right: 24px;
       &__temp {
         font-size: 1.5rem; // 24px
       }
@@ -48,7 +50,11 @@
 
 @media screen and (max-width: 600px) {
   .header {
+    &__inner-wrapper {
+      padding: 12px 24px;
+    }
     .weather {
+      top: 16px;
       flex-direction: row;
       gap: 6px;
     }
