@@ -1,10 +1,11 @@
+import { useUpcomingBirthdays } from '../hooks';
 import moment from 'moment-timezone';
 import { FaBirthdayCake } from 'react-icons/fa';
 
-const Birthdays = ({ upcomingBirthdays }) => {
-  if (!upcomingBirthdays.length) {
-    return null;
-  }
+const Birthdays = () => {
+  const upcomingBirthdays = useUpcomingBirthdays();
+
+  if (!upcomingBirthdays.length) return null;
 
   return (
     <section className='content-right-item'>

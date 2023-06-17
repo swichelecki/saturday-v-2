@@ -1,0 +1,22 @@
+.items-column {
+  flex: 0 1 286px;
+  h2 {
+    padding: 12px 24px;
+    background-color: $color-header-background;
+    color: $color-white;
+    margin-bottom: 8px;
+    svg {
+      font-size: 1.375rem; // 22px;
+      margin-right: 8px;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .items-column {
+    flex: 1 1 auto;
+    h2 {
+      margin-bottom: 0;
+    }
+  }
+}

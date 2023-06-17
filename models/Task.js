@@ -5,6 +5,10 @@ const TaskSchema = new Schema({
     type: Number,
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+  },
   title: {
     type: String,
     required: true,

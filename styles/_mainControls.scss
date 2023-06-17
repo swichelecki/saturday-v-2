@@ -1,0 +1,95 @@
+.main-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  flex-wrap: wrap;
+  max-width: 590px;
+  width: 100%;
+  padding: 32px 24px;
+  background-color: $color-white;
+  box-shadow: 0 0 6px 2px $color-shadow;
+  &__top-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  &__bottom-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+  .main-controls__type-button--active {
+    background-color: $button-purple;
+    color: $color-white;
+    opacity: 1;
+  }
+  input[type='text'] {
+    flex: 0 1 388px;
+    border: none;
+    background-color: $color-background;
+    padding: 7px 12px;
+    border-radius: 20px;
+    box-shadow: 0 0 0 1px $color-shadow;
+    font: inherit;
+    &:disabled {
+      background-color: $color-shadow;
+    }
+  }
+  &__checkbox-container {
+    position: relative;
+    padding: 3px 0 0 35px;
+    top: -1px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 1rem; // 16px
+    & input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+    &:hover input ~ .main-controls__checkmark {
+      background-color: $color-shadow;
+    }
+    & input:checked ~ .main-controls__checkmark {
+      background-color: $button-blue;
+    }
+    & input:checked ~ .main-controls__checkmark:after {
+      display: block;
+    }
+  }
+  &__checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: $color-background;
+    border: 1px solid $color-shadow;
+    &:after {
+      content: '';
+      position: absolute;
+      display: none;
+      left: 8px;
+      top: 4px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .main-controls {
+    justify-content: flex-start;
+    position: relative;
+    margin-bottom: 0;
+    box-shadow: unset;
+  }
+}

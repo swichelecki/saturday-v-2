@@ -22,13 +22,7 @@ body {
   margin: 0 auto;
   max-width: 1296px;
   width: 100%;
-  padding: 48px 48px;
-}
-
-.content-container {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
+  padding: 32px 48px;
 }
 
 a {
@@ -62,18 +56,10 @@ input:disabled {
   .container {
     padding: 24px;
   }
-  .content-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-  }
 }
 
 @media screen and (max-width: 600px) {
   .container {
     padding: 0;
-  }
-  .content-container {
-    gap: 0;
   }
 }
