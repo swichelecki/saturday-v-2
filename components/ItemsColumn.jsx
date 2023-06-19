@@ -2,6 +2,12 @@ import { useState, useContext, useRef } from 'react';
 import { TasksContext } from '../context/tasksContext';
 import { ListItem } from './';
 import { updateTask } from '../services';
+import {
+  FaShoppingCart,
+  FaStore,
+  FaCogs,
+  FaCalendarCheck,
+} from 'react-icons/fa';
 
 const ItemsColumn = ({
   heading,
@@ -43,6 +49,27 @@ const ItemsColumn = ({
       };
     });
   }
+
+  const handleIcon = (heading) => {
+    let icon;
+    switch (heading) {
+      case 'Grocery':
+        icon = <FaShoppingCart />;
+        break;
+      case 'Big Box':
+        icon = <FaStore />;
+        break;
+      case 'Other':
+        icon = <FaCogs />;
+        break;
+      case 'Upcoming':
+        icon = <FaCalendarCheck />;
+        break;
+      default:
+        icon = '';
+    }
+    return icon;
+  };
 
   // TODO: DRAG RESORTING NEEDS TO BE UPDATED
   const handleDragStart = (index) => {
@@ -92,7 +119,10 @@ const ItemsColumn = ({
 
   return (
     <div className='items-column'>
-      <h2>{heading}</h2>
+      <h2>
+        {handleIcon(heading)}
+        {heading}
+      </h2>
       {filteredGlobalContextTasks?.map((item, index) => (
         <ListItem
           item={item}

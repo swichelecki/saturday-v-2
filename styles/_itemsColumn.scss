@@ -6,8 +6,10 @@
     color: $color-white;
     margin-bottom: 8px;
     svg {
+      position: relative;
+      top: 2px;
+      margin-right: 10px;
       font-size: 1.375rem; // 22px;
-      margin-right: 8px;
     }
   }
 }

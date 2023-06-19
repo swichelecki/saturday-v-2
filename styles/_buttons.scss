@@ -70,3 +70,9 @@ button.login-form__login-button {
   font-size: 1.125rem; // 18px
   border-radius: 26px;
 }
+
+@media screen and (max-width: 600px) {
+  button.main-controls__type-button {
+    min-width: 66px;
+  }
+}

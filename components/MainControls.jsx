@@ -1,5 +1,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
+import { useInnerWidth } from '../hooks';
+import {
+  FaShoppingCart,
+  FaStore,
+  FaCogs,
+  FaCalendarCheck,
+} from 'react-icons/fa';
 
 const MainControls = ({
   handleOnSubmit,
@@ -13,6 +20,8 @@ const MainControls = ({
   isAwaitingUpdateResponse,
   priority,
 }) => {
+  const width = useInnerWidth();
+
   const [checkbox, setCheckbox] = useState(false);
   const [isCheckedByUser, setIsCheckedByUser] = useState(false);
 
@@ -20,8 +29,8 @@ const MainControls = ({
     <div className='main-controls'>
       <div className='main-controls__top-controls'>
         <button
-          className={`main-controls__type-button ${
-            type === 'grocery' ? 'main-controls__type-button--active' : ''
+          className={`main-controls__type-button${
+            type === 'grocery' ? ' main-controls__type-button--active' : ''
           }`}
           onClick={() => {
             setType('grocery');
@@ -30,11 +39,11 @@ const MainControls = ({
             );
           }}
         >
-          Grocery
+          {width >= 600 ? 'Grocery' : <FaShoppingCart />}
         </button>
         <button
-          className={`main-controls__type-button ${
-            type === 'big-box' ? 'main-controls__type-button--active' : ''
+          className={`main-controls__type-button${
+            type === 'big-box' ? ' main-controls__type-button--active' : ''
           }`}
           onClick={() => {
             setType('big-box');
@@ -43,11 +52,11 @@ const MainControls = ({
             );
           }}
         >
-          Big Box
+          {width >= 600 ? 'BigBox' : <FaStore />}
         </button>
         <button
-          className={`main-controls__type-button ${
-            type === 'other' ? 'main-controls__type-button--active' : ''
+          className={`main-controls__type-button${
+            type === 'other' ? ' main-controls__type-button--active' : ''
           }`}
           onClick={() => {
             setType('other');
@@ -56,18 +65,18 @@ const MainControls = ({
             );
           }}
         >
-          Other
+          {width >= 600 ? 'Other' : <FaCogs />}
         </button>
         <button
-          className={`main-controls__type-button ${
-            type === 'upcoming' ? 'main-controls__type-button--active' : ''
+          className={`main-controls__type-button${
+            type === 'upcoming' ? ' main-controls__type-button--active' : ''
           }`}
           onClick={() => {
             setType('upcoming');
             setCheckbox(true);
           }}
         >
-          Upcoming
+          {width >= 600 ? 'Upcoming' : <FaCalendarCheck />}
         </button>
         <label
           className='main-controls__checkbox-container'
@@ -75,7 +84,7 @@ const MainControls = ({
           style={type === 'upcoming' && checkbox ? { cursor: 'no-drop' } : {}}
           onChange={() => setIsCheckedByUser((current) => !current)}
         >
-          Details
+          Detailed
           <input
             type='checkbox'
             id='checkbox'

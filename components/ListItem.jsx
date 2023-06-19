@@ -67,6 +67,33 @@ const ItemList = ({
     }
   };
 
+  /*   let posStart = 0;
+
+  const handleTouchStart = (e) => {
+    itemRef.current.addEventListener('touchstart', () => {
+      e.preventDefault();
+      posStart = e.touches[0].clientX;
+      console.log('start start');
+      console.log(e.touches[0].clientX);
+    });
+
+    itemRef.current.addEventListener('touchmove', () => {
+      handleTouchMove();
+    });
+
+    itemRef.current.addEventListener('touchend', () => {
+      handleTouchEnd();
+    });
+  };
+
+  const handleTouchMove = () => {
+    console.log('start move');
+  };
+
+  const handleTouchEnd = () => {
+    console.log('start end');
+  }; */
+
   return (
     <div
       className={
@@ -122,6 +149,7 @@ const ItemList = ({
             }`}
             onMouseEnter={handleSlideItem}
             onMouseLeave={handleSlideItem}
+            //onTouchStart={handleTouchStart}
           >
             <p>{item?.title}</p>
           </div>
