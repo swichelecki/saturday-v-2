@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useInnerWidth } from '../hooks';
 import moment from 'moment-timezone';
 import { GrDrag } from 'react-icons/gr';
-import { BsThreeDots } from 'react-icons/bs';
+import { BiChevronRight } from 'react-icons/bi';
 
 const ItemList = ({
   item,
@@ -19,12 +20,20 @@ const ItemList = ({
   handleDragEnter,
   handleDragEnd,
 }) => {
+  const width = useInnerWidth();
+
   const detailsRef = useRef(null);
   const itemRef = useRef(null);
+  const animationIdRef = useRef(null);
   const controlsRef = useRef(null);
   const detailsRefCurrent = detailsRef.current;
 
   const [isOpen, setIsOpen] = useState(false);
+  const [startPosition, setStartPosition] = useState(0);
+  const [itemPositionOnStart, setItemPositionOnStart] = useState(0);
+  const [currentTranslateX, setCurrentTranslateX] = useState(0);
+  const [previousTranslateX, setPreviousTranslateX] = useState(0);
+  const [movedBy, setMovedBy] = useState(0);
 
   const handleShowDetails = () => {
     setIsOpen((prevState) => !prevState);
@@ -53,7 +62,8 @@ const ItemList = ({
     return height;
   };
 
-  const handleSlideItem = () => {
+  const handleItemHoverSlide = () => {
+    if (width <= 600) return;
     if (
       !itemRef.current.style.transform ||
       itemRef.current.style.transform === 'translateX(0px)' ||
@@ -67,32 +77,63 @@ const ItemList = ({
     }
   };
 
-  /*   let posStart = 0;
+  useEffect(() => {
+    itemRef.current.addEventListener(
+      'touchstart',
+      (e) => {
+        e.preventDefault();
+        setStartPosition(e.touches[0].clientX);
+        itemRef.current.style.transition = 'none';
+        setItemPositionOnStart(itemRef.current.getBoundingClientRect().left);
+      },
+      { passive: false }
+    );
+  }, []);
 
-  const handleTouchStart = (e) => {
-    itemRef.current.addEventListener('touchstart', () => {
-      e.preventDefault();
-      posStart = e.touches[0].clientX;
-      console.log('start start');
-      console.log(e.touches[0].clientX);
-    });
-
-    itemRef.current.addEventListener('touchmove', () => {
-      handleTouchMove();
-    });
-
-    itemRef.current.addEventListener('touchend', () => {
-      handleTouchEnd();
-    });
+  const handleTouchMove = (e) => {
+    let currentPosition = e.touches[0].clientX;
+    setCurrentTranslateX(previousTranslateX + currentPosition - startPosition);
+    setMovedBy(currentTranslateX - previousTranslateX);
+    animationIdRef.current = requestAnimationFrame(animation);
   };
 
-  const handleTouchMove = () => {
-    console.log('start move');
+  const handleTouchEnd = (e) => {
+    // speed = amount moved / duration
+    /*   itemRef.current.style.transition = `all ${
+      AMOUNT/ DURATION
+    } ease-in-out`; */
+    if (movedBy * -1 <= 40 && itemPositionOnStart === 0) {
+      setCurrentTranslateX(0);
+      setPreviousTranslateX(0);
+      itemRef.current.style.transform = `translateX(0)`;
+    }
+
+    if (movedBy * -1 > 40 && itemPositionOnStart === 0) {
+      setCurrentTranslateX(-146);
+      setPreviousTranslateX(-146);
+      itemRef.current.style.transform = `translateX(-146px)`;
+    }
+
+    if (movedBy <= 40 && itemPositionOnStart === -146) {
+      setCurrentTranslateX(-146);
+      setPreviousTranslateX(-146);
+      itemRef.current.style.transform = `translateX(-146px)`;
+    }
+
+    if (movedBy > 40 && itemPositionOnStart === -146) {
+      setCurrentTranslateX(0);
+      setPreviousTranslateX(0);
+      itemRef.current.style.transform = `translateX(0)`;
+    }
+
+    setMovedBy(0);
+    cancelAnimationFrame(animationIdRef.current);
   };
 
-  const handleTouchEnd = () => {
-    console.log('start end');
-  }; */
+  const animation = () => {
+    const itemTranslateX = Math.max(-146, Math.min(currentTranslateX, 0));
+    itemRef.current.style.transform = `translateX(${itemTranslateX}px)`;
+  };
 
   return (
     <div
@@ -147,14 +188,15 @@ const ItemList = ({
                 ? 'list-item__item-hover-zone--upcoming'
                 : ''
             }`}
-            onMouseEnter={handleSlideItem}
-            onMouseLeave={handleSlideItem}
-            //onTouchStart={handleTouchStart}
+            onMouseEnter={handleItemHoverSlide}
+            onMouseLeave={handleItemHoverSlide}
+            onTouchMove={(e) => handleTouchMove(e)}
+            onTouchEnd={(e) => handleTouchEnd(e)}
           >
             <p>{item?.title}</p>
           </div>
           <div className='list-item__item-dots'>
-            <BsThreeDots />
+            <BiChevronRight />
           </div>
         </div>
         <div
@@ -167,8 +209,8 @@ const ItemList = ({
                 }
               : { height: '0' }
           }
-          onMouseEnter={handleSlideItem}
-          onMouseLeave={handleSlideItem}
+          onMouseEnter={handleItemHoverSlide}
+          onMouseLeave={handleItemHoverSlide}
         >
           <div className='list-item__details-padding'>
             {item?.description && (
@@ -190,8 +232,8 @@ const ItemList = ({
         className={`list-item__controls ${
           item?.dateAndTime || item?.date ? 'list-item__controls--upcoming' : ''
         }`}
-        onMouseEnter={handleSlideItem}
-        onMouseLeave={handleSlideItem}
+        onMouseEnter={handleItemHoverSlide}
+        onMouseLeave={handleItemHoverSlide}
       >
         {item?.date || item?.dateAndTime || item?.description ? (
           <button

@@ -26,12 +26,12 @@ const ItemsColumn = ({
 
   const [dragging, setDragging] = useState(false);
 
-  let filteredGlobalContextTasks = globalContextTasks.filter(
+  let filteredTasks = globalContextTasks.filter(
     (item) => item.type === heading.toLowerCase().replace(' ', '-')
   );
 
   if (heading === 'Upcoming') {
-    const tasksWithFormattedDate = filteredGlobalContextTasks?.map((item) => {
+    const tasksWithFormattedDate = filteredTasks?.map((item) => {
       return {
         ...item,
         date: new Date(item?.date),
@@ -42,7 +42,7 @@ const ItemsColumn = ({
       (objA, objB) => Number(objA.date) - Number(objB.date)
     );
 
-    filteredGlobalContextTasks = TasksSortedDateAsc.map((item) => {
+    filteredTasks = TasksSortedDateAsc.map((item) => {
       return {
         ...item,
         date: new Date(item.date).toISOString().split('T')[0],
@@ -117,13 +117,17 @@ const ItemsColumn = ({
       : 'list-item__outer-wrapper';
   };
 
+  if (!filteredTasks.length) {
+    return null;
+  }
+
   return (
     <div className='items-column'>
       <h2>
         {handleIcon(heading)}
         {heading}
       </h2>
-      {filteredGlobalContextTasks?.map((item, index) => (
+      {filteredTasks?.map((item, index) => (
         <ListItem
           item={item}
           handleEditTask={handleEditTask}

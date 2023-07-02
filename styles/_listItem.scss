@@ -58,10 +58,12 @@
   &__item-dots {
     position: absolute;
     top: 8px;
-    right: 16px;
+    right: 4px;
     pointer-events: none;
     svg {
       fill: $color-list-item-svg;
+      width: 1.5rem;
+      height: 1.5rem;
     }
   }
   &__controls {
@@ -134,7 +136,12 @@
       position: relative;
       margin-bottom: 0;
     }
+    &__inner-wrapper {
+      box-shadow: unset;
+      border-radius: unset;
+    }
     &__item {
+      transition: none;
       &:before {
         content: '';
         position: absolute;
@@ -144,9 +151,8 @@
         background-color: $color-shadow;
       }
     }
-    &__inner-wrapper {
-      box-shadow: unset;
-      border-radius: unset;
+    &__controls {
+      visibility: visible;
     }
     &__details-quill-wrapper {
       padding: 12px 0 0;
