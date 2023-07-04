@@ -97,11 +97,9 @@ const ItemList = ({
     animationIdRef.current = requestAnimationFrame(animation);
   };
 
-  const handleTouchEnd = (e) => {
-    // speed = amount moved / duration
-    /*   itemRef.current.style.transition = `all ${
-      AMOUNT/ DURATION
-    } ease-in-out`; */
+  const handleTouchEnd = () => {
+    itemRef.current.style.transition = 'transform 150ms';
+
     if (movedBy * -1 <= 40 && itemPositionOnStart === 0) {
       setCurrentTranslateX(0);
       setPreviousTranslateX(0);
@@ -191,7 +189,7 @@ const ItemList = ({
             onMouseEnter={handleItemHoverSlide}
             onMouseLeave={handleItemHoverSlide}
             onTouchMove={(e) => handleTouchMove(e)}
-            onTouchEnd={(e) => handleTouchEnd(e)}
+            onTouchEnd={handleTouchEnd}
           >
             <p>{item?.title}</p>
           </div>

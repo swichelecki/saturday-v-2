@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import connectDB from '../config/db';
 import Task from '../models/Task';
 import { TasksContext } from '../context/tasksContext';
-import { MainControls, ItemsColumn } from '../components';
+import { MainControls, ItemsColumn, Birthdays } from '../components';
+import { useUpcomingBirthdays } from '../hooks';
 import { submitTask, getTask, updateTask, deleteTask } from '../services';
 
 const Home = ({ tasks }) => {
+  const birthhdays = useUpcomingBirthdays();
+
   const [globalContextTasks, setGlobalContextTasks] = useState(tasks);
   const [title, setTitle] = useState('');
   const [type, setType] = useState('grocery');
@@ -167,6 +170,7 @@ const Home = ({ tasks }) => {
           />
         </div>
       </TasksContext.Provider>
+      {birthhdays && <Birthdays />}
     </div>
   );
 };

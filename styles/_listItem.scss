@@ -26,9 +26,12 @@
     }
   }
   &__item {
+    &:hover {
+      transition: all 0.3s ease-out;
+    }
     display: flex;
     position: relative;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in;
     background-color: $color-white;
     z-index: 2;
   }
@@ -77,13 +80,13 @@
     background-color: $color-shadow;
     z-index: 1;
     visibility: hidden;
-    transition: visibility 0.3s ease-in-out;
+    transition: visibility 0.3s;
     &--upcoming {
       top: 32px;
     }
   }
   &__details {
-    transition: height 0.3s ease-in-out;
+    transition: height 0.3s;
     background-color: $color-shadow;
   }
   &__details-edit-button {

@@ -101,9 +101,11 @@
 @media screen and (max-width: 600px) {
   .main-controls {
     box-shadow: unset;
+    gap: 24px;
     &__top-controls {
       flex-wrap: wrap;
       min-width: unset;
+      justify-content: flex-start;
     }
   }
 }
