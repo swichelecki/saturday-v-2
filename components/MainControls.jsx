@@ -39,7 +39,7 @@ const MainControls = ({
             );
           }}
         >
-          {width >= 600 ? 'Grocery' : <FaShoppingCart />}
+          {width > 500 ? 'Grocery' : <FaShoppingCart />}
         </button>
         <button
           className={`main-controls__type-button${
@@ -52,7 +52,7 @@ const MainControls = ({
             );
           }}
         >
-          {width >= 600 ? 'BigBox' : <FaStore />}
+          {width > 500 ? 'Big Box' : <FaStore />}
         </button>
         <button
           className={`main-controls__type-button${
@@ -65,7 +65,7 @@ const MainControls = ({
             );
           }}
         >
-          {width >= 600 ? 'Other' : <FaCogs />}
+          {width > 500 ? 'Other' : <FaCogs />}
         </button>
         <button
           className={`main-controls__type-button${
@@ -76,7 +76,7 @@ const MainControls = ({
             setCheckbox(true);
           }}
         >
-          {width >= 600 ? 'Upcoming' : <FaCalendarCheck />}
+          {width > 500 ? 'Upcoming' : <FaCalendarCheck />}
         </button>
         <label
           className='main-controls__checkbox-container'
@@ -84,7 +84,7 @@ const MainControls = ({
           style={type === 'upcoming' && checkbox ? { cursor: 'no-drop' } : {}}
           onChange={() => setIsCheckedByUser((current) => !current)}
         >
-          Detailed
+          <span>Detailed</span>
           <input
             type='checkbox'
             id='checkbox'
@@ -94,7 +94,7 @@ const MainControls = ({
             }}
             checked={checkbox ? true : false}
           />
-          <span className='main-controls__checkmark'></span>
+          <span className='main-controls__checkbox'></span>
         </label>
       </div>
       <div className='main-controls__bottom-controls'>

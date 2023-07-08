@@ -193,7 +193,7 @@ const ItemList = ({
           >
             <p>{item?.title}</p>
           </div>
-          <div className='list-item__item-dots'>
+          <div className='list-item__item-arrow-right'>
             <BiChevronRight />
           </div>
         </div>

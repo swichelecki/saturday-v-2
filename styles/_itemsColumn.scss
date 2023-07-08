@@ -20,5 +20,9 @@
     h2 {
       margin-bottom: 0;
     }
+    &:last-of-type {
+      padding-bottom: 72px;
+      background-color: $color-white;
+    }
   }
 }

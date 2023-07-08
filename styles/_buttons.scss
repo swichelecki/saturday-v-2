@@ -73,6 +73,12 @@ button.login-form__login-button {
 
 @media screen and (max-width: 600px) {
   button.main-controls__type-button {
-    min-width: 66px;
+    font-size: 0.875rem; // 14px
+  }
+}
+
+@media screen and (max-width: 500px) {
+  button.main-controls__type-button {
+    min-width: 55px;
   }
 }

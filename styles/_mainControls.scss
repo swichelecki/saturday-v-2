@@ -1,26 +1,25 @@
 .main-controls {
   display: flex;
-  gap: 32px;
+  gap: 16px;
   justify-content: center;
-  max-width: 1100px;
+  max-width: 970px;
   width: 100%;
-  padding: 24px;
+  padding: 16px;
   background-color: $color-white;
   box-shadow: 0 0 6px 2px $color-shadow;
   &__top-controls {
-    flex: 0 1 560px;
-    min-width: 500px;
+    flex: 0 0 482px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
   }
   &__bottom-controls {
-    flex: 0 1 560px;
+    flex: 0 1 440px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
   }
   .main-controls__type-button--active {
     background-color: $button-purple;
@@ -28,7 +27,7 @@
     opacity: 1;
   }
   input[type='text'] {
-    flex: 0 1 400px;
+    width: 100%;
     border: none;
     background-color: $color-background;
     padding: 7px 12px;
@@ -41,8 +40,7 @@
   }
   &__checkbox-container {
     position: relative;
-    padding: 3px 0 0 38px;
-    top: -1px;
+    padding: 3px 0 0 37px;
     cursor: pointer;
     user-select: none;
     font-size: 1rem; // 16px
@@ -53,17 +51,17 @@
       height: 0;
       width: 0;
     }
-    &:hover input ~ .main-controls__checkmark {
+    &:hover input ~ .main-controls__checkbox {
       background-color: $color-shadow;
     }
-    & input:checked ~ .main-controls__checkmark {
+    & input:checked ~ .main-controls__checkbox {
       background-color: $button-blue;
     }
-    & input:checked ~ .main-controls__checkmark:after {
+    & input:checked ~ .main-controls__checkbox:after {
       display: block;
     }
   }
-  &__checkmark {
+  &__checkbox {
     position: absolute;
     top: 0;
     left: 0;
@@ -89,34 +87,57 @@
 @media screen and (max-width: 989px) {
   .main-controls {
     flex-wrap: wrap;
-    max-width: 590px;
+    max-width: 521px;
     &__top-controls,
     &__bottom-controls {
       width: 100%;
       justify-content: center;
+      flex: 0 1 auto;
     }
   }
 }
 
 @media screen and (max-width: 600px) {
   .main-controls {
+    max-width: unset;
     box-shadow: unset;
+    padding: 24px 16px;
     gap: 24px;
     &__top-controls {
-      flex-wrap: wrap;
-      min-width: unset;
       justify-content: flex-start;
     }
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 500px) {
   .main-controls {
-    &__top-controls {
-      justify-content: space-between;
-    }
     &__checkbox-container {
-      width: 100%;
+      padding: 0 0 0 26px;
+    }
+    &__checkbox {
+      height: 18px;
+      width: 18px;
+      &:after {
+        left: 6px;
+        top: 3px;
+        width: 3px;
+        height: 6px;
+        border-width: 0 2px 2px 0;
+      }
+    }
+  }
+
+  @media screen and (max-width: 400px) {
+    .main-controls {
+      &__checkbox-container {
+        padding: 30px 0 0;
+        font-size: 0.8125rem; // 13px
+        span:first-of-type {
+          position: absolute;
+          left: 0;
+          bottom: -6px;
+        }
+      }
     }
   }
 }
