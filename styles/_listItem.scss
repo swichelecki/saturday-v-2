@@ -36,7 +36,7 @@
     z-index: 2;
   }
   &__item-drag-zone {
-    padding: 16px;
+    padding: 16px 8px 16px 16px;
     cursor: grab;
     svg {
       position: relative;
@@ -49,25 +49,25 @@
   &__item-hover-zone {
     width: 100%;
     padding: 16px 16px 16px 0;
-    p {
-      font-size: 1.25rem; // 20px;
-    }
     &--upcoming {
       width: 100%;
       padding: 16px;
       position: relative;
     }
   }
-  &__item-arrow-right {
-    position: absolute;
+  &__item-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-right: 6px;
+  }
+  &__item-right > svg {
+    position: relative;
     top: 8px;
     right: 4px;
-    pointer-events: none;
-    svg {
-      fill: $color-list-item-svg;
-      width: 1.5rem;
-      height: 1.5rem;
-    }
+    fill: $color-list-item-svg;
+    width: 1.5rem;
+    height: 1.5rem;
   }
   &__controls {
     position: absolute;
@@ -77,9 +77,6 @@
     justify-content: flex-end;
     position: absolute;
     height: 57px;
-    z-index: 1;
-    visibility: hidden;
-    transition: visibility 0.3s;
     &--upcoming {
       top: 32px;
     }
@@ -153,6 +150,9 @@
         height: 1px;
         background-color: $color-shadow;
       }
+    }
+    &__item-right {
+      display: block;
     }
     &__controls {
       visibility: visible;

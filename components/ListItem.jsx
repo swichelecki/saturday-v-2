@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import ItemButtons from './ItemButtons';
 import { useInnerWidth } from '../hooks';
 import moment from 'moment-timezone';
 import { GrDrag } from 'react-icons/gr';
@@ -25,7 +26,6 @@ const ItemList = ({
   const detailsRef = useRef(null);
   const itemRef = useRef(null);
   const animationIdRef = useRef(null);
-  const controlsRef = useRef(null);
   const detailsRefCurrent = detailsRef.current;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -60,21 +60,6 @@ const ItemList = ({
     clone.remove();
 
     return height;
-  };
-
-  const handleItemHoverSlide = () => {
-    if (width <= 600) return;
-    if (
-      !itemRef.current.style.transform ||
-      itemRef.current.style.transform === 'translateX(0px)' ||
-      isOpen
-    ) {
-      itemRef.current.style.transform = 'translateX(-146px)';
-      controlsRef.current.style.visibility = 'visible';
-    } else {
-      itemRef.current.style.transform = 'translateX(0px)';
-      controlsRef.current.style.visibility = isOpen ? 'visible' : 'hidden';
-    }
   };
 
   useEffect(() => {
@@ -186,15 +171,31 @@ const ItemList = ({
                 ? 'list-item__item-hover-zone--upcoming'
                 : ''
             }`}
-            onMouseEnter={handleItemHoverSlide}
-            onMouseLeave={handleItemHoverSlide}
             onTouchMove={(e) => handleTouchMove(e)}
             onTouchEnd={handleTouchEnd}
           >
             <p>{item?.title}</p>
           </div>
-          <div className='list-item__item-arrow-right'>
-            <BiChevronRight />
+          <div className='list-item__item-right'>
+            {width <= 600 ? (
+              <BiChevronRight />
+            ) : (
+              <ItemButtons
+                date={item?.date}
+                dateAndTime={item?.dateAndTime}
+                description={item?.description}
+                handleShowDetails={handleShowDetails}
+                isOpen={isOpen}
+                taskToEditId={taskToEditId}
+                handleEditTask={handleEditTask}
+                itemId={item?._id}
+                isAwaitingEditResponse={isAwaitingEditResponse}
+                handleCancelEdit={handleCancelEdit}
+                handleDeleteTask={handleDeleteTask}
+                setIsOpen={setIsOpen}
+                isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+              />
+            )}
           </div>
         </div>
         <div
@@ -207,8 +208,6 @@ const ItemList = ({
                 }
               : { height: '0' }
           }
-          onMouseEnter={handleItemHoverSlide}
-          onMouseLeave={handleItemHoverSlide}
         >
           <div className='list-item__details-padding'>
             {item?.description && (
@@ -226,50 +225,27 @@ const ItemList = ({
         </div>
       </div>
       <div
-        ref={controlsRef}
         className={`list-item__controls ${
           item?.dateAndTime || item?.date ? 'list-item__controls--upcoming' : ''
         }`}
-        onMouseEnter={handleItemHoverSlide}
-        onMouseLeave={handleItemHoverSlide}
       >
-        {item?.date || item?.dateAndTime || item?.description ? (
-          <button
-            onClick={handleShowDetails}
-            className='list-item__details-button'
-          >
-            Details
-          </button>
-        ) : taskToEditId !== item?._id || isAwaitingEditResponse ? (
-          <button
-            onClick={() => {
-              handleEditTask(item?._id);
-            }}
-            className='list-item__edit-button'
-          >
-            {isAwaitingEditResponse && taskToEditId === item?._id && (
-              <div className='loader'></div>
-            )}
-            Edit
-          </button>
-        ) : (
-          <button
-            onClick={handleCancelEdit}
-            className='list-item__cancel-button'
-          >
-            Cancel
-          </button>
+        {width <= 600 && (
+          <ItemButtons
+            date={item?.date}
+            dateAndTime={item?.dateAndTime}
+            description={item?.description}
+            handleShowDetails={handleShowDetails}
+            isOpen={isOpen}
+            taskToEditId={taskToEditId}
+            handleEditTask={handleEditTask}
+            itemId={item?._id}
+            isAwaitingEditResponse={isAwaitingEditResponse}
+            handleCancelEdit={handleCancelEdit}
+            handleDeleteTask={handleDeleteTask}
+            setIsOpen={setIsOpen}
+            isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+          />
         )}
-        <button
-          onClick={() => {
-            handleDeleteTask(item?._id);
-            setIsOpen(false);
-          }}
-          className='list-item__delete-button'
-        >
-          {isAwaitingDeleteResponse && <div className='loader'></div>}
-          Delete
-        </button>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 .items-column {
-  flex: 0 1 286px;
+  flex: 0 0 312px;
   h2 {
     padding: 12px 24px;
     background-color: $color-header-background;
@@ -19,10 +19,6 @@
     flex: 1 1 auto;
     h2 {
       margin-bottom: 0;
-    }
-    &:last-of-type {
-      padding-bottom: 72px;
-      background-color: $color-white;
     }
   }
 }

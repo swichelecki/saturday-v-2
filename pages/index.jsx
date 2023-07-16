@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import connectDB from '../config/db';
 import Task from '../models/Task';
 import { TasksContext } from '../context/tasksContext';
-import { MainControls, ItemsColumn, Birthdays } from '../components';
+import { MainControls, ItemsColumn, BirthdaysColumn } from '../components';
 import { useUpcomingBirthdays } from '../hooks';
 import { submitTask, getTask, updateTask, deleteTask } from '../services';
 
@@ -168,9 +168,9 @@ const Home = ({ tasks }) => {
             isAwaitingEditResponse={isAwaitingEditResponse}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}
           />
+          {birthhdays && <BirthdaysColumn birthdays={birthhdays} />}
         </div>
       </TasksContext.Provider>
-      {birthhdays && <Birthdays />}
     </div>
   );
 };
@@ -178,15 +178,11 @@ const Home = ({ tasks }) => {
 export async function getServerSideProps() {
   await connectDB();
 
-  try {
-    const tasks = await Task.find().sort({ priority: 1 });
+  const tasks = await Task.find().sort({ priority: 1 });
 
-    return {
-      props: { tasks: JSON.parse(JSON.stringify(tasks)) } ?? [],
-    };
-  } catch (error) {
-    console.log(error);
-  }
+  return {
+    props: { tasks: JSON.parse(JSON.stringify(tasks)) } ?? [],
+  };
 }
 
 export default Home;
