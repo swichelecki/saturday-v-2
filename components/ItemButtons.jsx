@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useInnerWidth } from '../hooks';
 import { MdEdit } from 'react-icons/md';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
@@ -20,6 +21,8 @@ const ItemButtons = ({
   isAwaitingDeleteResponse,
 }) => {
   const width = useInnerWidth();
+
+  const [idToDelete, setIdToDelete] = useState('');
 
   const handleDetailsButtonClass = () => {
     return width <= 600
@@ -79,11 +82,12 @@ const ItemButtons = ({
       <button
         onClick={() => {
           handleDeleteTask(itemId);
+          setIdToDelete(itemId);
           setIsOpen(false);
         }}
         className={`list-item__delete-button ${handleDeleteButtonClass()}`}
       >
-        {isAwaitingDeleteResponse ? (
+        {isAwaitingDeleteResponse && idToDelete === itemId ? (
           <div className='loader'></div>
         ) : (
           <RiDeleteBin7Fill />
