@@ -4,7 +4,8 @@ import ItemButtons from './ItemButtons';
 import { useInnerWidth } from '../hooks';
 import moment from 'moment-timezone';
 import { GrDrag } from 'react-icons/gr';
-import { BiChevronRight } from 'react-icons/bi';
+import { MdEdit } from 'react-icons/md';
+import { TbChevronRight } from 'react-icons/tb';
 
 const ItemList = ({
   item,
@@ -178,7 +179,7 @@ const ItemList = ({
           </div>
           <div className='list-item__item-right'>
             {width <= 600 ? (
-              <BiChevronRight />
+              <TbChevronRight />
             ) : (
               <ItemButtons
                 date={item?.date}
@@ -218,7 +219,9 @@ const ItemList = ({
             )}
             <div className='list-item__details-controls-left'>
               <Link href={`/details/${item?._id}`}>
-                <span className='list-item__details-edit-button'>Edit</span>
+                <span className='list-item__edit-button list-item__edit-button--desktop'>
+                  <MdEdit />
+                </span>
               </Link>
             </div>
           </div>

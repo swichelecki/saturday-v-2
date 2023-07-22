@@ -98,12 +98,6 @@ const MainControls = ({
         </label>
       </div>
       <div className='main-controls__bottom-controls'>
-        <input
-          type='text'
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          disabled={checkbox ? true : false}
-        />
         {checkbox ? (
           <Link
             href={{
@@ -130,6 +124,12 @@ const MainControls = ({
             Add
           </button>
         )}
+        <input
+          type='text'
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          disabled={checkbox ? true : false}
+        />
       </div>
     </div>
   );

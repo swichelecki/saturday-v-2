@@ -64,11 +64,11 @@ const ItemButtons = ({
           }}
           className={`list-item__edit-button ${handleEditButtonClass()}`}
         >
-          {isAwaitingEditResponse && taskToEditId === itemId && (
+          {isAwaitingEditResponse && taskToEditId === itemId ? (
             <div className='loader'></div>
+          ) : (
+            <MdEdit />
           )}
-
-          <MdEdit />
         </button>
       ) : (
         <button

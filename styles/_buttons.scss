@@ -1,6 +1,7 @@
 button,
 span.main-controls__create-button,
 span.list-item__details-edit-button,
+span.list-item__edit-button,
 span.details-form__cancel-button {
   display: flex;
   align-items: center;
@@ -38,7 +39,6 @@ span.details-form__cancel-button {
   background-color: $button-orange;
 }
 
-span.list-item__details-edit-button,
 button.details-form__save-button {
   background-color: $button-green;
 }
@@ -49,6 +49,10 @@ button.list-item__details-button {
 
 button.list-item__delete-button {
   background-color: $button-red;
+}
+
+span.list-item__edit-button {
+  background-color: $button-green;
 }
 
 button.list-item__edit-button {
@@ -62,6 +66,7 @@ button.list-item__cancel-button {
 button.list-item__details-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
+span.list-item__edit-button,
 button.list-item__cancel-button {
   position: relative;
   padding: 0;
@@ -75,7 +80,7 @@ button.list-item__cancel-button {
     min-width: unset;
     width: 34px;
     height: 28px;
-    border-radius: 12px;
+    border-radius: 10px;
     svg {
       fill: $color-white;
       width: 1rem;
@@ -86,8 +91,8 @@ button.list-item__cancel-button {
     border-radius: 0;
     svg {
       fill: $color-white;
-      width: 1.5rem;
-      height: 1.5rem;
+      width: 1.4rem;
+      height: 1.4rem;
     }
   }
   .loader {
@@ -106,8 +111,8 @@ button.list-item__cancel-button {
   &--mobile {
     svg {
       fill: $color-white;
-      width: 1.9rem;
-      height: 1.9rem;
+      width: 1.8rem;
+      height: 1.8rem;
     }
   }
 }

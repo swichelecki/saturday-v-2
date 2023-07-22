@@ -58,6 +58,21 @@
     font-size: 1.125rem; // 18px
     min-height: 200px;
     font-family: inherit;
+    p,
+    ul,
+    ol {
+      margin: 0;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 16px;
+    }
+    a {
+      color: $button-blue;
+      font-weight: 400;
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
   .ql-container.ql-snow {
     border-bottom-right-radius: 9px;
