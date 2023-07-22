@@ -1,6 +1,7 @@
 button,
-span.add-item__create-button,
+span.main-controls__create-button,
 span.list-item__details-edit-button,
+span.list-item__edit-button,
 span.details-form__cancel-button {
   display: flex;
   align-items: center;
@@ -18,29 +19,102 @@ span.details-form__cancel-button {
   text-align: center;
 }
 
-button.add-item__add-button,
-span.add-item__create-button,
-button.list-item__details-button {
+button.main-controls__add-button,
+span.main-controls__create-button {
   background-color: $button-purple;
 }
 
-button.list-item__edit-button,
-button.add-item__update-button {
+button.main-controls__type-button {
+  background-color: $color-white;
+  color: $button-purple;
+  box-shadow: 0 0 0 1px $button-purple;
+  opacity: 0.8;
+}
+
+button.main-controls__update-button {
   background-color: $button-blue;
 }
 
-button.list-item__cancel-button,
 span.details-form__cancel-button {
   background-color: $button-orange;
 }
 
-span.list-item__details-edit-button,
 button.details-form__save-button {
   background-color: $button-green;
 }
 
+button.list-item__details-button {
+  background-color: $button-purple;
+}
+
 button.list-item__delete-button {
   background-color: $button-red;
+}
+
+span.list-item__edit-button {
+  background-color: $button-green;
+}
+
+button.list-item__edit-button {
+  background-color: $button-blue;
+}
+
+button.list-item__cancel-button {
+  background-color: $button-orange;
+}
+
+button.list-item__details-button,
+button.list-item__delete-button,
+button.list-item__edit-button,
+span.list-item__edit-button,
+button.list-item__cancel-button {
+  position: relative;
+  padding: 0;
+  svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  &--desktop {
+    min-width: unset;
+    width: 34px;
+    height: 28px;
+    border-radius: 10px;
+    svg {
+      fill: $color-white;
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+  &--mobile {
+    border-radius: 0;
+    svg {
+      fill: $color-white;
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+  }
+  .loader {
+    margin-right: 0;
+  }
+}
+
+button.list-item__cancel-button {
+  &--desktop {
+    svg {
+      fill: $color-white;
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+  }
+  &--mobile {
+    svg {
+      fill: $color-white;
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+  }
 }
 
 button.login-form__login-button {
@@ -49,4 +123,16 @@ button.login-form__login-button {
   padding: 14px;
   font-size: 1.125rem; // 18px
   border-radius: 26px;
+}
+
+@media screen and (max-width: 600px) {
+  button.main-controls__type-button {
+    font-size: 0.875rem; // 14px
+  }
+}
+
+@media screen and (max-width: 500px) {
+  button.main-controls__type-button {
+    min-width: 55px;
+  }
 }

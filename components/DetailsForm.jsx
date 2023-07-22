@@ -22,14 +22,14 @@ const DetailsForm = ({ task }) => {
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
   const router = useRouter();
-  const { asPath } = router;
+  const { itemPriority, type } = router.query;
 
-  const priority = task ? task?.priority : parseInt(asPath.split('=')[1]);
+  const priority = task ? task?.priority : itemPriority;
 
   const onSubmit = (e) => {
     e.preventDefault();
 
-    if (!title && !date && !dateAndTime) {
+    if (!title || (type === 'upcoming' && !date && !dateAndTime)) {
       return;
     }
 
@@ -40,9 +40,10 @@ const DetailsForm = ({ task }) => {
         _id: task?._id,
         title,
         description,
+        date: date,
         dateAndTime: null,
-        date: `${date}T00:00:00.000+00:00`,
         priority,
+        type,
       };
     }
 
@@ -51,15 +52,28 @@ const DetailsForm = ({ task }) => {
         _id: task?._id,
         title,
         description,
-        date: null,
+        date: dateAndTime.split('T')[0],
         dateAndTime: new Date(dateAndTime).toISOString(),
         priority,
+        type,
+      };
+    }
+
+    if (!date && !dateAndTime && type !== 'upcoming') {
+      taskObject = {
+        _id: task?._id,
+        title,
+        description,
+        date: null,
+        dateAndTime: null,
+        priority,
+        type,
       };
     }
 
     setIsAwaitingSaveResponse(true);
 
-    typeof asPath.split('/')[2] === 'string'
+    itemPriority == undefined
       ? updateTask(taskObject).then((res) => router.push('/'))
       : submitTask(taskObject).then((res) => {
           router.push('/');

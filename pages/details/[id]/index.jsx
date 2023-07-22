@@ -11,16 +11,12 @@ export async function getServerSideProps(context) {
 
   const { params } = context;
 
-  try {
-    const id = params.id;
-    const task = await Task.find({ _id: id });
+  const id = params.id;
+  const task = await Task.find({ _id: id });
 
-    return {
-      props: { task: JSON.parse(JSON.stringify(task[0])) } ?? {},
-    };
-  } catch (error) {
-    console.log(error);
-  }
+  return {
+    props: { task: JSON.parse(JSON.stringify(task[0])) } ?? {},
+  };
 }
 
 export default EditDetails;

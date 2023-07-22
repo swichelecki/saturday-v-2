@@ -1,2 +1,2 @@
-export * from './useUpcomingEvents';
 export * from './useUpcomingBirthdays';
+export * from './useInnerWidth';
