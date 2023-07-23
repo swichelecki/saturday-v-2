@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { submitTask, updateTask } from '../services';
@@ -19,6 +19,7 @@ const DetailsForm = ({ task }) => {
           .format('yyyy-MM-DDTHH:mm')
       : ''
   );
+  const [taskType, setTaskType] = useState(task?.type ?? '');
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
   const router = useRouter();
@@ -26,10 +27,20 @@ const DetailsForm = ({ task }) => {
 
   const priority = task ? task?.priority : itemPriority;
 
+  useEffect(() => {
+    if (!task) {
+      setTaskType(type);
+    }
+  }, []);
+
   const onSubmit = (e) => {
     e.preventDefault();
 
-    if (!title || (type === 'upcoming' && !date && !dateAndTime)) {
+    if (
+      !title ||
+      (taskType === 'upcoming' && !date && !dateAndTime) ||
+      (!task !== 'upcoming' && !description)
+    ) {
       return;
     }
 
@@ -59,7 +70,7 @@ const DetailsForm = ({ task }) => {
       };
     }
 
-    if (!date && !dateAndTime && type !== 'upcoming') {
+    if (!date && !dateAndTime && taskType !== 'upcoming') {
       taskObject = {
         _id: task?._id,
         title,
@@ -102,21 +113,33 @@ const DetailsForm = ({ task }) => {
       <div className='details-form__form-row'>
         <label htmlFor='date'>Date</label>
         <input
-          disabled={dateAndTime ? true : false}
+          disabled={
+            dateAndTime || (!dateAndTime && taskType !== 'upcoming')
+              ? true
+              : false
+          }
           type='date'
           id='date'
-          value={date}
+          value={date && !dateAndTime ? date : ''}
           onChange={(e) => setDate(e.target.value)}
         />
       </div>
       <div className='details-form__form-row'>
         <label htmlFor='dateAndTime'>Date & Time</label>
         <input
-          disabled={date ? true : false}
+          disabled={
+            (date && !dateAndTime) ||
+            (!date && !dateAndTime && taskType !== 'upcoming')
+              ? true
+              : false
+          }
           type='datetime-local'
           id='dateAndTime'
           value={dateAndTime}
-          onChange={(e) => setDateAndTime(e.target.value)}
+          onChange={(e) => {
+            setDateAndTime(e.target.value);
+            setDate('');
+          }}
         />
       </div>
       <div className='details-form__buttons-wrapper'>
