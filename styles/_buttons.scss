@@ -88,7 +88,7 @@ button.list-item__cancel-button {
     }
   }
   &--mobile {
-    border-radius: 0;
+    border-radius: unset;
     svg {
       fill: $color-white;
       width: 1.4rem;

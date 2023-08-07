@@ -7,6 +7,8 @@ import { GrDrag } from 'react-icons/gr';
 import { MdEdit } from 'react-icons/md';
 import { TbChevronRight } from 'react-icons/tb';
 
+let previousItemId = '';
+
 const ItemList = ({
   item,
   handleEditTask,
@@ -21,6 +23,9 @@ const ItemList = ({
   handleDragStart,
   handleDragEnter,
   handleDragEnd,
+  closeOpenItem,
+  setAllItemsTouchReset,
+  allItemsTouchReset,
 }) => {
   const width = useInnerWidth();
 
@@ -35,6 +40,8 @@ const ItemList = ({
   const [currentTranslateX, setCurrentTranslateX] = useState(0);
   const [previousTranslateX, setPreviousTranslateX] = useState(0);
   const [movedBy, setMovedBy] = useState(0);
+
+  const OPEN_CLOSE_THRESHOLD = 60;
 
   const handleShowDetails = () => {
     setIsOpen((prevState) => !prevState);
@@ -64,16 +71,24 @@ const ItemList = ({
   };
 
   useEffect(() => {
-    itemRef.current.addEventListener(
-      'touchstart',
-      (e) => {
-        e.preventDefault();
-        setStartPosition(e.touches[0].clientX);
-        itemRef.current.style.transition = 'none';
-        setItemPositionOnStart(itemRef.current.getBoundingClientRect().left);
-      },
-      { passive: false }
-    );
+    if (allItemsTouchReset) {
+      setCurrentTranslateX(0);
+      setPreviousTranslateX(0);
+      setAllItemsTouchReset(false);
+    }
+  }, [allItemsTouchReset]);
+
+  useEffect(() => {
+    itemRef.current.addEventListener('touchstart', (e) => {
+      if (itemRef.current.id !== previousItemId) {
+        setCurrentTranslateX(0);
+        setPreviousTranslateX(0);
+      }
+      previousItemId = closeOpenItem(itemRef.current.id);
+      setStartPosition(e.touches[0].clientX);
+      itemRef.current.style.transition = 'none';
+      setItemPositionOnStart(itemRef.current.getBoundingClientRect().left);
+    });
   }, []);
 
   const handleTouchMove = (e) => {
@@ -86,28 +101,28 @@ const ItemList = ({
   const handleTouchEnd = () => {
     itemRef.current.style.transition = 'transform 150ms';
 
-    if (movedBy * -1 <= 40 && itemPositionOnStart === 0) {
+    if (movedBy * -1 <= OPEN_CLOSE_THRESHOLD && itemPositionOnStart === 0) {
       setCurrentTranslateX(0);
       setPreviousTranslateX(0);
-      itemRef.current.style.transform = `translateX(0)`;
+      itemRef.current.style.transform = 'translateX(0)';
     }
 
-    if (movedBy * -1 > 40 && itemPositionOnStart === 0) {
+    if (movedBy * -1 > OPEN_CLOSE_THRESHOLD && itemPositionOnStart === 0) {
       setCurrentTranslateX(-146);
       setPreviousTranslateX(-146);
-      itemRef.current.style.transform = `translateX(-146px)`;
+      itemRef.current.style.transform = 'translateX(-146px)';
     }
 
-    if (movedBy <= 40 && itemPositionOnStart === -146) {
+    if (movedBy <= OPEN_CLOSE_THRESHOLD && itemPositionOnStart === -146) {
       setCurrentTranslateX(-146);
       setPreviousTranslateX(-146);
-      itemRef.current.style.transform = `translateX(-146px)`;
+      itemRef.current.style.transform = 'translateX(-146px)';
     }
 
-    if (movedBy > 40 && itemPositionOnStart === -146) {
+    if (movedBy > OPEN_CLOSE_THRESHOLD && itemPositionOnStart === -146) {
       setCurrentTranslateX(0);
       setPreviousTranslateX(0);
-      itemRef.current.style.transform = `translateX(0)`;
+      itemRef.current.style.transform = 'translateX(0)';
     }
 
     setMovedBy(0);
@@ -160,7 +175,11 @@ const ItemList = ({
             )}
           </div>
         )}
-        <div ref={itemRef} className='list-item__item'>
+        <div
+          ref={itemRef}
+          className='list-item__item'
+          id={`${item?.type}_index_${index}`}
+        >
           {item?.type !== 'upcoming' && (
             <div className='list-item__item-drag-zone'>
               <GrDrag />
@@ -176,11 +195,10 @@ const ItemList = ({
             onTouchEnd={handleTouchEnd}
           >
             <p>{item?.title}</p>
+            {width <= 600 && <TbChevronRight />}
           </div>
           <div className='list-item__item-right'>
-            {width <= 600 ? (
-              <TbChevronRight />
-            ) : (
+            {width > 600 && (
               <ItemButtons
                 date={item?.date}
                 dateAndTime={item?.dateAndTime}

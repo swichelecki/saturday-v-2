@@ -17,6 +17,9 @@ const ItemsColumn = ({
   taskToEditId,
   isAwaitingEditResponse,
   isAwaitingDeleteResponse,
+  closeOpenItem,
+  setAllItemsTouchReset,
+  allItemsTouchReset,
 }) => {
   const { globalContextTasks, setGlobalContextTasks } =
     useContext(TasksContext);
@@ -117,7 +120,7 @@ const ItemsColumn = ({
       : 'list-item__outer-wrapper';
   };
 
-  if (!filteredTasks.length) {
+  if (!filteredTasks?.length) {
     return null;
   }
 
@@ -143,6 +146,9 @@ const ItemsColumn = ({
           handleDragStart={handleDragStart}
           handleDragEnter={handleDragEnter}
           handleDragEnd={handleDragEnd}
+          closeOpenItem={closeOpenItem}
+          setAllItemsTouchReset={setAllItemsTouchReset}
+          allItemsTouchReset={allItemsTouchReset}
         />
       ))}
     </div>

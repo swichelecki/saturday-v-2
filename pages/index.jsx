@@ -3,10 +3,12 @@ import connectDB from '../config/db';
 import Task from '../models/Task';
 import { TasksContext } from '../context/tasksContext';
 import { MainControls, ItemsColumn, BirthdaysColumn } from '../components';
+import { useInnerWidth } from '../hooks';
 import { useUpcomingBirthdays } from '../hooks';
 import { submitTask, getTask, updateTask, deleteTask } from '../services';
 
 const Home = ({ tasks }) => {
+  const width = useInnerWidth();
   const birthhdays = useUpcomingBirthdays();
 
   const [globalContextTasks, setGlobalContextTasks] = useState(tasks);
@@ -21,6 +23,9 @@ const Home = ({ tasks }) => {
   const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
+  const [allItemsTouchReset, setAllItemsTouchReset] = useState(false);
+
+  const allItems = [];
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -36,6 +41,15 @@ const Home = ({ tasks }) => {
 
   const priority =
     globalContextTasks?.length > 0 ? globalContextTasks?.length + 1 : 1;
+
+  const handleItemsTouchReset = () => {
+    allItems = Array.from(document.querySelectorAll('.list-item__item'));
+    allItems.forEach((item) => {
+      item.style.transition = 'unset';
+      item.style.transform = 'translateX(0)';
+    });
+    setAllItemsTouchReset(true);
+  };
 
   const handleOnSubmit = () => {
     if (!title) {
@@ -55,6 +69,7 @@ const Home = ({ tasks }) => {
     submitTask(taskObject).then((res) => {
       setGlobalContextTasks((current) => [...current, res]);
       setIsAwaitingAddResponse(false);
+      if (width <= 600) handleItemsTouchReset();
     });
 
     setTitle('');
@@ -94,6 +109,7 @@ const Home = ({ tasks }) => {
       );
       setGlobalContextTasks(filteredTasksArray);
       setIsAwaitingDeleteResponse(false);
+      if (width <= 600) handleItemsTouchReset();
     });
   };
 
@@ -112,6 +128,17 @@ const Home = ({ tasks }) => {
       setIsUpdating(true);
       setIsAwaitingEditResponse(false);
     });
+  };
+
+  const closeOpenItem = (currentItemId) => {
+    allItems = Array.from(document.querySelectorAll('.list-item__item'));
+    allItems.forEach((item) => {
+      if (item?.id !== currentItemId) {
+        item.style.transition = 'transform 150ms';
+        item.style.transform = 'translateX(0)';
+      }
+    });
+    return currentItemId;
   };
 
   return (
@@ -140,6 +167,10 @@ const Home = ({ tasks }) => {
             taskToEditId={taskToEditId}
             isAwaitingEditResponse={isAwaitingEditResponse}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+            closeOpenItem={closeOpenItem}
+            allItems={allItems}
+            setAllItemsTouchReset={setAllItemsTouchReset}
+            allItemsTouchReset={allItemsTouchReset}
           />
           <ItemsColumn
             heading={'Big Box'}
@@ -149,6 +180,10 @@ const Home = ({ tasks }) => {
             taskToEditId={taskToEditId}
             isAwaitingEditResponse={isAwaitingEditResponse}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+            closeOpenItem={closeOpenItem}
+            allItems={allItems}
+            setAllItemsTouchReset={setAllItemsTouchReset}
+            allItemsTouchReset={allItemsTouchReset}
           />
           <ItemsColumn
             heading={'Other'}
@@ -158,6 +193,10 @@ const Home = ({ tasks }) => {
             taskToEditId={taskToEditId}
             isAwaitingEditResponse={isAwaitingEditResponse}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+            closeOpenItem={closeOpenItem}
+            allItems={allItems}
+            setAllItemsTouchReset={setAllItemsTouchReset}
+            allItemsTouchReset={allItemsTouchReset}
           />
           <ItemsColumn
             heading={'Upcoming'}
@@ -167,6 +206,10 @@ const Home = ({ tasks }) => {
             taskToEditId={taskToEditId}
             isAwaitingEditResponse={isAwaitingEditResponse}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+            closeOpenItem={closeOpenItem}
+            allItems={allItems}
+            setAllItemsTouchReset={setAllItemsTouchReset}
+            allItemsTouchReset={allItemsTouchReset}
           />
           {birthhdays && <BirthdaysColumn birthdays={birthhdays} />}
         </div>
