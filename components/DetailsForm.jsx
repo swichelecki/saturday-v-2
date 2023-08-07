@@ -39,7 +39,7 @@ const DetailsForm = ({ task }) => {
     if (
       !title ||
       (taskType === 'upcoming' && !date && !dateAndTime) ||
-      (!task !== 'upcoming' && !description)
+      (taskType !== 'upcoming' && !description)
     ) {
       return;
     }
