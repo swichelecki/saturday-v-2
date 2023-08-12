@@ -11,6 +11,9 @@ const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 const DetailsForm = ({ task }) => {
   const [title, setTitle] = useState(task?.title ?? '');
   const [description, setDescription] = useState(task?.description ?? '');
+  const [confirmDeletion, setConfirmDeletion] = useState(
+    task?.confirmDeletion ?? false
+  );
   const [date, setDate] = useState(task?.date?.split('T')[0] ?? '');
   const [dateAndTime, setDateAndTime] = useState(
     task?.dateAndTime
@@ -51,6 +54,7 @@ const DetailsForm = ({ task }) => {
         _id: task?._id,
         title,
         description,
+        confirmDeletion,
         date: date,
         dateAndTime: null,
         priority,
@@ -63,6 +67,7 @@ const DetailsForm = ({ task }) => {
         _id: task?._id,
         title,
         description,
+        confirmDeletion,
         date: dateAndTime.split('T')[0],
         dateAndTime: new Date(dateAndTime).toISOString(),
         priority,
@@ -75,6 +80,7 @@ const DetailsForm = ({ task }) => {
         _id: task?._id,
         title,
         description,
+        confirmDeletion,
         date: null,
         dateAndTime: null,
         priority,
@@ -109,6 +115,20 @@ const DetailsForm = ({ task }) => {
           value={description}
           onChange={setDescription}
         />
+      </div>
+      <div className='details-form__form-row'>
+        <label className='inputs__checkbox-container' htmlFor='checkbox'>
+          <span>Confirm Deletion</span>
+          <input
+            type='checkbox'
+            id='checkbox'
+            onChange={(e) => {
+              setConfirmDeletion(e.target.checked);
+            }}
+            checked={confirmDeletion}
+          />
+          <span className='inputs__checkbox'></span>
+        </label>
       </div>
       <div className='details-form__form-row'>
         <label htmlFor='date'>Date</label>

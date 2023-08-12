@@ -101,7 +101,10 @@ const Home = ({ tasks }) => {
     setTitle('');
   };
 
-  const handleDeleteTask = (id) => {
+  const handleDeleteTask = (id, confirmDeletion) => {
+    if (confirmDeletion) {
+      if (!confirm('Confirm Deletion')) return;
+    }
     setIsAwaitingDeleteResponse(true);
     deleteTask(id).then((res) => {
       const filteredTasksArray = globalContextTasks.filter(

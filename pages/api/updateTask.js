@@ -5,7 +5,15 @@ export default async function updateTask(req, res) {
   await connectDB();
 
   try {
-    const { _id, priority, title, description, date, dateAndTime } = req.body;
+    const {
+      _id,
+      priority,
+      title,
+      description,
+      confirmDeletion,
+      date,
+      dateAndTime,
+    } = req.body;
 
     await Task.updateOne(
       { _id: _id },
@@ -13,6 +21,7 @@ export default async function updateTask(req, res) {
         priority,
         title,
         description,
+        confirmDeletion,
         date,
         dateAndTime,
       }

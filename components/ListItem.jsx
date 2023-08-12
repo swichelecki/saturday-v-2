@@ -79,16 +79,20 @@ const ItemList = ({
   }, [allItemsTouchReset]);
 
   useEffect(() => {
-    itemRef.current.addEventListener('touchstart', (e) => {
-      if (itemRef.current.id !== previousItemId) {
-        setCurrentTranslateX(0);
-        setPreviousTranslateX(0);
-      }
-      previousItemId = closeOpenItem(itemRef.current.id);
-      setStartPosition(e.touches[0].clientX);
-      itemRef.current.style.transition = 'none';
-      setItemPositionOnStart(itemRef.current.getBoundingClientRect().left);
-    });
+    itemRef.current.addEventListener(
+      'touchstart',
+      (e) => {
+        if (itemRef.current.id !== previousItemId) {
+          setCurrentTranslateX(0);
+          setPreviousTranslateX(0);
+        }
+        previousItemId = closeOpenItem(itemRef.current.id);
+        setStartPosition(e.touches[0].clientX);
+        itemRef.current.style.transition = 'none';
+        setItemPositionOnStart(itemRef.current.getBoundingClientRect().left);
+      },
+      { passive: true }
+    );
   }, []);
 
   const handleTouchMove = (e) => {
@@ -140,7 +144,7 @@ const ItemList = ({
         dragging ? handleDragStyles(index) : 'list-item__outer-wrapper'
       }
       style={item?.type === 'upcoming' ? { cursor: 'default' } : {}}
-      draggable={item?.type !== 'upcoming' ? true : false}
+      draggable={item?.type !== 'upcoming'}
       onDragStart={() => handleDragStart(index)}
       onDragEnter={
         dragging
@@ -203,6 +207,7 @@ const ItemList = ({
                 date={item?.date}
                 dateAndTime={item?.dateAndTime}
                 description={item?.description}
+                confirmDeletion={item?.confirmDeletion}
                 handleShowDetails={handleShowDetails}
                 isOpen={isOpen}
                 taskToEditId={taskToEditId}

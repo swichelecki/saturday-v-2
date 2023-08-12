@@ -79,7 +79,7 @@ const MainControls = ({
           {width > 500 ? 'Upcoming' : <FaCalendarCheck />}
         </button>
         <label
-          className='main-controls__checkbox-container'
+          className='inputs__checkbox-container'
           htmlFor='checkbox'
           style={type === 'upcoming' && checkbox ? { cursor: 'no-drop' } : {}}
           onChange={() => setIsCheckedByUser((current) => !current)}
@@ -92,9 +92,9 @@ const MainControls = ({
               if (type === 'upcoming') return;
               setCheckbox(e.target.checked);
             }}
-            checked={checkbox ? true : false}
+            checked={checkbox}
           />
-          <span className='main-controls__checkbox'></span>
+          <span className='inputs__checkbox'></span>
         </label>
       </div>
       <div className='main-controls__bottom-controls'>

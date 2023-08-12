@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Link from 'next/link';
 import { useInnerWidth } from '../hooks';
 import { MdEdit } from 'react-icons/md';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
@@ -9,6 +10,7 @@ const ItemButtons = ({
   date,
   dateAndTime,
   description,
+  confirmDeletion,
   handleShowDetails,
   isOpen,
   taskToEditId,
@@ -50,13 +52,19 @@ const ItemButtons = ({
 
   return (
     <>
-      {date || dateAndTime || description ? (
+      {(date || dateAndTime) && description ? (
         <button
           onClick={handleShowDetails}
           className={`list-item__details-button ${handleDetailsButtonClass()}`}
         >
           {isOpen ? <FaArrowUp /> : <FaArrowDown />}
         </button>
+      ) : (date || dateAndTime) && !description ? (
+        <Link href={`/details/${itemId}`}>
+          <span className='list-item__edit-button list-item__edit-button--desktop'>
+            <MdEdit />
+          </span>
+        </Link>
       ) : taskToEditId !== itemId || isAwaitingEditResponse ? (
         <button
           onClick={() => {
@@ -81,7 +89,7 @@ const ItemButtons = ({
 
       <button
         onClick={() => {
-          handleDeleteTask(itemId);
+          handleDeleteTask(itemId, confirmDeletion);
           setIdToDelete(itemId);
           setIsOpen(false);
         }}

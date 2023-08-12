@@ -16,6 +16,10 @@ const TaskSchema = new Schema({
   description: {
     type: String,
   },
+  confirmDeletion: {
+    type: Boolean,
+    default: false,
+  },
   date: {
     type: Date,
   },

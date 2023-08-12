@@ -97,6 +97,7 @@
   }
   &__details-quill-wrapper {
     padding: 0;
+    line-height: 1.56;
     p,
     ul,
     ol {
@@ -107,7 +108,7 @@
       padding: 0 0 0 16px;
     }
     li {
-      margin-bottom: 16px;
+      margin-bottom: 8px;
     }
     a {
       color: $button-blue;
@@ -126,6 +127,9 @@
     background-color: $color-background;
     color: $color-background;
     box-shadow: none;
+  }
+  button {
+    display: none;
   }
   svg {
     display: none;
