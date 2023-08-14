@@ -1,4 +1,4 @@
-import { useState, useContext, useRef } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { TasksContext } from '../context/tasksContext';
 import { ListItem } from './';
 import { updateTask } from '../services';
@@ -21,37 +21,47 @@ const ItemsColumn = ({
   setAllItemsTouchReset,
   allItemsTouchReset,
 }) => {
-  const { globalContextTasks, setGlobalContextTasks } =
-    useContext(TasksContext);
+  const { globalContextTasks } = useContext(TasksContext);
 
   const dragItemRef = useRef(null);
   const dragOverItemRef = useRef(null);
 
   const [dragging, setDragging] = useState(false);
+  const [filteredTasks, setFilteredTasks] = useState([]);
 
-  let filteredTasks = globalContextTasks.filter(
-    (item) => item.type === heading.toLowerCase().replace(' ', '-')
-  );
+  useEffect(() => {
+    if (heading !== 'Upcoming') {
+      setFilteredTasks(
+        globalContextTasks?.filter(
+          (item) => item?.type === heading?.toLowerCase()?.replace(' ', '-')
+        )
+      );
+    } else {
+      const filteredUpcomingTasks = globalContextTasks?.filter(
+        (item) => item?.type === heading?.toLowerCase()?.replace(' ', '-')
+      );
 
-  if (heading === 'Upcoming') {
-    const tasksWithFormattedDate = filteredTasks?.map((item) => {
-      return {
-        ...item,
-        date: new Date(item?.date),
-      };
-    });
+      const tasksWithFormattedDate = filteredUpcomingTasks.map((item) => {
+        return {
+          ...item,
+          date: new Date(item?.date),
+        };
+      });
 
-    const TasksSortedDateAsc = tasksWithFormattedDate.sort(
-      (objA, objB) => Number(objA.date) - Number(objB.date)
-    );
+      const TasksSortedDateAsc = tasksWithFormattedDate.sort(
+        (objA, objB) => Number(objA.date) - Number(objB.date)
+      );
 
-    filteredTasks = TasksSortedDateAsc.map((item) => {
-      return {
-        ...item,
-        date: new Date(item.date).toISOString().split('T')[0],
-      };
-    });
-  }
+      const upcomingTasksSortedByDateAsc = TasksSortedDateAsc.map((item) => {
+        return {
+          ...item,
+          date: new Date(item.date).toISOString().split('T')[0],
+        };
+      });
+
+      setFilteredTasks(upcomingTasksSortedByDateAsc);
+    }
+  }, [globalContextTasks]);
 
   const handleIcon = (heading) => {
     let icon;
@@ -74,7 +84,6 @@ const ItemsColumn = ({
     return icon;
   };
 
-  // TODO: DRAG RESORTING NEEDS TO BE UPDATED
   const handleDragStart = (index) => {
     dragItemRef.current = index;
     setTimeout(() => {
@@ -85,17 +94,19 @@ const ItemsColumn = ({
   const handleDragEnter = (index) => {
     const dragItemIndex = dragItemRef.current;
     const dragOverItemIndex = index;
+
     if (index !== dragItemRef.current) {
-      setGlobalContextTasks((currentGlobalContextTasks) => {
-        let copyGlobalContextTasks = [...currentGlobalContextTasks];
-        copyGlobalContextTasks.splice(
+      setFilteredTasks(() => {
+        const copyFilteredTasks = [...filteredTasks];
+        copyFilteredTasks.splice(
           dragOverItemIndex,
           0,
-          copyGlobalContextTasks.splice(dragItemIndex, 1)[0]
+          copyFilteredTasks.splice(dragItemIndex, 1)[0]
         );
-        dragItemRef.current = dragOverItemIndex;
-        return copyGlobalContextTasks;
+        return copyFilteredTasks;
       });
+
+      dragItemRef.current = dragOverItemIndex;
     }
   };
 
@@ -104,13 +115,11 @@ const ItemsColumn = ({
     dragItemRef.current = null;
     dragOverItemRef.current = null;
 
-    const copyGlobalContextTasks = [...globalContextTasks];
-    const tasksWithNewPriorities = copyGlobalContextTasks?.map(
-      (item, index) => ({
-        ...item,
-        priority: index + 1,
-      })
-    );
+    const tasksWithNewPriorities = filteredTasks?.map((item, index) => ({
+      ...item,
+      priority: index + 1,
+    }));
+
     tasksWithNewPriorities?.forEach((item) => updateTask(item));
   };
 
