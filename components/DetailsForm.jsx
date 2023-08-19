@@ -130,38 +130,42 @@ const DetailsForm = ({ task }) => {
           <span className='inputs__checkbox'></span>
         </label>
       </div>
-      <div className='details-form__form-row'>
-        <label htmlFor='date'>Date</label>
-        <input
-          disabled={
-            dateAndTime || (!dateAndTime && taskType !== 'upcoming')
-              ? true
-              : false
-          }
-          type='date'
-          id='date'
-          value={date && !dateAndTime ? date : ''}
-          onChange={(e) => setDate(e.target.value)}
-        />
-      </div>
-      <div className='details-form__form-row'>
-        <label htmlFor='dateAndTime'>Date & Time</label>
-        <input
-          disabled={
-            (date && !dateAndTime) ||
-            (!date && !dateAndTime && taskType !== 'upcoming')
-              ? true
-              : false
-          }
-          type='datetime-local'
-          id='dateAndTime'
-          value={dateAndTime}
-          onChange={(e) => {
-            setDateAndTime(e.target.value);
-            setDate('');
-          }}
-        />
-      </div>
+      {taskType === 'upcoming' && (
+        <>
+          <div className='details-form__form-row'>
+            <label htmlFor='date'>Date</label>
+            <input
+              disabled={
+                dateAndTime || (!dateAndTime && taskType !== 'upcoming')
+                  ? true
+                  : false
+              }
+              type='date'
+              id='date'
+              value={date && !dateAndTime ? date : ''}
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </div>
+          <div className='details-form__form-row'>
+            <label htmlFor='dateAndTime'>Date & Time</label>
+            <input
+              disabled={
+                (date && !dateAndTime) ||
+                (!date && !dateAndTime && taskType !== 'upcoming')
+                  ? true
+                  : false
+              }
+              type='datetime-local'
+              id='dateAndTime'
+              value={dateAndTime}
+              onChange={(e) => {
+                setDateAndTime(e.target.value);
+                setDate('');
+              }}
+            />
+          </div>
+        </>
+      )}
       <div className='details-form__buttons-wrapper'>
         <button type='submit' className='details-form__save-button'>
           {isAwaitingSaveResponse && <div className='loader'></div>}

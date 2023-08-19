@@ -28,6 +28,7 @@ const ItemsColumn = ({
 
   const [dragging, setDragging] = useState(false);
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [hideItemDetailsOnDrag, setHideItemDetailsOnDrag] = useState(false);
 
   useEffect(() => {
     if (heading !== 'Upcoming') {
@@ -112,6 +113,7 @@ const ItemsColumn = ({
 
   const handleDragEnd = () => {
     setDragging(false);
+    setHideItemDetailsOnDrag(false);
     dragItemRef.current = null;
     dragOverItemRef.current = null;
 
@@ -158,6 +160,8 @@ const ItemsColumn = ({
           closeOpenItem={closeOpenItem}
           setAllItemsTouchReset={setAllItemsTouchReset}
           allItemsTouchReset={allItemsTouchReset}
+          hideItemDetailsOnDrag={hideItemDetailsOnDrag}
+          setHideItemDetailsOnDrag={setHideItemDetailsOnDrag}
         />
       ))}
     </div>

@@ -26,6 +26,8 @@ const ItemList = ({
   closeOpenItem,
   setAllItemsTouchReset,
   allItemsTouchReset,
+  hideItemDetailsOnDrag,
+  setHideItemDetailsOnDrag,
 }) => {
   const width = useInnerWidth();
 
@@ -145,7 +147,10 @@ const ItemList = ({
       }
       style={item?.type === 'upcoming' ? { cursor: 'default' } : {}}
       draggable={item?.type !== 'upcoming'}
-      onDragStart={() => handleDragStart(index)}
+      onDragStart={() => {
+        handleDragStart(index);
+        setHideItemDetailsOnDrag(true);
+      }}
       onDragEnter={
         dragging
           ? () => {
@@ -222,37 +227,41 @@ const ItemList = ({
             )}
           </div>
         </div>
-        <div
-          ref={detailsRef}
-          className='list-item__details'
-          style={
-            isOpen
-              ? {
-                  height: `${handleHiddenHeight(detailsRefCurrent)}px`,
-                }
-              : { height: '0' }
-          }
-        >
-          <div className='list-item__details-padding'>
-            {item?.description && (
-              <div
-                className='list-item__details-quill-wrapper'
-                dangerouslySetInnerHTML={{ __html: item?.description }}
-              />
-            )}
-            <div className='list-item__details-controls-left'>
-              <Link href={`/details/${item?._id}`}>
-                <span className='list-item__edit-button list-item__edit-button--desktop'>
-                  <MdEdit />
-                </span>
-              </Link>
+        {!hideItemDetailsOnDrag && (
+          <div
+            ref={detailsRef}
+            className='list-item__details'
+            style={
+              isOpen
+                ? {
+                    height: `${handleHiddenHeight(detailsRefCurrent)}px`,
+                  }
+                : { height: '0px' }
+            }
+          >
+            <div className='list-item__details-padding'>
+              {item?.description && (
+                <div
+                  className='list-item__details-quill-wrapper'
+                  dangerouslySetInnerHTML={{ __html: item?.description }}
+                />
+              )}
+              <div className='list-item__details-controls-left'>
+                <Link href={`/details/${item?._id}`}>
+                  <span className='list-item__edit-button list-item__edit-button--desktop'>
+                    <MdEdit />
+                  </span>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
       <div
-        className={`list-item__controls ${
-          item?.dateAndTime || item?.date ? 'list-item__controls--upcoming' : ''
+        className={`list-item__controls${
+          item?.dateAndTime || item?.date
+            ? ' list-item__controls--upcoming'
+            : ''
         }`}
       >
         {width <= 600 && (

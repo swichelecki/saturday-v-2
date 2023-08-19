@@ -37,7 +37,6 @@ input:disabled {
   border-top: 2px solid transparent;
   width: 12px;
   height: 12px;
-  margin-right: 6px;
   animation: spin 1.3s linear infinite;
 }
 
@@ -106,5 +105,9 @@ input:disabled {
 @media screen and (max-width: 600px) {
   .container {
     padding: 0;
+  }
+  .loader {
+    width: 18px;
+    height: 18px;
   }
 }

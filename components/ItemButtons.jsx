@@ -59,6 +59,13 @@ const ItemButtons = ({
         >
           {isOpen ? <FaArrowUp /> : <FaArrowDown />}
         </button>
+      ) : !date && !dateAndTime && description ? (
+        <button
+          onClick={handleShowDetails}
+          className={`list-item__details-button ${handleDetailsButtonClass()}`}
+        >
+          {isOpen ? <FaArrowUp /> : <FaArrowDown />}
+        </button>
       ) : (date || dateAndTime) && !description ? (
         <Link href={`/details/${itemId}`}>
           <span className='list-item__edit-button list-item__edit-button--desktop'>

@@ -88,7 +88,8 @@ button.list-item__cancel-button {
     }
   }
   &--mobile {
-    border-radius: unset;
+    border-radius: 0;
+    appearance: none;
     svg {
       fill: $color-white;
       width: 1.4rem;
@@ -123,6 +124,7 @@ button.login-form__login-button {
   padding: 14px;
   font-size: 1.125rem; // 18px
   border-radius: 26px;
+  gap: 6px;
 }
 
 @media screen and (max-width: 600px) {
