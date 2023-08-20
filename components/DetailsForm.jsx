@@ -135,11 +135,7 @@ const DetailsForm = ({ task }) => {
           <div className='details-form__form-row'>
             <label htmlFor='date'>Date</label>
             <input
-              disabled={
-                dateAndTime || (!dateAndTime && taskType !== 'upcoming')
-                  ? true
-                  : false
-              }
+              disabled={dateAndTime ? true : false}
               type='date'
               id='date'
               value={date && !dateAndTime ? date : ''}
@@ -149,12 +145,7 @@ const DetailsForm = ({ task }) => {
           <div className='details-form__form-row'>
             <label htmlFor='dateAndTime'>Date & Time</label>
             <input
-              disabled={
-                (date && !dateAndTime) ||
-                (!date && !dateAndTime && taskType !== 'upcoming')
-                  ? true
-                  : false
-              }
+              disabled={date && !dateAndTime ? true : false}
               type='datetime-local'
               id='dateAndTime'
               value={dateAndTime}

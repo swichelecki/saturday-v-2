@@ -89,16 +89,17 @@ button.list-item__cancel-button {
   }
   &--mobile {
     border-radius: 0;
-    appearance: none;
     svg {
       fill: $color-white;
       width: 1.4rem;
       height: 1.4rem;
     }
   }
-  .loader {
-    margin-right: 0;
-  }
+}
+
+button.main-controls__add-button,
+button.details-form__save-button {
+  gap: 6px;
 }
 
 button.list-item__cancel-button {
@@ -130,6 +131,14 @@ button.login-form__login-button {
 @media screen and (max-width: 600px) {
   button.main-controls__type-button {
     font-size: 0.875rem; // 14px
+  }
+
+  button.list-item__delete-button,
+  button.list-item__edit-button {
+    .loader {
+      width: 18px;
+      height: 18px;
+    }
   }
 }
 
