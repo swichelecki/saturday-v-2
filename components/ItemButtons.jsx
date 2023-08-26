@@ -68,7 +68,7 @@ const ItemButtons = ({
         </button>
       ) : (date || dateAndTime) && !description ? (
         <Link href={`/details/${itemId}`}>
-          <span className='list-item__edit-button list-item__edit-button--desktop'>
+          <span className={`list-item__edit-button ${handleEditButtonClass()}`}>
             <MdEdit />
           </span>
         </Link>

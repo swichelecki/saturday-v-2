@@ -89,6 +89,7 @@ button.list-item__cancel-button {
   }
   &--mobile {
     border-radius: 0;
+    -webkit-tap-highlight-color: transparent;
     svg {
       fill: $color-white;
       width: 1.4rem;
@@ -98,7 +99,8 @@ button.list-item__cancel-button {
 }
 
 button.main-controls__add-button,
-button.details-form__save-button {
+button.details-form__save-button,
+button.main-controls__update-button {
   gap: 6px;
 }
 

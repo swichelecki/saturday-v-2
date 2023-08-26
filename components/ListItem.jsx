@@ -43,7 +43,7 @@ const ItemList = ({
   const [previousTranslateX, setPreviousTranslateX] = useState(0);
   const [movedBy, setMovedBy] = useState(0);
 
-  const OPEN_CLOSE_THRESHOLD = 60;
+  const OPEN_CLOSE_THRESHOLD = 50;
 
   const handleShowDetails = () => {
     setIsOpen((prevState) => !prevState);
