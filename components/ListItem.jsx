@@ -37,13 +37,156 @@ const ItemList = ({
   const detailsRefCurrent = detailsRef.current;
 
   const [isOpen, setIsOpen] = useState(false);
-  const [startPosition, setStartPosition] = useState(0);
+  const [startXPosition, setStartXPosition] = useState(0);
+  const [startYPosition, setStartYPosition] = useState(0);
   const [itemPositionOnStart, setItemPositionOnStart] = useState(0);
   const [currentTranslateX, setCurrentTranslateX] = useState(0);
   const [previousTranslateX, setPreviousTranslateX] = useState(0);
   const [movedBy, setMovedBy] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   const OPEN_CLOSE_THRESHOLD = 50;
+  const TOUCH_DURATION_THRESHOLD = 500;
+
+  useEffect(() => {
+    if (allItemsTouchReset) {
+      setCurrentTranslateX(0);
+      setPreviousTranslateX(0);
+      setAllItemsTouchReset(false);
+    }
+  }, [allItemsTouchReset]);
+
+  useEffect(() => {
+    itemRef.current.addEventListener(
+      'touchstart',
+      (e) => {
+        if (itemRef.current.id !== previousItemId) {
+          setCurrentTranslateX(0);
+          setPreviousTranslateX(0);
+        }
+        previousItemId = closeOpenItem(itemRef.current.id);
+        setStartXPosition(e.touches[0].clientX);
+        setStartYPosition(e.touches[0].clientY);
+        itemRef.current.style.transition = 'none';
+        setItemPositionOnStart(itemRef.current.getBoundingClientRect().left);
+        setStartTime(new Date().getTime());
+      },
+      { passive: true }
+    );
+  }, []);
+
+  useEffect(() => {
+    itemRef.current.style.transition = 'transform 150ms';
+    if (currentTranslateX === previousTranslateX) return;
+
+    if (
+      duration >= TOUCH_DURATION_THRESHOLD &&
+      movedBy * -1 < OPEN_CLOSE_THRESHOLD &&
+      itemPositionOnStart === 0
+    ) {
+      setCurrentTranslateX(0);
+      setPreviousTranslateX(0);
+      itemRef.current.style.transform = 'translateX(0)';
+    }
+
+    if (
+      (duration < TOUCH_DURATION_THRESHOLD && itemPositionOnStart === 0) ||
+      (duration >= TOUCH_DURATION_THRESHOLD &&
+        movedBy * -1 >= OPEN_CLOSE_THRESHOLD &&
+        itemPositionOnStart === 0)
+    ) {
+      setCurrentTranslateX(-146);
+      setPreviousTranslateX(-146);
+      itemRef.current.style.transform = 'translateX(-146px)';
+    }
+
+    if (
+      duration >= TOUCH_DURATION_THRESHOLD &&
+      movedBy * -1 < OPEN_CLOSE_THRESHOLD &&
+      itemPositionOnStart === -146
+    ) {
+      setCurrentTranslateX(-146);
+      setPreviousTranslateX(-146);
+      itemRef.current.style.transform = 'translateX(-146px)';
+    }
+
+    if (
+      (duration < TOUCH_DURATION_THRESHOLD && itemPositionOnStart === -146) ||
+      (duration >= TOUCH_DURATION_THRESHOLD &&
+        movedBy > OPEN_CLOSE_THRESHOLD &&
+        itemPositionOnStart === -146)
+    ) {
+      setCurrentTranslateX(0);
+      setPreviousTranslateX(0);
+      itemRef.current.style.transform = 'translateX(0)';
+    }
+
+    setMovedBy(0);
+    cancelAnimationFrame(animationIdRef.current);
+  }, [duration]);
+
+  // TODO: need to disable touch scroll when opening and closing items
+  /*   useEffect(() => {
+    itemRef.current.addEventListener(
+      //document.addEventListener(
+      'touchmove',
+      (e) => {
+        console.log('Start X', startXPosition);
+        console.log('currnet X', e.touches[0].clientX);
+        console.log('End X', startXPosition - e.touches[0].clientX);
+        console.log('Start Y', startYPosition);
+        console.log('currnet Y', e.touches[0].clientY);
+        console.log('End Y', e.touches[0].clientY - startYPosition);
+
+        if (???????) {
+          if (e.cancelable) {
+            console.log('open item and check for y UP scroll and prevent it');
+            e.preventDefault();
+          }
+        }
+      },
+      { passive: false }
+    );
+    return () => {
+      window.removeEventListener('touchmove', () => {});
+    };
+  }); */
+
+  const handleTouchMove = (e) => {
+    // touch scroll down and prevent items from opening
+    if (
+      e.touches[0].clientY - startYPosition >
+        startXPosition - e.touches[0].clientX &&
+      itemPositionOnStart === 0
+    ) {
+      return;
+    }
+
+    // touch scroll up and prevent items from opening
+    if (
+      startYPosition - e.touches[0].clientY >
+        startXPosition - e.touches[0].clientX &&
+      itemPositionOnStart === 0
+    ) {
+      return;
+    }
+
+    if (isOpen) return;
+    let currentPosition = e.touches[0].clientX;
+    setCurrentTranslateX(previousTranslateX + currentPosition - startXPosition);
+    setMovedBy(currentTranslateX - previousTranslateX);
+    animationIdRef.current = requestAnimationFrame(animation);
+  };
+
+  const handleTouchEnd = () => {
+    setDuration(new Date().getTime() - startTime);
+  };
+
+  const animation = () => {
+    const itemTranslateX = Math.max(-146, Math.min(currentTranslateX, 0));
+    itemRef.current.style.transform = `translateX(${itemTranslateX}px)`;
+  };
 
   const handleShowDetails = () => {
     setIsOpen((prevState) => !prevState);
@@ -70,74 +213,6 @@ const ItemList = ({
     clone.remove();
 
     return height;
-  };
-
-  useEffect(() => {
-    if (allItemsTouchReset) {
-      setCurrentTranslateX(0);
-      setPreviousTranslateX(0);
-      setAllItemsTouchReset(false);
-    }
-  }, [allItemsTouchReset]);
-
-  useEffect(() => {
-    itemRef.current.addEventListener(
-      'touchstart',
-      (e) => {
-        if (itemRef.current.id !== previousItemId) {
-          setCurrentTranslateX(0);
-          setPreviousTranslateX(0);
-        }
-        previousItemId = closeOpenItem(itemRef.current.id);
-        setStartPosition(e.touches[0].clientX);
-        itemRef.current.style.transition = 'none';
-        setItemPositionOnStart(itemRef.current.getBoundingClientRect().left);
-      },
-      { passive: true }
-    );
-  }, []);
-
-  const handleTouchMove = (e) => {
-    let currentPosition = e.touches[0].clientX;
-    setCurrentTranslateX(previousTranslateX + currentPosition - startPosition);
-    setMovedBy(currentTranslateX - previousTranslateX);
-    animationIdRef.current = requestAnimationFrame(animation);
-  };
-
-  const handleTouchEnd = () => {
-    itemRef.current.style.transition = 'transform 150ms';
-
-    if (movedBy * -1 <= OPEN_CLOSE_THRESHOLD && itemPositionOnStart === 0) {
-      setCurrentTranslateX(0);
-      setPreviousTranslateX(0);
-      itemRef.current.style.transform = 'translateX(0)';
-    }
-
-    if (movedBy * -1 > OPEN_CLOSE_THRESHOLD && itemPositionOnStart === 0) {
-      setCurrentTranslateX(-146);
-      setPreviousTranslateX(-146);
-      itemRef.current.style.transform = 'translateX(-146px)';
-    }
-
-    if (movedBy <= OPEN_CLOSE_THRESHOLD && itemPositionOnStart === -146) {
-      setCurrentTranslateX(-146);
-      setPreviousTranslateX(-146);
-      itemRef.current.style.transform = 'translateX(-146px)';
-    }
-
-    if (movedBy > OPEN_CLOSE_THRESHOLD && itemPositionOnStart === -146) {
-      setCurrentTranslateX(0);
-      setPreviousTranslateX(0);
-      itemRef.current.style.transform = 'translateX(0)';
-    }
-
-    setMovedBy(0);
-    cancelAnimationFrame(animationIdRef.current);
-  };
-
-  const animation = () => {
-    const itemTranslateX = Math.max(-146, Math.min(currentTranslateX, 0));
-    itemRef.current.style.transform = `translateX(${itemTranslateX}px)`;
   };
 
   return (

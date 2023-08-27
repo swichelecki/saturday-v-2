@@ -12,9 +12,7 @@ export const useInnerWidth = () => {
       setInnerWidth(window.innerWidth);
     });
     return () => {
-      window.removeEventListener('resize', () => {
-        setInnerWidth(window.innerWidth);
-      });
+      window.removeEventListener('resize', () => {});
     };
   }, [innerWidth]);
 
