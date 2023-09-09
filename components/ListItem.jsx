@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import ItemButtons from './ItemButtons';
 import { useInnerWidth } from '../hooks';
+import { handleTodaysDateCheck } from 'utilities';
 import moment from 'moment-timezone';
 import { GrDrag } from 'react-icons/gr';
 import { MdEdit } from 'react-icons/md';
@@ -215,6 +216,9 @@ const ItemList = ({
     return height;
   };
 
+  const isToday =
+    item?.type === 'upcoming' ? handleTodaysDateCheck(item?.date) : null;
+
   return (
     <div
       className={
@@ -244,9 +248,14 @@ const ItemList = ({
         }`}
       >
         {(item?.dateAndTime || item?.date) && (
-          <div className='list-item__upcoming-date-time'>
+          <div
+            className={`list-item__upcoming-date-time${
+              isToday ? ' list-item__upcoming-date-time--is-today' : ''
+            }`}
+          >
             {item?.dateAndTime ? (
               <p>
+                {isToday && 'Today,'}{' '}
                 {moment(item?.dateAndTime)
                   .tz('America/Chicago')
                   .format('dddd, MMMM D,')}{' '}
@@ -255,7 +264,10 @@ const ItemList = ({
                   .format('h:mm A')}{' '}
               </p>
             ) : (
-              <p>{moment(item?.date).format('dddd, MMMM D')}</p>
+              <p>
+                {isToday && 'Today, '}
+                {moment(item?.date).format('dddd, MMMM D')}
+              </p>
             )}
           </div>
         )}
