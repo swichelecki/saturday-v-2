@@ -80,6 +80,7 @@
     height: 55px;
     &--upcoming {
       top: 32px;
+      height: calc(100% - 32px);
     }
   }
   &__details {
@@ -154,6 +155,9 @@
     }
     &__item-hover-zone {
       font-size: 1.25rem; // 20px
+      &--upcoming {
+        padding: 15px 16px;
+      }
     }
     &__item-right {
       display: block;

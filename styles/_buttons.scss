@@ -47,7 +47,8 @@ button.list-item__details-button {
   background-color: $button-purple;
 }
 
-button.list-item__delete-button {
+button.list-item__delete-button,
+button.modal__delete-button {
   background-color: $button-red;
 }
 
@@ -59,7 +60,8 @@ button.list-item__edit-button {
   background-color: $button-blue;
 }
 
-button.list-item__cancel-button {
+button.list-item__cancel-button,
+button.modal__cancel-button {
   background-color: $button-orange;
 }
 
@@ -89,7 +91,6 @@ button.list-item__cancel-button {
   }
   &--mobile {
     border-radius: 0;
-    -webkit-tap-highlight-color: transparent;
     svg {
       fill: $color-white;
       width: 1.4rem;
@@ -127,6 +128,13 @@ button.login-form__login-button {
   padding: 14px;
   font-size: 1.125rem; // 18px
   border-radius: 26px;
+  gap: 6px;
+}
+
+button.modal__cancel-button,
+button.modal__delete-button {
+  width: 100%;
+  font-size: 1.125rem; // 18px
   gap: 6px;
 }
 

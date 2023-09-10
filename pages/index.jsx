@@ -1,8 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import connectDB from '../config/db';
 import Task from '../models/Task';
 import { TasksContext } from '../context/tasksContext';
-import { MainControls, ItemsColumn, BirthdaysColumn } from '../components';
+import {
+  MainControls,
+  ItemsColumn,
+  BirthdaysColumn,
+  Modal,
+} from '../components';
 import { useInnerWidth } from '../hooks';
 import { useUpcomingBirthdays } from '../hooks';
 import { submitTask, getTask, updateTask, deleteTask } from '../services';
@@ -10,6 +15,9 @@ import { submitTask, getTask, updateTask, deleteTask } from '../services';
 const Home = ({ tasks }) => {
   const width = useInnerWidth();
   const birthhdays = useUpcomingBirthdays();
+
+  const modalRef = useRef(null);
+  const modalIdToDeleteRef = useRef(null);
 
   const [globalContextTasks, setGlobalContextTasks] = useState(tasks);
   const [title, setTitle] = useState('');
@@ -24,6 +32,7 @@ const Home = ({ tasks }) => {
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [allItemsTouchReset, setAllItemsTouchReset] = useState(false);
+  const [, setForceUpdate] = useState({});
 
   const allItems = [];
 
@@ -103,7 +112,10 @@ const Home = ({ tasks }) => {
 
   const handleDeleteTask = (id, confirmDeletion) => {
     if (confirmDeletion) {
-      if (!confirm('Confirm Deletion')) return;
+      modalRef.current.showModal();
+      modalIdToDeleteRef.current = id;
+      setForceUpdate({});
+      return;
     }
     setIsAwaitingDeleteResponse(true);
     deleteTask(id).then((res) => {
@@ -113,6 +125,7 @@ const Home = ({ tasks }) => {
       setGlobalContextTasks(filteredTasksArray);
       setIsAwaitingDeleteResponse(false);
       if (width <= 600) handleItemsTouchReset();
+      if (modalRef.current.open) modalRef.current.close();
     });
   };
 
@@ -216,6 +229,12 @@ const Home = ({ tasks }) => {
           />
           {birthhdays && <BirthdaysColumn birthdays={birthhdays} />}
         </div>
+        <Modal
+          ref={modalRef}
+          handleDeleteTask={handleDeleteTask}
+          modalIdToDeleteRef={modalIdToDeleteRef.current}
+          isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+        />
       </TasksContext.Provider>
     </div>
   );

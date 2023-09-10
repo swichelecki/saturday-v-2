@@ -356,6 +356,7 @@ const ItemList = ({
             date={item?.date}
             dateAndTime={item?.dateAndTime}
             description={item?.description}
+            confirmDeletion={item?.confirmDeletion}
             handleShowDetails={handleShowDetails}
             isOpen={isOpen}
             taskToEditId={taskToEditId}
