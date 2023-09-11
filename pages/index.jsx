@@ -17,7 +17,6 @@ const Home = ({ tasks }) => {
   const birthhdays = useUpcomingBirthdays();
 
   const modalRef = useRef(null);
-  const modalIdToDeleteRef = useRef(null);
 
   const [globalContextTasks, setGlobalContextTasks] = useState(tasks);
   const [title, setTitle] = useState('');
@@ -32,7 +31,7 @@ const Home = ({ tasks }) => {
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [allItemsTouchReset, setAllItemsTouchReset] = useState(false);
-  const [, setForceUpdate] = useState({});
+  const [modalIdToDelete, setModalIdToDelete] = useState('');
 
   const allItems = [];
 
@@ -113,10 +112,10 @@ const Home = ({ tasks }) => {
   const handleDeleteTask = (id, confirmDeletion) => {
     if (confirmDeletion) {
       modalRef.current.showModal();
-      modalIdToDeleteRef.current = id;
-      setForceUpdate({});
+      setModalIdToDelete(id);
       return;
     }
+
     setIsAwaitingDeleteResponse(true);
     deleteTask(id).then((res) => {
       const filteredTasksArray = globalContextTasks.filter(
@@ -232,7 +231,7 @@ const Home = ({ tasks }) => {
         <Modal
           ref={modalRef}
           handleDeleteTask={handleDeleteTask}
-          modalIdToDeleteRef={modalIdToDeleteRef.current}
+          modalIdToDelete={modalIdToDelete}
           isAwaitingDeleteResponse={isAwaitingDeleteResponse}
         />
       </TasksContext.Provider>

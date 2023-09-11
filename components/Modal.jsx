@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 
 const Modal = forwardRef(
   (
-    { handleDeleteTask, modalIdToDeleteRef, isAwaitingDeleteResponse },
+    { handleDeleteTask, modalIdToDelete, isAwaitingDeleteResponse },
     modalRef
   ) => {
     const handleCloseModal = () => {
@@ -17,7 +17,7 @@ const Modal = forwardRef(
           </button>
           <button
             onClick={() => {
-              handleDeleteTask(modalIdToDeleteRef, false);
+              handleDeleteTask(modalIdToDelete, false);
             }}
             className='modal__delete-button'
           >
