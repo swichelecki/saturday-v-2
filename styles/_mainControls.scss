@@ -5,8 +5,7 @@
   max-width: 970px;
   width: 100%;
   padding: 16px;
-  background-color: $color-white;
-  box-shadow: 0 0 6px 2px $color-shadow;
+  border: 1px solid $color-border;
   &__top-controls {
     flex: 0 0 482px;
     display: flex;
@@ -21,21 +20,18 @@
     align-items: center;
     gap: 16px;
   }
-  .main-controls__type-button--active {
-    background-color: $button-purple;
-    color: $color-white;
-    opacity: 1;
-  }
   input[type='text'] {
     flex: 1 1 auto;
     border: none;
-    background-color: $color-background;
     padding: 7px 12px;
     border-radius: 20px;
-    box-shadow: 0 0 0 1px $color-shadow;
+    background-color: $color-input;
+    color: $color-font;
+    box-shadow: 0 0 0 1px $color-border;
     font: inherit;
     &:disabled {
-      background-color: $color-shadow;
+      background-color: $color-border;
+      color: $color-background;
     }
   }
 }
@@ -56,9 +52,9 @@
 @media screen and (max-width: 600px) {
   .main-controls {
     max-width: unset;
-    box-shadow: unset;
     padding: 24px 16px;
     gap: 24px;
+    border: 0;
     &__top-controls {
       justify-content: flex-start;
     }

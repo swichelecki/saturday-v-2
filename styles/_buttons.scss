@@ -12,57 +12,101 @@ span.details-form__cancel-button {
   border: 0;
   font: inherit;
   cursor: pointer;
-  color: $color-white;
+  color: $color-background;
+  background-color: transparent;
   font-size: 1rem; // 16px
   letter-spacing: 0.5px;
   font-weight: 400;
   text-align: center;
 }
 
-button.main-controls__add-button,
-span.main-controls__create-button {
-  background-color: $button-purple;
-}
-
 button.main-controls__type-button {
-  background-color: $color-white;
+  background-color: $color-background-secondary;
   color: $button-purple;
-  box-shadow: 0 0 0 1px $button-purple;
+  box-shadow: 0 0 0 1px $color-border;
   opacity: 0.8;
+  &--active {
+    box-shadow: 0 0 0 1px $button-purple;
+    background-color: $button-purple-dark;
+    color: $button-purple;
+    opacity: 1;
+  }
 }
 
 button.main-controls__update-button {
-  background-color: $button-blue;
+  background-color: $button-blue-dark;
+  border: 1px solid $button-blue;
+  color: $button-blue;
+  .loader {
+    border: 2px solid $button-blue;
+    border-top: 2px solid transparent;
+  }
 }
 
-span.details-form__cancel-button {
-  background-color: $button-orange;
-}
-
-button.details-form__save-button {
-  background-color: $button-green;
-}
-
-button.list-item__details-button {
-  background-color: $button-purple;
+button.list-item__details-button,
+button.main-controls__add-button,
+span.main-controls__create-button {
+  border: 1px solid $color-border;
+  background-color: $button-purple-dark;
+  color: $button-purple;
+  svg {
+    fill: $button-purple;
+  }
+  .loader {
+    border: 2px solid $button-purple;
+    border-top: 2px solid transparent;
+  }
 }
 
 button.list-item__delete-button,
 button.modal__delete-button {
-  background-color: $button-red;
+  background-color: $button-red-dark;
+  border: 1px solid $color-border;
+  color: $button-red;
+  svg {
+    fill: $button-red;
+  }
+  .loader {
+    border: 2px solid $button-red;
+    border-top: 2px solid transparent;
+  }
 }
 
-span.list-item__edit-button {
-  background-color: $button-green;
+span.list-item__edit-button,
+button.details-form__save-button {
+  background-color: $button-green-dark;
+  border: 1px solid $color-border;
+  color: $button-green;
+  svg {
+    fill: $button-green;
+  }
+  .loader {
+    border: 2px solid $button-green;
+    border-top: 2px solid transparent;
+  }
 }
 
 button.list-item__edit-button {
-  background-color: $button-blue;
+  border: 1px solid $color-border;
+  background-color: $button-blue-dark;
+  svg {
+    fill: $button-blue;
+  }
+  .loader {
+    border: 2px solid $button-blue;
+    border-top: 2px solid transparent;
+  }
 }
 
 button.list-item__cancel-button,
-button.modal__cancel-button {
-  background-color: $button-orange;
+button.modal__cancel-button,
+span.details-form__cancel-button {
+  background-color: $button-orange-dark;
+  border: 1px solid $color-border;
+  color: $button-orange;
+  svg {
+    fill: $button-orange;
+  }
 }
 
 button.list-item__details-button,
@@ -84,7 +128,6 @@ button.list-item__cancel-button {
     height: 28px;
     border-radius: 10px;
     svg {
-      fill: $color-white;
       width: 1rem;
       height: 1rem;
     }
@@ -92,7 +135,6 @@ button.list-item__cancel-button {
   &--mobile {
     border-radius: 0;
     svg {
-      fill: $color-white;
       width: 1.4rem;
       height: 1.4rem;
     }
@@ -108,14 +150,12 @@ button.main-controls__update-button {
 button.list-item__cancel-button {
   &--desktop {
     svg {
-      fill: $color-white;
       width: 1.4rem;
       height: 1.4rem;
     }
   }
   &--mobile {
     svg {
-      fill: $color-white;
       width: 1.8rem;
       height: 1.8rem;
     }
@@ -124,11 +164,17 @@ button.list-item__cancel-button {
 
 button.login-form__login-button {
   width: 100%;
-  background-color: $button-purple;
   padding: 14px;
   font-size: 1.125rem; // 18px
   border-radius: 26px;
   gap: 6px;
+  border: 1px solid $color-border;
+  background-color: $button-purple-dark;
+  color: $button-purple;
+  .loader {
+    border: 2px solid $button-purple;
+    border-top: 2px solid transparent;
+  }
 }
 
 button.modal__cancel-button,
@@ -136,6 +182,24 @@ button.modal__delete-button {
   width: 100%;
   font-size: 1.125rem; // 18px
   gap: 6px;
+}
+
+button.modal__cancel-button,
+span.details-form__cancel-button {
+  border: 1px solid $button-orange;
+}
+
+button.modal__delete-button {
+  border: 1px solid $button-red;
+}
+
+button.main-controls__add-button,
+span.main-controls__create-button {
+  border: 1px solid $button-purple;
+}
+
+button.details-form__save-button {
+  border: 1px solid $button-green;
 }
 
 @media screen and (max-width: 600px) {

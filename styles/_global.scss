@@ -8,7 +8,6 @@ html,
 body {
   margin: 0;
   padding: 0;
-  color: $color-font;
 }
 
 body {
@@ -16,6 +15,7 @@ body {
   background-color: $color-background;
   font-size: 1.125rem; // 18px
   font-weight: 300;
+  color: $color-font;
 }
 
 .container {
@@ -32,7 +32,7 @@ input:disabled {
 }
 
 .loader {
-  border: 2px solid $color-white;
+  border: 2px solid $color-font;
   border-radius: 50%;
   border-top: 2px solid transparent;
   width: 12px;
@@ -55,10 +55,10 @@ input:disabled {
       width: 0;
     }
     &:hover input ~ .inputs__checkbox {
-      background-color: $color-shadow;
+      background-color: $color-border;
     }
     & input:checked ~ .inputs__checkbox {
-      background-color: $button-blue;
+      background-color: $color-upcoming;
     }
     & input:checked ~ .inputs__checkbox:after {
       display: block;
@@ -70,8 +70,8 @@ input:disabled {
     left: 0;
     height: 25px;
     width: 25px;
-    background-color: $color-background;
-    border: 1px solid $color-shadow;
+    background-color: $color-input;
+    border: 1px solid $color-border;
     &:after {
       content: '';
       position: absolute;
@@ -80,7 +80,7 @@ input:disabled {
       top: 4px;
       width: 5px;
       height: 10px;
-      border: solid white;
+      border: solid $color-font;
       border-width: 0 3px 3px 0;
       transform: rotate(45deg);
     }

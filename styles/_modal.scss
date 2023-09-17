@@ -5,8 +5,10 @@ dialog::backdrop {
 dialog {
   border: 0;
   padding: 32px 32px 48px;
-  background-color: $color-white;
   border-radius: 12px;
+  background-color: $color-background;
+  color: $color-font;
+  border: 1px solid $color-border;
 }
 
 .modal {

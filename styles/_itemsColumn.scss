@@ -2,10 +2,9 @@
   flex: 0 0 312px;
   h2 {
     padding: 12px 24px;
-    background-color: $color-header-background;
-    color: $color-white;
     margin-bottom: 8px;
-    box-shadow: 0 0 6px 2px $color-shadow;
+    color: $color-font;
+    border: 1px solid $color-border;
     svg {
       position: relative;
       top: 2px;
@@ -20,7 +19,8 @@
     flex: 1 1 auto;
     h2 {
       margin-bottom: 0;
-      box-shadow: unset;
+      border: 0;
+      background-color: $color-background-secondary;
     }
   }
 }

@@ -14,8 +14,7 @@
     max-width: 480px;
     width: 100%;
     padding: 48px;
-    background-color: $color-white;
-    box-shadow: 0 12px 32px $color-shadow;
+    border: 1px solid $color-border;
     border-radius: 12px;
   }
   &__form-controls-wrapper {
@@ -39,11 +38,10 @@
       border: none;
       padding: 12px;
       font: inherit;
-      border: 1px solid $color-shadow;
+      border: 1px solid $color-border;
+      background-color: $color-input;
+      color: $color-font;
       border-radius: 9px;
-      &:disabled {
-        background-color: $color-shadow;
-      }
     }
     &:last-of-type {
       padding-top: 8px;

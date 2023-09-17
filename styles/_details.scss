@@ -3,8 +3,7 @@
   width: 100%;
   margin: 0 auto;
   padding: 48px 60px;
-  background-color: $color-white;
-  box-shadow: 0 0 6px 2px $color-shadow;
+  border: 1px solid $color-border;
   &__form-row {
     display: flex;
     flex-direction: column;
@@ -20,17 +19,15 @@
       border: none;
       padding: 12px;
       font: inherit;
-      border: 1px solid $color-shadow;
       border-radius: 9px;
+      background-color: $color-input;
+      color: $color-font;
+      border: 1px solid $color-border;
+      color-scheme: dark;
       &:disabled {
-        background-color: $color-shadow;
+        background-color: $color-border;
+        color: $color-background;
       }
-    }
-    textarea {
-      min-height: 150px;
-      font: inherit;
-      padding: 8px 12px;
-      border: 1px solid $color-shadow;
     }
     &:last-of-type {
       padding-bottom: 16px;
@@ -47,7 +44,13 @@
 .quill {
   .ql-toolbar.ql-snow,
   .ql-container.ql-snow {
-    border: 1px solid $color-shadow;
+    border: 1px solid $color-border;
+    .ql-stroke {
+      stroke: $color-font;
+    }
+    .ql-picker-label {
+      color: $color-font;
+    }
     .ql-formats button {
       min-width: unset;
       box-shadow: unset;
@@ -59,6 +62,7 @@
     min-height: 200px;
     font-family: inherit;
     line-height: 1.56;
+    background-color: $color-input;
     p,
     ul,
     ol {
@@ -85,7 +89,6 @@
   .details-form {
     padding: 48px;
     max-width: unset;
-    box-shadow: unset;
   }
 }
 
