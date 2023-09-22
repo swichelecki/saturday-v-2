@@ -98,7 +98,7 @@ const MainControls = ({
         </label>
       </div>
       <div className='main-controls__bottom-controls'>
-        {checkbox ? (
+        {checkbox && !isUpdating ? (
           <Link
             href={{
               pathname: '/details',
@@ -128,7 +128,7 @@ const MainControls = ({
           type='text'
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          disabled={checkbox ? true : false}
+          disabled={checkbox && !isUpdating}
         />
       </div>
     </div>
