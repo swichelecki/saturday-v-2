@@ -58,9 +58,29 @@ const ItemList = ({
     }
   }, [allItemsTouchReset]);
 
+  // disable scrolling when opening and closing items on touch
+  useEffect(() => {
+    itemRef.current.addEventListener(
+      'touchmove',
+      (e) => {
+        if (itemRef.current.style.transform !== 'translateX(0px)') {
+          if (e.cancelable) {
+            e.preventDefault();
+          }
+        }
+      },
+      { passive: false }
+    );
+
+    return () => {
+      if (itemRef.current) {
+        itemRef.current.removeEventListener('touchmove', () => {});
+      }
+    };
+  });
+
   // handle touch transitions after touchend event
   useEffect(() => {
-    itemRef.current.style.transition = 'transform 150ms';
     if (currentTranslateX === previousTranslateX) return;
 
     // return item to close state when touchmove does not exceed open threshold
@@ -108,30 +128,13 @@ const ItemList = ({
       setPreviousTranslateX(0);
       itemRef.current.style.transform = 'translateX(0px)';
     }
-
-    cancelAnimationFrame(animationIdRef.current);
   }, [duration]);
 
-  // disable scrolling when opening and closing items on touch
+  // run animation function on touch move and after touch end
   useEffect(() => {
-    itemRef.current.addEventListener(
-      'touchmove',
-      (e) => {
-        if (itemRef.current.style.transform !== 'translateX(0px)') {
-          if (e.cancelable) {
-            e.preventDefault();
-          }
-        }
-      },
-      { passive: false }
-    );
-
-    return () => {
-      if (itemRef.current) {
-        itemRef.current.removeEventListener('touchmove', () => {});
-      }
-    };
-  });
+    animationIdRef.current = requestAnimationFrame(animation);
+    return () => cancelAnimationFrame(animationIdRef.current);
+  }, [currentTranslateX]);
 
   // touch start
   const handleTouchStart = (e) => {
@@ -149,34 +152,29 @@ const ItemList = ({
 
   // touch move
   const handleTouchMove = (e) => {
-    // touch scroll down and prevent items from opening
+    // if touch move is up or down end touch move
     if (
-      e.touches[0].clientY - startYPosition >
-        startXPosition - e.touches[0].clientX &&
-      itemPositionOnStart === 0
-    ) {
+      Math.max(
+        e.touches[0].clientY - startYPosition,
+        startYPosition - e.touches[0].clientY
+      ) >
+      Math.max(
+        e.touches[0].clientX - startXPosition,
+        startXPosition - e.touches[0].clientX
+      )
+    )
       return;
-    }
-
-    // touch scroll up and prevent items from opening
-    if (
-      startYPosition - e.touches[0].clientY >
-        startXPosition - e.touches[0].clientX &&
-      itemPositionOnStart === 0
-    ) {
-      return;
-    }
 
     if (isOpen) return;
     let currentPosition = e.touches[0].clientX;
     setCurrentTranslateX(previousTranslateX + currentPosition - startXPosition);
-    setMovedBy(currentTranslateX - previousTranslateX);
-    animationIdRef.current = requestAnimationFrame(animation);
   };
 
   // touch end
   const handleTouchEnd = () => {
+    setMovedBy(currentTranslateX - previousTranslateX);
     setDuration(new Date().getTime() - startTime);
+    itemRef.current.style.transition = 'transform 150ms ease-out';
   };
 
   // animate open and close item on touchmove
