@@ -4,6 +4,7 @@
   h1 {
     color: $color-font;
     cursor: pointer;
+    display: inline-block;
   }
   &__inner-wrapper {
     position: relative;
