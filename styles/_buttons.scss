@@ -208,6 +208,16 @@ button.details-form__save-button {
     font-size: 0.875rem; // 14px
   }
 
+  span.list-item__edit-button--desktop {
+    width: 55px;
+    height: 35px;
+    border-radius: 20px;
+    svg {
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+  }
+
   button.list-item__delete-button,
   button.list-item__edit-button {
     .loader {
