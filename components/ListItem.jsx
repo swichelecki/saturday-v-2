@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import ItemButtons from './ItemButtons';
 import { useInnerWidth } from '../hooks';
-import { handleTodaysDateCheck } from 'utilities';
+import { handleTodaysDateCheck, handleTransitionSpeed } from 'utilities';
 import moment from 'moment-timezone';
 import { GrDrag } from 'react-icons/gr';
 import { MdEdit } from 'react-icons/md';
@@ -47,8 +47,9 @@ const ItemList = ({
   const [startTime, setStartTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  const OPEN_CLOSE_THRESHOLD = 50;
-  const TOUCH_DURATION_THRESHOLD = 500;
+  const OPEN_CLOSE_THRESHOLD = 60;
+  const TOUCH_DURATION_THRESHOLD = 400;
+  const MAX_MOVE_DISTANCE = 146;
 
   useEffect(() => {
     if (allItemsTouchReset) {
@@ -83,17 +84,6 @@ const ItemList = ({
   useEffect(() => {
     if (currentTranslateX === previousTranslateX) return;
 
-    // return item to close state when touchmove does not exceed open threshold
-    if (
-      duration >= TOUCH_DURATION_THRESHOLD &&
-      movedBy * -1 < OPEN_CLOSE_THRESHOLD &&
-      itemPositionOnStart === 0
-    ) {
-      setCurrentTranslateX(0);
-      setPreviousTranslateX(0);
-      itemRef.current.style.transform = 'translateX(0px)';
-    }
-
     // open item on swipe or when touchmove exceeds open threshold
     if (
       (duration < TOUCH_DURATION_THRESHOLD && itemPositionOnStart === 0) ||
@@ -101,20 +91,15 @@ const ItemList = ({
         movedBy * -1 >= OPEN_CLOSE_THRESHOLD &&
         itemPositionOnStart === 0)
     ) {
+      const transitionSpeed = handleTransitionSpeed(
+        MAX_MOVE_DISTANCE,
+        movedBy,
+        duration
+      );
+      itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      itemRef.current.style.transform = `translateX(-146px)`;
       setCurrentTranslateX(-146);
       setPreviousTranslateX(-146);
-      itemRef.current.style.transform = 'translateX(-146px)';
-    }
-
-    // return item to open state when touchmove does not exceed close threshold
-    if (
-      duration >= TOUCH_DURATION_THRESHOLD &&
-      movedBy * -1 < OPEN_CLOSE_THRESHOLD &&
-      itemPositionOnStart === -146
-    ) {
-      setCurrentTranslateX(-146);
-      setPreviousTranslateX(-146);
-      itemRef.current.style.transform = 'translateX(-146px)';
     }
 
     // close item on swipe or when touchmove exceeds close threshold
@@ -124,11 +109,43 @@ const ItemList = ({
         movedBy > OPEN_CLOSE_THRESHOLD &&
         itemPositionOnStart === -146)
     ) {
+      const transitionSpeed = handleTransitionSpeed(
+        MAX_MOVE_DISTANCE,
+        movedBy,
+        duration
+      );
+      itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      itemRef.current.style.transform = 'translateX(0px)';
       setCurrentTranslateX(0);
       setPreviousTranslateX(0);
-      itemRef.current.style.transform = 'translateX(0px)';
     }
-  }, [duration]);
+
+    // when closed, return item to close state when touchmove does not exceed open threshold
+    if (
+      duration >= TOUCH_DURATION_THRESHOLD &&
+      movedBy * -1 < OPEN_CLOSE_THRESHOLD &&
+      itemPositionOnStart === 0
+    ) {
+      const transitionSpeed = handleTransitionSpeed(false, movedBy, duration);
+      itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      itemRef.current.style.transform = 'translateX(0px)';
+      setCurrentTranslateX(0);
+      setPreviousTranslateX(0);
+    }
+
+    // when open, return item to open state when touchmove does not exceed close threshold
+    if (
+      duration >= TOUCH_DURATION_THRESHOLD &&
+      movedBy < OPEN_CLOSE_THRESHOLD &&
+      itemPositionOnStart === -146
+    ) {
+      const transitionSpeed = handleTransitionSpeed(false, movedBy, duration);
+      itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      itemRef.current.style.transform = 'translateX(-146px)';
+      setCurrentTranslateX(-146);
+      setPreviousTranslateX(-146);
+    }
+  }, [duration, movedBy]);
 
   // run animation function on touch move and after touch end
   useEffect(() => {
@@ -174,12 +191,14 @@ const ItemList = ({
   const handleTouchEnd = () => {
     setMovedBy(currentTranslateX - previousTranslateX);
     setDuration(new Date().getTime() - startTime);
-    itemRef.current.style.transition = 'transform 150ms ease-out';
   };
 
   // animate open and close item on touchmove
   const animation = () => {
-    const itemTranslateX = Math.max(-146, Math.min(currentTranslateX, 0));
+    const itemTranslateX = Math.max(
+      -MAX_MOVE_DISTANCE,
+      Math.min(currentTranslateX, 0)
+    );
     itemRef.current.style.transform = `translateX(${itemTranslateX}px)`;
   };
 
