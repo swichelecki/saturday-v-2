@@ -61,24 +61,27 @@ const ItemList = ({
 
   // disable scrolling when opening and closing items on touch
   useEffect(() => {
-    if (itemRef.current) {
-      itemRef.current.addEventListener(
+    const handlePreventScroll = (e) => {
+      if (itemRef.current.style.transform !== 'translateX(0px)') {
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    itemRef.current.addEventListener(
+      'touchmove',
+      (e) => handlePreventScroll(e),
+      { passive: false }
+    );
+
+    return () =>
+      itemRef.current?.removeEventListener(
         'touchmove',
-        (e) => {
-          if (itemRef.current.style.transform !== 'translateX(0px)') {
-            if (e.cancelable) {
-              e.preventDefault();
-            }
-          }
-        },
+        (e) => handlePreventScroll(e),
         { passive: false }
       );
-
-      return () => {
-        itemRef.current.removeEventListener('touchmove', () => {});
-      };
-    }
-  }, [currentTranslateX]);
+  }, []);
 
   // handle touch transitions after touchend event
   useEffect(() => {
