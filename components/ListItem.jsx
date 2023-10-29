@@ -61,24 +61,24 @@ const ItemList = ({
 
   // disable scrolling when opening and closing items on touch
   useEffect(() => {
-    itemRef.current.addEventListener(
-      'touchmove',
-      (e) => {
-        if (itemRef.current.style.transform !== 'translateX(0px)') {
-          if (e.cancelable) {
-            e.preventDefault();
+    if (itemRef.current) {
+      itemRef.current.addEventListener(
+        'touchmove',
+        (e) => {
+          if (itemRef.current.style.transform !== 'translateX(0px)') {
+            if (e.cancelable) {
+              e.preventDefault();
+            }
           }
-        }
-      },
-      { passive: false }
-    );
+        },
+        { passive: false }
+      );
 
-    return () => {
-      if (itemRef.current) {
+      return () => {
         itemRef.current.removeEventListener('touchmove', () => {});
-      }
-    };
-  });
+      };
+    }
+  }, [currentTranslateX]);
 
   // handle touch transitions after touchend event
   useEffect(() => {
@@ -88,7 +88,7 @@ const ItemList = ({
     if (
       (duration < TOUCH_DURATION_THRESHOLD && itemPositionOnStart === 0) ||
       (duration >= TOUCH_DURATION_THRESHOLD &&
-        movedBy * -1 >= OPEN_CLOSE_THRESHOLD &&
+        movedBy >= OPEN_CLOSE_THRESHOLD &&
         itemPositionOnStart === 0)
     ) {
       const transitionSpeed = handleTransitionSpeed(
@@ -123,7 +123,7 @@ const ItemList = ({
     // when closed, return item to close state when touchmove does not exceed open threshold
     if (
       duration >= TOUCH_DURATION_THRESHOLD &&
-      movedBy * -1 < OPEN_CLOSE_THRESHOLD &&
+      movedBy < OPEN_CLOSE_THRESHOLD &&
       itemPositionOnStart === 0
     ) {
       const transitionSpeed = handleTransitionSpeed(false, movedBy, duration);
@@ -189,7 +189,7 @@ const ItemList = ({
 
   // touch end
   const handleTouchEnd = () => {
-    setMovedBy(currentTranslateX - previousTranslateX);
+    setMovedBy(Math.abs(currentTranslateX - previousTranslateX));
     setDuration(new Date().getTime() - startTime);
   };
 
