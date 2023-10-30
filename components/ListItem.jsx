@@ -154,7 +154,7 @@ const ItemList = ({
   useEffect(() => {
     animationIdRef.current = requestAnimationFrame(animation);
     return () => cancelAnimationFrame(animationIdRef.current);
-  }, [currentTranslateX]);
+  }, []);
 
   // touch start
   const handleTouchStart = (e) => {
@@ -188,12 +188,14 @@ const ItemList = ({
     if (isOpen) return;
     let currentPosition = e.touches[0].clientX;
     setCurrentTranslateX(previousTranslateX + currentPosition - startXPosition);
+    animationIdRef.current = requestAnimationFrame(animation);
   };
 
   // touch end
   const handleTouchEnd = () => {
     setMovedBy(Math.abs(currentTranslateX - previousTranslateX));
     setDuration(new Date().getTime() - startTime);
+    cancelAnimationFrame(animationIdRef.current);
   };
 
   // animate open and close item on touchmove
