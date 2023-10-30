@@ -74,13 +74,6 @@ const ItemList = ({
       (e) => handlePreventScroll(e),
       { passive: false }
     );
-
-    return () =>
-      itemRef.current?.removeEventListener(
-        'touchmove',
-        (e) => handlePreventScroll(e),
-        { passive: false }
-      );
   }, []);
 
   // handle touch transitions after touchend event
@@ -94,29 +87,22 @@ const ItemList = ({
         movedBy >= OPEN_CLOSE_THRESHOLD &&
         itemPositionOnStart === 0)
     ) {
-      const transitionSpeed = handleTransitionSpeed(
-        MAX_MOVE_DISTANCE,
-        movedBy,
-        duration
-      );
+      const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       itemRef.current.style.transform = `translateX(-146px)`;
-      setCurrentTranslateX(-146);
-      setPreviousTranslateX(-146);
+      setCurrentTranslateX(-MAX_MOVE_DISTANCE);
+      setPreviousTranslateX(-MAX_MOVE_DISTANCE);
     }
 
     // close item on swipe or when touchmove exceeds close threshold
     if (
-      (duration < TOUCH_DURATION_THRESHOLD && itemPositionOnStart === -146) ||
+      (duration < TOUCH_DURATION_THRESHOLD &&
+        itemPositionOnStart === -MAX_MOVE_DISTANCE) ||
       (duration >= TOUCH_DURATION_THRESHOLD &&
         movedBy > OPEN_CLOSE_THRESHOLD &&
-        itemPositionOnStart === -146)
+        itemPositionOnStart === -MAX_MOVE_DISTANCE)
     ) {
-      const transitionSpeed = handleTransitionSpeed(
-        MAX_MOVE_DISTANCE,
-        movedBy,
-        duration
-      );
+      const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       itemRef.current.style.transform = 'translateX(0px)';
       setCurrentTranslateX(0);
@@ -129,7 +115,7 @@ const ItemList = ({
       movedBy < OPEN_CLOSE_THRESHOLD &&
       itemPositionOnStart === 0
     ) {
-      const transitionSpeed = handleTransitionSpeed(false, movedBy, duration);
+      const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       itemRef.current.style.transform = 'translateX(0px)';
       setCurrentTranslateX(0);
@@ -140,17 +126,17 @@ const ItemList = ({
     if (
       duration >= TOUCH_DURATION_THRESHOLD &&
       movedBy < OPEN_CLOSE_THRESHOLD &&
-      itemPositionOnStart === -146
+      itemPositionOnStart === -MAX_MOVE_DISTANCE
     ) {
-      const transitionSpeed = handleTransitionSpeed(false, movedBy, duration);
+      const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       itemRef.current.style.transform = 'translateX(-146px)';
-      setCurrentTranslateX(-146);
-      setPreviousTranslateX(-146);
+      setCurrentTranslateX(-MAX_MOVE_DISTANCE);
+      setPreviousTranslateX(-MAX_MOVE_DISTANCE);
     }
   }, [duration, movedBy]);
 
-  // run animation function on touch move and after touch end
+  // initialize animation
   useEffect(() => {
     animationIdRef.current = requestAnimationFrame(animation);
     return () => cancelAnimationFrame(animationIdRef.current);

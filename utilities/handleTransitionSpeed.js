@@ -1,18 +1,15 @@
-const handleTransitionSpeed = (maxMoveDistance, movedBy, duration) => {
+const handleTransitionSpeed = (movedBy, duration) => {
   const MAX_TRANSITION_SPEED = 100;
   const MIN_TRANSITION_SPEED = 500;
-  const velocity = movedBy / duration;
 
-  if (maxMoveDistance) {
-    const transitionSpeed = Math.floor((maxMoveDistance - movedBy) / velocity);
-    return transitionSpeed < 500 && transitionSpeed >= 100
-      ? transitionSpeed
-      : transitionSpeed >= 500
-      ? MIN_TRANSITION_SPEED
-      : MAX_TRANSITION_SPEED;
-  } else {
-    return Math.floor(movedBy / velocity / 2);
-  }
+  const velocity = movedBy / duration;
+  const speed = Math.floor(movedBy / velocity);
+
+  return speed < MIN_TRANSITION_SPEED && speed >= MAX_TRANSITION_SPEED
+    ? speed
+    : speed >= MIN_TRANSITION_SPEED
+    ? MIN_TRANSITION_SPEED
+    : MAX_TRANSITION_SPEED;
 };
 
 export default handleTransitionSpeed;
