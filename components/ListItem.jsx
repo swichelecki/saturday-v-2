@@ -41,6 +41,7 @@ const ItemList = ({
   const [startXPosition, setStartXPosition] = useState(0);
   const [startYPosition, setStartYPosition] = useState(0);
   const [itemPositionOnStart, setItemPositionOnStart] = useState(0);
+  const [itemPositionOnEnd, setItemPositionOnEnd] = useState(0);
   const [currentTranslateX, setCurrentTranslateX] = useState(0);
   const [previousTranslateX, setPreviousTranslateX] = useState(0);
   const [movedBy, setMovedBy] = useState(0);
@@ -51,6 +52,7 @@ const ItemList = ({
   const TOUCH_DURATION_THRESHOLD = 400;
   const MAX_MOVE_DISTANCE = 146;
 
+  // when all items are closed automatically make sure state is reset for next item touch
   useEffect(() => {
     if (allItemsTouchReset) {
       setCurrentTranslateX(0);
@@ -82,10 +84,11 @@ const ItemList = ({
 
     // open item on swipe or when touchmove exceeds open threshold
     if (
-      (duration < TOUCH_DURATION_THRESHOLD && itemPositionOnStart === 0) ||
+      (duration < TOUCH_DURATION_THRESHOLD &&
+        itemPositionOnEnd < itemPositionOnStart) ||
       (duration >= TOUCH_DURATION_THRESHOLD &&
         movedBy >= OPEN_CLOSE_THRESHOLD &&
-        itemPositionOnStart === 0)
+        itemPositionOnEnd < itemPositionOnStart)
     ) {
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
@@ -97,10 +100,10 @@ const ItemList = ({
     // close item on swipe or when touchmove exceeds close threshold
     if (
       (duration < TOUCH_DURATION_THRESHOLD &&
-        itemPositionOnStart === -MAX_MOVE_DISTANCE) ||
+        itemPositionOnEnd > itemPositionOnStart) ||
       (duration >= TOUCH_DURATION_THRESHOLD &&
         movedBy > OPEN_CLOSE_THRESHOLD &&
-        itemPositionOnStart === -MAX_MOVE_DISTANCE)
+        itemPositionOnEnd > itemPositionOnStart)
     ) {
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
@@ -144,6 +147,7 @@ const ItemList = ({
 
   // touch start
   const handleTouchStart = (e) => {
+    // after item closes when new item is opened state must be reset on previously opened item
     if (itemRef.current.id !== previousItemId) {
       setCurrentTranslateX(0);
       setPreviousTranslateX(0);
@@ -181,6 +185,7 @@ const ItemList = ({
   const handleTouchEnd = () => {
     setMovedBy(Math.abs(currentTranslateX - previousTranslateX));
     setDuration(new Date().getTime() - startTime);
+    setItemPositionOnEnd(itemRef.current.getBoundingClientRect().left);
     cancelAnimationFrame(animationIdRef.current);
   };
 

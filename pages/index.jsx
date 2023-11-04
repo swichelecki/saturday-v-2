@@ -50,6 +50,7 @@ const Home = ({ tasks }) => {
   const priority =
     globalContextTasks?.length > 0 ? globalContextTasks?.length + 1 : 1;
 
+  // ensure all items are closed after new item is created or item is deleted
   const handleItemsTouchReset = () => {
     allItems = Array.from(document.querySelectorAll('.list-item__item'));
     allItems.forEach((item) => {
@@ -145,6 +146,7 @@ const Home = ({ tasks }) => {
     });
   };
 
+  // close currently open item when a new item is opened
   const closeOpenItem = (currentItemId) => {
     allItems = Array.from(document.querySelectorAll('.list-item__item'));
     allItems.forEach((item) => {
