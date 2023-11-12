@@ -14,20 +14,45 @@
   }
   .weather {
     position: absolute;
-    top: 10px;
+    top: 12px;
     right: 48px;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    p {
-      margin: 0;
+    gap: 16px;
+    &__icon-temp-location-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      &:after {
+        content: '';
+        position: absolute;
+        right: -8px;
+        top: 12.5%;
+        height: 75%;
+        width: 1px;
+        background: $color-font;
+      }
     }
-    &__temp {
-      font-size: 1.875rem; // 30px
+    &__icon-temp {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.75rem; // 28px
+      gap: 8px;
+      svg {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
     }
-    &__location {
-      font-size: 1.125rem; // 18px
+    &__high-low-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem; // 16px
     }
   }
 }
@@ -39,11 +64,10 @@
     }
     .weather {
       right: 24px;
-      &__temp {
-        font-size: 1.5rem; // 24px
-      }
-      &__location {
-        font-size: 1rem; // 16px
+      top: 20px;
+      &__icon-temp-location-wrapper {
+        flex-direction: row;
+        gap: 8px;
       }
     }
   }
@@ -56,9 +80,20 @@
       padding: 12px 24px;
     }
     .weather {
-      top: 16px;
-      flex-direction: row;
-      gap: 6px;
+      top: 12px;
+      font-size: 1rem; // 16px
+      &__icon-temp-location-wrapper {
+        gap: 6px;
+      }
+      &__icon-temp {
+        font-size: 1.5rem; // 24px
+        svg {
+          display: none;
+        }
+      }
+      &__high-low-wrapper {
+        font-size: 0.8125rem; // 13px
+      }
     }
   }
 }

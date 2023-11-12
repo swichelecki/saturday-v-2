@@ -3,7 +3,7 @@ const handleTransitionSpeed = (movedBy, duration) => {
   const MIN_TRANSITION_SPEED = 500;
 
   const velocity = movedBy / duration;
-  const speed = Math.floor(movedBy / velocity);
+  const speed = Math.round(movedBy / velocity);
 
   return speed < MIN_TRANSITION_SPEED && speed >= MAX_TRANSITION_SPEED
     ? speed
