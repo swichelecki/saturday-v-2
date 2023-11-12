@@ -77,7 +77,7 @@ const Weather = () => {
             <span>&deg;</span>
           </p>
         </div>
-        <p>Chicago</p>
+        <p className='weather__location'>Chicago</p>
       </div>
       <div className='weather__high-low-wrapper'>
         <p>
