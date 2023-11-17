@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { handleDayNightCheck } from 'utilities';
 import {
   BsFillSunFill,
   BsCloudSunFill,
@@ -7,6 +8,8 @@ import {
   BsFillCloudRainFill,
   BsSnow,
   BsFillCloudLightningRainFill,
+  BsFillMoonStarsFill,
+  BsFillCloudMoonFill,
 } from 'react-icons/bs';
 
 const ICON_MAP = new Map();
@@ -29,7 +32,7 @@ const Weather = () => {
       const { temperature_2m_max, temperature_2m_min } = daily;
 
       setTemperature(Math.round(temperature_2m));
-      setWeatherCode(weather_code);
+      setWeatherCode(handleDayNightCheck(weather_code));
       setTodaysHigh(Math.round(temperature_2m_max));
       setTodaysLow(Math.round(temperature_2m_min));
     } else {
@@ -61,6 +64,8 @@ const Weather = () => {
     );
     addMapping([71, 73, 75, 77, 85, 86], <BsSnow />);
     addMapping([95, 96, 99], <BsFillCloudLightningRainFill />);
+    addMapping([100], <BsFillMoonStarsFill />);
+    addMapping([101], <BsFillCloudMoonFill />);
   }, []);
 
   if (!temperature) {
