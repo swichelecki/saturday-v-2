@@ -3,33 +3,32 @@ import moment from 'moment-timezone';
 const handleDayNightCheck = (weather_code) => {
   if (weather_code > 2) return weather_code;
 
+  const FORMAT_TIME = 'HH:mm:ss';
   const MOON = 100;
   const MOON_CLOUDS = 101;
 
-  const today = moment().tz('America/Chicago').format();
-  const year = moment().tz('America/Chicago').format('YYYY');
-  const nextYear = parseInt(year) + 1;
+  const today = moment();
+  const year = today.format('YYYY');
 
-  let todayFormattedWinterSunrise = today.split('T')[0];
-  todayFormattedWinterSunrise = `${todayFormattedWinterSunrise}T06:00:00-00:00`;
-  let todayFormattedWinterSunSet = today.split('T')[0];
-  todayFormattedWinterSunSet = `${todayFormattedWinterSunSet}T17:00:00-00:00`;
+  const octoberOne = `${year}-10-01`;
+  const decemberThirtyFirst = `${year}-12-31`;
+  const januaryFirst = `${year}-01-01`;
+  const marchThirtyFirst = `${year}-03-31`;
+  const aprilFirst = `${year}-04-01`;
+  const septemberThirtieth = `${year}-09-30`;
 
-  let todayFormattedSummerSunrise = today.split('T')[0];
-  todayFormattedSummerSunrise = `${todayFormattedSummerSunrise}T07:00:00-00:00`;
-  let todayFormattedSummerSunSet = today.split('T')[0];
-  todayFormattedSummerSunSet = `${todayFormattedSummerSunSet}T20:00:00-00:00`;
+  const winterSunrise = moment('06:00:00', FORMAT_TIME);
+  const winterSunSet = moment('17:00:00', FORMAT_TIME);
+  const summerSunrise = moment('07:00:00', FORMAT_TIME);
+  const summerSunSet = moment('20:00:00', FORMAT_TIME);
 
   // check for fall/winter
-  if (moment(today).isBetween(`${year}-10-01`, `${nextYear}-04-01`)) {
+  if (
+    today.isBetween(octoberOne, decemberThirtyFirst, undefined, '[]') ||
+    today.isBetween(januaryFirst, marchThirtyFirst, undefined, '[]')
+  ) {
     // check day or night
-    if (
-      moment(today).isBetween(
-        todayFormattedWinterSunrise,
-        todayFormattedWinterSunSet,
-        'hour'
-      )
-    ) {
+    if (today.isBetween(winterSunrise, winterSunSet, undefined, '[]')) {
       return weather_code;
     } else {
       // check weather code for night
@@ -42,15 +41,9 @@ const handleDayNightCheck = (weather_code) => {
   }
 
   // check for spring/summer
-  if (moment(today).isBetween(`${year}-04-02`, `${nextYear}-09-30`)) {
+  if (today.isBetween(aprilFirst, septemberThirtieth, undefined, '[]')) {
     // check day or night
-    if (
-      moment(today).isBetween(
-        todayFormattedSummerSunrise,
-        todayFormattedSummerSunSet,
-        'hour'
-      )
-    ) {
+    if (today.isBetween(summerSunrise, summerSunSet, undefined, '[]')) {
       return weather_code;
     } else {
       // check weather code for night
