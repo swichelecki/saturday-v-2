@@ -12,6 +12,9 @@
       font-size: 1.375rem; // 22px;
     }
   }
+  &__list-item-wrapper {
+    position: relative;
+  }
 }
 
 @media screen and (max-width: 600px) {

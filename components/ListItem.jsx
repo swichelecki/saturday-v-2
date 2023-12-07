@@ -29,15 +29,23 @@ const ItemList = ({
   allItemsTouchReset,
   hideItemDetailsOnDrag,
   setHideItemDetailsOnDrag,
+  listItemWrapperRef,
+  setListItemHeight,
 }) => {
   const width = useInnerWidth();
 
+  const startingIndexRef = useRef(null);
   const detailsRef = useRef(null);
+  const listItemRef = useRef(null);
   const itemRef = useRef(null);
   const animationIdRef = useRef(null);
+  const animationYIdRef = useRef(null);
   const detailsRefCurrent = detailsRef.current;
+  const arrayOfListItemsRef = useRef(null);
+  const arrayOfListItemsRefCurr = arrayOfListItemsRef.current;
 
   const [isOpen, setIsOpen] = useState(false);
+  // state for x-axis animation
   const [startXPosition, setStartXPosition] = useState(0);
   const [startYPosition, setStartYPosition] = useState(0);
   const [itemPositionOnStart, setItemPositionOnStart] = useState(0);
@@ -47,10 +55,32 @@ const ItemList = ({
   const [movedBy, setMovedBy] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  // state for y-axis animation
+  const [currentTranslateY, setCurrentTranslateY] = useState(0);
+  const [listItemYPositionOnStart, setListItemYPositionOnStart] = useState(0);
+  const [isTouchMove, setIsTouchMove] = useState(false);
 
   const OPEN_CLOSE_THRESHOLD = 60;
   const TOUCH_DURATION_THRESHOLD = 400;
-  const MAX_MOVE_DISTANCE = 146;
+  const MAX_MOVE_DISTANCE = -146;
+  const MOBILE_BREAKPOINT = 600;
+  const ITEM_REORDER_TOUCH_EVENT = 'touchEvent';
+  const ITEM_REORDER_DRAG_EVENT = 'dragEvent';
+
+  // get array of column list items for touch y-axis dom manipulation
+  useEffect(() => {
+    const listItemWrapper = listItemWrapperRef.current;
+    arrayOfListItemsRef.current = [
+      ...listItemWrapper.querySelectorAll('.list-item__outer-wrapper'),
+    ];
+  }, [listItemWrapperRef]);
+
+  // set column wrapper height on mobile
+  useEffect(() => {
+    if (width <= MOBILE_BREAKPOINT && index === 0) {
+      setListItemHeight(listItemRef.current.clientHeight);
+    }
+  }, [listItemRef, index, width]);
 
   // when all items are closed automatically make sure state is reset for next item touch
   useEffect(() => {
@@ -76,6 +106,14 @@ const ItemList = ({
       (e) => handlePreventScroll(e),
       { passive: false }
     );
+
+    return () => {
+      itemRef.current?.removeEventListener(
+        'touchmove',
+        (e) => handlePreventScroll(e),
+        { passive: false }
+      );
+    };
   }, []);
 
   // handle touch transitions after touchend event
@@ -93,8 +131,8 @@ const ItemList = ({
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       itemRef.current.style.transform = `translateX(-146px)`;
-      setCurrentTranslateX(-MAX_MOVE_DISTANCE);
-      setPreviousTranslateX(-MAX_MOVE_DISTANCE);
+      setCurrentTranslateX(MAX_MOVE_DISTANCE);
+      setPreviousTranslateX(MAX_MOVE_DISTANCE);
     }
 
     // close item on swipe or when touchmove exceeds close threshold
@@ -129,20 +167,25 @@ const ItemList = ({
     if (
       duration >= TOUCH_DURATION_THRESHOLD &&
       movedBy < OPEN_CLOSE_THRESHOLD &&
-      itemPositionOnStart === -MAX_MOVE_DISTANCE
+      itemPositionOnStart === MAX_MOVE_DISTANCE
     ) {
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       itemRef.current.style.transform = 'translateX(-146px)';
-      setCurrentTranslateX(-MAX_MOVE_DISTANCE);
-      setPreviousTranslateX(-MAX_MOVE_DISTANCE);
+      setCurrentTranslateX(MAX_MOVE_DISTANCE);
+      setPreviousTranslateX(MAX_MOVE_DISTANCE);
     }
   }, [duration, movedBy]);
 
   // initialize animation
   useEffect(() => {
     animationIdRef.current = requestAnimationFrame(animation);
-    return () => cancelAnimationFrame(animationIdRef.current);
+    animationYIdRef.current = requestAnimationFrame(animationY);
+
+    return () => {
+      cancelAnimationFrame(animationIdRef.current);
+      cancelAnimationFrame(animationYIdRef.current);
+    };
   }, []);
 
   // touch start
@@ -192,10 +235,173 @@ const ItemList = ({
   // animate open and close item on touchmove
   const animation = () => {
     const itemTranslateX = Math.max(
-      -MAX_MOVE_DISTANCE,
+      MAX_MOVE_DISTANCE,
       Math.min(currentTranslateX, 0)
     );
     itemRef.current.style.transform = `translateX(${itemTranslateX}px)`;
+  };
+
+  // disable scrolling on touch y-axis move
+  useEffect(() => {
+    const handlePreventScroll = (e) => {
+      if (isTouchMove) {
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    itemRef.current.addEventListener(
+      'touchmove',
+      (e) => handlePreventScroll(e),
+      { passive: false }
+    );
+
+    return () => {
+      itemRef.current?.removeEventListener(
+        'touchmove',
+        (e) => handlePreventScroll(e),
+        { passive: false }
+      );
+    };
+  }, [isTouchMove]);
+
+  // touch y-axis start
+  const handleTouchYStart = (e) => {
+    setIsTouchMove(true);
+    handleDragStart(index);
+    setStartYPosition(e.touches[0].clientY);
+    setListItemYPositionOnStart(listItemRef.current.clientHeight * index);
+    startingIndexRef.current = index;
+
+    // on first touch start position top is set on each absolute item
+    arrayOfListItemsRefCurr?.forEach((item, i) => {
+      item.style.position = 'absolute';
+      item.style.top = `${item.clientHeight * i}px`;
+      item.style.left = '0';
+      item.style.right = '0';
+      item.style.zIndex = '1';
+    });
+
+    listItemRef.current.style.zIndex = '2';
+  };
+
+  // touch y-axis move
+  const handleTouchYMove = (e) => {
+    if (isOpen) return;
+
+    let currentPosition = e.touches[0].clientY;
+
+    setCurrentTranslateY(
+      Math.max(
+        0,
+        Math.min(
+          listItemYPositionOnStart + currentPosition - startYPosition,
+          listItemWrapperRef.current.clientHeight -
+            listItemRef.current.clientHeight
+        )
+      )
+    );
+
+    animationYIdRef.current = requestAnimationFrame(animationY);
+
+    // move up and trigger array resort and dom update
+    if (
+      currentTranslateY > 0 &&
+      currentTranslateY <
+        listItemRef.current.clientHeight * (startingIndexRef.current - 1) +
+          listItemRef.current.clientHeight / 2
+    ) {
+      startingIndexRef.current -= 1;
+
+      handleDragEnter(startingIndexRef.current, ITEM_REORDER_TOUCH_EVENT);
+
+      arrayOfListItemsRefCurr?.forEach((item) => {
+        // moves item down when item dragged over it
+        if (parseInt(item.dataset.listItemIndex) === startingIndexRef.current) {
+          item.style.top = `${
+            item.clientHeight * (parseInt(item.dataset.listItemIndex) + 1)
+          }px`;
+          item.setAttribute(
+            'data-list-item-index',
+            parseInt(item.dataset.listItemIndex) + 1
+          );
+        }
+
+        // sets new index for item being dragged
+        if (
+          parseInt(item.dataset.listItemIndex) ===
+          startingIndexRef.current + 1
+        ) {
+          item.setAttribute(
+            'data-list-item-index',
+            parseInt(item.dataset.listItemIndex)
+          );
+        }
+      });
+    }
+
+    // move down and trigger array resort and dom update
+    if (
+      currentTranslateY <
+        listItemWrapperRef.current.clientHeight -
+          listItemRef.current.clientHeight &&
+      currentTranslateY >
+        listItemRef.current.clientHeight * startingIndexRef.current +
+          listItemRef.current.clientHeight / 2
+    ) {
+      startingIndexRef.current += 1;
+
+      handleDragEnter(startingIndexRef.current, ITEM_REORDER_TOUCH_EVENT);
+
+      arrayOfListItemsRefCurr?.forEach((item) => {
+        // moves item up when item dragged over it
+        if (parseInt(item.dataset.listItemIndex) === startingIndexRef.current) {
+          item.style.top = `${
+            item.clientHeight * (parseInt(item.dataset.listItemIndex) - 1)
+          }px`;
+          item.setAttribute(
+            'data-list-item-index',
+            parseInt(item.dataset.listItemIndex) - 1
+          );
+        }
+
+        // sets new index for item being dragged
+        if (
+          parseInt(item.dataset.listItemIndex) ===
+          startingIndexRef.current - 1
+        ) {
+          item.setAttribute(
+            'data-list-item-index',
+            parseInt(item.dataset.listItemIndex)
+          );
+        }
+      });
+    }
+  };
+
+  // touch y-axis end
+  const handleTouchYEnd = () => {
+    setIsTouchMove(false);
+
+    handleDragEnd(ITEM_REORDER_TOUCH_EVENT);
+
+    arrayOfListItemsRefCurr?.forEach((item, i) => {
+      item.style.position = 'relative';
+      item.style.top = 'unset';
+      item.style.left = 'unset';
+      item.style.bottom = 'unset';
+      item.style.right = 'unset';
+      item.style.zIndex = '1';
+      item.setAttribute('data-list-item-index', parseInt(i));
+    });
+
+    cancelAnimationFrame(animationYIdRef.current);
+  };
+
+  // animate y-axis
+  const animationY = () => {
+    listItemRef.current.style.top = `${currentTranslateY}px`;
   };
 
   const handleShowDetails = () => {
@@ -231,9 +437,13 @@ const ItemList = ({
   return (
     <div
       className={
-        dragging ? handleDragStyles(index) : 'list-item__outer-wrapper'
+        dragging && width > MOBILE_BREAKPOINT
+          ? handleDragStyles(index)
+          : 'list-item__outer-wrapper'
       }
+      ref={listItemRef}
       style={item?.type === 'upcoming' ? { cursor: 'default' } : {}}
+      data-list-item-index={index}
       draggable={item?.type !== 'upcoming'}
       onDragStart={() => {
         handleDragStart(index);
@@ -242,11 +452,13 @@ const ItemList = ({
       onDragEnter={
         dragging
           ? () => {
-              handleDragEnter(index);
+              handleDragEnter(index, ITEM_REORDER_DRAG_EVENT);
             }
           : null
       }
-      onDragEnd={handleDragEnd}
+      onDragEnd={() => {
+        handleDragEnd(ITEM_REORDER_DRAG_EVENT);
+      }}
       onDragOver={(e) => e.preventDefault()}
     >
       <div
@@ -286,7 +498,12 @@ const ItemList = ({
           id={`${item?.type}_index_${index}`}
         >
           {item?.type !== 'upcoming' && (
-            <div className='list-item__item-drag-zone'>
+            <div
+              className='list-item__item-drag-zone'
+              onTouchStart={(e) => handleTouchYStart(e)}
+              onTouchMove={(e) => handleTouchYMove(e)}
+              onTouchEnd={handleTouchYEnd}
+            >
               <GrDrag />
             </div>
           )}
@@ -383,5 +600,4 @@ const ItemList = ({
     </div>
   );
 };
-
 export default ItemList;
