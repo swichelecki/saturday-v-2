@@ -45,10 +45,9 @@ const ItemList = ({
   const startingIndexRef = useRef(null);
   const detailsRef = useRef(null);
   const listItemRef = useRef(null);
-  const itemRef = useRef(null);
-  const animationIdRef = useRef(null);
+  const listItemInnerRef = useRef(null);
+  const animationXIdRef = useRef(null);
   const animationYIdRef = useRef(null);
-  const detailsRefCurrent = detailsRef.current;
   const arrayOfListItemsRef = useRef(null);
   const arrayOfListItemsRefCurr = arrayOfListItemsRef.current;
 
@@ -56,18 +55,17 @@ const ItemList = ({
   // state for x-axis animation
   const [startXPosition, setStartXPosition] = useState(0);
   const [startYPosition, setStartYPosition] = useState(0);
-  const [itemPositionOnStart, setItemPositionOnStart] = useState(0);
-  const [itemPositionOnEnd, setItemPositionOnEnd] = useState(0);
+  const [itemXPositionOnStart, setItemXPositionOnStart] = useState(0);
+  const [itemXPositionOnEnd, setItemXPositionOnEnd] = useState(0);
   const [currentTranslateX, setCurrentTranslateX] = useState(0);
   const [previousTranslateX, setPreviousTranslateX] = useState(0);
   const [movedBy, setMovedBy] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [duration, setDuration] = useState(0);
   // state for y-axis animation
-  //const [listItemHeight, setListItemHeight] = useState(0);
   const [currentTranslateY, setCurrentTranslateY] = useState(0);
   const [listItemYPositionOnStart, setListItemYPositionOnStart] = useState(0);
-  const [isTouchMove, setIsTouchMove] = useState(false);
+  const [isYTouchMove, setIsYTouchMove] = useState(false);
 
   // get array of column list items for touch y-axis dom manipulation
   useEffect(() => {
@@ -76,13 +74,6 @@ const ItemList = ({
       ...listItemWrapper.querySelectorAll('.list-item__outer-wrapper'),
     ];
   }, [numberOfItemsInColumn]);
-
-  // set column wrapper height on mobile
-  /*   useEffect(() => {
-    if (width <= MOBILE_BREAKPOINT && index === 0) {
-      setListItemHeight(listItemRef.current.clientHeight);
-    }
-  }, [listItemRef, index, width]); */
 
   // when all items are closed automatically make sure state is reset for next item touch
   useEffect(() => {
@@ -96,21 +87,21 @@ const ItemList = ({
   // disable scrolling when opening and closing items on touch
   useEffect(() => {
     const handlePreventScroll = (e) => {
-      if (itemRef.current.style.transform !== 'translateX(0px)') {
+      if (listItemInnerRef.current.style.transform !== 'translateX(0px)') {
         if (e.cancelable) {
           e.preventDefault();
         }
       }
     };
 
-    itemRef.current.addEventListener(
+    listItemInnerRef.current.addEventListener(
       'touchmove',
       (e) => handlePreventScroll(e),
       { passive: false }
     );
 
     return () => {
-      itemRef.current?.removeEventListener(
+      listItemInnerRef.current?.removeEventListener(
         'touchmove',
         (e) => handlePreventScroll(e),
         { passive: false }
@@ -118,21 +109,21 @@ const ItemList = ({
     };
   }, []);
 
-  // handle touch transitions after touchend event
+  // handle touch x-axis transitions after touchend event
   useEffect(() => {
     if (currentTranslateX === previousTranslateX) return;
 
     // open item on swipe or when touchmove exceeds open threshold
     if (
       (duration < TOUCH_DURATION_THRESHOLD &&
-        itemPositionOnEnd < itemPositionOnStart) ||
+        itemXPositionOnEnd < itemXPositionOnStart) ||
       (duration >= TOUCH_DURATION_THRESHOLD &&
         movedBy >= OPEN_CLOSE_THRESHOLD &&
-        itemPositionOnEnd < itemPositionOnStart)
+        itemXPositionOnEnd < itemXPositionOnStart)
     ) {
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
-      itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
-      itemRef.current.style.transform = `translateX(-146px)`;
+      listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      listItemInnerRef.current.style.transform = `translateX(-146px)`;
       setCurrentTranslateX(MAX_MOVE_DISTANCE);
       setPreviousTranslateX(MAX_MOVE_DISTANCE);
     }
@@ -140,14 +131,14 @@ const ItemList = ({
     // close item on swipe or when touchmove exceeds close threshold
     if (
       (duration < TOUCH_DURATION_THRESHOLD &&
-        itemPositionOnEnd > itemPositionOnStart) ||
+        itemXPositionOnEnd > itemXPositionOnStart) ||
       (duration >= TOUCH_DURATION_THRESHOLD &&
         movedBy > OPEN_CLOSE_THRESHOLD &&
-        itemPositionOnEnd > itemPositionOnStart)
+        itemXPositionOnEnd > itemXPositionOnStart)
     ) {
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
-      itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
-      itemRef.current.style.transform = 'translateX(0px)';
+      listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      listItemInnerRef.current.style.transform = 'translateX(0px)';
       setCurrentTranslateX(0);
       setPreviousTranslateX(0);
     }
@@ -156,11 +147,11 @@ const ItemList = ({
     if (
       duration >= TOUCH_DURATION_THRESHOLD &&
       movedBy < OPEN_CLOSE_THRESHOLD &&
-      itemPositionOnStart === 0
+      itemXPositionOnStart === 0
     ) {
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
-      itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
-      itemRef.current.style.transform = 'translateX(0px)';
+      listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      listItemInnerRef.current.style.transform = 'translateX(0px)';
       setCurrentTranslateX(0);
       setPreviousTranslateX(0);
     }
@@ -169,44 +160,46 @@ const ItemList = ({
     if (
       duration >= TOUCH_DURATION_THRESHOLD &&
       movedBy < OPEN_CLOSE_THRESHOLD &&
-      itemPositionOnStart === MAX_MOVE_DISTANCE
+      itemXPositionOnStart === MAX_MOVE_DISTANCE
     ) {
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
-      itemRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
-      itemRef.current.style.transform = 'translateX(-146px)';
+      listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      listItemInnerRef.current.style.transform = 'translateX(-146px)';
       setCurrentTranslateX(MAX_MOVE_DISTANCE);
       setPreviousTranslateX(MAX_MOVE_DISTANCE);
     }
   }, [duration, movedBy]);
 
-  // initialize animation
+  // initialize animations
   useEffect(() => {
-    animationIdRef.current = requestAnimationFrame(animation);
+    animationXIdRef.current = requestAnimationFrame(animationX);
     animationYIdRef.current = requestAnimationFrame(animationY);
 
     return () => {
-      cancelAnimationFrame(animationIdRef.current);
+      cancelAnimationFrame(animationXIdRef.current);
       cancelAnimationFrame(animationYIdRef.current);
     };
   }, []);
 
-  // touch start
-  const handleTouchStart = (e) => {
+  // touch x-axis start
+  const handleTouchXStart = (e) => {
     // after item closes when new item is opened state must be reset on previously opened item
-    if (itemRef.current.id !== previousItemId) {
+    if (listItemInnerRef.current.id !== previousItemId) {
       setCurrentTranslateX(0);
       setPreviousTranslateX(0);
     }
-    previousItemId = closeOpenItem(itemRef.current.id);
+    previousItemId = closeOpenItem(listItemInnerRef.current.id);
     setStartXPosition(e.touches[0].clientX);
     setStartYPosition(e.touches[0].clientY);
-    itemRef.current.style.transition = 'none';
-    setItemPositionOnStart(itemRef.current.getBoundingClientRect().left);
+    listItemInnerRef.current.style.transition = 'none';
+    setItemXPositionOnStart(
+      listItemInnerRef.current.getBoundingClientRect().left
+    );
     setStartTime(new Date().getTime());
   };
 
-  // touch move
-  const handleTouchMove = (e) => {
+  // touch x-axis move
+  const handleTouchXMove = (e) => {
     // if touch move is up or down end touch move
     if (
       Math.max(
@@ -221,56 +214,61 @@ const ItemList = ({
       return;
 
     if (isOpen) return;
+
     let currentPosition = e.touches[0].clientX;
-    setCurrentTranslateX(previousTranslateX + currentPosition - startXPosition);
-    animationIdRef.current = requestAnimationFrame(animation);
+    setCurrentTranslateX(
+      Math.max(
+        MAX_MOVE_DISTANCE,
+        Math.min(previousTranslateX + currentPosition - startXPosition, 0)
+      )
+    );
+
+    animationXIdRef.current = requestAnimationFrame(animationX);
   };
 
-  // touch end
-  const handleTouchEnd = () => {
+  // touch x-axis end
+  const handleTouchXEnd = () => {
     setMovedBy(Math.abs(currentTranslateX - previousTranslateX));
     setDuration(new Date().getTime() - startTime);
-    setItemPositionOnEnd(itemRef.current.getBoundingClientRect().left);
-    cancelAnimationFrame(animationIdRef.current);
+    setItemXPositionOnEnd(
+      listItemInnerRef.current.getBoundingClientRect().left
+    );
+    cancelAnimationFrame(animationXIdRef.current);
   };
 
-  // animate open and close item on touchmove
-  const animation = () => {
-    const itemTranslateX = Math.max(
-      MAX_MOVE_DISTANCE,
-      Math.min(currentTranslateX, 0)
-    );
-    itemRef.current.style.transform = `translateX(${itemTranslateX}px)`;
+  // animate x-axis
+  const animationX = () => {
+    listItemInnerRef.current.style.transform = `translateX(${currentTranslateX}px)`;
   };
 
   // TODO: still not working --- disable scrolling on touch y-axis move
   useEffect(() => {
     const handlePreventScroll = (e) => {
-      if (isTouchMove) {
+      if (isYTouchMove) {
         if (e.cancelable) {
           e.preventDefault();
         }
       }
     };
 
-    itemRef.current.addEventListener(
+    listItemInnerRef.current.addEventListener(
       'touchmove',
       (e) => handlePreventScroll(e),
       { passive: false }
     );
 
     return () => {
-      itemRef.current?.removeEventListener(
+      listItemInnerRef.current?.removeEventListener(
         'touchmove',
         (e) => handlePreventScroll(e),
         { passive: false }
       );
     };
-  }, [isTouchMove]);
+  }, [isYTouchMove]);
 
   // touch y-axis start
   const handleTouchYStart = (e) => {
-    setIsTouchMove(true);
+    setIsYTouchMove(true);
     handleDragStart(index);
     setStartYPosition(e.touches[0].clientY);
     setListItemYPositionOnStart(listItemRef.current.clientHeight * index);
@@ -394,7 +392,7 @@ const ItemList = ({
 
   // touch y-axis end
   const handleTouchYEnd = () => {
-    setIsTouchMove(false);
+    setIsYTouchMove(false);
     listItemWrapperRef.current.removeAttribute('style');
 
     handleDragEnd(ITEM_REORDER_TOUCH_EVENT);
@@ -506,7 +504,7 @@ const ItemList = ({
           </div>
         )}
         <div
-          ref={itemRef}
+          ref={listItemInnerRef}
           className='list-item__item'
           id={`${item?.type}_index_${index}`}
         >
@@ -526,9 +524,9 @@ const ItemList = ({
                 ? 'list-item__item-hover-zone--upcoming'
                 : ''
             }`}
-            onTouchStart={(e) => handleTouchStart(e)}
-            onTouchMove={(e) => handleTouchMove(e)}
-            onTouchEnd={handleTouchEnd}
+            onTouchStart={(e) => handleTouchXStart(e)}
+            onTouchMove={(e) => handleTouchXMove(e)}
+            onTouchEnd={handleTouchXEnd}
           >
             <p>{item?.title}</p>
             {width <= 600 && <TbChevronRight />}
@@ -561,7 +559,7 @@ const ItemList = ({
             style={
               isOpen
                 ? {
-                    height: `${handleHiddenHeight(detailsRefCurrent)}px`,
+                    height: `${handleHiddenHeight(detailsRef.current)}px`,
                   }
                 : { height: '0px' }
             }

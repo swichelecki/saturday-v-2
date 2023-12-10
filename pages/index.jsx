@@ -67,7 +67,7 @@ const Home = ({ tasks }) => {
     allItems = Array.from(document.querySelectorAll('.list-item__item'));
     allItems.forEach((item) => {
       item.style.transition = 'unset';
-      item.style.translistItem = 'translateX(0)';
+      item.style.transform = 'translateX(0)';
     });
     setAllItemsTouchReset(true);
   };
@@ -165,8 +165,8 @@ const Home = ({ tasks }) => {
     allItems = Array.from(document.querySelectorAll('.list-item__item'));
     allItems.forEach((item) => {
       if (item?.id !== currentItemId) {
-        item.style.transition = 'translistItem 150ms';
-        item.style.translistItem = 'translateX(0)';
+        item.style.transition = 'transform 150ms';
+        item.style.transform = 'translateX(0)';
       }
     });
     return currentItemId;
