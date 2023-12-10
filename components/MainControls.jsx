@@ -7,12 +7,13 @@ import {
   FaCogs,
   FaCalendarCheck,
 } from 'react-icons/fa';
+import { MOBILE_BREAKPOINT, TYPE_UPCOMING } from 'constants';
 
 const MainControls = ({
   handleOnSubmit,
   handleEditSubmit,
-  setTitle,
   title,
+  handleSetListItem,
   setType,
   type,
   isUpdating,
@@ -39,7 +40,7 @@ const MainControls = ({
             );
           }}
         >
-          {width > 500 ? 'Grocery' : <FaShoppingCart />}
+          {width > MOBILE_BREAKPOINT ? 'Grocery' : <FaShoppingCart />}
         </button>
         <button
           className={`main-controls__type-button${
@@ -52,7 +53,7 @@ const MainControls = ({
             );
           }}
         >
-          {width > 500 ? 'Big Box' : <FaStore />}
+          {width > MOBILE_BREAKPOINT ? 'Big Box' : <FaStore />}
         </button>
         <button
           className={`main-controls__type-button${
@@ -65,23 +66,25 @@ const MainControls = ({
             );
           }}
         >
-          {width > 500 ? 'Other' : <FaCogs />}
+          {width > MOBILE_BREAKPOINT ? 'Other' : <FaCogs />}
         </button>
         <button
           className={`main-controls__type-button${
-            type === 'upcoming' ? ' main-controls__type-button--active' : ''
+            type === TYPE_UPCOMING ? ' main-controls__type-button--active' : ''
           }`}
           onClick={() => {
-            setType('upcoming');
+            setType(TYPE_UPCOMING);
             setCheckbox(true);
           }}
         >
-          {width > 500 ? 'Upcoming' : <FaCalendarCheck />}
+          {width > MOBILE_BREAKPOINT ? 'Upcoming' : <FaCalendarCheck />}
         </button>
         <label
           className='inputs__checkbox-container'
           htmlFor='checkbox'
-          style={type === 'upcoming' && checkbox ? { cursor: 'no-drop' } : {}}
+          style={
+            type === TYPE_UPCOMING && checkbox ? { cursor: 'no-drop' } : {}
+          }
           onChange={() => setIsCheckedByUser((current) => !current)}
         >
           <span>Detailed</span>
@@ -89,7 +92,7 @@ const MainControls = ({
             type='checkbox'
             id='checkbox'
             onChange={(e) => {
-              if (type === 'upcoming') return;
+              if (type === TYPE_UPCOMING) return;
               setCheckbox(e.target.checked);
             }}
             checked={checkbox}
@@ -102,7 +105,7 @@ const MainControls = ({
           <Link
             href={{
               pathname: '/details',
-              query: { itemPriority: priority, type: type },
+              query: { priority, type },
             }}
           >
             <span className='main-controls__create-button'>Create</span>
@@ -127,7 +130,7 @@ const MainControls = ({
         <input
           type='text'
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={handleSetListItem}
           disabled={checkbox && !isUpdating}
         />
       </div>

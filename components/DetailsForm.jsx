@@ -5,94 +5,85 @@ import { submitTask, updateTask } from '../services';
 import moment from 'moment-timezone';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
+import { TYPE_UPCOMING } from 'constants';
 
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 const DetailsForm = ({ task }) => {
-  const [title, setTitle] = useState(task?.title ?? '');
-  const [description, setDescription] = useState(task?.description ?? '');
-  const [confirmDeletion, setConfirmDeletion] = useState(
-    task?.confirmDeletion ?? false
-  );
-  const [date, setDate] = useState(task?.date?.split('T')[0] ?? '');
-  const [dateAndTime, setDateAndTime] = useState(
-    task?.dateAndTime
+  const [form, setForm] = useState({
+    _id: task?._id,
+    title: task?.title ?? '',
+    description: task?.description ?? '',
+    confirmDeletion: task?.confirmDeletion ?? false,
+    date: task?.date?.split('T')[0] ?? '',
+    dateAndTime: task?.dateAndTime
       ? moment(task?.dateAndTime)
           .tz('America/Chicago')
           .format('yyyy-MM-DDTHH:mm')
-      : ''
-  );
-  const [taskType, setTaskType] = useState(task?.type ?? '');
+      : '',
+    priority: task?.priority ?? '',
+    type: task?.type ?? '',
+  });
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
   const router = useRouter();
-  const { itemPriority, type } = router.query;
+  const { priority, type } = router.query;
 
-  const priority = task ? task?.priority : itemPriority;
-
+  // set state priority and type from query params when blank form
   useEffect(() => {
     if (!task) {
-      setTaskType(type);
+      setForm({
+        ...form,
+        priority,
+        type,
+      });
     }
-  }, []);
+  }, [priority, type]);
+
+  const handleSetForm = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleConfirmDeletion = (e) => {
+    setForm({ ...form, confirmDeletion: e.target.checked });
+  };
+
+  const handleSetQuill = (value) => {
+    setForm({ ...form, description: value });
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
 
     if (
-      !title ||
-      (taskType === 'upcoming' && !date && !dateAndTime) ||
-      (taskType !== 'upcoming' && !description)
+      !form?.title ||
+      (type === TYPE_UPCOMING && !form?.date && !form?.dateAndTime) ||
+      (type !== TYPE_UPCOMING && !form?.description)
     ) {
+      // TODO: create user notifications
       return;
     }
 
-    let taskObject = {};
-
-    if (date) {
-      taskObject = {
-        _id: task?._id,
-        title,
-        description,
-        confirmDeletion,
-        date: date,
-        dateAndTime: null,
-        priority,
-        type,
+    const formatDateAndTimeForMongoDB = (form) => {
+      return {
+        ...form,
+        dateAndTime: new Date(form?.dateAndTime).toISOString(),
+        date: form?.dateAndTime.split('T')[0],
       };
-    }
+    };
 
-    if (dateAndTime) {
-      taskObject = {
-        _id: task?._id,
-        title,
-        description,
-        confirmDeletion,
-        date: dateAndTime.split('T')[0],
-        dateAndTime: new Date(dateAndTime).toISOString(),
-        priority,
-        type,
-      };
-    }
-
-    if (!date && !dateAndTime && taskType !== 'upcoming') {
-      taskObject = {
-        _id: task?._id,
-        title,
-        description,
-        confirmDeletion,
-        date: null,
-        dateAndTime: null,
-        priority,
-        type,
-      };
-    }
+    const finalForm = form?.dateAndTime
+      ? formatDateAndTimeForMongoDB(form)
+      : form;
 
     setIsAwaitingSaveResponse(true);
 
-    itemPriority == undefined
-      ? updateTask(taskObject).then((res) => router.push('/'))
-      : submitTask(taskObject).then((res) => {
+    priority == undefined
+      ? updateTask(finalForm).then((res) => router.push('/'))
+      : submitTask(finalForm).then((res) => {
           router.push('/');
         });
   };
@@ -104,16 +95,17 @@ const DetailsForm = ({ task }) => {
         <input
           type='text'
           id='title'
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          name='title'
+          value={form?.title}
+          onChange={handleSetForm}
         />
       </div>
       <div className='details-form__form-row'>
         <label htmlFor='description'>Description</label>
         <ReactQuill
           theme='snow'
-          value={description}
-          onChange={setDescription}
+          value={form?.description}
+          onChange={handleSetQuill}
         />
       </div>
       <div className='details-form__form-row'>
@@ -122,37 +114,34 @@ const DetailsForm = ({ task }) => {
           <input
             type='checkbox'
             id='checkbox'
-            onChange={(e) => {
-              setConfirmDeletion(e.target.checked);
-            }}
-            checked={confirmDeletion}
+            checked={form?.confirmDeletion}
+            onChange={handleConfirmDeletion}
           />
           <span className='inputs__checkbox'></span>
         </label>
       </div>
-      {taskType === 'upcoming' && (
+      {(form?.type === TYPE_UPCOMING || type === TYPE_UPCOMING) && (
         <>
           <div className='details-form__form-row'>
             <label htmlFor='date'>Date</label>
             <input
-              disabled={dateAndTime ? true : false}
+              disabled={form?.dateAndTime}
               type='date'
               id='date'
-              value={date && !dateAndTime ? date : ''}
-              onChange={(e) => setDate(e.target.value)}
+              name='date'
+              value={form?.date && !form?.dateAndTime ? form?.date : ''}
+              onChange={handleSetForm}
             />
           </div>
           <div className='details-form__form-row'>
             <label htmlFor='dateAndTime'>Date & Time</label>
             <input
-              disabled={date && !dateAndTime ? true : false}
+              disabled={form?.date && !form?.dateAndTime}
               type='datetime-local'
               id='dateAndTime'
-              value={dateAndTime}
-              onChange={(e) => {
-                setDateAndTime(e.target.value);
-                setDate('');
-              }}
+              name='dateAndTime'
+              value={form?.dateAndTime}
+              onChange={handleSetForm}
             />
           </div>
         </>

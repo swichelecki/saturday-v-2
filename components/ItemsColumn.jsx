@@ -9,6 +9,11 @@ import {
   FaCogs,
   FaCalendarCheck,
 } from 'react-icons/fa';
+import {
+  MOBILE_BREAKPOINT,
+  ITEM_REORDER_DRAG_EVENT,
+  ITEM_REORDER_TOUCH_EVENT,
+} from 'constants';
 
 const ItemsColumn = ({
   heading,
@@ -30,15 +35,10 @@ const ItemsColumn = ({
   const dragOverItemRef = useRef(null);
   const listItemWrapperRef = useRef(null);
 
-  const [listItemHeight, setListItemHeight] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [filteredTasks, setFilteredTasks] = useState([]);
   const [touchFilteredTasks, setTouchFilteredTasks] = useState([]);
   const [hideItemDetailsOnDrag, setHideItemDetailsOnDrag] = useState(false);
-
-  const MOBILE_BREAKPOINT = 600;
-  const ITEM_REORDER_DRAG_EVENT = 'dragEvent';
-  const ITEM_REORDER_TOUCH_EVENT = 'touchEvent';
 
   useEffect(() => {
     if (width > MOBILE_BREAKPOINT) return;
@@ -98,11 +98,6 @@ const ItemsColumn = ({
         icon = '';
     }
     return icon;
-  };
-
-  // set column wrapper height on mobile
-  const handleWrapperHeight = (numberOfItems) => {
-    return numberOfItems * listItemHeight;
   };
 
   const handleDragStart = (index) => {
@@ -190,15 +185,7 @@ const ItemsColumn = ({
         {handleIcon(heading)}
         {heading}
       </h2>
-      <div
-        className='items-column__list-item-wrapper'
-        style={
-          listItemHeight && width <= MOBILE_BREAKPOINT
-            ? { height: `${handleWrapperHeight(filteredTasks?.length)}px` }
-            : {}
-        }
-        ref={listItemWrapperRef}
-      >
+      <div className='items-column__list-item-wrapper' ref={listItemWrapperRef}>
         {filteredTasks?.map((item, index) => (
           <ListItem
             item={item}
@@ -221,7 +208,7 @@ const ItemsColumn = ({
             hideItemDetailsOnDrag={hideItemDetailsOnDrag}
             setHideItemDetailsOnDrag={setHideItemDetailsOnDrag}
             listItemWrapperRef={listItemWrapperRef}
-            setListItemHeight={setListItemHeight}
+            numberOfItemsInColumn={filteredTasks?.length}
           />
         ))}
       </div>

@@ -206,6 +206,7 @@ button.details-form__save-button {
 @media screen and (max-width: 600px) {
   button.main-controls__type-button {
     font-size: 0.875rem; // 14px
+    min-width: 55px;
   }
 
   span.list-item__edit-button--desktop {
@@ -224,11 +225,5 @@ button.details-form__save-button {
       width: 18px;
       height: 18px;
     }
-  }
-}
-
-@media screen and (max-width: 500px) {
-  button.main-controls__type-button {
-    min-width: 55px;
   }
 }

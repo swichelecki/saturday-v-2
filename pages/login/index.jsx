@@ -6,29 +6,27 @@ import { RiAlertFill } from 'react-icons/ri';
 const Login = () => {
   const router = useRouter();
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [form, setForm] = useState({ username: '', password: '' });
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isAwaitingLogInResponse, setisAwaitingLogInResponse] = useState(false);
 
+  const handleForm = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (!username?.length || !password?.length) {
+    if (!form?.username?.length || !form?.password?.length) {
       setHasError(true);
       setErrorMessage('Username and Password Required');
       return;
     }
 
-    const userObject = {
-      username,
-      password,
-    };
-
     setisAwaitingLogInResponse(true);
 
-    const response = await loginUser(userObject);
+    const response = await loginUser(form);
     if (response.status === 200) {
       router.push('/');
     } else if (response.status === 403) {
@@ -52,8 +50,9 @@ const Login = () => {
             <input
               type='text'
               id='username'
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              name='username'
+              value={form?.username}
+              onChange={handleForm}
             />
             {hasError && (
               <div className='login-form__form-error-message'>
@@ -67,8 +66,9 @@ const Login = () => {
             <input
               type='password'
               id='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name='password'
+              value={form?.password}
+              onChange={handleForm}
             />
             {hasError && (
               <div className='login-form__form-error-message'>

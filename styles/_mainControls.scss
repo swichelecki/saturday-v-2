@@ -58,11 +58,6 @@
     &__top-controls {
       justify-content: flex-start;
     }
-  }
-}
-
-@media screen and (max-width: 500px) {
-  .main-controls {
     .inputs__checkbox-container {
       padding: 0 0 0 26px;
     }

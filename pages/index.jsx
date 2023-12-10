@@ -11,6 +11,7 @@ import {
 import { useInnerWidth } from '../hooks';
 import { useUpcomingBirthdays } from '../hooks';
 import { submitTask, getTask, updateTask, deleteTask } from '../services';
+import { MOBILE_BREAKPOINT } from '../constants';
 
 const Home = ({ tasks }) => {
   const width = useInnerWidth();
@@ -19,11 +20,17 @@ const Home = ({ tasks }) => {
   const modalRef = useRef(null);
 
   const [globalContextTasks, setGlobalContextTasks] = useState(tasks);
-  const [title, setTitle] = useState('');
+  const [listItem, setListItem] = useState({
+    title: '',
+    priority: '',
+    type: '',
+    description: '',
+    date: '',
+    dateAndTime: '',
+  });
   const [type, setType] = useState('grocery');
   const [isUpdating, setIsUpdating] = useState(false);
   const [taskToEditId, setTaskToEditId] = useState('');
-  const [taskToEdit, setTaskToEdit] = useState({});
   const [isAwaitingAddResponse, setIsAwaitingAddResponse] = useState(false);
   const [isAwaitingUpdateResponse, setIsAwaitingUpdateResponse] =
     useState(false);
@@ -34,7 +41,15 @@ const Home = ({ tasks }) => {
   const [modalIdToDelete, setModalIdToDelete] = useState('');
 
   const allItems = [];
+  const priority =
+    globalContextTasks?.length > 0 ? globalContextTasks?.length + 1 : 1;
 
+  // set state priority and type
+  useEffect(() => {
+    setListItem({ ...listItem, priority, type });
+  }, [priority, type]);
+
+  // handle submit with Enter key
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Enter') {
@@ -45,52 +60,60 @@ const Home = ({ tasks }) => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [title]);
+  }, [listItem]);
 
-  const priority =
-    globalContextTasks?.length > 0 ? globalContextTasks?.length + 1 : 1;
-
-  // ensure all items are closed after new item is created or item is deleted
+  // ensure all items are closed on mobile after new item is created or item is deleted
   const handleItemsTouchReset = () => {
     allItems = Array.from(document.querySelectorAll('.list-item__item'));
     allItems.forEach((item) => {
       item.style.transition = 'unset';
-      item.style.transform = 'translateX(0)';
+      item.style.translistItem = 'translateX(0)';
     });
     setAllItemsTouchReset(true);
   };
 
+  // set item title
+  const handleSetListItem = (e) => {
+    setListItem({ ...listItem, title: e.target.value });
+  };
+
+  // create new item
   const handleOnSubmit = () => {
-    if (!title) {
+    if (!listItem?.title) {
+      // TODO: create user notifications
       return;
     }
 
-    const taskObject = {
-      title,
-      priority,
-      type,
-      description: null,
-      date: null,
-      dateAndTime: null,
-    };
-
     setIsAwaitingAddResponse(true);
-    submitTask(taskObject).then((res) => {
+    submitTask(listItem).then((res) => {
       setGlobalContextTasks((current) => [...current, res]);
       setIsAwaitingAddResponse(false);
-      if (width <= 600) handleItemsTouchReset();
+      if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
     });
 
-    setTitle('');
+    setListItem({ ...listItem, title: '' });
   };
 
+  // get item to edit
+  const handleEditTask = (id) => {
+    setIsAwaitingEditResponse(true);
+    setTaskToEditId(id);
+    getTask(id).then((res) => {
+      setListItem(res);
+      setIsUpdating(true);
+      setIsAwaitingEditResponse(false);
+    });
+  };
+
+  // edit item
   const handleEditSubmit = () => {
-    if (!title) {
+    if (!listItem?.title) {
+      // TODO: create user notifications
       return;
     }
 
     setIsAwaitingUpdateResponse(true);
-    updateTask({ ...taskToEdit, title }).then((res) => {
+    updateTask(listItem).then((res) => {
       setGlobalContextTasks(
         globalContextTasks?.map((item) => {
           if (item?._id === taskToEditId) {
@@ -107,9 +130,10 @@ const Home = ({ tasks }) => {
       setIsUpdating(false);
       setTaskToEditId('');
     });
-    setTitle('');
+    setListItem({ ...listItem, title: '' });
   };
 
+  // delete item
   const handleDeleteTask = (id, confirmDeletion) => {
     if (confirmDeletion) {
       modalRef.current.showModal();
@@ -124,26 +148,16 @@ const Home = ({ tasks }) => {
       );
       setGlobalContextTasks(filteredTasksArray);
       setIsAwaitingDeleteResponse(false);
-      if (width <= 600) handleItemsTouchReset();
+      if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
       if (modalRef.current.open) modalRef.current.close();
     });
   };
 
+  // cancel item edit
   const handleCancelEdit = () => {
     setIsUpdating(false);
     setTaskToEditId('');
-    setTitle('');
-  };
-
-  const handleEditTask = (id) => {
-    setIsAwaitingEditResponse(true);
-    setTaskToEditId(id);
-    getTask(id).then((res) => {
-      setTitle(res?.title);
-      setTaskToEdit(res);
-      setIsUpdating(true);
-      setIsAwaitingEditResponse(false);
-    });
+    setListItem({ ...listItem, title: '' });
   };
 
   // close currently open item when a new item is opened
@@ -151,8 +165,8 @@ const Home = ({ tasks }) => {
     allItems = Array.from(document.querySelectorAll('.list-item__item'));
     allItems.forEach((item) => {
       if (item?.id !== currentItemId) {
-        item.style.transition = 'transform 150ms';
-        item.style.transform = 'translateX(0)';
+        item.style.transition = 'translistItem 150ms';
+        item.style.translistItem = 'translateX(0)';
       }
     });
     return currentItemId;
@@ -166,8 +180,8 @@ const Home = ({ tasks }) => {
         <MainControls
           handleOnSubmit={handleOnSubmit}
           handleEditSubmit={handleEditSubmit}
-          setTitle={setTitle}
-          title={title}
+          title={listItem?.title}
+          handleSetListItem={handleSetListItem}
           setType={setType}
           type={type}
           isUpdating={isUpdating}

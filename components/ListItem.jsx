@@ -7,6 +7,14 @@ import moment from 'moment-timezone';
 import { GrDrag } from 'react-icons/gr';
 import { MdEdit } from 'react-icons/md';
 import { TbChevronRight } from 'react-icons/tb';
+import {
+  OPEN_CLOSE_THRESHOLD,
+  TOUCH_DURATION_THRESHOLD,
+  MAX_MOVE_DISTANCE,
+  MOBILE_BREAKPOINT,
+  ITEM_REORDER_TOUCH_EVENT,
+  ITEM_REORDER_DRAG_EVENT,
+} from 'constants';
 
 let previousItemId = '';
 
@@ -30,7 +38,7 @@ const ItemList = ({
   hideItemDetailsOnDrag,
   setHideItemDetailsOnDrag,
   listItemWrapperRef,
-  setListItemHeight,
+  numberOfItemsInColumn,
 }) => {
   const width = useInnerWidth();
 
@@ -56,16 +64,10 @@ const ItemList = ({
   const [startTime, setStartTime] = useState(0);
   const [duration, setDuration] = useState(0);
   // state for y-axis animation
+  //const [listItemHeight, setListItemHeight] = useState(0);
   const [currentTranslateY, setCurrentTranslateY] = useState(0);
   const [listItemYPositionOnStart, setListItemYPositionOnStart] = useState(0);
   const [isTouchMove, setIsTouchMove] = useState(false);
-
-  const OPEN_CLOSE_THRESHOLD = 60;
-  const TOUCH_DURATION_THRESHOLD = 400;
-  const MAX_MOVE_DISTANCE = -146;
-  const MOBILE_BREAKPOINT = 600;
-  const ITEM_REORDER_TOUCH_EVENT = 'touchEvent';
-  const ITEM_REORDER_DRAG_EVENT = 'dragEvent';
 
   // get array of column list items for touch y-axis dom manipulation
   useEffect(() => {
@@ -73,14 +75,14 @@ const ItemList = ({
     arrayOfListItemsRef.current = [
       ...listItemWrapper.querySelectorAll('.list-item__outer-wrapper'),
     ];
-  }, [listItemWrapperRef]);
+  }, [numberOfItemsInColumn]);
 
   // set column wrapper height on mobile
-  useEffect(() => {
+  /*   useEffect(() => {
     if (width <= MOBILE_BREAKPOINT && index === 0) {
       setListItemHeight(listItemRef.current.clientHeight);
     }
-  }, [listItemRef, index, width]);
+  }, [listItemRef, index, width]); */
 
   // when all items are closed automatically make sure state is reset for next item touch
   useEffect(() => {
@@ -241,7 +243,7 @@ const ItemList = ({
     itemRef.current.style.transform = `translateX(${itemTranslateX}px)`;
   };
 
-  // disable scrolling on touch y-axis move
+  // TODO: still not working --- disable scrolling on touch y-axis move
   useEffect(() => {
     const handlePreventScroll = (e) => {
       if (isTouchMove) {
@@ -273,6 +275,16 @@ const ItemList = ({
     setStartYPosition(e.touches[0].clientY);
     setListItemYPositionOnStart(listItemRef.current.clientHeight * index);
     startingIndexRef.current = index;
+
+    // set height of list item wrapper
+    const handleWrapperHeight = (numberOfItems) => {
+      return numberOfItems * listItemRef.current.clientHeight;
+    };
+
+    listItemWrapperRef.current.setAttribute(
+      'style',
+      `height: ${handleWrapperHeight(numberOfItemsInColumn)}px`
+    );
 
     // on first touch start position top is set on each absolute item
     arrayOfListItemsRefCurr?.forEach((item, i) => {
@@ -383,6 +395,7 @@ const ItemList = ({
   // touch y-axis end
   const handleTouchYEnd = () => {
     setIsTouchMove(false);
+    listItemWrapperRef.current.removeAttribute('style');
 
     handleDragEnd(ITEM_REORDER_TOUCH_EVENT);
 

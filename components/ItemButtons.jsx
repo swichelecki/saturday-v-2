@@ -5,6 +5,7 @@ import { MdEdit } from 'react-icons/md';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import { TiCancel } from 'react-icons/ti';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
+import { MOBILE_BREAKPOINT } from 'constants';
 
 const ItemButtons = ({
   date,
@@ -27,25 +28,25 @@ const ItemButtons = ({
   const [idToDelete, setIdToDelete] = useState('');
 
   const handleDetailsButtonClass = () => {
-    return width <= 600
+    return width <= MOBILE_BREAKPOINT
       ? 'list-item__details-button--mobile'
       : 'list-item__details-button--desktop';
   };
 
   const handleEditButtonClass = () => {
-    return width <= 600
+    return width <= MOBILE_BREAKPOINT
       ? 'list-item__edit-button--mobile'
       : 'list-item__edit-button--desktop';
   };
 
   const handleCancelButtonClass = () => {
-    return width <= 600
+    return width <= MOBILE_BREAKPOINT
       ? 'list-item__cancel-button--mobile'
       : 'list-item__cancel-button--desktop';
   };
 
   const handleDeleteButtonClass = () => {
-    return width <= 600
+    return width <= MOBILE_BREAKPOINT
       ? 'list-item__delete-button--mobile'
       : 'list-item__delete-button--desktop';
   };
