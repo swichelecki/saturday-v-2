@@ -42,10 +42,11 @@ const ItemList = ({
 }) => {
   const width = useInnerWidth();
 
-  const startingIndexRef = useRef(null);
-  const detailsRef = useRef(null);
   const listItemRef = useRef(null);
   const listItemInnerRef = useRef(null);
+  const detailsRef = useRef(null);
+  const startingIndexRef = useRef(null);
+  const isYTouchMoveRef = useRef(null);
   const animationXIdRef = useRef(null);
   const animationYIdRef = useRef(null);
   const arrayOfListItemsRef = useRef(null);
@@ -65,7 +66,6 @@ const ItemList = ({
   // state for y-axis animation
   const [currentTranslateY, setCurrentTranslateY] = useState(0);
   const [listItemYPositionOnStart, setListItemYPositionOnStart] = useState(0);
-  const [isYTouchMove, setIsYTouchMove] = useState(false);
 
   // get array of column list items for touch y-axis dom manipulation
   useEffect(() => {
@@ -241,10 +241,10 @@ const ItemList = ({
     listItemInnerRef.current.style.transform = `translateX(${currentTranslateX}px)`;
   };
 
-  // TODO: still not working --- disable scrolling on touch y-axis move
+  // disable scrolling on touch y-axis move
   useEffect(() => {
     const handlePreventScroll = (e) => {
-      if (isYTouchMove) {
+      if (isYTouchMoveRef.current) {
         if (e.cancelable) {
           e.preventDefault();
         }
@@ -264,11 +264,11 @@ const ItemList = ({
         { passive: false }
       );
     };
-  }, [isYTouchMove]);
+  }, [isYTouchMoveRef.current]);
 
   // touch y-axis start
   const handleTouchYStart = (e) => {
-    setIsYTouchMove(true);
+    isYTouchMoveRef.current = true;
     handleDragStart(index);
     setStartYPosition(e.touches[0].clientY);
     setListItemYPositionOnStart(listItemRef.current.clientHeight * index);
@@ -392,7 +392,7 @@ const ItemList = ({
 
   // touch y-axis end
   const handleTouchYEnd = () => {
-    setIsYTouchMove(false);
+    isYTouchMoveRef.current = false;
     listItemWrapperRef.current.removeAttribute('style');
 
     handleDragEnd(ITEM_REORDER_TOUCH_EVENT);
@@ -519,9 +519,9 @@ const ItemList = ({
             </div>
           )}
           <div
-            className={`list-item__item-hover-zone ${
+            className={`list-item__item-swipe-zone ${
               item?.type === 'upcoming'
-                ? 'list-item__item-hover-zone--upcoming'
+                ? 'list-item__item-swipe-zone--upcoming'
                 : ''
             }`}
             onTouchStart={(e) => handleTouchXStart(e)}
@@ -529,10 +529,10 @@ const ItemList = ({
             onTouchEnd={handleTouchXEnd}
           >
             <p>{item?.title}</p>
-            {width <= 600 && <TbChevronRight />}
+            {width <= MOBILE_BREAKPOINT && <TbChevronRight />}
           </div>
           <div className='list-item__item-right'>
-            {width > 600 && (
+            {width > MOBILE_BREAKPOINT && (
               <ItemButtons
                 date={item?.date}
                 dateAndTime={item?.dateAndTime}
@@ -589,7 +589,7 @@ const ItemList = ({
             : ''
         }`}
       >
-        {width <= 600 && (
+        {width <= MOBILE_BREAKPOINT && (
           <ItemButtons
             date={item?.date}
             dateAndTime={item?.dateAndTime}
