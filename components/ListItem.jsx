@@ -12,8 +12,6 @@ import {
   TOUCH_DURATION_THRESHOLD,
   MAX_MOVE_DISTANCE,
   MOBILE_BREAKPOINT,
-  ITEM_REORDER_TOUCH_EVENT,
-  ITEM_REORDER_DRAG_EVENT,
 } from 'constants';
 
 let previousItemId = '';
@@ -27,16 +25,12 @@ const ItemList = ({
   isAwaitingDeleteResponse,
   taskToEditId,
   index,
-  dragging,
-  handleDragStyles,
   handleDragStart,
   handleDragEnter,
   handleDragEnd,
   closeOpenItem,
   setAllItemsTouchReset,
   allItemsTouchReset,
-  hideItemDetailsOnDrag,
-  setHideItemDetailsOnDrag,
   listItemWrapperRef,
   numberOfItemsInColumn,
 }) => {
@@ -66,6 +60,7 @@ const ItemList = ({
   // state for y-axis animation
   const [currentTranslateY, setCurrentTranslateY] = useState(0);
   const [listItemYPositionOnStart, setListItemYPositionOnStart] = useState(0);
+  const [listItemId, setListItemId] = useState('');
 
   // get array of column list items for touch y-axis dom manipulation
   useEffect(() => {
@@ -179,7 +174,7 @@ const ItemList = ({
       cancelAnimationFrame(animationXIdRef.current);
       cancelAnimationFrame(animationYIdRef.current);
     };
-  }, []);
+  }, [currentTranslateY]);
 
   // touch x-axis start
   const handleTouchXStart = (e) => {
@@ -270,8 +265,11 @@ const ItemList = ({
   const handleTouchYStart = (e) => {
     isYTouchMoveRef.current = true;
     handleDragStart(index);
-    setStartYPosition(e.touches[0].clientY);
+    setStartYPosition(
+      e.type.includes('mouse') ? e.pageY : e.touches[0].clientY
+    );
     setListItemYPositionOnStart(listItemRef.current.clientHeight * index);
+    setListItemId(listItemRef.current.id);
     startingIndexRef.current = index;
 
     // set height of list item wrapper
@@ -294,13 +292,17 @@ const ItemList = ({
     });
 
     listItemRef.current.style.zIndex = '2';
+
+    if (e.type.includes('mouse')) e.target.style.cursor = 'grabbing';
   };
 
   // touch y-axis move
   const handleTouchYMove = (e) => {
     if (isOpen) return;
 
-    let currentPosition = e.touches[0].clientY;
+    let currentPosition = e.type.includes('mouse')
+      ? e.pageY
+      : e.touches[0].clientY;
 
     setCurrentTranslateY(
       Math.max(
@@ -313,8 +315,6 @@ const ItemList = ({
       )
     );
 
-    animationYIdRef.current = requestAnimationFrame(animationY);
-
     // move up and trigger array resort and dom update
     if (
       currentTranslateY > 0 &&
@@ -323,8 +323,7 @@ const ItemList = ({
           listItemRef.current.clientHeight / 2
     ) {
       startingIndexRef.current -= 1;
-
-      handleDragEnter(startingIndexRef.current, ITEM_REORDER_TOUCH_EVENT);
+      handleDragEnter(startingIndexRef.current);
 
       arrayOfListItemsRefCurr?.forEach((item) => {
         // moves item down when item dragged over it
@@ -339,13 +338,10 @@ const ItemList = ({
         }
 
         // sets new index for item being dragged
-        if (
-          parseInt(item.dataset.listItemIndex) ===
-          startingIndexRef.current + 1
-        ) {
+        if (listItemId === item.id) {
           item.setAttribute(
             'data-list-item-index',
-            parseInt(item.dataset.listItemIndex)
+            parseInt(item.dataset.listItemIndex) - 1
           );
         }
       });
@@ -361,8 +357,7 @@ const ItemList = ({
           listItemRef.current.clientHeight / 2
     ) {
       startingIndexRef.current += 1;
-
-      handleDragEnter(startingIndexRef.current, ITEM_REORDER_TOUCH_EVENT);
+      handleDragEnter(startingIndexRef.current);
 
       arrayOfListItemsRefCurr?.forEach((item) => {
         // moves item up when item dragged over it
@@ -377,13 +372,10 @@ const ItemList = ({
         }
 
         // sets new index for item being dragged
-        if (
-          parseInt(item.dataset.listItemIndex) ===
-          startingIndexRef.current - 1
-        ) {
+        if (listItemId === item.id) {
           item.setAttribute(
             'data-list-item-index',
-            parseInt(item.dataset.listItemIndex)
+            parseInt(item.dataset.listItemIndex) + 1
           );
         }
       });
@@ -391,28 +383,31 @@ const ItemList = ({
   };
 
   // touch y-axis end
-  const handleTouchYEnd = () => {
+  const handleTouchYEnd = (e) => {
     isYTouchMoveRef.current = false;
     listItemWrapperRef.current.removeAttribute('style');
-
-    handleDragEnd(ITEM_REORDER_TOUCH_EVENT);
+    handleDragEnd();
 
     arrayOfListItemsRefCurr?.forEach((item, i) => {
       item.style.position = 'relative';
       item.style.top = 'unset';
       item.style.left = 'unset';
-      item.style.bottom = 'unset';
       item.style.right = 'unset';
       item.style.zIndex = '1';
       item.setAttribute('data-list-item-index', parseInt(i));
     });
 
     cancelAnimationFrame(animationYIdRef.current);
+
+    if (e.type.includes('mouse')) e.target.style.cursor = 'grab';
   };
 
   // animate y-axis
   const animationY = () => {
-    listItemRef.current.style.top = `${currentTranslateY}px`;
+    if (isYTouchMoveRef.current) {
+      listItemRef.current.style.top = `${currentTranslateY}px`;
+      requestAnimationFrame(animationY);
+    }
   };
 
   const handleShowDetails = () => {
@@ -447,30 +442,10 @@ const ItemList = ({
 
   return (
     <div
-      className={
-        dragging && width > MOBILE_BREAKPOINT
-          ? handleDragStyles(index)
-          : 'list-item__outer-wrapper'
-      }
+      className='list-item__outer-wrapper'
+      id={`${item?.type}_list-item_${index}`}
       ref={listItemRef}
-      style={item?.type === 'upcoming' ? { cursor: 'default' } : {}}
       data-list-item-index={index}
-      draggable={item?.type !== 'upcoming'}
-      onDragStart={() => {
-        handleDragStart(index);
-        setHideItemDetailsOnDrag(true);
-      }}
-      onDragEnter={
-        dragging
-          ? () => {
-              handleDragEnter(index, ITEM_REORDER_DRAG_EVENT);
-            }
-          : null
-      }
-      onDragEnd={() => {
-        handleDragEnd(ITEM_REORDER_DRAG_EVENT);
-      }}
-      onDragOver={(e) => e.preventDefault()}
     >
       <div
         className={`list-item__inner-wrapper ${
@@ -506,14 +481,20 @@ const ItemList = ({
         <div
           ref={listItemInnerRef}
           className='list-item__item'
-          id={`${item?.type}_index_${index}`}
+          id={`${item?.type}_list-item-inner_${index}`}
         >
           {item?.type !== 'upcoming' && (
             <div
               className='list-item__item-drag-zone'
-              onTouchStart={(e) => handleTouchYStart(e)}
-              onTouchMove={(e) => handleTouchYMove(e)}
+              onTouchStart={handleTouchYStart}
+              onTouchMove={handleTouchYMove}
               onTouchEnd={handleTouchYEnd}
+              onMouseDown={handleTouchYStart}
+              onMouseMove={(e) => {
+                isYTouchMoveRef.current && handleTouchYMove(e);
+              }}
+              onMouseUp={handleTouchYEnd}
+              onMouseLeave={handleTouchYEnd}
             >
               <GrDrag />
             </div>
@@ -524,8 +505,8 @@ const ItemList = ({
                 ? 'list-item__item-swipe-zone--upcoming'
                 : ''
             }`}
-            onTouchStart={(e) => handleTouchXStart(e)}
-            onTouchMove={(e) => handleTouchXMove(e)}
+            onTouchStart={handleTouchXStart}
+            onTouchMove={handleTouchXMove}
             onTouchEnd={handleTouchXEnd}
           >
             <p>{item?.title}</p>
@@ -552,35 +533,33 @@ const ItemList = ({
             )}
           </div>
         </div>
-        {!hideItemDetailsOnDrag && (
-          <div
-            ref={detailsRef}
-            className='list-item__details'
-            style={
-              isOpen
-                ? {
-                    height: `${handleHiddenHeight(detailsRef.current)}px`,
-                  }
-                : { height: '0px' }
-            }
-          >
-            <div className='list-item__details-padding'>
-              {item?.description && (
-                <div
-                  className='list-item__details-quill-wrapper'
-                  dangerouslySetInnerHTML={{ __html: item?.description }}
-                />
-              )}
-              <div className='list-item__details-controls-left'>
-                <Link href={`/details/${item?._id}`}>
-                  <span className='list-item__edit-button list-item__edit-button--desktop'>
-                    <MdEdit />
-                  </span>
-                </Link>
-              </div>
+        <div
+          ref={detailsRef}
+          className='list-item__details'
+          style={
+            isOpen
+              ? {
+                  height: `${handleHiddenHeight(detailsRef.current)}px`,
+                }
+              : { height: '0px' }
+          }
+        >
+          <div className='list-item__details-padding'>
+            {item?.description && (
+              <div
+                className='list-item__details-quill-wrapper'
+                dangerouslySetInnerHTML={{ __html: item?.description }}
+              />
+            )}
+            <div className='list-item__details-controls-left'>
+              <Link href={`/details/${item?._id}`}>
+                <span className='list-item__edit-button list-item__edit-button--desktop'>
+                  <MdEdit />
+                </span>
+              </Link>
             </div>
           </div>
-        )}
+        </div>
       </div>
       <div
         className={`list-item__controls${

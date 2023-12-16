@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import { TasksContext } from '../context/tasksContext';
-import { useInnerWidth } from '../hooks';
 import { ListItem } from './';
 import { updateTask } from '../services';
 import {
@@ -9,11 +8,6 @@ import {
   FaCogs,
   FaCalendarCheck,
 } from 'react-icons/fa';
-import {
-  MOBILE_BREAKPOINT,
-  ITEM_REORDER_DRAG_EVENT,
-  ITEM_REORDER_TOUCH_EVENT,
-} from 'constants';
 
 const ItemsColumn = ({
   heading,
@@ -29,19 +23,14 @@ const ItemsColumn = ({
 }) => {
   const { globalContextTasks } = useContext(TasksContext);
 
-  const width = useInnerWidth();
-
   const dragItemRef = useRef(null);
   const dragOverItemRef = useRef(null);
   const listItemWrapperRef = useRef(null);
 
-  const [dragging, setDragging] = useState(false);
   const [filteredTasks, setFilteredTasks] = useState([]);
   const [touchFilteredTasks, setTouchFilteredTasks] = useState([]);
-  const [hideItemDetailsOnDrag, setHideItemDetailsOnDrag] = useState(false);
 
   useEffect(() => {
-    if (width > MOBILE_BREAKPOINT) return;
     setTouchFilteredTasks(filteredTasks);
   }, [filteredTasks]);
 
@@ -102,77 +91,40 @@ const ItemsColumn = ({
 
   const handleDragStart = (index) => {
     dragItemRef.current = index;
-    setTimeout(() => {
-      setDragging(true);
-    }, 0);
   };
 
-  const handleDragEnter = (index, eventType) => {
+  const handleDragEnter = (index) => {
     const dragItemIndex = dragItemRef.current;
     const dragOverItemIndex = index;
 
     if (index !== dragItemRef.current) {
-      if (eventType === ITEM_REORDER_DRAG_EVENT) {
-        setFilteredTasks(() => {
-          const copyFilteredTasks = [...filteredTasks];
-          copyFilteredTasks.splice(
-            dragOverItemIndex,
-            0,
-            copyFilteredTasks.splice(dragItemIndex, 1)[0]
-          );
-          return copyFilteredTasks;
-        });
-      }
-
-      if (eventType === ITEM_REORDER_TOUCH_EVENT) {
-        setTouchFilteredTasks(() => {
-          const copyTouchFilteredTasks = [...touchFilteredTasks];
-          copyTouchFilteredTasks.splice(
-            dragOverItemIndex,
-            0,
-            copyTouchFilteredTasks.splice(dragItemIndex, 1)[0]
-          );
-          return copyTouchFilteredTasks;
-        });
-      }
-
+      setTouchFilteredTasks(() => {
+        const copyTouchFilteredTasks = [...touchFilteredTasks];
+        copyTouchFilteredTasks.splice(
+          dragOverItemIndex,
+          0,
+          copyTouchFilteredTasks.splice(dragItemIndex, 1)[0]
+        );
+        return copyTouchFilteredTasks;
+      });
       dragItemRef.current = dragOverItemIndex;
     }
   };
 
-  const handleDragEnd = (eventType) => {
+  const handleDragEnd = () => {
     dragItemRef.current = null;
     dragOverItemRef.current = null;
 
-    if (eventType === ITEM_REORDER_DRAG_EVENT) {
-      setDragging(false);
-      setHideItemDetailsOnDrag(false);
-      const tasksWithNewPriorities = filteredTasks?.map((item, index) => ({
+    const touchTasksWithNewPriorities = touchFilteredTasks?.map(
+      (item, index) => ({
         ...item,
         priority: index + 1,
-      }));
+      })
+    );
 
-      tasksWithNewPriorities?.forEach((item) => updateTask(item));
-    }
+    touchTasksWithNewPriorities?.forEach((item) => updateTask(item));
 
-    if (eventType === ITEM_REORDER_TOUCH_EVENT) {
-      const touchTasksWithNewPriorities = touchFilteredTasks?.map(
-        (item, index) => ({
-          ...item,
-          priority: index + 1,
-        })
-      );
-
-      touchTasksWithNewPriorities?.forEach((item) => updateTask(item));
-
-      setFilteredTasks(touchTasksWithNewPriorities);
-    }
-  };
-
-  const handleDragStyles = (index) => {
-    return dragItemRef.current === index
-      ? 'list-item__outer-wrapper list-item-on-drag'
-      : 'list-item__outer-wrapper';
+    setFilteredTasks(touchTasksWithNewPriorities);
   };
 
   if (!filteredTasks?.length) {
@@ -197,16 +149,12 @@ const ItemsColumn = ({
             taskToEditId={taskToEditId}
             key={`list-item__${index}`}
             index={index}
-            dragging={dragging}
-            handleDragStyles={handleDragStyles}
             handleDragStart={handleDragStart}
             handleDragEnter={handleDragEnter}
             handleDragEnd={handleDragEnd}
             closeOpenItem={closeOpenItem}
             setAllItemsTouchReset={setAllItemsTouchReset}
             allItemsTouchReset={allItemsTouchReset}
-            hideItemDetailsOnDrag={hideItemDetailsOnDrag}
-            setHideItemDetailsOnDrag={setHideItemDetailsOnDrag}
             listItemWrapperRef={listItemWrapperRef}
             numberOfItemsInColumn={filteredTasks?.length}
           />

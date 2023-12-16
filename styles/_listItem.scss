@@ -1,10 +1,7 @@
 .list-item {
   &__outer-wrapper {
     position: relative;
-    margin-bottom: 8px;
-    &:last-of-type {
-      margin-bottom: 0;
-    }
+    padding-bottom: 8px;
   }
   &__inner-wrapper {
     overflow: hidden;
@@ -40,6 +37,7 @@
     svg {
       position: relative;
       top: 2px;
+      pointer-events: none;
       path {
         stroke: $color-list-item-svg;
       }
@@ -49,6 +47,7 @@
     display: flex;
     align-items: center;
     width: 100%;
+    user-select: none;
     &--upcoming {
       width: 100%;
       padding: 16px;
@@ -122,26 +121,11 @@
   }
 }
 
-.list-item-on-drag {
-  .list-item__inner-wrapper,
-  .list-item__item {
-    background-color: $color-background;
-    color: $color-background;
-    border: 0;
-  }
-  button {
-    display: none;
-  }
-  svg {
-    visibility: hidden;
-  }
-}
-
 @media screen and (max-width: 600px) {
   .list-item {
     &__outer-wrapper {
       position: relative;
-      margin-bottom: 0;
+      padding-bottom: 0;
     }
     &__inner-wrapper {
       border: 0;
