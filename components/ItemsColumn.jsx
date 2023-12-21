@@ -27,16 +27,16 @@ const ItemsColumn = ({
   const dragOverItemRef = useRef(null);
   const listItemWrapperRef = useRef(null);
 
-  const [filteredTasks, setFilteredTasks] = useState([]);
-  const [touchFilteredTasks, setTouchFilteredTasks] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [draggableItems, setDraggableItems] = useState([]);
 
   useEffect(() => {
-    setTouchFilteredTasks(filteredTasks);
-  }, [filteredTasks]);
+    setDraggableItems(filteredItems);
+  }, [filteredItems]);
 
   useEffect(() => {
     if (heading !== 'Upcoming') {
-      setFilteredTasks(
+      setFilteredItems(
         globalContextTasks?.filter(
           (item) => item?.type === heading?.toLowerCase()?.replace(' ', '-')
         )
@@ -64,7 +64,7 @@ const ItemsColumn = ({
         };
       });
 
-      setFilteredTasks(upcomingTasksSortedByDateAsc);
+      setFilteredItems(upcomingTasksSortedByDateAsc);
     }
   }, [globalContextTasks]);
 
@@ -98,14 +98,14 @@ const ItemsColumn = ({
     const dragOverItemIndex = index;
 
     if (index !== dragItemRef.current) {
-      setTouchFilteredTasks(() => {
-        const copyTouchFilteredTasks = [...touchFilteredTasks];
-        copyTouchFilteredTasks.splice(
+      setDraggableItems(() => {
+        const copyDraggableItems = [...draggableItems];
+        copyDraggableItems.splice(
           dragOverItemIndex,
           0,
-          copyTouchFilteredTasks.splice(dragItemIndex, 1)[0]
+          copyDraggableItems.splice(dragItemIndex, 1)[0]
         );
-        return copyTouchFilteredTasks;
+        return copyDraggableItems;
       });
       dragItemRef.current = dragOverItemIndex;
     }
@@ -115,19 +115,19 @@ const ItemsColumn = ({
     dragItemRef.current = null;
     dragOverItemRef.current = null;
 
-    const touchTasksWithNewPriorities = touchFilteredTasks?.map(
+    const draggableItemsWithNewPriorities = draggableItems?.map(
       (item, index) => ({
         ...item,
         priority: index + 1,
       })
     );
 
-    touchTasksWithNewPriorities?.forEach((item) => updateTask(item));
+    draggableItemsWithNewPriorities?.forEach((item) => updateTask(item));
 
-    setFilteredTasks(touchTasksWithNewPriorities);
+    setFilteredItems(draggableItemsWithNewPriorities);
   };
 
-  if (!filteredTasks?.length) {
+  if (!filteredItems?.length) {
     return null;
   }
 
@@ -138,7 +138,7 @@ const ItemsColumn = ({
         {heading}
       </h2>
       <div className='items-column__list-item-wrapper' ref={listItemWrapperRef}>
-        {filteredTasks?.map((item, index) => (
+        {filteredItems?.map((item, index) => (
           <ListItem
             item={item}
             handleEditTask={handleEditTask}
@@ -156,7 +156,7 @@ const ItemsColumn = ({
             setAllItemsTouchReset={setAllItemsTouchReset}
             allItemsTouchReset={allItemsTouchReset}
             listItemWrapperRef={listItemWrapperRef}
-            numberOfItemsInColumn={filteredTasks?.length}
+            numberOfItemsInColumn={filteredItems?.length}
           />
         ))}
       </div>

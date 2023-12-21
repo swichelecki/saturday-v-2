@@ -40,15 +40,13 @@ const ItemList = ({
   const listItemInnerRef = useRef(null);
   const detailsRef = useRef(null);
   const startingIndexRef = useRef(null);
-  const isXTouchMoveRef = useRef(null);
-  const isYTouchMoveRef = useRef(null);
+  const isSwipingXRef = useRef(null);
+  const isDraggingYRef = useRef(null);
   const animationXIdRef = useRef(null);
   const animationYIdRef = useRef(null);
   const arrayOfListItemsRef = useRef(null);
-  const arrayOfListItemsRefCurr = arrayOfListItemsRef.current;
 
   const [isOpen, setIsOpen] = useState(false);
-  // state for x-axis animation
   const [startXPosition, setStartXPosition] = useState(0);
   const [startYPosition, setStartYPosition] = useState(0);
   const [itemXPositionOnStart, setItemXPositionOnStart] = useState(0);
@@ -58,7 +56,6 @@ const ItemList = ({
   const [movedBy, setMovedBy] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  // state for y-axis animation
   const [currentTranslateY, setCurrentTranslateY] = useState(0);
   const [listItemYPositionOnStart, setListItemYPositionOnStart] = useState(0);
   const [listItemId, setListItemId] = useState('');
@@ -178,8 +175,8 @@ const ItemList = ({
   }, [currentTranslateX, currentTranslateY]);
 
   // touch x-axis start
-  const handleTouchXStart = (e) => {
-    isXTouchMoveRef.current = true;
+  const handleSwipeXStart = (e) => {
+    isSwipingXRef.current = true;
     // after item closes when new item is opened state must be reset on previously opened item
     if (listItemInnerRef.current.id !== previousItemId) {
       setCurrentTranslateX(0);
@@ -196,7 +193,7 @@ const ItemList = ({
   };
 
   // touch x-axis move
-  const handleTouchXMove = (e) => {
+  const handleSwipeXMove = (e) => {
     // if touch move is up or down end touch move
     if (
       Math.max(
@@ -222,8 +219,8 @@ const ItemList = ({
   };
 
   // touch x-axis end
-  const handleTouchXEnd = () => {
-    isXTouchMoveRef.current = false;
+  const handleSwipeXEnd = () => {
+    isSwipingXRef.current = false;
     setMovedBy(Math.abs(currentTranslateX - previousTranslateX));
     setDuration(new Date().getTime() - startTime);
     setItemXPositionOnEnd(
@@ -234,16 +231,16 @@ const ItemList = ({
 
   // animate x-axis
   const animationX = () => {
-    if (isXTouchMoveRef.current) {
+    if (isSwipingXRef.current) {
       listItemInnerRef.current.style.transform = `translateX(${currentTranslateX}px)`;
       requestAnimationFrame(animationX);
     }
   };
 
-  // disable scrolling on touch y-axis move
+  // disable scrolling on y-axis move
   useEffect(() => {
     const handlePreventScroll = (e) => {
-      if (isYTouchMoveRef.current) {
+      if (isDraggingYRef.current) {
         if (e.cancelable) {
           e.preventDefault();
         }
@@ -263,11 +260,11 @@ const ItemList = ({
         { passive: false }
       );
     };
-  }, [isYTouchMoveRef.current]);
+  }, [isDraggingYRef.current]);
 
-  // touch y-axis start
-  const handleTouchYStart = (e) => {
-    isYTouchMoveRef.current = true;
+  // y-axis start
+  const handleDragYStart = (e) => {
+    isDraggingYRef.current = true;
     handleDragStart(index);
     setStartYPosition(
       e.type.includes('mouse') ? e.pageY : e.touches[0].clientY
@@ -286,8 +283,8 @@ const ItemList = ({
       `height: ${handleWrapperHeight(numberOfItemsInColumn)}px`
     );
 
-    // on first touch start position top is set on each absolute item
-    arrayOfListItemsRefCurr?.forEach((item, i) => {
+    // make each item absolutely positioned
+    arrayOfListItemsRef.current?.forEach((item, i) => {
       item.style.position = 'absolute';
       item.style.top = `${item.clientHeight * i}px`;
       item.style.left = '0';
@@ -300,8 +297,8 @@ const ItemList = ({
     if (e.type.includes('mouse')) e.target.style.cursor = 'grabbing';
   };
 
-  // touch y-axis move
-  const handleTouchYMove = (e) => {
+  // y-axis move
+  const handleDragYMove = (e) => {
     if (isOpen) return;
 
     let currentPosition = e.type.includes('mouse')
@@ -329,7 +326,7 @@ const ItemList = ({
       startingIndexRef.current -= 1;
       handleDragEnter(startingIndexRef.current);
 
-      arrayOfListItemsRefCurr?.forEach((item) => {
+      arrayOfListItemsRef.current?.forEach((item) => {
         // moves item down when item dragged over it
         if (parseInt(item.dataset.listItemIndex) === startingIndexRef.current) {
           item.style.top = `${
@@ -363,7 +360,7 @@ const ItemList = ({
       startingIndexRef.current += 1;
       handleDragEnter(startingIndexRef.current);
 
-      arrayOfListItemsRefCurr?.forEach((item) => {
+      arrayOfListItemsRef.current?.forEach((item) => {
         // moves item up when item dragged over it
         if (parseInt(item.dataset.listItemIndex) === startingIndexRef.current) {
           item.style.top = `${
@@ -386,13 +383,13 @@ const ItemList = ({
     }
   };
 
-  // touch y-axis end
-  const handleTouchYEnd = (e) => {
-    isYTouchMoveRef.current = false;
+  // y-axis end
+  const handleDragYEnd = (e) => {
+    isDraggingYRef.current = false;
     listItemWrapperRef.current.removeAttribute('style');
     handleDragEnd();
 
-    arrayOfListItemsRefCurr?.forEach((item, i) => {
+    arrayOfListItemsRef.current?.forEach((item, i) => {
       item.style.position = 'relative';
       item.style.top = 'unset';
       item.style.left = 'unset';
@@ -408,7 +405,7 @@ const ItemList = ({
 
   // animate y-axis
   const animationY = () => {
-    if (isYTouchMoveRef.current) {
+    if (isDraggingYRef.current) {
       listItemRef.current.style.top = `${currentTranslateY}px`;
       requestAnimationFrame(animationY);
     }
@@ -490,15 +487,15 @@ const ItemList = ({
           {item?.type !== 'upcoming' && (
             <div
               className='list-item__item-drag-zone'
-              onTouchStart={handleTouchYStart}
-              onTouchMove={handleTouchYMove}
-              onTouchEnd={handleTouchYEnd}
-              onMouseDown={handleTouchYStart}
+              onTouchStart={handleDragYStart}
+              onTouchMove={handleDragYMove}
+              onTouchEnd={handleDragYEnd}
+              onMouseDown={handleDragYStart}
               onMouseMove={(e) => {
-                isYTouchMoveRef.current && handleTouchYMove(e);
+                isDraggingYRef.current && handleDragYMove(e);
               }}
-              onMouseUp={handleTouchYEnd}
-              onMouseLeave={handleTouchYEnd}
+              onMouseUp={handleDragYEnd}
+              onMouseLeave={handleDragYEnd}
             >
               <GrDrag />
             </div>
@@ -509,9 +506,9 @@ const ItemList = ({
                 ? 'list-item__item-swipe-zone--upcoming'
                 : ''
             }`}
-            onTouchStart={handleTouchXStart}
-            onTouchMove={handleTouchXMove}
-            onTouchEnd={handleTouchXEnd}
+            onTouchStart={handleSwipeXStart}
+            onTouchMove={handleSwipeXMove}
+            onTouchEnd={handleSwipeXEnd}
           >
             <p>{item?.title}</p>
             {width <= MOBILE_BREAKPOINT && <TbChevronRight />}
