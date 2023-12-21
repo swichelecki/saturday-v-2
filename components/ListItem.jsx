@@ -40,6 +40,7 @@ const ItemList = ({
   const listItemInnerRef = useRef(null);
   const detailsRef = useRef(null);
   const startingIndexRef = useRef(null);
+  const isXTouchMoveRef = useRef(null);
   const isYTouchMoveRef = useRef(null);
   const animationXIdRef = useRef(null);
   const animationYIdRef = useRef(null);
@@ -165,7 +166,7 @@ const ItemList = ({
     }
   }, [duration, movedBy]);
 
-  // initialize animations
+  // initialize and run animations
   useEffect(() => {
     animationXIdRef.current = requestAnimationFrame(animationX);
     animationYIdRef.current = requestAnimationFrame(animationY);
@@ -174,10 +175,11 @@ const ItemList = ({
       cancelAnimationFrame(animationXIdRef.current);
       cancelAnimationFrame(animationYIdRef.current);
     };
-  }, [currentTranslateY]);
+  }, [currentTranslateX, currentTranslateY]);
 
   // touch x-axis start
   const handleTouchXStart = (e) => {
+    isXTouchMoveRef.current = true;
     // after item closes when new item is opened state must be reset on previously opened item
     if (listItemInnerRef.current.id !== previousItemId) {
       setCurrentTranslateX(0);
@@ -217,12 +219,11 @@ const ItemList = ({
         Math.min(previousTranslateX + currentPosition - startXPosition, 0)
       )
     );
-
-    animationXIdRef.current = requestAnimationFrame(animationX);
   };
 
   // touch x-axis end
   const handleTouchXEnd = () => {
+    isXTouchMoveRef.current = false;
     setMovedBy(Math.abs(currentTranslateX - previousTranslateX));
     setDuration(new Date().getTime() - startTime);
     setItemXPositionOnEnd(
@@ -233,7 +234,10 @@ const ItemList = ({
 
   // animate x-axis
   const animationX = () => {
-    listItemInnerRef.current.style.transform = `translateX(${currentTranslateX}px)`;
+    if (isXTouchMoveRef.current) {
+      listItemInnerRef.current.style.transform = `translateX(${currentTranslateX}px)`;
+      requestAnimationFrame(animationX);
+    }
   };
 
   // disable scrolling on touch y-axis move
@@ -448,9 +452,9 @@ const ItemList = ({
       data-list-item-index={index}
     >
       <div
-        className={`list-item__inner-wrapper ${
+        className={`list-item__inner-wrapper${
           item?.dateAndTime || item?.date
-            ? 'list-item__inner-wrapper--upcoming'
+            ? ' list-item__inner-wrapper--upcoming'
             : ''
         }`}
       >
