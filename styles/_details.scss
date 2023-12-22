@@ -32,6 +32,9 @@
     &:last-of-type {
       padding-bottom: 16px;
     }
+    &--error {
+      position: relative;
+    }
   }
   &__buttons-wrapper {
     display: flex;

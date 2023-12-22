@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { loginUser } from '../../services';
 import { useRouter } from 'next/router';
-import { RiAlertFill } from 'react-icons/ri';
+import { FormErrorMessage } from '../../components';
+import {
+  FORM_ERROR_MISSING_USERNAME_PASSWORD,
+  FORM_ERROR_INCORRECT_USERNAME_PASSWORD,
+  SERVER_ERROR,
+} from 'constants';
 
 const Login = () => {
   const router = useRouter();
@@ -20,7 +25,7 @@ const Login = () => {
 
     if (!form?.username?.length || !form?.password?.length) {
       setHasError(true);
-      setErrorMessage('Username and Password Required');
+      setErrorMessage(FORM_ERROR_MISSING_USERNAME_PASSWORD);
       return;
     }
 
@@ -32,11 +37,11 @@ const Login = () => {
     } else if (response.status === 403) {
       setHasError(true);
       setisAwaitingLogInResponse(false);
-      setErrorMessage('Incorrect Username or Password');
+      setErrorMessage(FORM_ERROR_INCORRECT_USERNAME_PASSWORD);
     } else if (response.status === 500) {
       setHasError(true);
       setisAwaitingLogInResponse(false);
-      setErrorMessage('Server Error');
+      setErrorMessage(SERVER_ERROR);
       console.log(`${response.statusText}: ${response.status}`);
     }
   };
@@ -54,12 +59,7 @@ const Login = () => {
               value={form?.username}
               onChange={handleForm}
             />
-            {hasError && (
-              <div className='login-form__form-error-message'>
-                <RiAlertFill />
-                <span>{errorMessage}</span>
-              </div>
-            )}
+            {hasError && <FormErrorMessage errorMessage={errorMessage} />}
           </div>
           <div className='login-form__form-row'>
             <label htmlFor='password'>Password</label>
@@ -70,12 +70,7 @@ const Login = () => {
               value={form?.password}
               onChange={handleForm}
             />
-            {hasError && (
-              <div className='login-form__form-error-message'>
-                <RiAlertFill />
-                <span>{errorMessage}</span>
-              </div>
-            )}
+            {hasError && <FormErrorMessage errorMessage={errorMessage} />}
           </div>
           <div className='login-form__form-row'>
             <button type='submit' className='login-form__login-button'>

@@ -6,3 +6,4 @@ export { default as ListItem } from './ListItem';
 export { default as DetailsForm } from './DetailsForm';
 export { default as BirthdaysColumn } from './BirthdaysColumn';
 export { default as Modal } from './Modal';
+export { default as FormErrorMessage } from './FormErrorMessage';

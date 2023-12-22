@@ -1,0 +1,15 @@
+.form-error-message {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: absolute;
+  bottom: -26px;
+  left: 0;
+  color: $button-red;
+  font-weight: 400;
+  font-size: 1rem; // 16px
+  letter-spacing: 0.2px;
+  span {
+    margin-left: 4px;
+  }
+}

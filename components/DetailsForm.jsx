@@ -1,15 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { submitTask, updateTask } from '../services';
+import FormErrorMessage from './FormErrorMessage';
 import moment from 'moment-timezone';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
-import { TYPE_UPCOMING } from 'constants';
+import {
+  TYPE_UPCOMING,
+  FORM_ERROR_MISSING_TITLE,
+  FORM_ERROR_MISSING_DESCRIPTION,
+  FORM_ERROR_MISSING_DATE,
+} from 'constants';
 
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 const DetailsForm = ({ task }) => {
+  const formRef = useRef(null);
+
   const [form, setForm] = useState({
     _id: task?._id,
     title: task?.title ?? '',
@@ -24,6 +32,12 @@ const DetailsForm = ({ task }) => {
     priority: task?.priority ?? '',
     type: task?.type ?? '',
   });
+  const [errorMessage, setErrorMessage] = useState({
+    title: '',
+    description: '',
+    dateOrDateAndTime: '',
+  });
+  const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
   const router = useRouter();
@@ -39,6 +53,39 @@ const DetailsForm = ({ task }) => {
       });
     }
   }, [priority, type]);
+
+  // remove error messages when adding data to fields
+  useEffect(() => {
+    if (
+      !errorMessage.title &&
+      !errorMessage.description &&
+      !errorMessage.dateOrDateAndTime
+    )
+      return;
+
+    setErrorMessage({
+      title: form.title ? '' : FORM_ERROR_MISSING_TITLE,
+      description:
+        type !== TYPE_UPCOMING && !form?.description
+          ? FORM_ERROR_MISSING_DESCRIPTION
+          : '',
+      dateOrDateAndTime:
+        type === TYPE_UPCOMING && (form.date || form.dateAndTime)
+          ? ''
+          : FORM_ERROR_MISSING_DATE,
+    });
+  }, [form]);
+
+  // scroll up to topmost error message
+  useEffect(() => {
+    if (!scrollToErrorMessage) return;
+    const errorArray = Array.from(
+      formRef.current.querySelectorAll('.details-form__form-row--error')
+    );
+    const firstErrorNode = errorArray[0];
+    window.scrollTo(0, firstErrorNode.offsetTop - 24);
+    setScrollToErrorMessage(false);
+  }, [scrollToErrorMessage]);
 
   const handleSetForm = (e) => {
     setForm({
@@ -58,12 +105,25 @@ const DetailsForm = ({ task }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
+    // error handling for missing required fields
     if (
       !form?.title ||
       (type === TYPE_UPCOMING && !form?.date && !form?.dateAndTime) ||
       (type !== TYPE_UPCOMING && !form?.description)
     ) {
-      // TODO: create user notifications
+      setErrorMessage({
+        title: !form.title ? FORM_ERROR_MISSING_TITLE : '',
+        description:
+          !form.description && type !== TYPE_UPCOMING
+            ? FORM_ERROR_MISSING_DESCRIPTION
+            : '',
+        dateOrDateAndTime:
+          type === TYPE_UPCOMING && !form.date && !form.dateAndTime
+            ? FORM_ERROR_MISSING_DATE
+            : '',
+      });
+      setScrollToErrorMessage(true);
+
       return;
     }
 
@@ -89,8 +149,12 @@ const DetailsForm = ({ task }) => {
   };
 
   return (
-    <form onSubmit={onSubmit} className='details-form'>
-      <div className='details-form__form-row'>
+    <form onSubmit={onSubmit} ref={formRef} className='details-form'>
+      <div
+        className={`details-form__form-row${
+          errorMessage.title ? ' details-form__form-row--error' : ''
+        }`}
+      >
         <label htmlFor='title'>Title</label>
         <input
           type='text'
@@ -99,14 +163,24 @@ const DetailsForm = ({ task }) => {
           value={form?.title}
           onChange={handleSetForm}
         />
+        {errorMessage.title && (
+          <FormErrorMessage errorMessage={errorMessage.title} />
+        )}
       </div>
-      <div className='details-form__form-row'>
+      <div
+        className={`details-form__form-row${
+          errorMessage.description ? ' details-form__form-row--error' : ''
+        }`}
+      >
         <label htmlFor='description'>Description</label>
         <ReactQuill
           theme='snow'
           value={form?.description}
           onChange={handleSetQuill}
         />
+        {errorMessage.description && (
+          <FormErrorMessage errorMessage={errorMessage.description} />
+        )}
       </div>
       <div className='details-form__form-row'>
         <label className='inputs__checkbox-container' htmlFor='checkbox'>
@@ -120,9 +194,16 @@ const DetailsForm = ({ task }) => {
           <span className='inputs__checkbox'></span>
         </label>
       </div>
-      {(form?.type === TYPE_UPCOMING || type === TYPE_UPCOMING) && (
+      {((form?.type && form?.type === TYPE_UPCOMING) ||
+        (type && type === TYPE_UPCOMING)) && (
         <>
-          <div className='details-form__form-row'>
+          <div
+            className={`details-form__form-row${
+              errorMessage.date || errorMessage.dateOrDateAndTime
+                ? ' details-form__form-row--error'
+                : ''
+            }`}
+          >
             <label htmlFor='date'>Date</label>
             <input
               disabled={form?.dateAndTime}
@@ -132,8 +213,17 @@ const DetailsForm = ({ task }) => {
               value={form?.date && !form?.dateAndTime ? form?.date : ''}
               onChange={handleSetForm}
             />
+            {errorMessage.dateOrDateAndTime && (
+              <FormErrorMessage errorMessage={errorMessage.dateOrDateAndTime} />
+            )}
           </div>
-          <div className='details-form__form-row'>
+          <div
+            className={`details-form__form-row${
+              errorMessage.date || errorMessage.dateOrDateAndTime
+                ? ' details-form__form-row--error'
+                : ''
+            }`}
+          >
             <label htmlFor='dateAndTime'>Date & Time</label>
             <input
               disabled={form?.date && !form?.dateAndTime}
@@ -143,6 +233,9 @@ const DetailsForm = ({ task }) => {
               value={form?.dateAndTime}
               onChange={handleSetForm}
             />
+            {errorMessage.dateOrDateAndTime && (
+              <FormErrorMessage errorMessage={errorMessage.dateOrDateAndTime} />
+            )}
           </div>
         </>
       )}
