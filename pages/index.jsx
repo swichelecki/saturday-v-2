@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import connectDB from '../config/db';
+import { useAppContext } from 'context';
 import Task from '../models/Task';
-import { TasksContext } from '../context/tasksContext';
 import {
   MainControls,
   ItemsColumn,
@@ -19,7 +19,9 @@ const Home = ({ tasks }) => {
 
   const modalRef = useRef(null);
 
-  const [globalContextTasks, setGlobalContextTasks] = useState(tasks);
+  const { setShowToast, setServerError } = useAppContext();
+
+  const [listItems, setListItems] = useState(tasks);
   const [listItem, setListItem] = useState({
     title: '',
     priority: '',
@@ -41,8 +43,7 @@ const Home = ({ tasks }) => {
   const [modalIdToDelete, setModalIdToDelete] = useState('');
 
   const allItems = [];
-  const priority =
-    globalContextTasks?.length > 0 ? globalContextTasks?.length + 1 : 1;
+  const priority = listItems?.length > 0 ? listItems?.length + 1 : 1;
 
   // set state priority and type
   useEffect(() => {
@@ -86,12 +87,19 @@ const Home = ({ tasks }) => {
 
     setIsAwaitingAddResponse(true);
     submitTask(listItem).then((res) => {
-      setGlobalContextTasks((current) => [...current, res]);
-      setIsAwaitingAddResponse(false);
-      if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
-    });
+      if (res.status === 200) {
+        setListItems((current) => [...current, res.item]);
+        if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+        setListItem({ ...listItem, title: '' });
+      }
 
-    setListItem({ ...listItem, title: '' });
+      if (res.status !== 200) {
+        setServerError(res.status);
+        setShowToast(true);
+      }
+
+      setIsAwaitingAddResponse(false);
+    });
   };
 
   // get item to edit
@@ -99,8 +107,15 @@ const Home = ({ tasks }) => {
     setIsAwaitingEditResponse(true);
     setTaskToEditId(id);
     getTask(id).then((res) => {
-      setListItem(res);
-      setIsUpdating(true);
+      if (res.status === 200) {
+        setListItem(res.item);
+        setIsUpdating(true);
+      }
+
+      if (res.status !== 200) {
+        setServerError(res.status);
+        setShowToast(true);
+      }
       setIsAwaitingEditResponse(false);
     });
   };
@@ -114,23 +129,38 @@ const Home = ({ tasks }) => {
 
     setIsAwaitingUpdateResponse(true);
     updateTask(listItem).then((res) => {
-      setGlobalContextTasks(
-        globalContextTasks?.map((item) => {
-          if (item?._id === taskToEditId) {
-            return {
-              ...item,
-              title: res?.title,
-            };
-          } else {
-            return item;
-          }
-        })
-      );
+      if (res.status === 200) {
+        setListItems(
+          listItems?.map((item) => {
+            if (item?._id === taskToEditId) {
+              return {
+                ...item,
+                title: res?.item?.title,
+              };
+            } else {
+              return item;
+            }
+          })
+        );
+        setIsUpdating(false);
+        setTaskToEditId('');
+        setListItem({
+          title: '',
+          priority,
+          type,
+          description: '',
+          date: '',
+          dateAndTime: '',
+        });
+      }
+
+      if (res.status !== 200) {
+        setServerError(res.status);
+        setShowToast(true);
+      }
+
       setIsAwaitingUpdateResponse(false);
-      setIsUpdating(false);
-      setTaskToEditId('');
     });
-    setListItem({ ...listItem, title: '' });
   };
 
   // delete item
@@ -143,13 +173,19 @@ const Home = ({ tasks }) => {
 
     setIsAwaitingDeleteResponse(true);
     deleteTask(id).then((res) => {
-      const filteredTasksArray = globalContextTasks.filter(
-        (item) => item._id !== id
-      );
-      setGlobalContextTasks(filteredTasksArray);
-      setIsAwaitingDeleteResponse(false);
-      if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+      if (res.status === 200) {
+        const filteredTasksArray = listItems.filter((item) => item._id !== id);
+        setListItems(filteredTasksArray);
+        if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+      }
+
+      if (res.status !== 200) {
+        setServerError(res.status);
+        setShowToast(true);
+      }
+
       if (modalRef.current.open) modalRef.current.close();
+      setIsAwaitingDeleteResponse(false);
     });
   };
 
@@ -157,7 +193,14 @@ const Home = ({ tasks }) => {
   const handleCancelEdit = () => {
     setIsUpdating(false);
     setTaskToEditId('');
-    setListItem({ ...listItem, title: '' });
+    setListItem({
+      title: '',
+      priority,
+      type,
+      description: '',
+      date: '',
+      dateAndTime: '',
+    });
   };
 
   // close currently open item when a new item is opened
@@ -174,95 +217,99 @@ const Home = ({ tasks }) => {
 
   return (
     <div className='content-container'>
-      <TasksContext.Provider
-        value={{ globalContextTasks, setGlobalContextTasks }}
-      >
-        <MainControls
-          handleOnSubmit={handleOnSubmit}
-          handleEditSubmit={handleEditSubmit}
-          title={listItem?.title}
-          handleSetListItem={handleSetListItem}
-          setType={setType}
-          type={type}
-          isUpdating={isUpdating}
-          isAwaitingAddResponse={isAwaitingAddResponse}
-          isAwaitingUpdateResponse={isAwaitingUpdateResponse}
-          priority={priority}
-        />
-        <div className='items-column-wrapper'>
-          <ItemsColumn
-            heading={'Grocery'}
-            handleEditTask={handleEditTask}
-            handleCancelEdit={handleCancelEdit}
-            handleDeleteTask={handleDeleteTask}
-            taskToEditId={taskToEditId}
-            isAwaitingEditResponse={isAwaitingEditResponse}
-            isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-            closeOpenItem={closeOpenItem}
-            allItems={allItems}
-            setAllItemsTouchReset={setAllItemsTouchReset}
-            allItemsTouchReset={allItemsTouchReset}
-          />
-          <ItemsColumn
-            heading={'Big Box'}
-            handleEditTask={handleEditTask}
-            handleCancelEdit={handleCancelEdit}
-            handleDeleteTask={handleDeleteTask}
-            taskToEditId={taskToEditId}
-            isAwaitingEditResponse={isAwaitingEditResponse}
-            isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-            closeOpenItem={closeOpenItem}
-            allItems={allItems}
-            setAllItemsTouchReset={setAllItemsTouchReset}
-            allItemsTouchReset={allItemsTouchReset}
-          />
-          <ItemsColumn
-            heading={'Other'}
-            handleEditTask={handleEditTask}
-            handleCancelEdit={handleCancelEdit}
-            handleDeleteTask={handleDeleteTask}
-            taskToEditId={taskToEditId}
-            isAwaitingEditResponse={isAwaitingEditResponse}
-            isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-            closeOpenItem={closeOpenItem}
-            allItems={allItems}
-            setAllItemsTouchReset={setAllItemsTouchReset}
-            allItemsTouchReset={allItemsTouchReset}
-          />
-          <ItemsColumn
-            heading={'Upcoming'}
-            handleEditTask={handleEditTask}
-            handleCancelEdit={handleCancelEdit}
-            handleDeleteTask={handleDeleteTask}
-            taskToEditId={taskToEditId}
-            isAwaitingEditResponse={isAwaitingEditResponse}
-            isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-            closeOpenItem={closeOpenItem}
-            allItems={allItems}
-            setAllItemsTouchReset={setAllItemsTouchReset}
-            allItemsTouchReset={allItemsTouchReset}
-          />
-          {birthhdays && <BirthdaysColumn birthdays={birthhdays} />}
-        </div>
-        <Modal
-          ref={modalRef}
+      <MainControls
+        handleOnSubmit={handleOnSubmit}
+        handleEditSubmit={handleEditSubmit}
+        title={listItem?.title}
+        handleSetListItem={handleSetListItem}
+        setType={setType}
+        type={type}
+        isUpdating={isUpdating}
+        isAwaitingAddResponse={isAwaitingAddResponse}
+        isAwaitingUpdateResponse={isAwaitingUpdateResponse}
+        priority={priority}
+      />
+      <div className='items-column-wrapper'>
+        <ItemsColumn
+          heading={'Grocery'}
+          listItems={listItems}
+          handleEditTask={handleEditTask}
+          handleCancelEdit={handleCancelEdit}
           handleDeleteTask={handleDeleteTask}
-          modalIdToDelete={modalIdToDelete}
+          taskToEditId={taskToEditId}
+          isAwaitingEditResponse={isAwaitingEditResponse}
           isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+          closeOpenItem={closeOpenItem}
+          allItems={allItems}
+          setAllItemsTouchReset={setAllItemsTouchReset}
+          allItemsTouchReset={allItemsTouchReset}
         />
-      </TasksContext.Provider>
+        <ItemsColumn
+          heading={'Big Box'}
+          listItems={listItems}
+          handleEditTask={handleEditTask}
+          handleCancelEdit={handleCancelEdit}
+          handleDeleteTask={handleDeleteTask}
+          taskToEditId={taskToEditId}
+          isAwaitingEditResponse={isAwaitingEditResponse}
+          isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+          closeOpenItem={closeOpenItem}
+          allItems={allItems}
+          setAllItemsTouchReset={setAllItemsTouchReset}
+          allItemsTouchReset={allItemsTouchReset}
+        />
+        <ItemsColumn
+          heading={'Other'}
+          listItems={listItems}
+          handleEditTask={handleEditTask}
+          handleCancelEdit={handleCancelEdit}
+          handleDeleteTask={handleDeleteTask}
+          taskToEditId={taskToEditId}
+          isAwaitingEditResponse={isAwaitingEditResponse}
+          isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+          closeOpenItem={closeOpenItem}
+          allItems={allItems}
+          setAllItemsTouchReset={setAllItemsTouchReset}
+          allItemsTouchReset={allItemsTouchReset}
+        />
+        <ItemsColumn
+          heading={'Upcoming'}
+          listItems={listItems}
+          handleEditTask={handleEditTask}
+          handleCancelEdit={handleCancelEdit}
+          handleDeleteTask={handleDeleteTask}
+          taskToEditId={taskToEditId}
+          isAwaitingEditResponse={isAwaitingEditResponse}
+          isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+          closeOpenItem={closeOpenItem}
+          allItems={allItems}
+          setAllItemsTouchReset={setAllItemsTouchReset}
+          allItemsTouchReset={allItemsTouchReset}
+        />
+        {birthhdays && <BirthdaysColumn birthdays={birthhdays} />}
+      </div>
+      <Modal
+        ref={modalRef}
+        handleDeleteTask={handleDeleteTask}
+        modalIdToDelete={modalIdToDelete}
+        isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+      />
     </div>
   );
 };
 
 export async function getServerSideProps() {
-  await connectDB();
+  try {
+    await connectDB();
 
-  const tasks = await Task.find().sort({ priority: 1 });
+    const tasks = await Task.find().sort({ priority: 1 });
 
-  return {
-    props: { tasks: JSON.parse(JSON.stringify(tasks)) } ?? [],
-  };
+    return {
+      props: { tasks: JSON.parse(JSON.stringify(tasks)) } ?? [],
+    };
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export default Home;

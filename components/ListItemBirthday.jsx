@@ -18,7 +18,7 @@ const ListItemBirthday = ({ name, date }) => {
           </p>
         </div>
         <div className='list-item__item'>
-          <div className='list-item__item-hover-zone list-item__item-hover-zone--upcoming'>
+          <div className='list-item__item-drag-zone list-item__item-drag-zone--upcoming'>
             <p>{name}</p>
           </div>
         </div>

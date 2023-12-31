@@ -7,3 +7,4 @@ export { default as DetailsForm } from './DetailsForm';
 export { default as BirthdaysColumn } from './BirthdaysColumn';
 export { default as Modal } from './Modal';
 export { default as FormErrorMessage } from './FormErrorMessage';
+export { default as Toast } from './Toast';

@@ -7,16 +7,19 @@ const EditDetails = ({ task }) => {
 };
 
 export async function getServerSideProps(context) {
-  await connectDB();
+  try {
+    await connectDB();
 
-  const { params } = context;
+    const { params } = context;
+    const id = params.id;
+    const task = await Task.find({ _id: id });
 
-  const id = params.id;
-  const task = await Task.find({ _id: id });
-
-  return {
-    props: { task: JSON.parse(JSON.stringify(task[0])) } ?? {},
-  };
+    return {
+      props: { task: JSON.parse(JSON.stringify(task[0])) } ?? {},
+    };
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export default EditDetails;

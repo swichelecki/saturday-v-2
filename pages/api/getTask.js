@@ -1,9 +1,6 @@
-import connectDB from '../../config/db';
 import Task from '../../models/Task';
 
 export default async function getTask(req, res) {
-  await connectDB();
-
   try {
     const result = await Task.find({ _id: req.body });
 

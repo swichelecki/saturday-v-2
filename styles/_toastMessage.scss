@@ -1,0 +1,41 @@
+.toast-message {
+  position: fixed;
+  top: -70px;
+  right: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 30px 14px 14px;
+  border-radius: 4px;
+  font-weight: 400;
+  border-left: 8px solid $button-red;
+  background-color: $color-white;
+  color: $button-red;
+  transition: top 0.2s;
+  svg {
+    font-size: 1.75rem; // 28px;
+  }
+  p:first-of-type {
+    color: $color-background;
+    font-weight: 600;
+  }
+  p:last-of-type {
+    color: $color-list-item-svg;
+    font-size: 0.8125rem; // 13px;
+  }
+  button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 24px;
+    padding: 8px;
+    border-radius: 0;
+    svg {
+      font-size: 1rem; // 16px
+    }
+  }
+  &--show-toast {
+    top: 24px;
+  }
+}

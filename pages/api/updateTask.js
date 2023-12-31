@@ -1,9 +1,6 @@
-import connectDB from '../../config/db';
 import Task from '../../models/Task';
 
 export default async function updateTask(req, res) {
-  await connectDB();
-
   try {
     const {
       _id,

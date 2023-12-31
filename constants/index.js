@@ -12,4 +12,4 @@ export const FORM_ERROR_MISSING_USERNAME_PASSWORD =
   'Username and Password Required';
 export const FORM_ERROR_INCORRECT_USERNAME_PASSWORD =
   'Incorrect Username or Password';
-export const SERVER_ERROR = 'Server Error';
+export const SERVER_ERROR_MESSAGE = 'A server error has occurred';

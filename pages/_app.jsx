@@ -1,11 +1,14 @@
 import { Layout } from '../components';
+import { AppWrapper } from 'context';
 import '../styles/styles.scss';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <AppWrapper>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </AppWrapper>
   );
 }
 

@@ -1,5 +1,5 @@
 export const getTask = async (id) => {
-  const result = await fetch('/api/getTask', {
+  const response = await fetch('/api/getTask', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -7,11 +7,13 @@ export const getTask = async (id) => {
     body: JSON.stringify(id),
   });
 
-  return result.json();
+  const item = await response.json();
+
+  return { status: response.status, item };
 };
 
 export const submitTask = async (obj) => {
-  const result = await fetch('/api/addTask', {
+  const response = await fetch('/api/addTask', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -19,11 +21,13 @@ export const submitTask = async (obj) => {
     body: JSON.stringify(obj),
   });
 
-  return result.json();
+  const item = await response.json();
+
+  return { status: response.status, item };
 };
 
 export const deleteTask = async (id) => {
-  const result = await fetch('/api/deleteTask', {
+  const response = await fetch('/api/deleteTask', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -31,11 +35,11 @@ export const deleteTask = async (id) => {
     body: JSON.stringify(id),
   });
 
-  return result.json();
+  return response;
 };
 
 export const updateTask = async (obj) => {
-  const result = await fetch('/api/updateTask', {
+  const response = await fetch('/api/updateTask', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -43,22 +47,24 @@ export const updateTask = async (obj) => {
     body: JSON.stringify(obj),
   });
 
-  return result.json();
+  const item = await response.json();
+
+  return { status: response.status, item };
 };
 
 export const getBirthdays = async () => {
-  const result = await fetch('/api/getBirthdays', {
+  const response = await fetch('/api/getBirthdays', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
   });
 
-  return result.json();
+  return response.json();
 };
 
 export const updateBirthdays = async (obj) => {
-  const result = await fetch('/api/updateBirthdays', {
+  const response = await fetch('/api/updateBirthdays', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -66,11 +72,11 @@ export const updateBirthdays = async (obj) => {
     body: JSON.stringify(obj),
   });
 
-  return result.json();
+  return response.json();
 };
 
 export const loginUser = async (obj) => {
-  const result = await fetch('/api/login', {
+  const response = await fetch('/api/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -78,5 +84,5 @@ export const loginUser = async (obj) => {
     body: JSON.stringify(obj),
   });
 
-  return result;
+  return response;
 };

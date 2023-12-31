@@ -1,6 +1,6 @@
-import { useState, useEffect, useContext, useRef } from 'react';
-import { TasksContext } from '../context/tasksContext';
+import { useState, useEffect, useRef } from 'react';
 import { ListItem } from './';
+import { useAppContext } from 'context';
 import { updateTask } from '../services';
 import {
   FaShoppingCart,
@@ -11,6 +11,7 @@ import {
 
 const ItemsColumn = ({
   heading,
+  listItems,
   handleEditTask,
   handleCancelEdit,
   handleDeleteTask,
@@ -21,11 +22,11 @@ const ItemsColumn = ({
   setAllItemsTouchReset,
   allItemsTouchReset,
 }) => {
-  const { globalContextTasks } = useContext(TasksContext);
-
   const dragItemRef = useRef(null);
   const dragOverItemRef = useRef(null);
   const listItemWrapperRef = useRef(null);
+
+  const { setShowToast, setServerError } = useAppContext();
 
   const [filteredItems, setFilteredItems] = useState([]);
   const [draggableItems, setDraggableItems] = useState([]);
@@ -37,12 +38,12 @@ const ItemsColumn = ({
   useEffect(() => {
     if (heading !== 'Upcoming') {
       setFilteredItems(
-        globalContextTasks?.filter(
+        listItems?.filter(
           (item) => item?.type === heading?.toLowerCase()?.replace(' ', '-')
         )
       );
     } else {
-      const filteredUpcomingTasks = globalContextTasks?.filter(
+      const filteredUpcomingTasks = listItems?.filter(
         (item) => item?.type === heading?.toLowerCase()?.replace(' ', '-')
       );
 
@@ -66,7 +67,7 @@ const ItemsColumn = ({
 
       setFilteredItems(upcomingTasksSortedByDateAsc);
     }
-  }, [globalContextTasks]);
+  }, [listItems]);
 
   const handleIcon = (heading) => {
     let icon;
@@ -122,7 +123,14 @@ const ItemsColumn = ({
       })
     );
 
-    draggableItemsWithNewPriorities?.forEach((item) => updateTask(item));
+    draggableItemsWithNewPriorities?.forEach((item) =>
+      updateTask(item).then((res) => {
+        if (res.status !== 200) {
+          setServerError(res.status);
+          setShowToast(true);
+        }
+      })
+    );
 
     setFilteredItems(draggableItemsWithNewPriorities);
   };

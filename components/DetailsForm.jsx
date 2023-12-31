@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { submitTask, updateTask } from '../services';
-import FormErrorMessage from './FormErrorMessage';
-import moment from 'moment-timezone';
 import dynamic from 'next/dynamic';
+import { useAppContext } from 'context';
+import FormErrorMessage from './FormErrorMessage';
+import { submitTask, updateTask } from '../services';
+import moment from 'moment-timezone';
 import 'react-quill/dist/quill.snow.css';
 import {
   TYPE_UPCOMING,
@@ -17,6 +18,8 @@ const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 const DetailsForm = ({ task }) => {
   const formRef = useRef(null);
+
+  const { setShowToast, setServerError } = useAppContext();
 
   const [form, setForm] = useState({
     _id: task?._id,
@@ -108,8 +111,8 @@ const DetailsForm = ({ task }) => {
     // error handling for missing required fields
     if (
       !form?.title ||
-      (type === TYPE_UPCOMING && !form?.date && !form?.dateAndTime) ||
-      (type !== TYPE_UPCOMING && !form?.description)
+      (form.type === TYPE_UPCOMING && !form?.date && !form?.dateAndTime) ||
+      (form.type !== TYPE_UPCOMING && !form?.description)
     ) {
       setErrorMessage({
         title: !form.title ? FORM_ERROR_MISSING_TITLE : '',
@@ -142,9 +145,27 @@ const DetailsForm = ({ task }) => {
     setIsAwaitingSaveResponse(true);
 
     priority == undefined
-      ? updateTask(finalForm).then((res) => router.push('/'))
+      ? updateTask(finalForm).then((res) => {
+          if (res.status === 200) {
+            router.push('/');
+          }
+
+          if (res.status !== 200) {
+            setServerError(res.status);
+            setShowToast(true);
+            setIsAwaitingSaveResponse(false);
+          }
+        })
       : submitTask(finalForm).then((res) => {
-          router.push('/');
+          if (res.status === 200) {
+            router.push('/');
+          }
+
+          if (res.status !== 200) {
+            setServerError(res.status);
+            setShowToast(true);
+            setIsAwaitingSaveResponse(false);
+          }
         });
   };
 
@@ -194,8 +215,7 @@ const DetailsForm = ({ task }) => {
           <span className='inputs__checkbox'></span>
         </label>
       </div>
-      {((form?.type && form?.type === TYPE_UPCOMING) ||
-        (type && type === TYPE_UPCOMING)) && (
+      {form?.type && form?.type === TYPE_UPCOMING && (
         <>
           <div
             className={`details-form__form-row${

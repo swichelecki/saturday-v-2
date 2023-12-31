@@ -1,9 +1,6 @@
-import connectDB from '../../config/db';
 import Birthday from '../../models/Birthday';
 
 export default async function updateBirthdays(req, res) {
-  await connectDB();
-
   try {
     const { _id, name, date } = req.body;
 
@@ -14,7 +11,10 @@ export default async function updateBirthdays(req, res) {
         date,
       }
     );
+
+    return res.status(200).end();
   } catch (error) {
     console.log(error);
+    return res.status(500).end();
   }
 }

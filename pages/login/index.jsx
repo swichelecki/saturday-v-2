@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { loginUser } from '../../services';
 import { useRouter } from 'next/router';
+import { useAppContext } from 'context';
 import { FormErrorMessage } from '../../components';
 import {
   FORM_ERROR_MISSING_USERNAME_PASSWORD,
   FORM_ERROR_INCORRECT_USERNAME_PASSWORD,
-  SERVER_ERROR,
 } from 'constants';
 
 const Login = () => {
   const router = useRouter();
+
+  const { setShowToast, setServerError } = useAppContext();
 
   const [form, setForm] = useState({ username: '', password: '' });
   const [hasError, setHasError] = useState(false);
@@ -38,11 +40,10 @@ const Login = () => {
       setHasError(true);
       setisAwaitingLogInResponse(false);
       setErrorMessage(FORM_ERROR_INCORRECT_USERNAME_PASSWORD);
-    } else if (response.status === 500) {
-      setHasError(true);
+    } else {
+      setServerError(response.status);
+      setShowToast(true);
       setisAwaitingLogInResponse(false);
-      setErrorMessage(SERVER_ERROR);
-      console.log(`${response.statusText}: ${response.status}`);
     }
   };
 
