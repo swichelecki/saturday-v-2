@@ -5,7 +5,8 @@ const jwtSecret = process.env.JWT_SECRET;
 
 export default async function login(req, res) {
   try {
-    const result = await User.findOne(req.body);
+    const { username, password } = req.body;
+    const result = await User.findOne({ username, password });
     if (!result) {
       return res.status(403).end();
     } else {

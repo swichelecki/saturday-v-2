@@ -59,25 +59,28 @@ const DetailsForm = ({ task }) => {
 
   // remove error messages when adding data to fields
   useEffect(() => {
-    if (
-      !errorMessage.title &&
-      !errorMessage.description &&
-      !errorMessage.dateOrDateAndTime
-    )
-      return;
-
+    if (!errorMessage.title) return;
     setErrorMessage({
-      title: form.title ? '' : FORM_ERROR_MISSING_TITLE,
-      description:
-        type !== TYPE_UPCOMING && !form?.description
-          ? FORM_ERROR_MISSING_DESCRIPTION
-          : '',
-      dateOrDateAndTime:
-        type === TYPE_UPCOMING && (form.date || form.dateAndTime)
-          ? ''
-          : FORM_ERROR_MISSING_DATE,
+      ...errorMessage,
+      title: '',
     });
-  }, [form]);
+  }, [form.title]);
+
+  useEffect(() => {
+    if (!errorMessage.description) return;
+    setErrorMessage({
+      ...errorMessage,
+      description: '',
+    });
+  }, [form.description]);
+
+  useEffect(() => {
+    if (!errorMessage.dateOrDateAndTime) return;
+    setErrorMessage({
+      ...errorMessage,
+      dateOrDateAndTime: '',
+    });
+  }, [form.date, form.dateAndTime]);
 
   // scroll up to topmost error message
   useEffect(() => {
@@ -86,7 +89,11 @@ const DetailsForm = ({ task }) => {
       formRef.current.querySelectorAll('.details-form__form-row--error')
     );
     const firstErrorNode = errorArray[0];
-    window.scrollTo(0, firstErrorNode.offsetTop - 24);
+    window.scrollTo({
+      top: firstErrorNode.offsetTop - 24,
+      left: 0,
+      behavior: 'smooth',
+    });
     setScrollToErrorMessage(false);
   }, [scrollToErrorMessage]);
 
@@ -112,18 +119,20 @@ const DetailsForm = ({ task }) => {
     if (
       !form?.title ||
       (form.type === TYPE_UPCOMING && !form?.date && !form?.dateAndTime) ||
-      (form.type !== TYPE_UPCOMING && !form?.description)
+      (form.type !== TYPE_UPCOMING &&
+        (!form?.description || form.description === '<p><br></p>'))
     ) {
       setErrorMessage({
-        title: !form.title ? FORM_ERROR_MISSING_TITLE : '',
+        title: !form.title && FORM_ERROR_MISSING_TITLE,
         description:
-          !form.description && type !== TYPE_UPCOMING
-            ? FORM_ERROR_MISSING_DESCRIPTION
-            : '',
+          (!form.description || form.description === '<p><br></p>') &&
+          type !== TYPE_UPCOMING &&
+          FORM_ERROR_MISSING_DESCRIPTION,
         dateOrDateAndTime:
-          type === TYPE_UPCOMING && !form.date && !form.dateAndTime
-            ? FORM_ERROR_MISSING_DATE
-            : '',
+          type === TYPE_UPCOMING &&
+          !form.date &&
+          !form.dateAndTime &&
+          FORM_ERROR_MISSING_DATE,
       });
       setScrollToErrorMessage(true);
 

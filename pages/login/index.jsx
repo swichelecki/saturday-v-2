@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { loginUser } from '../../services';
 import { useRouter } from 'next/router';
 import { useAppContext } from 'context';
 import { FormErrorMessage } from '../../components';
 import {
-  FORM_ERROR_MISSING_USERNAME_PASSWORD,
+  FORM_ERROR_MISSING_USERNAME,
+  FORM_ERROR_MISSING_PASSWORD,
   FORM_ERROR_INCORRECT_USERNAME_PASSWORD,
 } from 'constants';
 
@@ -14,9 +15,21 @@ const Login = () => {
   const { setShowToast, setServerError } = useAppContext();
 
   const [form, setForm] = useState({ username: '', password: '' });
-  const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState({
+    username: '',
+    password: '',
+  });
   const [isAwaitingLogInResponse, setisAwaitingLogInResponse] = useState(false);
+
+  useEffect(() => {
+    if (!errorMessage.username) return;
+    setErrorMessage({ ...errorMessage, username: '' });
+  }, [form.username]);
+
+  useEffect(() => {
+    if (!errorMessage.password) return;
+    setErrorMessage({ ...errorMessage, password: '' });
+  }, [form.password]);
 
   const handleForm = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,9 +38,11 @@ const Login = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form?.username?.length || !form?.password?.length) {
-      setHasError(true);
-      setErrorMessage(FORM_ERROR_MISSING_USERNAME_PASSWORD);
+    if (!form.username || !form.password) {
+      setErrorMessage({
+        username: form.username ? '' : FORM_ERROR_MISSING_USERNAME,
+        password: form.password ? '' : FORM_ERROR_MISSING_PASSWORD,
+      });
       return;
     }
 
@@ -37,9 +52,11 @@ const Login = () => {
     if (response.status === 200) {
       router.push('/');
     } else if (response.status === 403) {
-      setHasError(true);
       setisAwaitingLogInResponse(false);
-      setErrorMessage(FORM_ERROR_INCORRECT_USERNAME_PASSWORD);
+      setErrorMessage({
+        username: FORM_ERROR_INCORRECT_USERNAME_PASSWORD,
+        password: FORM_ERROR_INCORRECT_USERNAME_PASSWORD,
+      });
     } else {
       setServerError(response.status);
       setShowToast(true);
@@ -60,7 +77,9 @@ const Login = () => {
               value={form?.username}
               onChange={handleForm}
             />
-            {hasError && <FormErrorMessage errorMessage={errorMessage} />}
+            {errorMessage.username && (
+              <FormErrorMessage errorMessage={errorMessage.username} />
+            )}
           </div>
           <div className='login-form__form-row'>
             <label htmlFor='password'>Password</label>
@@ -71,7 +90,9 @@ const Login = () => {
               value={form?.password}
               onChange={handleForm}
             />
-            {hasError && <FormErrorMessage errorMessage={errorMessage} />}
+            {errorMessage.password && (
+              <FormErrorMessage errorMessage={errorMessage.password} />
+            )}
           </div>
           <div className='login-form__form-row'>
             <button type='submit' className='login-form__login-button'>
