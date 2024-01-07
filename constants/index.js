@@ -8,8 +8,8 @@ export const TYPE_UPCOMING = 'upcoming';
 export const FORM_ERROR_MISSING_TITLE = 'Title Required';
 export const FORM_ERROR_MISSING_DESCRIPTION = 'Description Required';
 export const FORM_ERROR_MISSING_DATE = 'Date or Date & Time Required';
-export const FORM_ERROR_MISSING_USERNAME = 'Username Required';
+export const FORM_ERROR_MISSING_EMAIL = 'Email Address Required';
 export const FORM_ERROR_MISSING_PASSWORD = 'Password Required';
-export const FORM_ERROR_INCORRECT_USERNAME_PASSWORD =
-  'Incorrect Username or Password';
+export const FORM_ERROR_INCORRECT_EMAIL_PASSWORD =
+  'Incorrect Email Address or Password';
 export const SERVER_ERROR_MESSAGE = 'A server error has occurred';

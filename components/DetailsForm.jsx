@@ -19,10 +19,11 @@ const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 const DetailsForm = ({ task }) => {
   const formRef = useRef(null);
 
-  const { setShowToast, setServerError } = useAppContext();
+  const { userId, setShowToast, setServerError } = useAppContext();
 
   const [form, setForm] = useState({
     _id: task?._id,
+    userId: task?.userId ?? '',
     title: task?.title ?? '',
     description: task?.description ?? '',
     confirmDeletion: task?.confirmDeletion ?? false,
@@ -46,16 +47,17 @@ const DetailsForm = ({ task }) => {
   const router = useRouter();
   const { priority, type } = router.query;
 
-  // set state priority and type from query params when blank form
+  // set priority, type and user id when blank form
   useEffect(() => {
     if (!task) {
       setForm({
         ...form,
+        userId,
         priority,
         type,
       });
     }
-  }, [priority, type]);
+  }, [userId, priority, type]);
 
   // remove error messages when adding data to fields
   useEffect(() => {

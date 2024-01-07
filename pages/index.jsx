@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import connectDB from '../config/db';
 import { useAppContext } from 'context';
+import { getCookie } from 'cookies-next';
+import { jwtVerify } from 'jose';
 import Task from '../models/Task';
 import {
   MainControls,
@@ -13,16 +15,17 @@ import { useUpcomingBirthdays } from '../hooks';
 import { submitTask, getTask, updateTask, deleteTask } from '../services';
 import { MOBILE_BREAKPOINT } from '../constants';
 
-const Home = ({ tasks }) => {
+const Home = ({ tasks, userId }) => {
   const width = useInnerWidth();
   const birthhdays = useUpcomingBirthdays();
 
   const modalRef = useRef(null);
 
-  const { setShowToast, setServerError } = useAppContext();
+  const { setUserId, setShowToast, setServerError } = useAppContext();
 
   const [listItems, setListItems] = useState(tasks);
   const [listItem, setListItem] = useState({
+    userId,
     title: '',
     priority: '',
     type: '',
@@ -44,6 +47,11 @@ const Home = ({ tasks }) => {
 
   const allItems = [];
   const priority = listItems?.length > 0 ? listItems?.length + 1 : 1;
+
+  // set global context user id
+  useEffect(() => {
+    setUserId(userId);
+  }, []);
 
   // set state priority and type
   useEffect(() => {
@@ -145,6 +153,7 @@ const Home = ({ tasks }) => {
         setIsUpdating(false);
         setTaskToEditId('');
         setListItem({
+          userId,
           title: '',
           priority,
           type,
@@ -194,6 +203,7 @@ const Home = ({ tasks }) => {
     setIsUpdating(false);
     setTaskToEditId('');
     setListItem({
+      userId,
       title: '',
       priority,
       type,
@@ -298,14 +308,34 @@ const Home = ({ tasks }) => {
   );
 };
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ req, res }) {
   try {
     await connectDB();
 
-    const tasks = await Task.find().sort({ priority: 1 });
+    const jwtSecret = process.env.JWT_SECRET;
+    const token = getCookie('saturday', { req, res });
+    let userId;
+
+    if (token) {
+      try {
+        const { payload } = await jwtVerify(
+          token,
+          new TextEncoder().encode(jwtSecret)
+        );
+        if (payload?.id) {
+          userId = payload?.id;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    const tasks = await Task.find({ userId }).sort({
+      priority: 1,
+    });
 
     return {
-      props: { tasks: JSON.parse(JSON.stringify(tasks)) } ?? [],
+      props: { tasks: JSON.parse(JSON.stringify(tasks)), userId },
     };
   } catch (error) {
     console.log(error);

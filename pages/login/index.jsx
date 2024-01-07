@@ -4,9 +4,9 @@ import { useRouter } from 'next/router';
 import { useAppContext } from 'context';
 import { FormErrorMessage } from '../../components';
 import {
-  FORM_ERROR_MISSING_USERNAME,
+  FORM_ERROR_MISSING_EMAIL,
   FORM_ERROR_MISSING_PASSWORD,
-  FORM_ERROR_INCORRECT_USERNAME_PASSWORD,
+  FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
 } from 'constants';
 
 const Login = () => {
@@ -14,17 +14,17 @@ const Login = () => {
 
   const { setShowToast, setServerError } = useAppContext();
 
-  const [form, setForm] = useState({ username: '', password: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState({
-    username: '',
+    email: '',
     password: '',
   });
   const [isAwaitingLogInResponse, setisAwaitingLogInResponse] = useState(false);
 
   useEffect(() => {
-    if (!errorMessage.username) return;
-    setErrorMessage({ ...errorMessage, username: '' });
-  }, [form.username]);
+    if (!errorMessage.email) return;
+    setErrorMessage({ ...errorMessage, email: '' });
+  }, [form.email]);
 
   useEffect(() => {
     if (!errorMessage.password) return;
@@ -38,9 +38,9 @@ const Login = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.username || !form.password) {
+    if (!form.email || !form.password) {
       setErrorMessage({
-        username: form.username ? '' : FORM_ERROR_MISSING_USERNAME,
+        email: form.email ? '' : FORM_ERROR_MISSING_EMAIL,
         password: form.password ? '' : FORM_ERROR_MISSING_PASSWORD,
       });
       return;
@@ -54,8 +54,8 @@ const Login = () => {
     } else if (response.status === 403) {
       setisAwaitingLogInResponse(false);
       setErrorMessage({
-        username: FORM_ERROR_INCORRECT_USERNAME_PASSWORD,
-        password: FORM_ERROR_INCORRECT_USERNAME_PASSWORD,
+        email: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+        password: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
       });
     } else {
       setServerError(response.status);
@@ -69,16 +69,16 @@ const Login = () => {
       <form onSubmit={onSubmit} className='login-form__form'>
         <div className='login-form__form-controls-wrapper'>
           <div className='login-form__form-row'>
-            <label htmlFor='username'>Username</label>
+            <label htmlFor='email'>Email</label>
             <input
-              type='text'
-              id='username'
-              name='username'
-              value={form?.username}
+              type='email'
+              id='email'
+              name='email'
+              value={form?.email}
               onChange={handleForm}
             />
-            {errorMessage.username && (
-              <FormErrorMessage errorMessage={errorMessage.username} />
+            {errorMessage.email && (
+              <FormErrorMessage errorMessage={errorMessage.email} />
             )}
           </div>
           <div className='login-form__form-row'>
