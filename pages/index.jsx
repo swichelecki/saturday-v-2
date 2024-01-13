@@ -16,6 +16,8 @@ import { submitTask, getTask, updateTask, deleteTask } from '../services';
 import { MOBILE_BREAKPOINT } from '../constants';
 
 const Home = ({ tasks, userId }) => {
+  console.log('tasks ', tasks);
+
   const width = useInnerWidth();
   const birthhdays = useUpcomingBirthdays();
 
@@ -23,7 +25,8 @@ const Home = ({ tasks, userId }) => {
 
   const { setUserId, setShowToast, setServerError } = useAppContext();
 
-  const [listItems, setListItems] = useState(tasks);
+  //const [listItems, setListItems] = useState(tasks);
+  const [listItems, setListItems] = useState([]);
   const [listItem, setListItem] = useState({
     userId,
     title: '',
@@ -47,6 +50,53 @@ const Home = ({ tasks, userId }) => {
 
   const allItems = [];
   const priority = listItems?.length > 0 ? listItems?.length + 1 : 1;
+
+  // dynamic column data sorting
+  useEffect(() => {
+    // 1. need to add column attribute to data for column order
+    // 3. create array based on column order that uses type as the keys
+    // array = [{grocery: []}, {bigBox: []}]
+    // 4. loop over this array and state and add items to where type matches key in arry
+    // array = [{grocery: [{type: grocery}, {}]}, {bigBox: [{type: bigBox},{}]}]
+
+    // remove duplicates and return type and column order
+    const columnTypes = [
+      ...tasks.reduce(
+        (map, item) => map.set(item?.column, item?.type),
+        new Map()
+      ),
+    ];
+
+    // sort column order ascending
+    const sortedColumnTypes = columnTypes.sort((a, b) => a[0] - b[0]);
+
+    // create data structure
+    const columnsData = [];
+    for (const item of sortedColumnTypes) {
+      let obj = {};
+      obj[item[1]] = [];
+      columnsData.push(obj);
+    }
+
+    // add data from state
+    for (const item of tasks) {
+      for (const column of columnsData) {
+        if (Object.keys(column)[0] === item?.type) {
+          Object.values(column)[0].push(item);
+        }
+      }
+    }
+
+    //console.log('columnTypes ', columnTypes);
+
+    //console.log('sortedColumnTypes  ', sortedColumnTypes);
+
+    console.log('columnsData ', columnsData);
+
+    setListItems(columnsData);
+  }, []);
+
+  console.log('listItems ', listItems);
 
   // set global context user id
   useEffect(() => {
@@ -240,7 +290,24 @@ const Home = ({ tasks, userId }) => {
         priority={priority}
       />
       <div className='items-column-wrapper'>
-        <ItemsColumn
+        {listItems?.map((item, index) => (
+          <ItemsColumn
+            key={`items-column_${index}`}
+            heading={Object.keys(item)[0]}
+            listItems={Object.values(item)[0]}
+            handleEditTask={handleEditTask}
+            handleCancelEdit={handleCancelEdit}
+            handleDeleteTask={handleDeleteTask}
+            taskToEditId={taskToEditId}
+            isAwaitingEditResponse={isAwaitingEditResponse}
+            isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+            closeOpenItem={closeOpenItem}
+            allItems={allItems}
+            setAllItemsTouchReset={setAllItemsTouchReset}
+            allItemsTouchReset={allItemsTouchReset}
+          />
+        ))}
+        {/* <ItemsColumn
           heading={'Grocery'}
           listItems={listItems}
           handleEditTask={handleEditTask}
@@ -295,7 +362,7 @@ const Home = ({ tasks, userId }) => {
           allItems={allItems}
           setAllItemsTouchReset={setAllItemsTouchReset}
           allItemsTouchReset={allItemsTouchReset}
-        />
+        /> */}
         {birthhdays && <BirthdaysColumn birthdays={birthhdays} />}
       </div>
       <Modal

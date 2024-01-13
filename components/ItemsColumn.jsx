@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { ListItem } from './';
 import { useAppContext } from 'context';
 import { updateTask } from '../services';
-import {
+/* import {
   FaShoppingCart,
   FaStore,
   FaCogs,
   FaCalendarCheck,
-} from 'react-icons/fa';
+} from 'react-icons/fa'; */
 
 const ItemsColumn = ({
   heading,
@@ -35,12 +35,15 @@ const ItemsColumn = ({
     setDraggableItems(filteredItems);
   }, [filteredItems]);
 
+  // TODO: filteredItems can probably be removed
+  // and upcoming ordering can be brought into dynamic columns ordering code
   useEffect(() => {
-    if (heading !== 'Upcoming') {
+    if (heading !== 'upcoming') {
       setFilteredItems(
-        listItems?.filter(
+        listItems
+        /*   listItems?.filter(
           (item) => item?.type === heading?.toLowerCase()?.replace(' ', '-')
-        )
+        ) */
       );
     } else {
       const filteredUpcomingTasks = listItems?.filter(
@@ -69,7 +72,7 @@ const ItemsColumn = ({
     }
   }, [listItems]);
 
-  const handleIcon = (heading) => {
+  /*   const handleIcon = (heading) => {
     let icon;
     switch (heading) {
       case 'Grocery':
@@ -88,7 +91,7 @@ const ItemsColumn = ({
         icon = '';
     }
     return icon;
-  };
+  }; */
 
   const handleDragStart = (index) => {
     dragItemRef.current = index;
@@ -142,7 +145,8 @@ const ItemsColumn = ({
   return (
     <div className='items-column'>
       <h2>
-        {handleIcon(heading)}
+        {/*   {handleIcon(heading)} */}
+        {/* TODO: heading values in the data can be exactly what is desired on the front end */}
         {heading}
       </h2>
       <div className='items-column__list-item-wrapper' ref={listItemWrapperRef}>

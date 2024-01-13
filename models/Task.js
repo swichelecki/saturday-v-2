@@ -6,6 +6,10 @@ const TaskSchema = new Schema({
     ref: 'User',
     required: true,
   },
+  column: {
+    type: Number,
+    required: true,
+  },
   priority: {
     type: Number,
     required: true,
