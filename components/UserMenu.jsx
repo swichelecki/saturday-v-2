@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useAppContext } from 'context';
 import { deleteCookie } from 'cookies-next';
 import { FaUser } from 'react-icons/fa';
 import {
@@ -15,11 +16,13 @@ const UserMenu = () => {
 
   const router = useRouter();
 
+  const { setUserId } = useAppContext();
+
   // close menu when clicking off of it or on it
   useEffect(() => {
     const handleCloseMenuWhenClickingOff = (e) => {
       if (!e.target.classList.contains('user-menu__button')) {
-        menuRef.current.classList.remove('user-menu__nav--show-menu');
+        menuRef?.current?.classList.remove('user-menu__nav--show-menu');
       }
     };
 
@@ -44,6 +47,7 @@ const UserMenu = () => {
   // log out
   const handleUserLogOut = () => {
     deleteCookie('saturday');
+    setUserId(null);
     router.push('/login');
   };
 
