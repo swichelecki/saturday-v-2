@@ -75,8 +75,44 @@ export const updateBirthdays = async (obj) => {
   return response.json();
 };
 
+export const SignUpUser = async (obj) => {
+  const response = await fetch('/api/user/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(obj),
+  });
+
+  return response;
+};
+
 export const loginUser = async (obj) => {
-  const response = await fetch('/api/login', {
+  const response = await fetch('/api/user/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(obj),
+  });
+
+  return response;
+};
+
+export const updateUserPassword = async (obj) => {
+  const response = await fetch('/api/user/updatePassword', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(obj),
+  });
+
+  return response;
+};
+
+export const deleteUserAccount = async (obj) => {
+  const response = await fetch('/api/user/deleteAccount', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

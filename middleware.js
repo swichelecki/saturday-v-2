@@ -24,12 +24,19 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
+  if (!user && req.nextUrl.pathname === '/signup') {
+    return NextResponse.next();
+  }
+
   if (!user && req.nextUrl.pathname !== '/login') {
     req.nextUrl.pathname = '/login';
     return NextResponse.redirect(req.nextUrl);
   }
 
-  if (user && req.nextUrl.pathname === '/login') {
+  if (
+    (user && req.nextUrl.pathname === '/login') ||
+    (user && req.nextUrl.pathname === '/signup')
+  ) {
     req.nextUrl.pathname = '/';
     return NextResponse.redirect(req.nextUrl);
   }
@@ -38,5 +45,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ['/login', '/details/:path*', '/'],
+  matcher: ['/login', '/signup', '/details/:path*', '/'],
 };

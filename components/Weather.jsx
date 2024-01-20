@@ -19,6 +19,7 @@ const Weather = () => {
   const [weatherCode, setWeatherCode] = useState(0);
   const [todaysHigh, setTodaysHigh] = useState(0);
   const [todaysLow, setTodaysLow] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getWeather = async () => {
     const openMeteoApiUrl =
@@ -35,6 +36,7 @@ const Weather = () => {
       setWeatherCode(handleDayNightCheck(weather_code));
       setTodaysHigh(Math.round(temperature_2m_max));
       setTodaysLow(Math.round(temperature_2m_min));
+      setIsLoading(false);
     } else {
       console.log(
         `Error requesting weather. Status code: ${response?.status}`,
@@ -68,7 +70,7 @@ const Weather = () => {
     addMapping([101], <BsFillCloudMoonFill />);
   }, []);
 
-  if (!temperature) {
+  if (isLoading) {
     return null;
   }
 

@@ -308,10 +308,11 @@ const Home = ({ tasks, userId }) => {
   );
 };
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps(context) {
   try {
     await connectDB();
 
+    const { req, res } = context;
     const jwtSecret = process.env.JWT_SECRET;
     const token = getCookie('saturday', { req, res });
     let userId;
