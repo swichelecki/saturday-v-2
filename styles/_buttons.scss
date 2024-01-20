@@ -2,7 +2,7 @@ button,
 span.main-controls__create-button,
 span.list-item__details-edit-button,
 span.list-item__edit-button,
-span.details-form__cancel-button {
+span.form-page__cancel-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,7 +59,8 @@ span.main-controls__create-button {
 }
 
 button.list-item__delete-button,
-button.modal__delete-button {
+button.modal__delete-button,
+button.form-page__delete-button {
   background-color: $button-red-dark;
   border: 1px solid $color-border;
   color: $button-red;
@@ -73,7 +74,7 @@ button.modal__delete-button {
 }
 
 span.list-item__edit-button,
-button.details-form__save-button {
+button.form-page__save-button {
   background-color: $button-green-dark;
   border: 1px solid $color-border;
   color: $button-green;
@@ -100,7 +101,7 @@ button.list-item__edit-button {
 
 button.list-item__cancel-button,
 button.modal__cancel-button,
-span.details-form__cancel-button {
+span.form-page__cancel-button {
   background-color: $button-orange-dark;
   border: 1px solid $color-border;
   color: $button-orange;
@@ -143,7 +144,7 @@ button.list-item__cancel-button {
 }
 
 button.main-controls__add-button,
-button.details-form__save-button,
+button.form-page__save-button,
 button.main-controls__update-button {
   gap: 6px;
 }
@@ -163,7 +164,7 @@ button.list-item__cancel-button {
   }
 }
 
-button.login-form__login-button {
+button.entry-form__button {
   width: 100%;
   padding: 14px;
   font-size: 1.125rem; // 18px
@@ -186,11 +187,12 @@ button.modal__delete-button {
 }
 
 button.modal__cancel-button,
-span.details-form__cancel-button {
+span.form-page__cancel-button {
   border: 1px solid $button-orange;
 }
 
-button.modal__delete-button {
+button.modal__delete-button,
+button.form-page__delete-button {
   border: 1px solid $button-red;
 }
 
@@ -199,8 +201,22 @@ span.main-controls__create-button {
   border: 1px solid $button-purple;
 }
 
-button.details-form__save-button {
+button.form-page__save-button {
   border: 1px solid $button-green;
+}
+
+button.user-menu__button {
+  border-radius: 20px;
+  padding: 0;
+  min-width: 24px;
+  height: 24px;
+  color: $color-background;
+  font-size: 22px;
+  background-color: $color-font;
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
 }
 
 @media screen and (max-width: 600px) {

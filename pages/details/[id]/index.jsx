@@ -36,7 +36,7 @@ export async function getServerSideProps(context) {
     const task = await Task.find({ _id: id, userId });
 
     return {
-      props: { task: JSON.parse(JSON.stringify(task[0])) } ?? {},
+      props: { task: JSON.parse(JSON.stringify(task[0])) },
     };
   } catch (error) {
     console.log(error);

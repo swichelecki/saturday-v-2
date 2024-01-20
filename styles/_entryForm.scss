@@ -1,4 +1,4 @@
-.login-form {
+.entry-form {
   &__wrapper {
     display: flex;
     justify-content: center;
@@ -25,23 +25,12 @@
   &__form-row {
     display: flex;
     flex-direction: column;
-    position: relative;
     margin-bottom: 32px;
-    label {
-      margin-bottom: 6px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 300;
-      font-size: 1rem; // 16px
-      letter-spacing: 0.5px;
-    }
-    input {
-      border: none;
-      padding: 12px;
-      font: inherit;
-      border: 1px solid $color-border;
-      background-color: $color-input;
-      color: $color-font;
-      border-radius: 9px;
+    a {
+      margin-top: 12px;
+      font-weight: 400;
+      text-decoration: underline;
+      color: $button-purple;
     }
     &:last-of-type {
       padding-top: 8px;
@@ -50,7 +39,7 @@
 }
 
 @media screen and (max-width: 700px) {
-  .login-form {
+  .entry-form {
     &__form {
       max-width: 345px;
       padding: 48px 24px;

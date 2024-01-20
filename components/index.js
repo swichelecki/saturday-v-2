@@ -1,9 +1,13 @@
 export { default as Header } from './Header';
 export { default as Layout } from './Layout';
 export { default as MainControls } from './MainControls';
+export { default as Checkbox } from './Checkbox';
 export { default as ItemsColumn } from './ItemsColumn';
 export { default as ListItem } from './ListItem';
 export { default as DetailsForm } from './DetailsForm';
+export { default as FormTextField } from './FormTextField';
+export { default as FormWYSIWYGField } from './FormWYSIWYGField';
+export { default as FormCheckboxField } from './FormCheckboxField';
 export { default as BirthdaysColumn } from './BirthdaysColumn';
 export { default as Modal } from './Modal';
 export { default as FormErrorMessage } from './FormErrorMessage';

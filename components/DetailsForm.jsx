@@ -1,20 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import dynamic from 'next/dynamic';
 import { useAppContext } from 'context';
-import FormErrorMessage from './FormErrorMessage';
 import { submitTask, updateTask } from '../services';
+import { FormTextField, FormWYSIWYGField, FormCheckboxField } from 'components';
 import moment from 'moment-timezone';
-import 'react-quill/dist/quill.snow.css';
 import {
   TYPE_UPCOMING,
   FORM_ERROR_MISSING_TITLE,
   FORM_ERROR_MISSING_DESCRIPTION,
   FORM_ERROR_MISSING_DATE,
 } from 'constants';
-
-const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 const DetailsForm = ({ task }) => {
   const formRef = useRef(null);
@@ -88,7 +84,7 @@ const DetailsForm = ({ task }) => {
   useEffect(() => {
     if (!scrollToErrorMessage) return;
     const errorArray = Array.from(
-      formRef.current.querySelectorAll('.details-form__form-row--error')
+      formRef.current.querySelectorAll('.form-field--error')
     );
     const firstErrorNode = errorArray[0];
     window.scrollTo({
@@ -181,102 +177,58 @@ const DetailsForm = ({ task }) => {
   };
 
   return (
-    <form onSubmit={onSubmit} ref={formRef} className='details-form'>
-      <div
-        className={`details-form__form-row${
-          errorMessage.title ? ' details-form__form-row--error' : ''
-        }`}
-      >
-        <label htmlFor='title'>Title</label>
-        <input
-          type='text'
-          id='title'
-          name='title'
-          value={form?.title}
-          onChange={handleSetForm}
-        />
-        {errorMessage.title && (
-          <FormErrorMessage errorMessage={errorMessage.title} />
-        )}
-      </div>
-      <div
-        className={`details-form__form-row${
-          errorMessage.description ? ' details-form__form-row--error' : ''
-        }`}
-      >
-        <label htmlFor='description'>Description</label>
-        <ReactQuill
-          theme='snow'
-          value={form?.description}
-          onChange={handleSetQuill}
-        />
-        {errorMessage.description && (
-          <FormErrorMessage errorMessage={errorMessage.description} />
-        )}
-      </div>
-      <div className='details-form__form-row'>
-        <label className='inputs__checkbox-container' htmlFor='checkbox'>
-          <span>Confirm Deletion</span>
-          <input
-            type='checkbox'
-            id='checkbox'
-            checked={form?.confirmDeletion}
-            onChange={handleConfirmDeletion}
-          />
-          <span className='inputs__checkbox'></span>
-        </label>
-      </div>
+    <form onSubmit={onSubmit} ref={formRef} className='form-page'>
+      <FormTextField
+        label={'Title'}
+        type={'text'}
+        id={'title'}
+        name={'title'}
+        value={form?.title}
+        onChangeHandler={handleSetForm}
+        errorMessage={errorMessage.title}
+      />
+      <FormWYSIWYGField
+        label={'Description'}
+        value={form?.description}
+        onChangeHandler={handleSetQuill}
+        errorMessage={errorMessage.description}
+      />
+      <FormCheckboxField
+        label={'Confirm Deletion'}
+        checked={form?.confirmDeletion}
+        onChangeHandler={handleConfirmDeletion}
+      />
       {form?.type && form?.type === TYPE_UPCOMING && (
         <>
-          <div
-            className={`details-form__form-row${
-              errorMessage.date || errorMessage.dateOrDateAndTime
-                ? ' details-form__form-row--error'
-                : ''
-            }`}
-          >
-            <label htmlFor='date'>Date</label>
-            <input
-              disabled={form?.dateAndTime}
-              type='date'
-              id='date'
-              name='date'
-              value={form?.date && !form?.dateAndTime ? form?.date : ''}
-              onChange={handleSetForm}
-            />
-            {errorMessage.dateOrDateAndTime && (
-              <FormErrorMessage errorMessage={errorMessage.dateOrDateAndTime} />
-            )}
-          </div>
-          <div
-            className={`details-form__form-row${
-              errorMessage.date || errorMessage.dateOrDateAndTime
-                ? ' details-form__form-row--error'
-                : ''
-            }`}
-          >
-            <label htmlFor='dateAndTime'>Date & Time</label>
-            <input
-              disabled={form?.date && !form?.dateAndTime}
-              type='datetime-local'
-              id='dateAndTime'
-              name='dateAndTime'
-              value={form?.dateAndTime}
-              onChange={handleSetForm}
-            />
-            {errorMessage.dateOrDateAndTime && (
-              <FormErrorMessage errorMessage={errorMessage.dateOrDateAndTime} />
-            )}
-          </div>
+          <FormTextField
+            label={'Date'}
+            type={'date'}
+            id={'date'}
+            name={'date'}
+            value={form?.date && !form?.dateAndTime ? form?.date : ''}
+            onChangeHandler={handleSetForm}
+            errorMessage={errorMessage.dateOrDateAndTime}
+            disabled={form?.dateAndTime}
+          />
+          <FormTextField
+            label={'Date & Time'}
+            type={'datetime-local'}
+            id={'dateAndTime'}
+            name={'dateAndTime'}
+            value={form?.dateAndTime}
+            onChangeHandler={handleSetForm}
+            errorMessage={errorMessage.dateOrDateAndTime}
+            disabled={form?.date && !form?.dateAndTime}
+          />
         </>
       )}
-      <div className='details-form__buttons-wrapper'>
-        <button type='submit' className='details-form__save-button'>
+      <div className='form-page__buttons-wrapper'>
+        <button type='submit' className='form-page__save-button'>
           {isAwaitingSaveResponse && <div className='loader'></div>}
           Save
         </button>
         <Link href='/'>
-          <span className='details-form__cancel-button'>Cancel</span>
+          <span className='form-page__cancel-button'>Cancel</span>
         </Link>
       </div>
     </form>

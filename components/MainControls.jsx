@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useInnerWidth } from '../hooks';
+import { Checkbox } from 'components';
 import {
   FaShoppingCart,
   FaStore,
@@ -25,6 +26,11 @@ const MainControls = ({
 
   const [checkbox, setCheckbox] = useState(false);
   const [isCheckedByUser, setIsCheckedByUser] = useState(false);
+
+  const handleSetCheckbox = (e) => {
+    setCheckbox(e.target.checked);
+    setIsCheckedByUser((current) => !current);
+  };
 
   return (
     <div className='main-controls'>
@@ -79,26 +85,14 @@ const MainControls = ({
         >
           {width > MOBILE_BREAKPOINT ? 'Upcoming' : <FaCalendarCheck />}
         </button>
-        <label
-          className='inputs__checkbox-container'
-          htmlFor='checkbox'
-          style={
-            type === TYPE_UPCOMING && checkbox ? { cursor: 'no-drop' } : {}
+        <Checkbox
+          label={'Detailed'}
+          type={type}
+          checked={checkbox}
+          onChangeHandler={
+            type !== TYPE_UPCOMING ? handleSetCheckbox : () => {}
           }
-          onChange={() => setIsCheckedByUser((current) => !current)}
-        >
-          <span>Detailed</span>
-          <input
-            type='checkbox'
-            id='checkbox'
-            onChange={(e) => {
-              if (type === TYPE_UPCOMING) return;
-              setCheckbox(e.target.checked);
-            }}
-            checked={checkbox}
-          />
-          <span className='inputs__checkbox'></span>
-        </label>
+        />
       </div>
       <div className='main-controls__bottom-controls'>
         {checkbox && !isUpdating ? (

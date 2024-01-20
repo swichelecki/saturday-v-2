@@ -1,7 +1,8 @@
-import connectDB from '../../config/db';
-import User from '../../models/User';
+import connectDB from '../../../config/db';
+import User from '../../../models/User';
 import { setCookie } from 'cookies-next';
 import { SignJWT } from 'jose';
+import bcrypt from 'bcryptjs';
 const jwtSecret = process.env.JWT_SECRET;
 
 export default async function login(req, res) {
@@ -11,18 +12,19 @@ export default async function login(req, res) {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
-    if (user && password === user.password) {
+    if (user && bcrypt.compare(password === user.password)) {
       const token = await new SignJWT({ hasToken: true, id: user._id })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
         .sign(new TextEncoder().encode(jwtSecret));
       setCookie('saturday', token, { req, res });
 
-      return res.status(200).end();
+      res.status(200).end();
     } else {
-      return res.status(403).end();
+      res.status(403).end();
+      throw new Error('Incorrect User Credentials');
     }
   } catch (error) {
     console.log(error);
-    return res.status(500).end();
+    res.status(500).end();
   }
 }
