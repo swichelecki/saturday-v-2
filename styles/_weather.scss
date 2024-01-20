@@ -1,7 +1,4 @@
 .weather {
-  position: absolute;
-  top: 12px;
-  right: 96px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -44,8 +41,6 @@
 
 @media screen and (max-width: 800px) {
   .weather {
-    right: 72px;
-    top: 20px;
     &__icon-temp-location-wrapper {
       flex-direction: row;
       gap: 8px;
@@ -55,7 +50,6 @@
 
 @media screen and (max-width: 600px) {
   .weather {
-    top: 12px;
     &__icon-temp {
       font-size: 1.5rem; // 24px
       svg {

@@ -65,10 +65,14 @@ const Home = ({ tasks, userId }) => {
         !isUpdating ? handleOnSubmit() : handleEditSubmit();
       }
     };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
+
+    if (document && typeof document !== 'undefined') {
+      document.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
   }, [listItem]);
 
   // ensure all items are closed on mobile after new item is created or item is deleted

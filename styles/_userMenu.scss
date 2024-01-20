@@ -1,8 +1,4 @@
 button.user-menu__button {
-  position: absolute;
-  right: 48px;
-  top: 50%;
-  transform: translate(0, -50%);
   svg {
     pointer-events: none;
   }
@@ -51,9 +47,6 @@ button.user-menu__button {
 }
 
 @media screen and (max-width: 800px) {
-  button.user-menu__button {
-    right: 24px;
-  }
   .user-menu {
     &__nav {
       right: 24px;
