@@ -7,10 +7,18 @@
     display: inline-block;
   }
   &__inner-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: relative;
     margin: 0 auto;
     max-width: 1296px;
-    padding: 20px 48px;
+    padding: 14px 48px;
+  }
+  &__content-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
   }
 }
 

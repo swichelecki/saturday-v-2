@@ -12,8 +12,10 @@ const Header = () => {
         <Link href='/'>
           <h1>Saturday</h1>
         </Link>
-        <Weather />
-        {userId && <UserMenu />}
+        <div className='header__content-right'>
+          <Weather />
+          {userId && <UserMenu />}
+        </div>
       </div>
     </header>
   );
