@@ -58,10 +58,10 @@
     &__top-controls {
       justify-content: flex-start;
     }
-    .inputs__checkbox-container {
+    .checkbox__checkbox-container {
       padding: 0 0 0 26px;
     }
-    .inputs__checkbox {
+    .checkbox__checkbox {
       height: 18px;
       width: 18px;
       &:after {
@@ -77,7 +77,7 @@
 
 @media screen and (max-width: 400px) {
   .main-controls {
-    .inputs__checkbox-container {
+    .checkbox__checkbox-container {
       padding: 30px 0 0;
       font-size: 0.8125rem; // 13px
       span:first-of-type {
