@@ -15,11 +15,14 @@ import {
 const DetailsForm = ({ task }) => {
   const formRef = useRef(null);
 
+  const router = useRouter();
+  const { priority, type, column } = router.query;
+
   const { userId, setShowToast, setServerError } = useAppContext();
 
   const [form, setForm] = useState({
     _id: task?._id,
-    userId: task?.userId ?? '',
+    userId: task?.userId ?? userId,
     title: task?.title ?? '',
     description: task?.description ?? '',
     confirmDeletion: task?.confirmDeletion ?? false,
@@ -29,8 +32,9 @@ const DetailsForm = ({ task }) => {
           .tz('America/Chicago')
           .format('yyyy-MM-DDTHH:mm')
       : '',
-    priority: task?.priority ?? '',
-    type: task?.type ?? '',
+    priority: task?.priority ?? priority,
+    type: task?.type ?? type,
+    column: task?.column ?? column,
   });
   const [errorMessage, setErrorMessage] = useState({
     title: '',
@@ -39,21 +43,6 @@ const DetailsForm = ({ task }) => {
   });
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
-
-  const router = useRouter();
-  const { priority, type } = router.query;
-
-  // set priority, type and user id when blank form
-  useEffect(() => {
-    if (!task) {
-      setForm({
-        ...form,
-        userId,
-        priority,
-        type,
-      });
-    }
-  }, [userId, priority, type]);
 
   // remove error messages when adding data to fields
   useEffect(() => {

@@ -12,6 +12,7 @@ import {
   TOUCH_DURATION_THRESHOLD,
   MAX_MOVE_DISTANCE,
   MOBILE_BREAKPOINT,
+  TYPE_UPCOMING,
 } from 'constants';
 
 let previousItemId = '';
@@ -439,7 +440,7 @@ const ItemList = ({
   };
 
   const isToday =
-    item?.type === 'upcoming' ? handleTodaysDateCheck(item?.date) : null;
+    item?.type === TYPE_UPCOMING ? handleTodaysDateCheck(item?.date) : null;
 
   return (
     <div
@@ -484,7 +485,7 @@ const ItemList = ({
           className='list-item__item'
           id={`${item?.type}_list-item-inner_${index}`}
         >
-          {item?.type !== 'upcoming' && (
+          {item?.type !== TYPE_UPCOMING && (
             <div
               className='list-item__item-drag-zone'
               onTouchStart={handleDragYStart}
@@ -502,7 +503,7 @@ const ItemList = ({
           )}
           <div
             className={`list-item__item-swipe-zone ${
-              item?.type === 'upcoming'
+              item?.type === TYPE_UPCOMING
                 ? 'list-item__item-swipe-zone--upcoming'
                 : ''
             }`}

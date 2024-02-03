@@ -11,7 +11,8 @@ import { updateTask } from '../services';
 
 const ItemsColumn = ({
   heading,
-  listItems,
+  items,
+  setListItems,
   handleEditTask,
   handleCancelEdit,
   handleDeleteTask,
@@ -28,70 +29,12 @@ const ItemsColumn = ({
 
   const { setShowToast, setServerError } = useAppContext();
 
-  const [filteredItems, setFilteredItems] = useState([]);
   const [draggableItems, setDraggableItems] = useState([]);
 
   useEffect(() => {
-    setDraggableItems(filteredItems);
-  }, [filteredItems]);
-
-  // TODO: filteredItems can probably be removed
-  // and upcoming ordering can be brought into dynamic columns ordering code
-  useEffect(() => {
-    if (heading !== 'upcoming') {
-      setFilteredItems(
-        listItems
-        /*   listItems?.filter(
-          (item) => item?.type === heading?.toLowerCase()?.replace(' ', '-')
-        ) */
-      );
-    } else {
-      const filteredUpcomingTasks = listItems?.filter(
-        (item) => item?.type === heading?.toLowerCase()?.replace(' ', '-')
-      );
-
-      const tasksWithFormattedDate = filteredUpcomingTasks.map((item) => {
-        return {
-          ...item,
-          date: new Date(item?.date),
-        };
-      });
-
-      const TasksSortedDateAsc = tasksWithFormattedDate.sort(
-        (objA, objB) => Number(objA.date) - Number(objB.date)
-      );
-
-      const upcomingTasksSortedByDateAsc = TasksSortedDateAsc.map((item) => {
-        return {
-          ...item,
-          date: new Date(item.date).toISOString().split('T')[0],
-        };
-      });
-
-      setFilteredItems(upcomingTasksSortedByDateAsc);
-    }
-  }, [listItems]);
-
-  /*   const handleIcon = (heading) => {
-    let icon;
-    switch (heading) {
-      case 'Grocery':
-        icon = <FaShoppingCart />;
-        break;
-      case 'Big Box':
-        icon = <FaStore />;
-        break;
-      case 'Other':
-        icon = <FaCogs />;
-        break;
-      case 'Upcoming':
-        icon = <FaCalendarCheck />;
-        break;
-      default:
-        icon = '';
-    }
-    return icon;
-  }; */
+    const copyOfListItems = [...items];
+    setDraggableItems(copyOfListItems);
+  }, [items]);
 
   const handleDragStart = (index) => {
     dragItemRef.current = index;
@@ -103,13 +46,12 @@ const ItemsColumn = ({
 
     if (index !== dragItemRef.current) {
       setDraggableItems(() => {
-        const copyDraggableItems = [...draggableItems];
-        copyDraggableItems.splice(
+        draggableItems.splice(
           dragOverItemIndex,
           0,
-          copyDraggableItems.splice(dragItemIndex, 1)[0]
+          draggableItems.splice(dragItemIndex, 1)[0]
         );
-        return copyDraggableItems;
+        return draggableItems;
       });
       dragItemRef.current = dragOverItemIndex;
     }
@@ -135,22 +77,23 @@ const ItemsColumn = ({
       })
     );
 
-    setFilteredItems(draggableItemsWithNewPriorities);
+    setListItems((current) => {
+      return [
+        ...draggableItemsWithNewPriorities,
+        ...current.filter((item) => item.type !== heading),
+      ];
+    });
   };
 
-  if (!filteredItems?.length) {
+  if (!items?.length) {
     return null;
   }
 
   return (
     <div className='items-column'>
-      <h2>
-        {/*   {handleIcon(heading)} */}
-        {/* TODO: heading values in the data can be exactly what is desired on the front end */}
-        {heading}
-      </h2>
+      <h2>{heading}</h2>
       <div className='items-column__list-item-wrapper' ref={listItemWrapperRef}>
-        {filteredItems?.map((item, index) => (
+        {items?.map((item, index) => (
           <ListItem
             item={item}
             handleEditTask={handleEditTask}
@@ -168,7 +111,7 @@ const ItemsColumn = ({
             setAllItemsTouchReset={setAllItemsTouchReset}
             allItemsTouchReset={allItemsTouchReset}
             listItemWrapperRef={listItemWrapperRef}
-            numberOfItemsInColumn={filteredItems?.length}
+            numberOfItemsInColumn={items?.length}
           />
         ))}
       </div>

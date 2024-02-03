@@ -15,8 +15,9 @@ const MainControls = ({
   handleEditSubmit,
   title,
   handleSetListItem,
-  setType,
+  setListItem,
   type,
+  column,
   isUpdating,
   isAwaitingAddResponse,
   isAwaitingUpdateResponse,
@@ -37,10 +38,10 @@ const MainControls = ({
       <div className='main-controls__top-controls'>
         <button
           className={`main-controls__type-button${
-            type === 'grocery' ? ' main-controls__type-button--active' : ''
+            type === 'Grocery' ? ' main-controls__type-button--active' : ''
           }`}
           onClick={() => {
-            setType('grocery');
+            setListItem((curr) => ({ ...curr, type: 'Grocery', column: 1 }));
             setCheckbox((current) =>
               isCheckedByUser && current === true ? true : false
             );
@@ -50,10 +51,10 @@ const MainControls = ({
         </button>
         <button
           className={`main-controls__type-button${
-            type === 'big-box' ? ' main-controls__type-button--active' : ''
+            type === 'Big Box' ? ' main-controls__type-button--active' : ''
           }`}
           onClick={() => {
-            setType('big-box');
+            setListItem((curr) => ({ ...curr, type: 'Big Box', column: 2 }));
             setCheckbox((current) =>
               isCheckedByUser && current === true ? true : false
             );
@@ -63,10 +64,10 @@ const MainControls = ({
         </button>
         <button
           className={`main-controls__type-button${
-            type === 'other' ? ' main-controls__type-button--active' : ''
+            type === 'Other' ? ' main-controls__type-button--active' : ''
           }`}
           onClick={() => {
-            setType('other');
+            setListItem((curr) => ({ ...curr, type: 'Other', column: 3 }));
             setCheckbox((current) =>
               isCheckedByUser && current === true ? true : false
             );
@@ -79,7 +80,11 @@ const MainControls = ({
             type === TYPE_UPCOMING ? ' main-controls__type-button--active' : ''
           }`}
           onClick={() => {
-            setType(TYPE_UPCOMING);
+            setListItem((curr) => ({
+              ...curr,
+              type: TYPE_UPCOMING,
+              column: 4,
+            }));
             setCheckbox(true);
           }}
         >
@@ -99,7 +104,7 @@ const MainControls = ({
           <Link
             href={{
               pathname: '/details',
-              query: { priority, type },
+              query: { priority, type, column },
             }}
           >
             <span className='main-controls__create-button'>Create</span>

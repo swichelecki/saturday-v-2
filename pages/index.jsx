@@ -13,11 +13,10 @@ import {
 import { useInnerWidth } from '../hooks';
 import { useUpcomingBirthdays } from '../hooks';
 import { submitTask, getTask, updateTask, deleteTask } from '../services';
+import { handleSortItemsAscending } from 'utilities';
 import { MOBILE_BREAKPOINT } from '../constants';
 
 const Home = ({ tasks, userId }) => {
-  console.log('tasks ', tasks);
-
   const width = useInnerWidth();
   const birthhdays = useUpcomingBirthdays();
 
@@ -25,18 +24,19 @@ const Home = ({ tasks, userId }) => {
 
   const { setUserId, setShowToast, setServerError } = useAppContext();
 
-  //const [listItems, setListItems] = useState(tasks);
-  const [listItems, setListItems] = useState([]);
+  const [listItems, setListItems] = useState(tasks);
+  const [sortedListItems, setSortedListItems] = useState([]);
   const [listItem, setListItem] = useState({
     userId,
     title: '',
-    priority: '',
+    column: 1,
+    priority: 1,
     type: '',
     description: '',
     date: '',
     dateAndTime: '',
   });
-  const [type, setType] = useState('grocery');
+  const [priority, setPriority] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
   const [taskToEditId, setTaskToEditId] = useState('');
   const [isAwaitingAddResponse, setIsAwaitingAddResponse] = useState(false);
@@ -49,19 +49,17 @@ const Home = ({ tasks, userId }) => {
   const [modalIdToDelete, setModalIdToDelete] = useState('');
 
   const allItems = [];
-  const priority = listItems?.length > 0 ? listItems?.length + 1 : 1;
 
   // dynamic column data sorting
   useEffect(() => {
-    // 1. need to add column attribute to data for column order
-    // 3. create array based on column order that uses type as the keys
-    // array = [{grocery: []}, {bigBox: []}]
-    // 4. loop over this array and state and add items to where type matches key in arry
-    // array = [{grocery: [{type: grocery}, {}]}, {bigBox: [{type: bigBox},{}]}]
+    if (!listItems.length) {
+      setSortedListItems([]);
+      return;
+    }
 
     // remove duplicates and return type and column order
     const columnTypes = [
-      ...tasks.reduce(
+      ...listItems.reduce(
         (map, item) => map.set(item?.column, item?.type),
         new Map()
       ),
@@ -73,13 +71,13 @@ const Home = ({ tasks, userId }) => {
     // create data structure
     const columnsData = [];
     for (const item of sortedColumnTypes) {
-      let obj = {};
+      const obj = {};
       obj[item[1]] = [];
       columnsData.push(obj);
     }
 
-    // add data from state
-    for (const item of tasks) {
+    // add items to array
+    for (const item of listItems) {
       for (const column of columnsData) {
         if (Object.keys(column)[0] === item?.type) {
           Object.values(column)[0].push(item);
@@ -87,26 +85,61 @@ const Home = ({ tasks, userId }) => {
       }
     }
 
-    //console.log('columnTypes ', columnTypes);
+    // sort arrays by date asc when date is present
+    for (const item of columnsData) {
+      if (Object.values(item)[0][0]['date'] !== null) {
+        const itemsWithDatesSortedAsc = handleSortItemsAscending(
+          Object.values(item)[0]
+        );
+        Object.values(item)[0].length = 0;
+        Object.values(item)[0].push(...itemsWithDatesSortedAsc);
+      }
+    }
 
-    //console.log('sortedColumnTypes  ', sortedColumnTypes);
+    // set item type to first column type on page load
+    if (!sortedListItems.length) {
+      setListItem({
+        ...listItem,
+        type: sortedColumnTypes[0][1],
+        column: 1,
+      });
+    }
 
-    console.log('columnsData ', columnsData);
+    setSortedListItems(columnsData);
+  }, [listItems]);
 
-    setListItems(columnsData);
-  }, []);
+  // set priority of next new item
+  useEffect(() => {
+    if (!listItem?.type) return;
 
-  console.log('listItems ', listItems);
+    const selectedCategoryData = sortedListItems.find(
+      (category) => Object.keys(category)[0] === listItem?.type
+    );
+
+    if (typeof selectedCategoryData === 'undefined') {
+      setPriority(1);
+      return;
+    }
+
+    const priorityOfNewItem = Object.values(selectedCategoryData)[0].length + 1;
+
+    setPriority(priorityOfNewItem);
+  }, [listItem, sortedListItems]);
+
+  // ensure list item always has correct priorty of next new item
+  useEffect(() => {
+    if (!sortedListItems.length) return;
+
+    setListItem({
+      ...listItem,
+      priority,
+    });
+  }, [priority]);
 
   // set global context user id
   useEffect(() => {
     setUserId(userId);
   }, []);
-
-  // set state priority and type
-  useEffect(() => {
-    setListItem({ ...listItem, priority, type });
-  }, [priority, type]);
 
   // handle submit with Enter key
   useEffect(() => {
@@ -135,9 +168,12 @@ const Home = ({ tasks, userId }) => {
     setAllItemsTouchReset(true);
   };
 
-  // set item title
+  // set item title and priority
   const handleSetListItem = (e) => {
-    setListItem({ ...listItem, title: e.target.value });
+    setListItem({
+      ...listItem,
+      title: e.target.value,
+    });
   };
 
   // create new item
@@ -209,8 +245,9 @@ const Home = ({ tasks, userId }) => {
         setListItem({
           userId,
           title: '',
+          column: res.item.column,
+          type: res.item.type,
           priority,
-          type,
           description: '',
           date: '',
           dateAndTime: '',
@@ -237,8 +274,8 @@ const Home = ({ tasks, userId }) => {
     setIsAwaitingDeleteResponse(true);
     deleteTask(id).then((res) => {
       if (res.status === 200) {
-        const filteredTasksArray = listItems.filter((item) => item._id !== id);
-        setListItems(filteredTasksArray);
+        setListItems(listItems.filter((item) => item._id !== id));
+
         if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
       }
 
@@ -259,8 +296,9 @@ const Home = ({ tasks, userId }) => {
     setListItem({
       userId,
       title: '',
+      column: listItem.column,
+      type: listItem.type,
       priority,
-      type,
       description: '',
       date: '',
       dateAndTime: '',
@@ -286,19 +324,21 @@ const Home = ({ tasks, userId }) => {
         handleEditSubmit={handleEditSubmit}
         title={listItem?.title}
         handleSetListItem={handleSetListItem}
-        setType={setType}
-        type={type}
+        setListItem={setListItem}
+        type={listItem?.type}
+        column={listItem?.column}
         isUpdating={isUpdating}
         isAwaitingAddResponse={isAwaitingAddResponse}
         isAwaitingUpdateResponse={isAwaitingUpdateResponse}
         priority={priority}
       />
       <div className='items-column-wrapper'>
-        {listItems?.map((item, index) => (
+        {sortedListItems?.map((item, index) => (
           <ItemsColumn
             key={`items-column_${index}`}
             heading={Object.keys(item)[0]}
-            listItems={Object.values(item)[0]}
+            items={Object.values(item)[0]}
+            setListItems={setListItems}
             handleEditTask={handleEditTask}
             handleCancelEdit={handleCancelEdit}
             handleDeleteTask={handleDeleteTask}
@@ -311,62 +351,6 @@ const Home = ({ tasks, userId }) => {
             allItemsTouchReset={allItemsTouchReset}
           />
         ))}
-        {/* <ItemsColumn
-          heading={'Grocery'}
-          listItems={listItems}
-          handleEditTask={handleEditTask}
-          handleCancelEdit={handleCancelEdit}
-          handleDeleteTask={handleDeleteTask}
-          taskToEditId={taskToEditId}
-          isAwaitingEditResponse={isAwaitingEditResponse}
-          isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-          closeOpenItem={closeOpenItem}
-          allItems={allItems}
-          setAllItemsTouchReset={setAllItemsTouchReset}
-          allItemsTouchReset={allItemsTouchReset}
-        />
-        <ItemsColumn
-          heading={'Big Box'}
-          listItems={listItems}
-          handleEditTask={handleEditTask}
-          handleCancelEdit={handleCancelEdit}
-          handleDeleteTask={handleDeleteTask}
-          taskToEditId={taskToEditId}
-          isAwaitingEditResponse={isAwaitingEditResponse}
-          isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-          closeOpenItem={closeOpenItem}
-          allItems={allItems}
-          setAllItemsTouchReset={setAllItemsTouchReset}
-          allItemsTouchReset={allItemsTouchReset}
-        />
-        <ItemsColumn
-          heading={'Other'}
-          listItems={listItems}
-          handleEditTask={handleEditTask}
-          handleCancelEdit={handleCancelEdit}
-          handleDeleteTask={handleDeleteTask}
-          taskToEditId={taskToEditId}
-          isAwaitingEditResponse={isAwaitingEditResponse}
-          isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-          closeOpenItem={closeOpenItem}
-          allItems={allItems}
-          setAllItemsTouchReset={setAllItemsTouchReset}
-          allItemsTouchReset={allItemsTouchReset}
-        />
-        <ItemsColumn
-          heading={'Upcoming'}
-          listItems={listItems}
-          handleEditTask={handleEditTask}
-          handleCancelEdit={handleCancelEdit}
-          handleDeleteTask={handleDeleteTask}
-          taskToEditId={taskToEditId}
-          isAwaitingEditResponse={isAwaitingEditResponse}
-          isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-          closeOpenItem={closeOpenItem}
-          allItems={allItems}
-          setAllItemsTouchReset={setAllItemsTouchReset}
-          allItemsTouchReset={allItemsTouchReset}
-        /> */}
         {birthhdays && <BirthdaysColumn birthdays={birthhdays} />}
       </div>
       <Modal
