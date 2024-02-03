@@ -25,6 +25,7 @@ button.main-controls__type-button {
   color: $button-purple;
   box-shadow: 0 0 0 1px $color-border;
   opacity: 0.8;
+  text-transform: capitalize;
   &--active {
     box-shadow: 0 0 0 1px $button-purple;
     background-color: $button-purple-dark;

@@ -1,16 +1,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
-import { useInnerWidth } from '../hooks';
+//import { useInnerWidth } from '../hooks';
 import { Checkbox } from 'components';
-import {
-  FaShoppingCart,
-  FaStore,
-  FaCogs,
-  FaCalendarCheck,
-} from 'react-icons/fa';
-import { MOBILE_BREAKPOINT, TYPE_UPCOMING } from 'constants';
+//import { MOBILE_BREAKPOINT } from 'constants';
 
 const MainControls = ({
+  categories,
   handleOnSubmit,
   handleEditSubmit,
   title,
@@ -23,10 +18,11 @@ const MainControls = ({
   isAwaitingUpdateResponse,
   priority,
 }) => {
-  const width = useInnerWidth();
+  //const width = useInnerWidth();
 
   const [checkbox, setCheckbox] = useState(false);
   const [isCheckedByUser, setIsCheckedByUser] = useState(false);
+  const [hasMandatoryDate, setHasMandatoryDate] = useState('');
 
   const handleSetCheckbox = (e) => {
     setCheckbox(e.target.checked);
@@ -36,66 +32,35 @@ const MainControls = ({
   return (
     <div className='main-controls'>
       <div className='main-controls__top-controls'>
-        <button
-          className={`main-controls__type-button${
-            type === 'Grocery' ? ' main-controls__type-button--active' : ''
-          }`}
-          onClick={() => {
-            setListItem((curr) => ({ ...curr, type: 'Grocery', column: 1 }));
-            setCheckbox((current) =>
-              isCheckedByUser && current === true ? true : false
-            );
-          }}
-        >
-          {width > MOBILE_BREAKPOINT ? 'Grocery' : <FaShoppingCart />}
-        </button>
-        <button
-          className={`main-controls__type-button${
-            type === 'Big Box' ? ' main-controls__type-button--active' : ''
-          }`}
-          onClick={() => {
-            setListItem((curr) => ({ ...curr, type: 'Big Box', column: 2 }));
-            setCheckbox((current) =>
-              isCheckedByUser && current === true ? true : false
-            );
-          }}
-        >
-          {width > MOBILE_BREAKPOINT ? 'Big Box' : <FaStore />}
-        </button>
-        <button
-          className={`main-controls__type-button${
-            type === 'Other' ? ' main-controls__type-button--active' : ''
-          }`}
-          onClick={() => {
-            setListItem((curr) => ({ ...curr, type: 'Other', column: 3 }));
-            setCheckbox((current) =>
-              isCheckedByUser && current === true ? true : false
-            );
-          }}
-        >
-          {width > MOBILE_BREAKPOINT ? 'Other' : <FaCogs />}
-        </button>
-        <button
-          className={`main-controls__type-button${
-            type === TYPE_UPCOMING ? ' main-controls__type-button--active' : ''
-          }`}
-          onClick={() => {
-            setListItem((curr) => ({
-              ...curr,
-              type: TYPE_UPCOMING,
-              column: 4,
-            }));
-            setCheckbox(true);
-          }}
-        >
-          {width > MOBILE_BREAKPOINT ? 'Upcoming' : <FaCalendarCheck />}
-        </button>
+        {categories?.map((item, index) => (
+          <button
+            key={`category-button_${index}`}
+            className={`main-controls__type-button${
+              type === item?.type ? ' main-controls__type-button--active' : ''
+            }`}
+            onClick={() => {
+              setListItem((curr) => ({
+                ...curr,
+                type: item?.type,
+                column: index + 1,
+              }));
+              setCheckbox((current) =>
+                (isCheckedByUser && current === true) || item?.mandatoryDate
+                  ? true
+                  : false
+              );
+              setHasMandatoryDate(item?.mandatoryDate ? 'true' : '');
+            }}
+          >
+            {item?.type}
+          </button>
+        ))}
         <Checkbox
           label={'Detailed'}
           type={type}
           checked={checkbox}
           onChangeHandler={
-            type !== TYPE_UPCOMING ? handleSetCheckbox : () => {}
+            !Boolean(hasMandatoryDate) ? handleSetCheckbox : () => {}
           }
         />
       </div>
@@ -104,7 +69,7 @@ const MainControls = ({
           <Link
             href={{
               pathname: '/details',
-              query: { priority, type, column },
+              query: { priority, type, column, hasMandatoryDate },
             }}
           >
             <span className='main-controls__create-button'>Create</span>

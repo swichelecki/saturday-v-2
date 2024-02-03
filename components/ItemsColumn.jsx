@@ -2,12 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { ListItem } from './';
 import { useAppContext } from 'context';
 import { updateTask } from '../services';
-/* import {
-  FaShoppingCart,
-  FaStore,
-  FaCogs,
-  FaCalendarCheck,
-} from 'react-icons/fa'; */
 
 const ItemsColumn = ({
   heading,

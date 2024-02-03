@@ -35,6 +35,10 @@ const TaskSchema = new Schema({
   dateAndTime: {
     type: Date,
   },
+  mandatoryDate: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const Task = models.Task ?? model('Task', TaskSchema);

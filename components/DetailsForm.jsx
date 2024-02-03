@@ -6,7 +6,6 @@ import { submitTask, updateTask } from '../services';
 import { FormTextField, FormWYSIWYGField, FormCheckboxField } from 'components';
 import moment from 'moment-timezone';
 import {
-  TYPE_UPCOMING,
   FORM_ERROR_MISSING_TITLE,
   FORM_ERROR_MISSING_DESCRIPTION,
   FORM_ERROR_MISSING_DATE,
@@ -16,7 +15,7 @@ const DetailsForm = ({ task }) => {
   const formRef = useRef(null);
 
   const router = useRouter();
-  const { priority, type, column } = router.query;
+  const { priority, type, column, hasMandatoryDate } = router.query;
 
   const { userId, setShowToast, setServerError } = useAppContext();
 
@@ -35,6 +34,7 @@ const DetailsForm = ({ task }) => {
     priority: task?.priority ?? priority,
     type: task?.type ?? type,
     column: task?.column ?? column,
+    mandatoryDate: task?.mandatoryDate ?? Boolean(hasMandatoryDate),
   });
   const [errorMessage, setErrorMessage] = useState({
     title: '',
@@ -105,18 +105,18 @@ const DetailsForm = ({ task }) => {
     // error handling for missing required fields
     if (
       !form?.title ||
-      (form.type === TYPE_UPCOMING && !form?.date && !form?.dateAndTime) ||
-      (form.type !== TYPE_UPCOMING &&
+      (Boolean(hasMandatoryDate) && !form?.date && !form?.dateAndTime) ||
+      (!Boolean(hasMandatoryDate) &&
         (!form?.description || form.description === '<p><br></p>'))
     ) {
       setErrorMessage({
         title: !form.title && FORM_ERROR_MISSING_TITLE,
         description:
           (!form.description || form.description === '<p><br></p>') &&
-          type !== TYPE_UPCOMING &&
+          !Boolean(hasMandatoryDate) &&
           FORM_ERROR_MISSING_DESCRIPTION,
         dateOrDateAndTime:
-          type === TYPE_UPCOMING &&
+          Boolean(hasMandatoryDate) &&
           !form.date &&
           !form.dateAndTime &&
           FORM_ERROR_MISSING_DATE,
@@ -187,7 +187,7 @@ const DetailsForm = ({ task }) => {
         checked={form?.confirmDeletion}
         onChangeHandler={handleConfirmDeletion}
       />
-      {form?.type && form?.type === TYPE_UPCOMING && (
+      {(form?.mandatoryDate || Boolean(hasMandatoryDate)) && (
         <>
           <FormTextField
             label={'Date'}

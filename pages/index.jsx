@@ -4,6 +4,7 @@ import { useAppContext } from 'context';
 import { getCookie } from 'cookies-next';
 import { jwtVerify } from 'jose';
 import Task from '../models/Task';
+import Category from '../models/Category';
 import {
   MainControls,
   ItemsColumn,
@@ -16,7 +17,7 @@ import { submitTask, getTask, updateTask, deleteTask } from '../services';
 import { handleSortItemsAscending } from 'utilities';
 import { MOBILE_BREAKPOINT } from '../constants';
 
-const Home = ({ tasks, userId }) => {
+const Home = ({ tasks, categories, userId }) => {
   const width = useInnerWidth();
   const birthhdays = useUpcomingBirthdays();
 
@@ -35,6 +36,7 @@ const Home = ({ tasks, userId }) => {
     description: '',
     date: '',
     dateAndTime: '',
+    mandatoryDate: false,
   });
   const [priority, setPriority] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -100,13 +102,12 @@ const Home = ({ tasks, userId }) => {
     if (!sortedListItems.length) {
       setListItem({
         ...listItem,
-        type: sortedColumnTypes[0][1],
-        column: 1,
+        type: categories[0]['type'],
       });
     }
 
     setSortedListItems(columnsData);
-  }, [listItems]);
+  }, [listItems, categories]);
 
   // set priority of next new item
   useEffect(() => {
@@ -251,6 +252,7 @@ const Home = ({ tasks, userId }) => {
           description: '',
           date: '',
           dateAndTime: '',
+          mandatoryDate: false,
         });
       }
 
@@ -302,6 +304,7 @@ const Home = ({ tasks, userId }) => {
       description: '',
       date: '',
       dateAndTime: '',
+      mandatoryDate: false,
     });
   };
 
@@ -320,6 +323,7 @@ const Home = ({ tasks, userId }) => {
   return (
     <div className='content-container'>
       <MainControls
+        categories={categories}
         handleOnSubmit={handleOnSubmit}
         handleEditSubmit={handleEditSubmit}
         title={listItem?.title}
@@ -390,8 +394,16 @@ export async function getServerSideProps(context) {
       priority: 1,
     });
 
+    const categories = await Category.find({ userId }).sort({
+      priority: 1,
+    });
+
     return {
-      props: { tasks: JSON.parse(JSON.stringify(tasks)), userId },
+      props: {
+        tasks: JSON.parse(JSON.stringify(tasks)),
+        categories: JSON.parse(JSON.stringify(categories)),
+        userId,
+      },
     };
   } catch (error) {
     console.log(error);
