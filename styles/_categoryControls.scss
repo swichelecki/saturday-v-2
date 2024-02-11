@@ -1,0 +1,23 @@
+.category-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+  flex: 0 1 100%;
+  &__form-wrapper {
+    flex: 0 1 100%;
+  }
+  &__categories-wrapper {
+    flex: 0 1 100%;
+    position: relative;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .category-controls {
+    flex-direction: column;
+    gap: 0;
+    &__categories-wrapper {
+      flex: auto;
+    }
+  }
+}

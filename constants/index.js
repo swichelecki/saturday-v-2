@@ -24,3 +24,4 @@ export const FORM_ERROR_MISSING_DELETE_MISMATCH =
 export const DELETE_MY_ACCOUNT = 'delete my account';
 export const INVALID_USER_DATA = 'Invalid User Data';
 export const SERVER_ERROR_MESSAGE = 'A server error has occurred';
+export const SETTINGS_MISSING_CATEGORY = 'Category Required';

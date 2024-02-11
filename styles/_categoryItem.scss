@@ -1,0 +1,36 @@
+.category-item {
+  &__wrapper {
+    padding-bottom: 8px;
+  }
+  &__inner-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    position: relative;
+    align-items: center;
+    border-radius: 8px;
+    text-transform: capitalize;
+    user-select: none;
+    border: 1px solid $color-border;
+    background-color: $color-background-secondary;
+    & > svg {
+      margin-right: 8px;
+    }
+    button {
+      position: absolute;
+      top: 16px;
+      right: 8px;
+    }
+  }
+  &__drag-zone {
+    padding: 16px 8px 16px 16px;
+    cursor: grab;
+    svg {
+      position: relative;
+      top: 2px;
+      pointer-events: none;
+      path {
+        stroke: $color-list-item-svg;
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@ export default async function updateTask(req, res) {
     const {
       _id,
       priority,
+      column,
       title,
       description,
       confirmDeletion,
@@ -16,6 +17,7 @@ export default async function updateTask(req, res) {
       { _id: _id },
       {
         priority,
+        column,
         title,
         description,
         confirmDeletion,

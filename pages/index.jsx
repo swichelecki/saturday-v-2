@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import connectDB from '../config/db';
 import { useAppContext } from 'context';
 import { getCookie } from 'cookies-next';
@@ -21,9 +21,8 @@ const Home = ({ tasks, categories, userId }) => {
   const width = useInnerWidth();
   const birthhdays = useUpcomingBirthdays();
 
-  const modalRef = useRef(null);
-
-  const { setUserId, setShowToast, setServerError } = useAppContext();
+  const { setUserId, setShowToast, setServerError, setShowModal } =
+    useAppContext();
 
   const [listItems, setListItems] = useState(tasks);
   const [sortedListItems, setSortedListItems] = useState([]);
@@ -48,7 +47,6 @@ const Home = ({ tasks, categories, userId }) => {
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [allItemsTouchReset, setAllItemsTouchReset] = useState(false);
-  const [modalIdToDelete, setModalIdToDelete] = useState('');
 
   const allItems = [];
 
@@ -266,10 +264,11 @@ const Home = ({ tasks, categories, userId }) => {
   };
 
   // delete item
-  const handleDeleteTask = (id, confirmDeletion) => {
+  const handleDeleteTask = (id, confirmDeletion = false) => {
     if (confirmDeletion) {
-      modalRef.current.showModal();
-      setModalIdToDelete(id);
+      setShowModal(
+        <Modal handleDeleteItem={handleDeleteTask} modalIdToDelete={id} />
+      );
       return;
     }
 
@@ -286,7 +285,7 @@ const Home = ({ tasks, categories, userId }) => {
         setShowToast(true);
       }
 
-      if (modalRef.current.open) modalRef.current.close();
+      setShowModal(null);
       setIsAwaitingDeleteResponse(false);
     });
   };
@@ -357,12 +356,6 @@ const Home = ({ tasks, categories, userId }) => {
         ))}
         {birthhdays && <BirthdaysColumn birthdays={birthhdays} />}
       </div>
-      <Modal
-        ref={modalRef}
-        handleDeleteTask={handleDeleteTask}
-        modalIdToDelete={modalIdToDelete}
-        isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-      />
     </div>
   );
 };

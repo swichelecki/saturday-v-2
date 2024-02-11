@@ -1,22 +1,15 @@
 import { useRef, useEffect } from 'react';
-import { useAppContext } from 'context';
 import { MdError, MdOutlineClear } from 'react-icons/md';
 import { SERVER_ERROR_MESSAGE } from 'constants';
 
-const Toast = () => {
+const Toast = ({ serverError, setShowToast }) => {
   const toastRef = useRef(null);
-
-  const { serverError, setShowToast } = useAppContext();
 
   useEffect(() => {
     setTimeout(() => {
       toastRef.current.classList.add('toast-message--show-toast');
     }, 100);
   }, []);
-
-  const handleDeleteToast = () => {
-    toastRef.current.remove();
-  };
 
   return (
     <div ref={toastRef} className='toast-message'>
@@ -28,7 +21,6 @@ const Toast = () => {
       <button
         onClick={() => {
           setShowToast(false);
-          handleDeleteToast;
         }}
       >
         <MdOutlineClear />

@@ -1,13 +1,9 @@
 import Head from 'next/head';
-import { useAppContext } from 'context';
 import { Header } from './';
-import { Toast } from './';
 
 // google fonts in pages/_document.js
 
 const Layout = ({ children }) => {
-  const { showToast } = useAppContext();
-
   return (
     <>
       <Head>
@@ -17,7 +13,6 @@ const Layout = ({ children }) => {
       </Head>
       <Header />
       <main className='container'>{children}</main>
-      {showToast && <Toast />}
     </>
   );
 };

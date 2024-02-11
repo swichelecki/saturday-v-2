@@ -8,6 +8,8 @@ export { default as DetailsForm } from './DetailsForm';
 export { default as FormTextField } from './FormTextField';
 export { default as FormWYSIWYGField } from './FormWYSIWYGField';
 export { default as FormCheckboxField } from './FormCheckboxField';
+export { default as CategoryControls } from './CategoryControls';
+export { default as CategoryItem } from './CategoryItem';
 export { default as BirthdaysColumn } from './BirthdaysColumn';
 export { default as Modal } from './Modal';
 export { default as FormErrorMessage } from './FormErrorMessage';

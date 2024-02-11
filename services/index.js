@@ -122,3 +122,41 @@ export const deleteUserAccount = async (obj) => {
 
   return response;
 };
+
+export const createCategory = async (obj) => {
+  const response = await fetch('/api/settings/createCategory', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(obj),
+  });
+
+  const item = await response.json();
+
+  return { status: response.status, item };
+};
+
+export const deleteCategory = async (obj) => {
+  const response = await fetch('/api/settings/deleteCategory', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(obj),
+  });
+
+  return response;
+};
+
+export const updateCategory = async (obj) => {
+  const response = await fetch('/api/settings/updateCategory', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(obj),
+  });
+
+  return response;
+};
