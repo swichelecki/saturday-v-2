@@ -53,7 +53,7 @@ const ItemButtons = ({
 
   return (
     <>
-      {(date || dateAndTime) && description ? (
+      {(date || dateAndTime) && description && description !== '<p><br></p>' ? (
         <button
           onClick={handleShowDetails}
           className={`list-item__details-button ${handleDetailsButtonClass()}`}
@@ -67,7 +67,8 @@ const ItemButtons = ({
         >
           {isOpen ? <FaArrowUp /> : <FaArrowDown />}
         </button>
-      ) : (date || dateAndTime) && !description ? (
+      ) : (date || dateAndTime) &&
+        (!description || description === '<p><br></p>') ? (
         <Link href={`/details/${itemId}`}>
           <span className={`list-item__edit-button ${handleEditButtonClass()}`}>
             <MdEdit />

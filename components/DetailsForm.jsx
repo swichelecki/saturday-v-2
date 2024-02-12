@@ -105,18 +105,18 @@ const DetailsForm = ({ task }) => {
     // error handling for missing required fields
     if (
       !form?.title ||
-      (Boolean(hasMandatoryDate) && !form?.date && !form?.dateAndTime) ||
-      (!Boolean(hasMandatoryDate) &&
+      (form.mandatoryDate && !form?.date && !form?.dateAndTime) ||
+      (!form.mandatoryDate &&
         (!form?.description || form.description === '<p><br></p>'))
     ) {
       setErrorMessage({
         title: !form.title && FORM_ERROR_MISSING_TITLE,
         description:
           (!form.description || form.description === '<p><br></p>') &&
-          !Boolean(hasMandatoryDate) &&
+          !form.mandatoryDate &&
           FORM_ERROR_MISSING_DESCRIPTION,
         dateOrDateAndTime:
-          Boolean(hasMandatoryDate) &&
+          form.mandatoryDate &&
           !form.date &&
           !form.dateAndTime &&
           FORM_ERROR_MISSING_DATE,
@@ -187,7 +187,7 @@ const DetailsForm = ({ task }) => {
         checked={form?.confirmDeletion}
         onChangeHandler={handleConfirmDeletion}
       />
-      {(form?.mandatoryDate || Boolean(hasMandatoryDate)) && (
+      {form?.mandatoryDate && (
         <>
           <FormTextField
             label={'Date'}

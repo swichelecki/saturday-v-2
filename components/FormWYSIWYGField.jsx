@@ -6,11 +6,7 @@ const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
 const FormWYSIWYGField = ({ label, value, onChangeHandler, errorMessage }) => {
   return (
-    <div
-      className={`form-field${
-        errorMessage.description ? ' form-field--error' : ''
-      }`}
-    >
+    <div className={`form-field${errorMessage ? ' form-field--error' : ''}`}>
       <label htmlFor='description'>{label}</label>
       <ReactQuill theme='snow' value={value} onChange={onChangeHandler} />
       {errorMessage && <FormErrorMessage errorMessage={errorMessage} />}
