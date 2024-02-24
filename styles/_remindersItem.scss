@@ -1,0 +1,18 @@
+.reminders-item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 12px;
+  padding: 12px;
+  font-weight: 400;
+  border-radius: 8px;
+  background-color: $button-yellow-dark;
+  &__title {
+    color: $button-yellow;
+  }
+  &__date {
+    color: $color-font;
+    font-size: 1rem; // 16px
+  }
+}

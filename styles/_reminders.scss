@@ -1,0 +1,57 @@
+.reminders {
+  &__wrapper {
+    max-width: 970px;
+    width: 100%;
+    border: 1px solid $color-border;
+    overflow: hidden;
+    & > button {
+      position: relative;
+      width: 100%;
+      padding: 12px;
+      text-align: left;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      color: $color-font;
+      background-color: $color-background-secondary;
+    }
+    button.button-open {
+      &:after {
+        content: '';
+        position: absolute;
+        top: 48%;
+        right: 12px;
+        cursor: pointer;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-bottom: 6px solid $color-list-item-svg;
+      }
+    }
+    button.button-closed {
+      &:after {
+        content: '';
+        position: absolute;
+        top: 48%;
+        right: 12px;
+        cursor: pointer;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid $color-list-item-svg;
+      }
+    }
+  }
+  &__reminders-wrapper {
+    transition: height 0.3s;
+  }
+  &__reminders-carousel {
+    display: flex;
+    width: 100%;
+    overflow: scroll;
+    -ms-overflow-style: none; // IE and Edge
+    scrollbar-width: none; // FireFox
+    &::-webkit-scrollbar {
+      display: none; // Chrome and Safari
+    }
+    gap: 8px;
+    padding: 8px;
+  }
+}

@@ -1,22 +1,27 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from 'context';
-import { Modal } from '../components';
+import { Modal } from '.';
 import { GrDrag } from 'react-icons/gr';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import { FaCalendarCheck } from 'react-icons/fa';
+import { MdEdit } from 'react-icons/md';
+import { MODAL_CONFIRM_DELETION_HEADLINE } from 'constants';
 
-const CategoryItem = ({
+const SettingsItem = ({
   item,
   index,
-  handleDeleteCategory,
+  handleDeleteItem,
   isAwaitingDeleteResponse,
-  handleDragStart,
-  handleDragEnter,
-  handleDragEnd,
-  categoryItemWrapperRef,
-  numberOfItemsInColumn,
+  handleDragStart = () => {},
+  handleDragEnter = () => {},
+  handleDragEnd = () => {},
+  categoryItemWrapperRef = '',
+  numberOfItemsInColumn = 0,
+  handleUpdateItem = () => {},
+  isAwaitingEditResponse = false,
+  reminderToEditId = '',
 }) => {
-  const categoryItemRef = useRef(null);
+  const settingsItemRef = useRef(null);
   const startingIndexRef = useRef(null);
   const isDraggingYRef = useRef(null);
   const animationYIdRef = useRef(null);
@@ -33,9 +38,10 @@ const CategoryItem = ({
 
   // get array of column list items for touch y-axis dom manipulation
   useEffect(() => {
+    if (!categoryItemWrapperRef) return;
     const categoryItemWrapper = categoryItemWrapperRef.current;
     arrayOfCategoryItemsRef.current = [
-      ...categoryItemWrapper.querySelectorAll('.category-item__wrapper'),
+      ...categoryItemWrapper.querySelectorAll('.settings-item__wrapper'),
     ];
   }, [numberOfItemsInColumn]);
 
@@ -49,14 +55,14 @@ const CategoryItem = ({
       }
     };
 
-    categoryItemRef.current.addEventListener(
+    settingsItemRef.current.addEventListener(
       'touchmove',
       (e) => handlePreventScroll(e),
       { passive: false }
     );
 
     return () => {
-      categoryItemRef.current?.removeEventListener(
+      settingsItemRef.current?.removeEventListener(
         'touchmove',
         (e) => handlePreventScroll(e),
         { passive: false }
@@ -74,20 +80,21 @@ const CategoryItem = ({
 
   // y-axis start
   const handleDragYStart = (e) => {
+    console.log('start');
     isDraggingYRef.current = true;
     handleDragStart(index);
     setStartYPosition(
       e.type.includes('mouse') ? e.pageY : e.touches[0].clientY
     );
     setCategoryItemYPositionOnStart(
-      categoryItemRef.current.clientHeight * index
+      settingsItemRef.current.clientHeight * index
     );
-    setCategoryItemId(categoryItemRef.current.id);
+    setCategoryItemId(settingsItemRef.current.id);
     startingIndexRef.current = index;
 
     // set height of list item wrapper
     const handleWrapperHeight = (numberOfItems) => {
-      return numberOfItems * categoryItemRef.current.clientHeight;
+      return numberOfItems * settingsItemRef.current.clientHeight;
     };
 
     categoryItemWrapperRef.current.setAttribute(
@@ -104,13 +111,14 @@ const CategoryItem = ({
       item.style.zIndex = '1';
     });
 
-    categoryItemRef.current.style.zIndex = '2';
+    settingsItemRef.current.style.zIndex = '2';
 
     if (e.type.includes('mouse')) e.target.style.cursor = 'grabbing';
   };
 
   // y-axis move
   const handleDragYMove = (e) => {
+    console.log('move');
     let currentPosition = e.type.includes('mouse')
       ? e.pageY
       : e.touches[0].clientY;
@@ -121,7 +129,7 @@ const CategoryItem = ({
         Math.min(
           categoryItemYPositionOnStart + currentPosition - startYPosition,
           categoryItemWrapperRef.current.clientHeight -
-            categoryItemRef.current.clientHeight
+            settingsItemRef.current.clientHeight
         )
       )
     );
@@ -130,8 +138,8 @@ const CategoryItem = ({
     if (
       currentTranslateY > 0 &&
       currentTranslateY <
-        categoryItemRef.current.clientHeight * (startingIndexRef.current - 1) +
-          categoryItemRef.current.clientHeight / 2
+        settingsItemRef.current.clientHeight * (startingIndexRef.current - 1) +
+          settingsItemRef.current.clientHeight / 2
     ) {
       startingIndexRef.current -= 1;
       handleDragEnter(startingIndexRef.current);
@@ -139,22 +147,22 @@ const CategoryItem = ({
       arrayOfCategoryItemsRef.current?.forEach((item) => {
         // moves item down when item dragged over it
         if (
-          parseInt(item.dataset.categoryItemIndex) === startingIndexRef.current
+          parseInt(item.dataset.settingsItemIndex) === startingIndexRef.current
         ) {
           item.style.top = `${
-            item.clientHeight * (parseInt(item.dataset.categoryItemIndex) + 1)
+            item.clientHeight * (parseInt(item.dataset.settingsItemIndex) + 1)
           }px`;
           item.setAttribute(
-            'data-category-item-index',
-            parseInt(item.dataset.categoryItemIndex) + 1
+            'data-settings-item-index',
+            parseInt(item.dataset.settingsItemIndex) + 1
           );
         }
 
         // sets new index for item being dragged
         if (categoryItemId === item.id) {
           item.setAttribute(
-            'data-category-item-index',
-            parseInt(item.dataset.categoryItemIndex) - 1
+            'data-settings-item-index',
+            parseInt(item.dataset.settingsItemIndex) - 1
           );
         }
       });
@@ -164,10 +172,10 @@ const CategoryItem = ({
     if (
       currentTranslateY <
         categoryItemWrapperRef.current.clientHeight -
-          categoryItemRef.current.clientHeight &&
+          settingsItemRef.current.clientHeight &&
       currentTranslateY >
-        categoryItemRef.current.clientHeight * startingIndexRef.current +
-          categoryItemRef.current.clientHeight / 2
+        settingsItemRef.current.clientHeight * startingIndexRef.current +
+          settingsItemRef.current.clientHeight / 2
     ) {
       startingIndexRef.current += 1;
       handleDragEnter(startingIndexRef.current);
@@ -175,22 +183,22 @@ const CategoryItem = ({
       arrayOfCategoryItemsRef.current?.forEach((item) => {
         // moves item up when item dragged over it
         if (
-          parseInt(item.dataset.categoryItemIndex) === startingIndexRef.current
+          parseInt(item.dataset.settingsItemIndex) === startingIndexRef.current
         ) {
           item.style.top = `${
-            item.clientHeight * (parseInt(item.dataset.categoryItemIndex) - 1)
+            item.clientHeight * (parseInt(item.dataset.settingsItemIndex) - 1)
           }px`;
           item.setAttribute(
-            'data-category-item-index',
-            parseInt(item.dataset.categoryItemIndex) - 1
+            'data-settings-item-index',
+            parseInt(item.dataset.settingsItemIndex) - 1
           );
         }
 
         // sets new index for item being dragged
         if (categoryItemId === item.id) {
           item.setAttribute(
-            'data-category-item-index',
-            parseInt(item.dataset.categoryItemIndex) + 1
+            'data-settings-item-index',
+            parseInt(item.dataset.settingsItemIndex) + 1
           );
         }
       });
@@ -209,7 +217,7 @@ const CategoryItem = ({
       item.style.left = 'unset';
       item.style.right = 'unset';
       item.style.zIndex = '1';
-      item.setAttribute('data-category-item-index', parseInt(i));
+      item.setAttribute('data-settings-item-index', parseInt(i));
     });
 
     cancelAnimationFrame(animationYIdRef.current);
@@ -220,56 +228,79 @@ const CategoryItem = ({
   // animate y-axis
   const animationY = () => {
     if (isDraggingYRef.current) {
-      categoryItemRef.current.style.top = `${currentTranslateY}px`;
+      settingsItemRef.current.style.top = `${currentTranslateY}px`;
       requestAnimationFrame(animationY);
     }
   };
 
   return (
     <div
-      className='category-item__wrapper'
-      id={`category-item_${index}`}
-      ref={categoryItemRef}
-      data-category-item-index={index}
+      className='settings-item__wrapper'
+      id={`settings-item_${index}`}
+      ref={settingsItemRef}
+      data-settings-item-index={index}
     >
-      <div className='category-item__inner-wrapper'>
-        <div
-          className='category-item__drag-zone'
-          onTouchStart={handleDragYStart}
-          onTouchMove={handleDragYMove}
-          onTouchEnd={handleDragYEnd}
-          onMouseDown={handleDragYStart}
-          onMouseMove={(e) => {
-            isDraggingYRef.current && handleDragYMove(e);
-          }}
-          onMouseUp={handleDragYEnd}
-          onMouseLeave={handleDragYEnd}
-        >
-          <GrDrag />
-        </div>
-        {item?.mandatoryDate && <FaCalendarCheck />}
-        {item?.type}
-        <button
-          onClick={() => {
-            setShowModal(
-              <Modal
-                handleDeleteItem={handleDeleteCategory}
-                modalIdToDelete={item?._id}
-              />
-            );
-            setIdToDelete(item?._id);
-          }}
-          className='list-item__delete-button list-item__delete-button--desktop'
-        >
-          {isAwaitingDeleteResponse && idToDelete === item?._id ? (
-            <div className='loader'></div>
-          ) : (
-            <RiDeleteBin7Fill />
+      <div className='settings-item__inner-wrapper'>
+        <div className='settings-item__title-wrapper'>
+          {!item?.reminder && (
+            <div
+              className='settings-item__drag-zone'
+              onTouchStart={handleDragYStart}
+              onTouchMove={handleDragYMove}
+              onTouchEnd={handleDragYEnd}
+              onMouseDown={handleDragYStart}
+              onMouseMove={(e) => {
+                isDraggingYRef.current && handleDragYMove(e);
+              }}
+              onMouseUp={handleDragYEnd}
+              onMouseLeave={handleDragYEnd}
+            >
+              <GrDrag />
+            </div>
           )}
-        </button>
+          {(item?.mandatoryDate || item?.exactRecurringDate) && (
+            <FaCalendarCheck />
+          )}
+          {item?.type ? item?.type : item?.reminder}
+        </div>
+        <div className='settings-item__button-wrapper'>
+          {item?.reminder && (
+            <button
+              onClick={() => {
+                handleUpdateItem(item?._id);
+              }}
+              className='list-item__edit-button list-item__edit-button--desktop'
+            >
+              {isAwaitingEditResponse && reminderToEditId === item?._id ? (
+                <div className='loader'></div>
+              ) : (
+                <MdEdit />
+              )}
+            </button>
+          )}
+          <button
+            onClick={() => {
+              setShowModal(
+                <Modal
+                  handleDeleteItem={handleDeleteItem}
+                  modalIdToDelete={item?._id}
+                  headlineText={MODAL_CONFIRM_DELETION_HEADLINE}
+                />
+              );
+              setIdToDelete(item?._id);
+            }}
+            className='list-item__delete-button list-item__delete-button--desktop'
+          >
+            {isAwaitingDeleteResponse && idToDelete === item?._id ? (
+              <div className='loader'></div>
+            ) : (
+              <RiDeleteBin7Fill />
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default CategoryItem;
+export default SettingsItem;

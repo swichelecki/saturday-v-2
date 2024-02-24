@@ -25,3 +25,35 @@ export const DELETE_MY_ACCOUNT = 'delete my account';
 export const INVALID_USER_DATA = 'Invalid User Data';
 export const SERVER_ERROR_MESSAGE = 'A server error has occurred';
 export const SETTINGS_MISSING_CATEGORY = 'Category Required';
+export const FORM_ERROR_MISSING_REMINDER_TITLE = 'Reminder Required';
+export const FORM_ERROR_MISSING_REMINDER_DATE = 'Reminder Date Required';
+export const FORM_ERROR_MISSING_REMINDER_INTERVAL =
+  'Reminder Interval Required';
+export const FORM_ERROR_MISSING_REMINDER_BUFFER = 'Reminder Buffer Required';
+export const FORM_REMINDER_INTERVAL_OPTIONS = [
+  { title: 'Monthly', name: 'recurrenceInterval', value: 1 },
+  { title: 'Every Two Months', name: 'recurrenceInterval', value: 2 },
+  { title: 'Every Three Months', name: 'recurrenceInterval', value: 3 },
+  { title: 'Every Four Months', name: 'recurrenceInterval', value: 4 },
+  { title: 'Every Five Months', name: 'recurrenceInterval', value: 5 },
+  { title: 'Every Six Months', name: 'recurrenceInterval', value: 6 },
+  { title: 'Every Seven Months', name: 'recurrenceInterval', value: 7 },
+  { title: 'Every Eight Months', name: 'recurrenceInterval', value: 8 },
+  { title: 'Every Nine Months', name: 'recurrenceInterval', value: 9 },
+  { title: 'Every Ten Months', name: 'recurrenceInterval', value: 10 },
+  { title: 'Every Eleven Months', name: 'recurrenceInterval', value: 11 },
+  { title: 'Annually', name: 'recurrenceInterval', value: 12 },
+];
+export const FORM_REMINDER_BUFFER_OPTIONS = [
+  { title: 'One Week', name: 'recurrenceBuffer', value: 1 },
+  { title: 'Two Weeks', name: 'recurrenceBuffer', value: 2 },
+  { title: 'Three Weeks', name: 'recurrenceBuffer', value: 3 },
+];
+export const MODAL_CONFIRM_DELETION_HEADLINE = 'Confirm Deletion';
+export const MODAL_CREATE_CATEGORY_HEADLINE = 'Create Category';
+export const MODAL_CREATE_REMINDER_HEADLINE = 'Create Reminder';
+export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
+export const MODAL_TYPE_REMINDER = 'Reminder';
+export const MODAL_TYPE_CATEGORY = 'Category';
+export const MODAL_OPERATION_CREATE = 'CREATE';
+export const MODAL_OPERATION_UPDATE = 'UPDATE';

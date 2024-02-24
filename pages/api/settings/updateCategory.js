@@ -1,7 +1,7 @@
 import Category from '../../../models/Category';
 import Task from '../../../models/Task';
 
-export default async function updateTask(req, res) {
+export default async function updateCategory(req, res) {
   try {
     const { _id, userId, priority, type, mandatoryDate } = req.body;
     const newItemColumn = priority;

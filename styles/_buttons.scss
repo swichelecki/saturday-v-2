@@ -1,8 +1,24 @@
-button,
+button {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+button.main-controls__type-button,
+button.main-controls__add-button,
 span.main-controls__create-button,
+button.main-controls__update-button,
 span.list-item__details-edit-button,
+button.list-item__delete-button,
+button.list-item__edit-button,
 span.list-item__edit-button,
-span.form-page__cancel-button {
+button.form-page__save-button,
+span.form-page__cancel-button,
+button.form-page__delete-button,
+button.modal__cancel-button,
+button.modal__delete-button,
+button.modal__update-button,
+button.modal__save-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,7 +50,8 @@ button.main-controls__type-button {
   }
 }
 
-button.main-controls__update-button {
+button.main-controls__update-button,
+button.modal__update-button {
   background-color: $button-blue-dark;
   border: 1px solid $button-blue;
   color: $button-blue;
@@ -59,9 +76,51 @@ span.main-controls__create-button {
   }
 }
 
+button.reminders__reminders-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: $button-yellow-dark;
+  border: 1px solid $color-border;
+  color: $button-yellow;
+  min-width: unset;
+  width: 34px;
+  height: 28px;
+  border-radius: 10px;
+  svg {
+    fill: $button-yellow;
+    width: 1rem;
+    height: 1rem;
+  }
+  .loader {
+    border: 2px solid $button-yellow;
+    border-top: 2px solid transparent;
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 12px;
+    width: 5px;
+    height: 10px;
+    border: solid $button-yellow;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+  }
+  &--resetting {
+    &:after {
+      display: none;
+    }
+  }
+}
+
 button.list-item__delete-button,
 button.modal__delete-button,
 button.form-page__delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: $button-red-dark;
   border: 1px solid $color-border;
   color: $button-red;
@@ -75,7 +134,8 @@ button.form-page__delete-button {
 }
 
 span.list-item__edit-button,
-button.form-page__save-button {
+button.form-page__save-button,
+button.modal__save-button {
   background-color: $button-green-dark;
   border: 1px solid $color-border;
   color: $button-green;
@@ -89,6 +149,9 @@ button.form-page__save-button {
 }
 
 button.list-item__edit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid $color-border;
   background-color: $button-blue-dark;
   svg {
@@ -166,10 +229,15 @@ button.list-item__cancel-button {
 }
 
 button.entry-form__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   padding: 14px;
   font-size: 1.125rem; // 18px
   border-radius: 26px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
   gap: 6px;
   border: 1px solid $color-border;
   background-color: $button-purple-dark;
@@ -181,7 +249,9 @@ button.entry-form__button {
 }
 
 button.modal__cancel-button,
-button.modal__delete-button {
+button.modal__delete-button,
+button.modal__update-button,
+button.modal__save-button {
   width: 100%;
   font-size: 1.125rem; // 18px
   gap: 6px;
@@ -202,11 +272,15 @@ span.main-controls__create-button {
   border: 1px solid $button-purple;
 }
 
-button.form-page__save-button {
+button.form-page__save-button,
+button.modal__save-button {
   border: 1px solid $button-green;
 }
 
 button.user-menu__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 20px;
   padding: 0;
   min-width: 24px;
@@ -217,6 +291,7 @@ button.user-menu__button {
   svg {
     width: 1rem;
     height: 1rem;
+    pointer-events: none;
   }
 }
 

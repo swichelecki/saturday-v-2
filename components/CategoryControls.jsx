@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from 'context';
-import { FormTextField, FormCheckboxField, CategoryItem } from 'components';
+import { SettingsItem, Modal } from 'components';
 import { createCategory, deleteCategory, updateCategory } from '../services';
-import { SETTINGS_MISSING_CATEGORY } from 'constants';
+import { MODAL_TYPE_CATEGORY, MODAL_CREATE_CATEGORY_HEADLINE } from 'constants';
 
 const CategoryControls = ({ categories, userId }) => {
   const dragItemRef = useRef(null);
@@ -11,27 +11,48 @@ const CategoryControls = ({ categories, userId }) => {
 
   const { setShowToast, setServerError, setShowModal } = useAppContext();
 
-  const [categoryItems, setCategoryItems] = useState(categories);
+  const [categoryItems, setCategoryItems] = useState(categories ?? []);
   const [form, setForm] = useState({
     userId,
     priority: '',
     type: '',
     mandatoryDate: false,
   });
-  const [errorMessage, setErrorMessage] = useState({
-    type: '',
-  });
-  const [isAwaitingCategoryCreation, setIsAwaitingCategoryCreation] =
-    useState(false);
+  const [modalCreateCategory, setModalCreateCategory] = useState(false);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [draggableCategories, setDraggableCategories] = useState([]);
 
+  // control modal
   useEffect(() => {
-    if (!errorMessage.type) return;
-    setErrorMessage({ type: '' });
-  }, [form.type]);
+    if (modalCreateCategory) {
+      setShowModal(
+        <Modal
+          form={form}
+          onChangeHandlerTextField={handleForm}
+          onChangeHandlerCheckbox={handleMandatoryDate}
+          handleItemOperation={handleCreateCategory}
+          handleCancelButton={setModalCreateCategory}
+          modalType={MODAL_TYPE_CATEGORY}
+          headlineText={MODAL_CREATE_CATEGORY_HEADLINE}
+        />
+      );
+    }
+  }, [form, modalCreateCategory]);
 
+  // reset form when closing modal
+  useEffect(() => {
+    if (!modalCreateCategory) {
+      setForm({
+        userId,
+        priority: '',
+        type: '',
+        mandatoryDate: false,
+      });
+    }
+  }, [modalCreateCategory]);
+
+  // state handlers
   const handleForm = (e) => {
     setForm({
       ...form,
@@ -44,19 +65,12 @@ const CategoryControls = ({ categories, userId }) => {
     setForm({ ...form, mandatoryDate: e.target.checked });
   };
 
-  const handleCreateCategory = (e) => {
-    e.preventDefault();
-
-    if (!form.type) {
-      setErrorMessage({ type: SETTINGS_MISSING_CATEGORY });
-      return;
-    }
-
-    setIsAwaitingCategoryCreation(true);
+  // create category
+  const handleCreateCategory = () => {
     createCategory(form).then((res) => {
       if (res.status === 200) {
         setCategoryItems((current) => [...current, res.item]);
-        setForm({ ...form, type: '', mandatoryDate: false });
+        setForm({ userId, priority: '', type: '', mandatoryDate: false });
       }
 
       if (res.status !== 200) {
@@ -64,10 +78,12 @@ const CategoryControls = ({ categories, userId }) => {
         setShowToast(true);
       }
 
-      setIsAwaitingCategoryCreation(false);
+      setShowModal(null);
+      setModalCreateCategory(false);
     });
   };
 
+  // delete category
   const handleDeleteCategory = (_id) => {
     setIsAwaitingDeleteResponse(true);
 
@@ -86,10 +102,11 @@ const CategoryControls = ({ categories, userId }) => {
     });
   };
 
+  // handle item reordering
   useEffect(() => {
-    const copyOfCategories = [...categories];
+    const copyOfCategories = [...categoryItems];
     setDraggableCategories(copyOfCategories);
-  }, [categories]);
+  }, [categoryItems]);
 
   const handleDragStart = (index) => {
     dragItemRef.current = index;
@@ -135,51 +152,35 @@ const CategoryControls = ({ categories, userId }) => {
     setCategoryItems([...draggableCategoriesWithNewPriorities]);
   };
 
-  if (!categoryItems?.length) {
-    return null;
-  }
-
   return (
-    <section>
+    <>
       <h2>Manage Categories</h2>
-      <div className='category-controls'>
-        <div className='category-controls__form-wrapper'>
-          <form onSubmit={handleCreateCategory}>
-            <FormTextField
-              label={'Category'}
-              type={'text'}
-              id={'category'}
-              name={'type'}
-              value={form?.type}
-              onChangeHandler={handleForm}
-              errorMessage={errorMessage.type}
-            />
-            <FormCheckboxField
-              label={'Date or Date & Time'}
-              checked={form?.mandatoryDate}
-              onChangeHandler={handleMandatoryDate}
-            />
-            <div className='form-page__buttons-wrapper'>
-              <button
-                type='submit'
-                className='form-page__save-button form-page__update-button'
-              >
-                {isAwaitingCategoryCreation && <div className='loader'></div>}
-                Create
-              </button>
-            </div>
-          </form>
+      <div className='settings-controls'>
+        <div className='settings-controls__button-wrapper'>
+          <button
+            onClick={() => {
+              setModalCreateCategory(true);
+            }}
+            className='form-page__save-button'
+          >
+            Create
+          </button>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
+            volutpat lacus eleifend tellus cursus iaculis. Morbi bibendum sit
+            amet nibh ornare convallis. Proin bibendum non eros at efficitur.
+          </p>
         </div>
         <div
-          className='category-controls__categories-wrapper'
+          className='settings-controls__list-wrapper'
           ref={categoryItemWrapperRef}
         >
           {categoryItems?.map((item, index) => (
-            <CategoryItem
+            <SettingsItem
               key={`category-item_${index}`}
               item={item}
               index={index}
-              handleDeleteCategory={handleDeleteCategory}
+              handleDeleteItem={handleDeleteCategory}
               isAwaitingDeleteResponse={isAwaitingDeleteResponse}
               handleDragStart={handleDragStart}
               handleDragEnter={handleDragEnter}
@@ -190,7 +191,7 @@ const CategoryControls = ({ categories, userId }) => {
           ))}
         </div>
       </div>
-    </section>
+    </>
   );
 };
 

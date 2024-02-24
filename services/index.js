@@ -160,3 +160,57 @@ export const updateCategory = async (obj) => {
 
   return response;
 };
+
+export const createReminder = async (obj) => {
+  const response = await fetch('/api/settings/createReminder', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(obj),
+  });
+
+  const item = await response.json();
+
+  return { status: response.status, item };
+};
+
+export const deleteReminder = async (id) => {
+  const response = await fetch('/api/settings/deleteReminder', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(id),
+  });
+
+  return response;
+};
+
+export const getReminder = async (id) => {
+  const response = await fetch('/api/settings/getReminder', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(id),
+  });
+
+  const item = await response.json();
+
+  return { status: response.status, item };
+};
+
+export const updateReminder = async (obj) => {
+  const response = await fetch('/api/settings/updateReminder', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(obj),
+  });
+
+  const item = await response.json();
+
+  return { status: response.status, item };
+};

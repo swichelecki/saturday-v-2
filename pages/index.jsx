@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import connectDB from '../config/db';
 import { useAppContext } from 'context';
 import { getCookie } from 'cookies-next';
 import { jwtVerify } from 'jose';
 import Task from '../models/Task';
 import Category from '../models/Category';
+import Reminder from '../models/Reminder';
 import {
   MainControls,
   ItemsColumn,
@@ -15,9 +17,14 @@ import { useInnerWidth } from '../hooks';
 import { useUpcomingBirthdays } from '../hooks';
 import { submitTask, getTask, updateTask, deleteTask } from '../services';
 import { handleSortItemsAscending } from 'utilities';
-import { MOBILE_BREAKPOINT } from '../constants';
+import {
+  MOBILE_BREAKPOINT,
+  MODAL_CONFIRM_DELETION_HEADLINE,
+} from '../constants';
 
-const Home = ({ tasks, categories, userId }) => {
+const Reminders = dynamic(() => import('../components/Reminders'));
+
+const Home = ({ tasks, categories, reminders, userId }) => {
   const width = useInnerWidth();
   const birthhdays = useUpcomingBirthdays();
 
@@ -89,7 +96,8 @@ const Home = ({ tasks, categories, userId }) => {
     for (const item of columnsData) {
       if (Object.values(item)[0][0]['date'] !== null) {
         const itemsWithDatesSortedAsc = handleSortItemsAscending(
-          Object.values(item)[0]
+          Object.values(item)[0],
+          'date'
         );
         Object.values(item)[0].length = 0;
         Object.values(item)[0].push(...itemsWithDatesSortedAsc);
@@ -267,7 +275,11 @@ const Home = ({ tasks, categories, userId }) => {
   const handleDeleteTask = (id, confirmDeletion = false) => {
     if (confirmDeletion) {
       setShowModal(
-        <Modal handleDeleteItem={handleDeleteTask} modalIdToDelete={id} />
+        <Modal
+          handleDeleteItem={handleDeleteTask}
+          modalIdToDelete={id}
+          headlineText={MODAL_CONFIRM_DELETION_HEADLINE}
+        />
       );
       return;
     }
@@ -335,6 +347,9 @@ const Home = ({ tasks, categories, userId }) => {
         isAwaitingUpdateResponse={isAwaitingUpdateResponse}
         priority={priority}
       />
+      {reminders && reminders?.length > 0 && (
+        <Reminders reminders={reminders} />
+      )}
       <div className='items-column-wrapper'>
         {sortedListItems?.map((item, index) => (
           <ItemsColumn
@@ -391,10 +406,13 @@ export async function getServerSideProps(context) {
       priority: 1,
     });
 
+    const reminders = await Reminder.find({ userId }).sort({ reminderDate: 1 });
+
     return {
       props: {
         tasks: JSON.parse(JSON.stringify(tasks)),
         categories: JSON.parse(JSON.stringify(categories)),
+        reminders: JSON.parse(JSON.stringify(reminders)),
         userId,
       },
     };

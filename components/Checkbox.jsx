@@ -1,16 +1,22 @@
 import { TYPE_UPCOMING } from 'constants';
 
-const Checkbox = ({ label, type = 'default', checked, onChangeHandler }) => {
+const Checkbox = ({
+  label,
+  id = 'checkbox',
+  type = 'default',
+  checked,
+  onChangeHandler,
+}) => {
   return (
     <label
       className='checkbox__checkbox-container'
-      htmlFor='checkbox'
+      htmlFor={id}
       style={type === TYPE_UPCOMING && checked ? { cursor: 'no-drop' } : {}}
     >
       <span>{label}</span>
       <input
         type='checkbox'
-        id='checkbox'
+        id={id}
         onChange={onChangeHandler}
         checked={checked}
       />

@@ -1,21 +1,24 @@
-.category-controls {
+.settings-controls {
   display: flex;
   justify-content: space-between;
   gap: 48px;
   flex: 0 1 100%;
-  &__form-wrapper {
-    flex: 0 1 100%;
+  &__button-wrapper {
+    flex: 0 1 40%;
+    button {
+      margin-bottom: 24px;
+    }
   }
-  &__categories-wrapper {
-    flex: 0 1 100%;
+  &__list-wrapper {
+    flex: 0 1 60%;
     position: relative;
   }
 }
 
 @media screen and (max-width: 600px) {
-  .category-controls {
+  .settings-controls {
     flex-direction: column;
-    gap: 0;
+    gap: 24px;
     &__categories-wrapper {
       flex: auto;
     }

@@ -27,6 +27,39 @@
   &:last-of-type {
     padding-bottom: 16px;
   }
+  &__sublabel {
+    margin-bottom: 10px;
+    font-size: 1rem; // 16px
+    color: $color-list-item-svg;
+  }
+  &__select-wrapper {
+    position: relative;
+    select {
+      width: 100%;
+      padding: 12px;
+      font: inherit;
+      color: $color-font;
+      background-color: $color-input;
+      border: 1px solid $color-border;
+      cursor: pointer;
+      appearance: none;
+      &:disabled {
+        background-color: $color-border;
+        color: $color-background;
+        cursor: not-allowed;
+        opacity: 1;
+      }
+    }
+    &:after {
+      content: '';
+      position: absolute;
+      top: 48%;
+      right: 12px;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid $color-list-item-svg;
+    }
+  }
 }
 
 .quill {

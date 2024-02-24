@@ -1,4 +1,5 @@
 import { FormErrorMessage } from 'components';
+import moment from 'moment-timezone';
 
 const FormTextField = ({
   label,
@@ -17,7 +18,13 @@ const FormTextField = ({
         type={type}
         id={id}
         name={name}
-        value={value}
+        value={
+          type === 'date'
+            ? value?.split('T')[0]
+            : type === 'datetime-local'
+            ? moment(value).tz('America/Chicago').format('yyyy-MM-DDTHH:mm')
+            : value
+        }
         onChange={onChangeHandler}
         disabled={disabled}
       />

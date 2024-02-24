@@ -2,10 +2,11 @@ import { useEffect } from 'react';
 import { getCookie } from 'cookies-next';
 import { jwtVerify } from 'jose';
 import Category from '../../models/Category';
+import Reminder from '../../models/Reminder';
 import { useAppContext } from 'context';
-import { CategoryControls } from 'components';
+import { CategoryControls, RemindersControls } from 'components';
 
-const Settings = ({ categories, userId }) => {
+const Settings = ({ categories, reminders, userId }) => {
   const { setUserId } = useAppContext();
 
   // set global context user id
@@ -16,6 +17,7 @@ const Settings = ({ categories, userId }) => {
   return (
     <div className='form-page'>
       <CategoryControls categories={categories} userId={userId} />
+      <RemindersControls reminders={reminders} userId={userId} />
     </div>
   );
 };
@@ -46,9 +48,12 @@ export async function getServerSideProps(context) {
       priority: 1,
     });
 
+    const reminders = await Reminder.find({ userId }).sort({ reminderDate: 1 });
+
     return {
       props: {
         categories: JSON.parse(JSON.stringify(categories)),
+        reminders: JSON.parse(JSON.stringify(reminders)),
         userId,
       },
     };

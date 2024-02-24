@@ -1,13 +1,15 @@
-.category-item {
+.settings-item {
   &__wrapper {
     padding-bottom: 8px;
   }
   &__inner-wrapper {
     display: flex;
-    justify-content: flex-start;
-    position: relative;
+    justify-content: space-between;
     align-items: center;
+    position: relative;
+    height: 55px;
     border-radius: 8px;
+    padding: 0 8px 0 16px;
     text-transform: capitalize;
     user-select: none;
     border: 1px solid $color-border;
@@ -15,14 +17,14 @@
     & > svg {
       margin-right: 8px;
     }
-    button {
-      position: absolute;
-      top: 16px;
-      right: 8px;
-    }
+  }
+  &__title-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
   }
   &__drag-zone {
-    padding: 16px 8px 16px 16px;
     cursor: grab;
     svg {
       position: relative;
@@ -32,5 +34,11 @@
         stroke: $color-list-item-svg;
       }
     }
+  }
+  &__button-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
   }
 }

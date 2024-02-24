@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { useAppContext } from 'context';
 import { submitTask, updateTask } from '../services';
 import { FormTextField, FormWYSIWYGField, FormCheckboxField } from 'components';
-import moment from 'moment-timezone';
 import {
   FORM_ERROR_MISSING_TITLE,
   FORM_ERROR_MISSING_DESCRIPTION,
@@ -25,12 +24,8 @@ const DetailsForm = ({ task }) => {
     title: task?.title ?? '',
     description: task?.description ?? '',
     confirmDeletion: task?.confirmDeletion ?? false,
-    date: task?.date?.split('T')[0] ?? '',
-    dateAndTime: task?.dateAndTime
-      ? moment(task?.dateAndTime)
-          .tz('America/Chicago')
-          .format('yyyy-MM-DDTHH:mm')
-      : '',
+    date: task?.date ?? '',
+    dateAndTime: task?.dateAndTime ?? '',
     priority: task?.priority ?? priority,
     type: task?.type ?? type,
     column: task?.column ?? column,
