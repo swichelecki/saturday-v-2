@@ -42,7 +42,7 @@ const Reminders = ({ reminders }) => {
               title={item?.reminder}
               date={
                 item?.exactRecurringDate &&
-                moment(item?.reminderDate).format('dddd, MMMM D')
+                moment(item?.reminderDate.split('T')[0]).format('dddd, MMMM D')
               }
               isAwaitingResetResponse={isAwaitingResetResponse}
               handleResetReminder={handleResetReminder}

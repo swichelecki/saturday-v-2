@@ -10,6 +10,7 @@ export default async function updateReminder(req, res) {
       recurrenceInterval,
       recurrenceBuffer,
       exactRecurringDate,
+      displayReminder,
     } = req.body;
 
     await Reminder.updateOne(
@@ -21,6 +22,7 @@ export default async function updateReminder(req, res) {
         recurrenceInterval,
         recurrenceBuffer,
         exactRecurringDate,
+        displayReminder,
       }
     );
 

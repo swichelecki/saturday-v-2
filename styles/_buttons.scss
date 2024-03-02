@@ -11,6 +11,7 @@ button.main-controls__update-button,
 span.list-item__details-edit-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
+button.list-item__details-button,
 span.list-item__edit-button,
 button.form-page__save-button,
 span.form-page__cancel-button,
@@ -118,9 +119,6 @@ button.reminders__reminders-button {
 button.list-item__delete-button,
 button.modal__delete-button,
 button.form-page__delete-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background-color: $button-red-dark;
   border: 1px solid $color-border;
   color: $button-red;

@@ -27,6 +27,7 @@ const RemindersControls = ({ reminders, userId }) => {
     recurrenceInterval: 0,
     recurrenceBuffer: 0,
     exactRecurringDate: false,
+    displayReminder: false,
   });
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
@@ -81,6 +82,7 @@ const RemindersControls = ({ reminders, userId }) => {
         recurrenceInterval: 0,
         recurrenceBuffer: 0,
         exactRecurringDate: false,
+        displayReminder: false,
       });
     }
   }, [modalCreateReminder, modalUpdateReminder]);
@@ -123,6 +125,7 @@ const RemindersControls = ({ reminders, userId }) => {
           recurrenceInterval: 0,
           recurrenceBuffer: 0,
           exactRecurringDate: false,
+          displayReminder: false,
         });
       }
 
@@ -178,6 +181,7 @@ const RemindersControls = ({ reminders, userId }) => {
           recurrenceInterval: 0,
           recurrenceBuffer: 0,
           exactRecurringDate: false,
+          displayReminder: false,
         });
         setReminderToEditId('');
       }

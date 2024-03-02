@@ -40,7 +40,7 @@ export const deleteTask = async (id) => {
 
 export const updateTask = async (obj) => {
   const response = await fetch('/api/updateTask', {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -65,7 +65,7 @@ export const getBirthdays = async () => {
 
 export const updateBirthdays = async (obj) => {
   const response = await fetch('/api/updateBirthdays', {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -101,7 +101,7 @@ export const loginUser = async (obj) => {
 
 export const updateUserPassword = async (obj) => {
   const response = await fetch('/api/user/updatePassword', {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -151,7 +151,7 @@ export const deleteCategory = async (obj) => {
 
 export const updateCategory = async (obj) => {
   const response = await fetch('/api/settings/updateCategory', {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -203,7 +203,7 @@ export const getReminder = async (id) => {
 
 export const updateReminder = async (obj) => {
   const response = await fetch('/api/settings/updateReminder', {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },

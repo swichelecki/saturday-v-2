@@ -26,6 +26,10 @@ const ReminderSchema = new Schema({
     type: Boolean,
     required: true,
   },
+  displayReminder: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const Reminder = models.Reminder ?? model('Reminder', ReminderSchema);

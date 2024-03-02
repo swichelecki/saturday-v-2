@@ -406,7 +406,12 @@ export async function getServerSideProps(context) {
       priority: 1,
     });
 
-    const reminders = await Reminder.find({ userId }).sort({ reminderDate: 1 });
+    const reminders = await Reminder.find({
+      userId,
+      displayReminder: true,
+    }).sort({
+      reminderDate: 1,
+    });
 
     return {
       props: {
