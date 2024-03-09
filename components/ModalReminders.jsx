@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FormTextField, FormCheckboxField, FormSelectField } from 'components';
+import { createReminder, updateReminder } from '../services';
+import { handleSortItemsAscending } from 'utilities';
 import {
   FORM_REMINDER_INTERVAL_OPTIONS,
   FORM_REMINDER_BUFFER_OPTIONS,
@@ -8,20 +10,30 @@ import {
   FORM_ERROR_MISSING_REMINDER_INTERVAL,
   FORM_ERROR_MISSING_REMINDER_BUFFER,
   MODAL_OPERATION_CREATE,
+  MODAL_OPERATION_UPDATE,
 } from 'constants';
 
 const ModalReminder = ({
-  form,
-  onChangeHandlerTextField,
-  onChangeHandlerSelectField,
-  onChangeHandlerCheckbox,
-  handleItemOperation,
-  handleCancelButton,
+  userId,
+  items,
+  setItems,
+  itemToUpdate,
+  itemToEditId,
+  setOpenCloseModal,
   modalRef,
   modalOperation,
 }) => {
   const pageRef = useRef(null);
 
+  const [form, setForm] = useState({
+    userId,
+    reminder: '',
+    reminderDate: '',
+    recurrenceInterval: 0,
+    recurrenceBuffer: 0,
+    exactRecurringDate: false,
+    displayReminder: false,
+  });
   const [errorMessage, setErrorMessage] = useState({
     reminder: '',
     reminderDate: '',
@@ -83,18 +95,35 @@ const ModalReminder = ({
     }
   }, []);
 
-  const handleCloseModal = () => {
-    modalRef.current.close();
-    handleCancelButton(false);
-    setErrorMessage({
-      reminder: '',
-      reminderDate: '',
-      recurrenceInterval: '',
+  // when edit button clicked, set state to item to update
+  useEffect(() => {
+    if (modalOperation === MODAL_OPERATION_UPDATE) {
+      setForm(itemToUpdate);
+    }
+  }, [itemToUpdate]);
+
+  // state handlers
+  const handleForm = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleReminderWithExactRecurringDate = (e) => {
+    setForm({
+      ...form,
+      exactRecurringDate: e.target.checked,
       recurrenceBuffer: '',
     });
   };
 
-  const handleSubmitRemidner = () => {
+  const handleFormSelectField = (optionName, optionValue) => {
+    setForm({ ...form, [optionName]: optionValue });
+  };
+
+  // add new reminder
+  const handleCreateReminder = () => {
     if (
       !form.reminder ||
       !form.reminderDate ||
@@ -117,7 +146,92 @@ const ModalReminder = ({
       return;
     }
 
-    handleItemOperation();
+    createReminder(form).then((res) => {
+      if (res.status === 200) {
+        const copyOfRemindersItems = [...items];
+        setItems(
+          handleSortItemsAscending(
+            [...copyOfRemindersItems, res.item],
+            'reminderDate'
+          )
+        );
+        setForm({
+          userId,
+          reminder: '',
+          reminderDate: '',
+          recurrenceInterval: 0,
+          recurrenceBuffer: 0,
+          exactRecurringDate: false,
+          displayReminder: false,
+        });
+      }
+
+      if (res.status !== 200) {
+        setServerError(res.status);
+        setShowToast(true);
+      }
+
+      setIsAwaitingSubmitResponse(false);
+      handleCloseModal();
+    });
+  };
+
+  // update reminder
+  const handleUpdateReminder = () => {
+    updateReminder(form).then((res) => {
+      if (res.status === 200) {
+        setItems(
+          handleSortItemsAscending(
+            items?.map((item) => {
+              if (item?._id === itemToEditId) {
+                return res?.item;
+              } else {
+                return item;
+              }
+            }),
+            'reminderDate'
+          )
+        );
+
+        setForm({
+          userId,
+          reminder: '',
+          reminderDate: '',
+          recurrenceInterval: 0,
+          recurrenceBuffer: 0,
+          exactRecurringDate: false,
+          displayReminder: false,
+        });
+      }
+
+      if (res.status !== 200) {
+        setServerError(res.status);
+        setShowToast(true);
+      }
+
+      setIsAwaitingSubmitResponse(false);
+      handleCloseModal();
+    });
+  };
+
+  const handleCloseModal = () => {
+    modalRef.current.close();
+    setOpenCloseModal(false);
+    setForm({
+      userId,
+      reminder: '',
+      reminderDate: '',
+      recurrenceInterval: 0,
+      recurrenceBuffer: 0,
+      exactRecurringDate: false,
+      displayReminder: false,
+    });
+    setErrorMessage({
+      reminder: '',
+      reminderDate: '',
+      recurrenceInterval: '',
+      recurrenceBuffer: '',
+    });
   };
 
   const handleIntervalFormat = (interval) => {
@@ -193,7 +307,7 @@ const ModalReminder = ({
         id={'reminder'}
         name={'reminder'}
         value={form?.reminder}
-        onChangeHandler={onChangeHandlerTextField}
+        onChangeHandler={handleForm}
         errorMessage={errorMessage.reminder}
       />
       <FormTextField
@@ -206,14 +320,14 @@ const ModalReminder = ({
         id={'reminderDate'}
         name={'reminderDate'}
         value={form?.reminderDate}
-        onChangeHandler={onChangeHandlerTextField}
+        onChangeHandler={handleForm}
         errorMessage={errorMessage.reminderDate}
       />
       <FormSelectField
         label={'Recurrence Interval'}
         id={'reminderRecurrenceInterval'}
         value={handleIntervalFormat(form?.recurrenceInterval)}
-        onChangeHandler={onChangeHandlerSelectField}
+        onChangeHandler={handleFormSelectField}
         options={FORM_REMINDER_INTERVAL_OPTIONS}
         errorMessage={errorMessage.recurrenceInterval}
       />
@@ -221,7 +335,7 @@ const ModalReminder = ({
         label={'Happens on Specific Date'}
         id={'remindersWithExactRecurringDate'}
         checked={form?.exactRecurringDate}
-        onChangeHandler={onChangeHandlerCheckbox}
+        onChangeHandler={handleReminderWithExactRecurringDate}
       />
       <FormSelectField
         label={'Recurrence Buffer'}
@@ -230,7 +344,7 @@ const ModalReminder = ({
         }
         id={'reminderRecurrenceBuffer'}
         value={handleReminderBufferFormat(form?.recurrenceBuffer)}
-        onChangeHandler={onChangeHandlerSelectField}
+        onChangeHandler={handleFormSelectField}
         options={FORM_REMINDER_BUFFER_OPTIONS}
         errorMessage={errorMessage.recurrenceBuffer}
         disabled={!form?.exactRecurringDate}
@@ -244,7 +358,7 @@ const ModalReminder = ({
             className='modal__save-button'
             onClick={() => {
               setIsAwaitingSubmitResponse(true);
-              handleSubmitRemidner();
+              handleCreateReminder();
             }}
           >
             {isAwaitingSubmitResponse && <div className='loader'></div>}
@@ -255,7 +369,7 @@ const ModalReminder = ({
             className='modal__update-button'
             onClick={() => {
               setIsAwaitingSubmitResponse(true);
-              handleSubmitRemidner();
+              handleUpdateReminder();
             }}
           >
             {isAwaitingSubmitResponse && <div className='loader'></div>}

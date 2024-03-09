@@ -1,13 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAppContext } from 'context';
 import { SettingsItem, Modal } from 'components';
-import {
-  createReminder,
-  deleteReminder,
-  getReminder,
-  updateReminder,
-} from '../services';
-import { handleSortItemsAscending } from 'utilities';
+import { deleteReminder, getReminder } from '../services';
 import {
   MODAL_CREATE_REMINDER_HEADLINE,
   MODAL_UPDATE_REMINDER_HEADLINE,
@@ -20,18 +14,10 @@ const RemindersControls = ({ reminders, userId }) => {
   const { setShowToast, setServerError, setShowModal } = useAppContext();
 
   const [remindersItems, setRemindersItems] = useState(reminders ?? []);
-  const [form, setForm] = useState({
-    userId,
-    reminder: '',
-    reminderDate: '',
-    recurrenceInterval: 0,
-    recurrenceBuffer: 0,
-    exactRecurringDate: false,
-    displayReminder: false,
-  });
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [reminderToEditId, setReminderToEditId] = useState('');
+  const [reminderToUpdate, setReminderToUpdate] = useState({});
   const [modalCreateReminder, setModalCreateReminder] = useState(false);
   const [modalUpdateReminder, setModalUpdateReminder] = useState(false);
   const [
@@ -44,14 +30,12 @@ const RemindersControls = ({ reminders, userId }) => {
     if (modalCreateReminder || modalUpdateReminder) {
       setShowModal(
         <Modal
-          form={form}
-          onChangeHandlerTextField={handleForm}
-          onChangeHandlerSelectField={handleFormSelectField}
-          onChangeHandlerCheckbox={handleReminderWithExactRecurringDate}
-          handleItemOperation={
-            modalCreateReminder ? handleCreateReminder : handleUpdateReminder
-          }
-          handleCancelButton={
+          userId={userId}
+          items={remindersItems}
+          setItems={setRemindersItems}
+          itemToUpdate={reminderToUpdate}
+          itemToEditId={reminderToEditId}
+          setOpenCloseModal={
             modalCreateReminder
               ? setModalCreateReminder
               : setModalUpdateReminder
@@ -70,74 +54,7 @@ const RemindersControls = ({ reminders, userId }) => {
         />
       );
     }
-  }, [form, modalCreateReminder, modalUpdateReminder]);
-
-  // reset form when closing modal
-  useEffect(() => {
-    if (!modalCreateReminder && !modalUpdateReminder) {
-      setForm({
-        userId,
-        reminder: '',
-        reminderDate: '',
-        recurrenceInterval: 0,
-        recurrenceBuffer: 0,
-        exactRecurringDate: false,
-        displayReminder: false,
-      });
-    }
   }, [modalCreateReminder, modalUpdateReminder]);
-
-  // state handlers
-  const handleForm = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleReminderWithExactRecurringDate = (e) => {
-    setForm({
-      ...form,
-      exactRecurringDate: e.target.checked,
-      recurrenceBuffer: '',
-    });
-  };
-
-  const handleFormSelectField = (optionName, optionValue) => {
-    setForm({ ...form, [optionName]: optionValue });
-  };
-
-  // add new reminder
-  const handleCreateReminder = () => {
-    createReminder(form).then((res) => {
-      if (res.status === 200) {
-        const copyOfRemindersItems = [...remindersItems];
-        setRemindersItems(
-          handleSortItemsAscending(
-            [...copyOfRemindersItems, res.item],
-            'reminderDate'
-          )
-        );
-        setForm({
-          userId,
-          reminder: '',
-          reminderDate: '',
-          recurrenceInterval: 0,
-          recurrenceBuffer: 0,
-          exactRecurringDate: false,
-          displayReminder: false,
-        });
-      }
-
-      if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
-      }
-
-      setShowModal(null);
-      setModalCreateReminder(false);
-    });
-  };
 
   // get reminder to update
   const handleReminderToUpdate = (id) => {
@@ -145,7 +62,7 @@ const RemindersControls = ({ reminders, userId }) => {
     setReminderToEditId(id);
     getReminder(id).then((res) => {
       if (res.status === 200) {
-        setForm(res.item);
+        setReminderToUpdate(res.item);
         setModalUpdateReminder(true);
       }
 
@@ -154,45 +71,6 @@ const RemindersControls = ({ reminders, userId }) => {
         setShowToast(true);
       }
       setListItemIsAwaitingUpdateResponse(false);
-    });
-  };
-
-  // update reminder
-  const handleUpdateReminder = () => {
-    updateReminder(form).then((res) => {
-      if (res.status === 200) {
-        setRemindersItems(
-          handleSortItemsAscending(
-            remindersItems?.map((item) => {
-              if (item?._id === reminderToEditId) {
-                return res?.item;
-              } else {
-                return item;
-              }
-            }),
-            'reminderDate'
-          )
-        );
-
-        setForm({
-          userId,
-          reminder: '',
-          reminderDate: '',
-          recurrenceInterval: 0,
-          recurrenceBuffer: 0,
-          exactRecurringDate: false,
-          displayReminder: false,
-        });
-        setReminderToEditId('');
-      }
-
-      if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
-      }
-
-      setShowModal(null);
-      setModalUpdateReminder(false);
     });
   };
 

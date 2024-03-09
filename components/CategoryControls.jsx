@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from 'context';
 import { SettingsItem, Modal } from 'components';
-import { createCategory, deleteCategory, updateCategory } from '../services';
+import { deleteCategory, updateCategory } from '../services';
 import { MODAL_TYPE_CATEGORY, MODAL_CREATE_CATEGORY_HEADLINE } from 'constants';
 
 const CategoryControls = ({ categories, userId }) => {
@@ -12,76 +12,26 @@ const CategoryControls = ({ categories, userId }) => {
   const { setShowToast, setServerError, setShowModal } = useAppContext();
 
   const [categoryItems, setCategoryItems] = useState(categories ?? []);
-  const [form, setForm] = useState({
-    userId,
-    priority: '',
-    type: '',
-    mandatoryDate: false,
-  });
-  const [modalCreateCategory, setModalCreateCategory] = useState(false);
+  const [openCloseModal, setOpenCloseModal] = useState(false);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [draggableCategories, setDraggableCategories] = useState([]);
 
   // control modal
   useEffect(() => {
-    if (modalCreateCategory) {
+    if (openCloseModal) {
       setShowModal(
         <Modal
-          form={form}
-          onChangeHandlerTextField={handleForm}
-          onChangeHandlerCheckbox={handleMandatoryDate}
-          handleItemOperation={handleCreateCategory}
-          handleCancelButton={setModalCreateCategory}
+          userId={userId}
+          items={categoryItems}
+          setItems={setCategoryItems}
+          setOpenCloseModal={setOpenCloseModal}
           modalType={MODAL_TYPE_CATEGORY}
           headlineText={MODAL_CREATE_CATEGORY_HEADLINE}
         />
       );
     }
-  }, [form, modalCreateCategory]);
-
-  // reset form when closing modal
-  useEffect(() => {
-    if (!modalCreateCategory) {
-      setForm({
-        userId,
-        priority: '',
-        type: '',
-        mandatoryDate: false,
-      });
-    }
-  }, [modalCreateCategory]);
-
-  // state handlers
-  const handleForm = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-      priority: categoryItems?.length + 1,
-    });
-  };
-
-  const handleMandatoryDate = (e) => {
-    setForm({ ...form, mandatoryDate: e.target.checked });
-  };
-
-  // create category
-  const handleCreateCategory = () => {
-    createCategory(form).then((res) => {
-      if (res.status === 200) {
-        setCategoryItems((current) => [...current, res.item]);
-        setForm({ userId, priority: '', type: '', mandatoryDate: false });
-      }
-
-      if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
-      }
-
-      setShowModal(null);
-      setModalCreateCategory(false);
-    });
-  };
+  }, [openCloseModal]);
 
   // delete category
   const handleDeleteCategory = (_id) => {
@@ -159,7 +109,7 @@ const CategoryControls = ({ categories, userId }) => {
         <div className='settings-controls__button-wrapper'>
           <button
             onClick={() => {
-              setModalCreateCategory(true);
+              setOpenCloseModal(true);
             }}
             className='form-page__save-button'
           >

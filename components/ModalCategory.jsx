@@ -1,17 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import { FormTextField, FormCheckboxField } from 'components';
+import { createCategory } from '../services';
 import { SETTINGS_MISSING_CATEGORY } from 'constants';
 
 const ModalReminder = ({
-  form,
-  onChangeHandlerTextField,
-  onChangeHandlerCheckbox,
-  handleItemOperation,
-  handleCancelButton,
+  userId,
+  items,
+  setItems,
+  setOpenCloseModal,
   modalRef,
 }) => {
   const pageRef = useRef(null);
 
+  const [form, setForm] = useState({
+    userId,
+    priority: '',
+    type: '',
+    mandatoryDate: false,
+  });
   const [errorMessage, setErrorMessage] = useState({
     type: '',
   });
@@ -39,20 +45,53 @@ const ModalReminder = ({
     }
   }, []);
 
-  const handleCloseModal = () => {
-    modalRef.current.close();
-    handleCancelButton(false);
-    setErrorMessage({ type: '' });
+  // state handlers
+  const handleForm = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+      priority: items?.length + 1,
+    });
   };
 
-  const handleSubmitCategory = () => {
+  const handleMandatoryDate = (e) => {
+    setForm({ ...form, mandatoryDate: e.target.checked });
+  };
+
+  // create category
+  const handleCreateCategory = () => {
     if (!form.type) {
       setErrorMessage({ type: SETTINGS_MISSING_CATEGORY });
       setIsAwaitingSubmitResponse(false);
       return;
     }
 
-    handleItemOperation();
+    createCategory(form).then((res) => {
+      if (res.status === 200) {
+        setItems((current) => [...current, res.item]);
+        setForm({ userId, priority: '', type: '', mandatoryDate: false });
+      }
+
+      if (res.status !== 200) {
+        setServerError(res.status);
+        setShowToast(true);
+      }
+
+      setIsAwaitingSubmitResponse(false);
+      handleCloseModal();
+    });
+  };
+
+  const handleCloseModal = () => {
+    modalRef.current.close();
+    setOpenCloseModal(false);
+    setForm({
+      userId,
+      priority: '',
+      type: '',
+      mandatoryDate: false,
+    });
+    setErrorMessage({ type: '' });
   };
 
   return (
@@ -63,14 +102,14 @@ const ModalReminder = ({
         id={'category'}
         name={'type'}
         value={form?.type}
-        onChangeHandler={onChangeHandlerTextField}
+        onChangeHandler={handleForm}
         errorMessage={errorMessage.type}
       />
       <FormCheckboxField
         label={'Date or Date & Time'}
         id={'categoryDateTimeCheckbox'}
         checked={form?.mandatoryDate}
-        onChangeHandler={onChangeHandlerCheckbox}
+        onChangeHandler={handleMandatoryDate}
       />
       <div className='modal__modal-button-wrapper'>
         <button onClick={handleCloseModal} className='modal__cancel-button'>
@@ -80,7 +119,7 @@ const ModalReminder = ({
           className='modal__save-button'
           onClick={() => {
             setIsAwaitingSubmitResponse(true);
-            handleSubmitCategory();
+            handleCreateCategory();
           }}
         >
           {isAwaitingSubmitResponse && <div className='loader'></div>}

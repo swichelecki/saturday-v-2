@@ -3,17 +3,17 @@ import { ModalReminders, ModalCategory, ModalDelete } from 'components';
 import { MODAL_TYPE_REMINDER, MODAL_TYPE_CATEGORY } from 'constants';
 
 const Modal = ({
-  form,
-  onChangeHandlerTextField = () => {},
-  onChangeHandlerSelectField = () => {},
-  onChangeHandlerCheckbox = () => {},
-  handleItemOperation = () => {},
-  handleDeleteItem = () => {},
-  handleCancelButton = () => {},
+  userId = '',
+  items = [],
+  itemToUpdate = '',
+  itemToEditId = '',
   modalIdToDelete = '',
   modalType,
   modalOperation,
   headlineText,
+  setItems = () => {},
+  handleDeleteItem = () => {},
+  setOpenCloseModal = () => {},
 }) => {
   const modalRef = useRef(null);
 
@@ -33,22 +33,21 @@ const Modal = ({
       <h2>{headlineText}</h2>
       {modalType === MODAL_TYPE_REMINDER ? (
         <ModalReminders
-          form={form}
-          onChangeHandlerTextField={onChangeHandlerTextField}
-          onChangeHandlerSelectField={onChangeHandlerSelectField}
-          onChangeHandlerCheckbox={onChangeHandlerCheckbox}
-          handleItemOperation={handleItemOperation}
-          handleCancelButton={handleCancelButton}
-          modalRef={modalRef}
+          userId={userId}
+          items={items}
+          setItems={setItems}
+          itemToUpdate={itemToUpdate}
+          itemToEditId={itemToEditId}
+          setOpenCloseModal={setOpenCloseModal}
           modalOperation={modalOperation}
+          modalRef={modalRef}
         />
       ) : modalType === MODAL_TYPE_CATEGORY ? (
         <ModalCategory
-          form={form}
-          onChangeHandlerTextField={onChangeHandlerTextField}
-          onChangeHandlerCheckbox={onChangeHandlerCheckbox}
-          handleItemOperation={handleItemOperation}
-          handleCancelButton={handleCancelButton}
+          userId={userId}
+          items={items}
+          setItems={setItems}
+          setOpenCloseModal={setOpenCloseModal}
           modalRef={modalRef}
         />
       ) : (
