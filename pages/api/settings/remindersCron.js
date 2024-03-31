@@ -52,7 +52,7 @@ export default async function remindersCron(req, res) {
     // display reminders with exact recurring date
     if (exactRecurringDateReminders?.length > 0) {
       for (const item of exactRecurringDateReminders) {
-        const todayMilliseconds = new Date().getTime();
+        const today = new Date().getTime();
         const nextOccurrance = new Date(item?.reminderDate).getTime();
         const reminderDateObject = new Date(item?.reminderDate);
         const reminderDateMinusBuffer = reminderDateObject.setDate(
@@ -62,7 +62,7 @@ export default async function remindersCron(req, res) {
         // display
         if (
           nextOccurrance > Date.now() &&
-          reminderDateMinusBuffer <= todayMilliseconds &&
+          reminderDateMinusBuffer <= today &&
           item?.displayReminder === false
         ) {
           const {
@@ -91,10 +91,9 @@ export default async function remindersCron(req, res) {
 
         // reschedule
         if (nextOccurrance <= Date.now() && item?.displayReminder) {
-          const today = new Date();
           const interval = item?.recurrenceInterval;
           const date = new Date(item?.reminderDate);
-          date.setMonth(today.getMonth() + interval);
+          date.setMonth(date.getMonth() + interval);
           const nextDate = date.toISOString();
 
           const {
