@@ -45,9 +45,9 @@ export const FORM_REMINDER_INTERVAL_OPTIONS = [
   { title: 'Annually', name: 'recurrenceInterval', value: 12 },
 ];
 export const FORM_REMINDER_BUFFER_OPTIONS = [
-  { title: 'One Week', name: 'recurrenceBuffer', value: 1 },
-  { title: 'Two Weeks', name: 'recurrenceBuffer', value: 2 },
-  { title: 'Three Weeks', name: 'recurrenceBuffer', value: 3 },
+  { title: 'One Week', name: 'recurrenceBuffer', value: 7 },
+  { title: 'Two Weeks', name: 'recurrenceBuffer', value: 14 },
+  { title: 'Three Weeks', name: 'recurrenceBuffer', value: 21 },
 ];
 export const MODAL_CONFIRM_DELETION_HEADLINE = 'Confirm Deletion';
 export const MODAL_CREATE_CATEGORY_HEADLINE = 'Create Category';

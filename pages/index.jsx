@@ -7,14 +7,8 @@ import { jwtVerify } from 'jose';
 import Task from '../models/Task';
 import Category from '../models/Category';
 import Reminder from '../models/Reminder';
-import {
-  MainControls,
-  ItemsColumn,
-  BirthdaysColumn,
-  Modal,
-} from '../components';
+import { MainControls, ItemsColumn, Modal } from '../components';
 import { useInnerWidth } from '../hooks';
-import { useUpcomingBirthdays } from '../hooks';
 import { submitTask, getTask, updateTask, deleteTask } from '../services';
 import { handleSortItemsAscending } from 'utilities';
 import {
@@ -26,7 +20,6 @@ const Reminders = dynamic(() => import('../components/Reminders'));
 
 const Home = ({ tasks, categories, reminders, userId }) => {
   const width = useInnerWidth();
-  const birthhdays = useUpcomingBirthdays();
 
   const { setUserId, setShowToast, setServerError, setShowModal } =
     useAppContext();
@@ -369,7 +362,6 @@ const Home = ({ tasks, categories, reminders, userId }) => {
             allItemsTouchReset={allItemsTouchReset}
           />
         ))}
-        {birthhdays && <BirthdaysColumn birthdays={birthhdays} />}
       </div>
     </div>
   );

@@ -52,29 +52,6 @@ export const updateTask = async (obj) => {
   return { status: response.status, item };
 };
 
-export const getBirthdays = async () => {
-  const response = await fetch('/api/getBirthdays', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  return response.json();
-};
-
-export const updateBirthdays = async (obj) => {
-  const response = await fetch('/api/updateBirthdays', {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(obj),
-  });
-
-  return response.json();
-};
-
 export const SignUpUser = async (obj) => {
   const response = await fetch('/api/user/signup', {
     method: 'POST',

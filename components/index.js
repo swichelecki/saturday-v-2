@@ -14,7 +14,6 @@ export { default as FormSelectField } from './FormSelectField';
 export { default as CategoryControls } from './CategoryControls';
 export { default as RemindersControls } from './RemindersControls';
 export { default as SettingsItem } from './SettingsItem';
-export { default as BirthdaysColumn } from './BirthdaysColumn';
 export { default as Modal } from './Modal';
 export { default as ModalReminders } from './ModalReminders';
 export { default as ModalCategory } from './ModalCategory';
