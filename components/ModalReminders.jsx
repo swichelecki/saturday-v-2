@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { FormTextField, FormCheckboxField, FormSelectField } from 'components';
 import { createReminder, updateReminder } from '../services';
-import { handleSortItemsAscending } from 'utilities';
+import {
+  handleSortItemsAscending,
+  handleReminderBufferFormat,
+} from 'utilities';
 import {
   FORM_REMINDER_INTERVAL_OPTIONS,
   FORM_REMINDER_BUFFER_OPTIONS,
@@ -278,25 +281,6 @@ const ModalReminder = ({
         break;
     }
     return intervalFormatted;
-  };
-
-  const handleReminderBufferFormat = (buffer) => {
-    let bufferFormatted = '';
-    switch (buffer) {
-      case 0:
-        bufferFormatted = '';
-        break;
-      case 1:
-        bufferFormatted = 'One Week';
-        break;
-      case 2:
-        bufferFormatted = 'Two Weeks';
-        break;
-      case 3:
-        bufferFormatted = 'Three Weeks';
-        break;
-    }
-    return bufferFormatted;
   };
 
   return (

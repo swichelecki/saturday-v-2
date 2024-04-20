@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from 'context';
-import { Modal } from '.';
-import { GrDrag } from 'react-icons/gr';
+import { Modal } from './';
+import { Tooltip } from './';
+import { handleReminderBufferFormat } from 'utilities';
+import moment from 'moment-timezone';
+import { GrDrag, GrMore } from 'react-icons/gr';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
-import { FaCalendarCheck } from 'react-icons/fa';
 import { MdEdit } from 'react-icons/md';
 import { MODAL_CONFIRM_DELETION_HEADLINE } from 'constants';
 
@@ -258,8 +260,31 @@ const SettingsItem = ({
               <GrDrag />
             </div>
           )}
-          {(item?.mandatoryDate || item?.exactRecurringDate) && (
-            <FaCalendarCheck />
+          {item?.reminder && !item?.exactRecurringDate && (
+            <Tooltip
+              icon={<GrMore />}
+              message={`<p>${moment(item?.reminderDate).format(
+                'dddd, MMMM D, YYYY'
+              )}</p>${
+                new Date(item?.reminderDate).getTime() > Date.now()
+                  ? '<p>Next Display Date</p>'
+                  : '<p>Currently Displayed</p>'
+              }`}
+            />
+          )}
+          {item?.reminder && item?.exactRecurringDate && (
+            <Tooltip
+              icon={<GrMore />}
+              message={`<p>${moment(item?.reminderDate).format(
+                'dddd, MMMM D, YYYY'
+              )}</p>${
+                new Date(item?.reminderDate).getTime() > Date.now()
+                  ? '<p>Displays <span>' +
+                    handleReminderBufferFormat(item?.recurrenceBuffer) +
+                    '</span> Prior</p>'
+                  : '<p>Currently Displayed</p>'
+              }`}
+            />
           )}
           {item?.type ? item?.type : item?.reminder}
         </div>

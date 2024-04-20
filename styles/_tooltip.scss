@@ -1,0 +1,63 @@
+.tooltip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  padding: 0 4px;
+  svg {
+    position: relative;
+    top: 2px;
+    pointer-events: none;
+    color: $color-list-item-svg;
+    path {
+      stroke: $color-list-item-svg;
+    }
+  }
+  &__tooltip-text {
+    flex-direction: column;
+    visibility: hidden;
+    position: absolute;
+    bottom: 30px;
+    z-index: 1;
+    width: 200px;
+    text-align: center;
+    background-color: $color-white;
+    color: $color-background;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem; // 16px
+    line-height: 1.4;
+    p:first-of-type,
+    span {
+      font-weight: 400;
+    }
+    &:after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -10px;
+      border-width: 10px;
+      border-style: solid;
+      border-color: $color-white transparent transparent transparent;
+    }
+  }
+  &:hover {
+    .tooltip__tooltip-text {
+      visibility: visible;
+    }
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .tooltip {
+    &__tooltip-text {
+      left: -16px;
+      text-align: left;
+      &:after {
+        left: 15%;
+      }
+    }
+  }
+}

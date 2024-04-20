@@ -19,4 +19,5 @@ export { default as ModalReminders } from './ModalReminders';
 export { default as ModalCategory } from './ModalCategory';
 export { default as ModalDelete } from './ModalDelete';
 export { default as FormErrorMessage } from './FormErrorMessage';
+export { default as Tooltip } from './Tooltip';
 export { default as Toast } from './Toast';
