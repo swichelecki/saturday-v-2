@@ -82,7 +82,6 @@ const SettingsItem = ({
 
   // y-axis start
   const handleDragYStart = (e) => {
-    console.log('start');
     isDraggingYRef.current = true;
     handleDragStart(index);
     setStartYPosition(
@@ -120,7 +119,6 @@ const SettingsItem = ({
 
   // y-axis move
   const handleDragYMove = (e) => {
-    console.log('move');
     let currentPosition = e.type.includes('mouse')
       ? e.pageY
       : e.touches[0].clientY;
@@ -235,6 +233,15 @@ const SettingsItem = ({
     }
   };
 
+  // handle tooltip message for reminders with exact recurring dates
+  let displayDateForExactRecurringReminder;
+  if (item?.exactRecurringDate) {
+    const date = new Date(item?.reminderDate);
+    displayDateForExactRecurringReminder = date.setDate(
+      date.getDate() - item?.recurrenceBuffer
+    );
+  }
+
   return (
     <div
       className='settings-item__wrapper'
@@ -263,9 +270,9 @@ const SettingsItem = ({
           {item?.reminder && !item?.exactRecurringDate && (
             <Tooltip
               icon={<GrMore />}
-              message={`<p>${moment(item?.reminderDate).format(
-                'dddd, MMMM D, YYYY'
-              )}</p>${
+              message={`<p>${moment(
+                new Date(item?.reminderDate).toISOString().split('T')[0]
+              ).format('dddd, MMMM D, YYYY')}</p>${
                 new Date(item?.reminderDate).getTime() > Date.now()
                   ? '<p>Next Display Date</p>'
                   : '<p>Currently Displayed</p>'
@@ -275,10 +282,10 @@ const SettingsItem = ({
           {item?.reminder && item?.exactRecurringDate && (
             <Tooltip
               icon={<GrMore />}
-              message={`<p>${moment(item?.reminderDate).format(
-                'dddd, MMMM D, YYYY'
-              )}</p>${
-                new Date(item?.reminderDate).getTime() > Date.now()
+              message={`<p>${moment(
+                new Date(item?.reminderDate).toISOString().split('T')[0]
+              ).format('dddd, MMMM D, YYYY')}</p>${
+                displayDateForExactRecurringReminder > Date.now()
                   ? '<p>Displays <span>' +
                     handleReminderBufferFormat(item?.recurrenceBuffer) +
                     '</span> Prior</p>'
