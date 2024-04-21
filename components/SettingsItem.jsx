@@ -272,7 +272,7 @@ const SettingsItem = ({
               icon={<GrMore />}
               message={`<p>${moment(
                 new Date(item?.reminderDate).toISOString().split('T')[0]
-              ).format('dddd, MMMM D, YYYY')}</p>${
+              ).format('ddd, MMM D, YYYY')}</p>${
                 new Date(item?.reminderDate).getTime() > Date.now()
                   ? '<p>Next Display Date</p>'
                   : '<p>Currently Displayed</p>'
@@ -284,7 +284,7 @@ const SettingsItem = ({
               icon={<GrMore />}
               message={`<p>${moment(
                 new Date(item?.reminderDate).toISOString().split('T')[0]
-              ).format('dddd, MMMM D, YYYY')}</p>${
+              ).format('ddd, MMM D, YYYY')}</p>${
                 displayDateForExactRecurringReminder > Date.now()
                   ? '<p>Displays <span>' +
                     handleReminderBufferFormat(item?.recurrenceBuffer) +

@@ -1,12 +1,12 @@
 const Tooltip = ({ icon, message }) => {
   return (
-    <button className='tooltip'>
+    <div className='tooltip'>
       {icon}
       <span
-        className='tooltip__tooltip-text'
+        className='tooltip__tooltip-message'
         dangerouslySetInnerHTML={{ __html: message }}
       ></span>
-    </button>
+    </div>
   );
 };
 

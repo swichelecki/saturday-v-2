@@ -6,19 +6,17 @@
   background-color: transparent;
   padding: 0 4px;
   svg {
-    position: relative;
-    top: 2px;
     pointer-events: none;
     color: $color-list-item-svg;
     path {
       stroke: $color-list-item-svg;
     }
   }
-  &__tooltip-text {
+  &__tooltip-message {
     flex-direction: column;
     visibility: hidden;
     position: absolute;
-    bottom: 30px;
+    bottom: 28px;
     z-index: 1;
     width: 200px;
     text-align: center;
@@ -44,7 +42,7 @@
     }
   }
   &:hover {
-    .tooltip__tooltip-text {
+    .tooltip__tooltip-message {
       visibility: visible;
     }
   }
@@ -52,7 +50,7 @@
 
 @media screen and (max-width: 800px) {
   .tooltip {
-    &__tooltip-text {
+    &__tooltip-message {
       left: -16px;
       text-align: left;
       &:after {
