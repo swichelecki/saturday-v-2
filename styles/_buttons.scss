@@ -7,7 +7,6 @@ button {
 button.main-controls__type-button,
 button.main-controls__add-button,
 span.main-controls__create-button,
-button.main-controls__update-button,
 span.list-item__details-edit-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
@@ -52,7 +51,6 @@ button.main-controls__type-button {
   }
 }
 
-button.main-controls__update-button,
 button.modal__update-button {
   background-color: $button-blue-dark;
   border: 1px solid $button-blue;
@@ -207,8 +205,7 @@ button.list-item__cancel-button {
 }
 
 button.main-controls__add-button,
-button.form-page__save-button,
-button.main-controls__update-button {
+button.form-page__save-button {
   gap: 6px;
 }
 

@@ -8,7 +8,6 @@ const ItemsColumn = ({
   items,
   setListItems,
   handleEditTask,
-  handleCancelEdit,
   handleDeleteTask,
   taskToEditId,
   isAwaitingEditResponse,
@@ -91,7 +90,6 @@ const ItemsColumn = ({
           <ListItem
             item={item}
             handleEditTask={handleEditTask}
-            handleCancelEdit={handleCancelEdit}
             handleDeleteTask={handleDeleteTask}
             isAwaitingEditResponse={isAwaitingEditResponse}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}

@@ -4,6 +4,7 @@ import { createReminder, updateReminder } from '../services';
 import {
   handleSortItemsAscending,
   handleReminderBufferFormat,
+  handleIntervalFormat,
 } from 'utilities';
 import {
   FORM_REMINDER_INTERVAL_OPTIONS,
@@ -86,7 +87,7 @@ const ModalReminder = ({
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') handleCloseModal();
-      if (e.key === 'Enter') handleSubmitRemidner();
+      if (e.key === 'Enter') handleCreateReminder();
     };
 
     if (document && typeof document !== 'undefined') {
@@ -96,7 +97,7 @@ const ModalReminder = ({
         document.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, []);
+  }, [form]);
 
   // when edit button clicked, set state to item to update
   useEffect(() => {
@@ -144,11 +145,11 @@ const ModalReminder = ({
           !form.recurrenceBuffer &&
           FORM_ERROR_MISSING_REMINDER_BUFFER,
       });
-      setIsAwaitingSubmitResponse(false);
       setScrollToErrorMessage(true);
       return;
     }
 
+    setIsAwaitingSubmitResponse(true);
     createReminder(form).then((res) => {
       if (res.status === 200) {
         const copyOfRemindersItems = [...items];
@@ -181,6 +182,7 @@ const ModalReminder = ({
 
   // update reminder
   const handleUpdateReminder = () => {
+    setIsAwaitingSubmitResponse(true);
     updateReminder(form).then((res) => {
       if (res.status === 200) {
         setItems(
@@ -195,16 +197,6 @@ const ModalReminder = ({
             'reminderDate'
           )
         );
-
-        setForm({
-          userId,
-          reminder: '',
-          reminderDate: '',
-          recurrenceInterval: 0,
-          recurrenceBuffer: 0,
-          exactRecurringDate: false,
-          displayReminder: false,
-        });
       }
 
       if (res.status !== 200) {
@@ -235,52 +227,6 @@ const ModalReminder = ({
       recurrenceInterval: '',
       recurrenceBuffer: '',
     });
-  };
-
-  const handleIntervalFormat = (interval) => {
-    let intervalFormatted = '';
-    switch (interval) {
-      case 0:
-        intervalFormatted = '';
-        break;
-      case 1:
-        intervalFormatted = 'Monthly';
-        break;
-      case 2:
-        intervalFormatted = 'Every Two Months';
-        break;
-      case 3:
-        intervalFormatted = 'Every Three Months';
-        break;
-      case 4:
-        intervalFormatted = 'Every Four Months';
-        break;
-      case 5:
-        intervalFormatted = 'Every Five Months';
-        break;
-      case 6:
-        intervalFormatted = 'Every Six Months';
-        break;
-      case 7:
-        intervalFormatted = 'Every Seven Months';
-        break;
-      case 8:
-        intervalFormatted = 'Every Eight Months';
-        break;
-      case 9:
-        intervalFormatted = 'Every Nine Months';
-        break;
-      case 10:
-        intervalFormatted = 'Every 10 Months';
-        break;
-      case 11:
-        intervalFormatted = 'Every 11 Months';
-        break;
-      case 12:
-        intervalFormatted = 'Annually';
-        break;
-    }
-    return intervalFormatted;
   };
 
   return (
@@ -338,23 +284,14 @@ const ModalReminder = ({
           Cancel
         </button>
         {modalOperation === MODAL_OPERATION_CREATE ? (
-          <button
-            className='modal__save-button'
-            onClick={() => {
-              setIsAwaitingSubmitResponse(true);
-              handleCreateReminder();
-            }}
-          >
+          <button className='modal__save-button' onClick={handleCreateReminder}>
             {isAwaitingSubmitResponse && <div className='loader'></div>}
             Save
           </button>
         ) : (
           <button
             className='modal__update-button'
-            onClick={() => {
-              setIsAwaitingSubmitResponse(true);
-              handleUpdateReminder();
-            }}
+            onClick={handleUpdateReminder}
           >
             {isAwaitingSubmitResponse && <div className='loader'></div>}
             Update

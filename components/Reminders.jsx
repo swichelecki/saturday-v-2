@@ -65,6 +65,8 @@ const Reminders = ({ reminders }) => {
     });
   };
 
+  if (!remindersItems?.length) return <></>;
+
   return (
     <div className='reminders__wrapper'>
       <button

@@ -30,6 +30,7 @@ export const FORM_ERROR_MISSING_REMINDER_DATE = 'Reminder Date Required';
 export const FORM_ERROR_MISSING_REMINDER_INTERVAL =
   'Reminder Interval Required';
 export const FORM_ERROR_MISSING_REMINDER_BUFFER = 'Reminder Buffer Required';
+export const FORM_ERROR_MISSING_UPDATE_TITLE = 'Title Required';
 export const FORM_REMINDER_INTERVAL_OPTIONS = [
   { title: 'Monthly', name: 'recurrenceInterval', value: 1 },
   { title: 'Every Two Months', name: 'recurrenceInterval', value: 2 },
@@ -53,7 +54,9 @@ export const MODAL_CONFIRM_DELETION_HEADLINE = 'Confirm Deletion';
 export const MODAL_CREATE_CATEGORY_HEADLINE = 'Create Category';
 export const MODAL_CREATE_REMINDER_HEADLINE = 'Create Reminder';
 export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
+export const MODAL_UPDATE_ITEM_HEADLINE = 'Update Item';
 export const MODAL_TYPE_REMINDER = 'Reminder';
 export const MODAL_TYPE_CATEGORY = 'Category';
+export const MODAL_TYPE_UPDATE_ITEM = 'UpdateItem';
 export const MODAL_OPERATION_CREATE = 'CREATE';
 export const MODAL_OPERATION_UPDATE = 'UPDATE';

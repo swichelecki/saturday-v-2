@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from 'context';
 import { Modal } from './';
 import { Tooltip } from './';
-import { handleReminderBufferFormat } from 'utilities';
+import { handleReminderBufferFormat, handleIntervalFormat } from 'utilities';
 import moment from 'moment-timezone';
 import { GrDrag, GrMore } from 'react-icons/gr';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
@@ -270,27 +270,35 @@ const SettingsItem = ({
           {item?.reminder && !item?.exactRecurringDate && (
             <Tooltip
               icon={<GrMore />}
-              message={`<p>${moment(
-                new Date(item?.reminderDate).toISOString().split('T')[0]
-              ).format('ddd, MMM D, YYYY')}</p>${
+              message={`${
                 new Date(item?.reminderDate).getTime() > Date.now()
                   ? '<p>Next Display Date</p>'
                   : '<p>Currently Displayed</p>'
-              }`}
+              }<p><span>${moment(
+                new Date(item?.reminderDate).toISOString().split('T')[0]
+              ).format(
+                'ddd, MMM D, YYYY'
+              )}</span></p><p>Interval: <span>${handleIntervalFormat(
+                item?.recurrenceInterval
+              )}</span></p>`}
             />
           )}
           {item?.reminder && item?.exactRecurringDate && (
             <Tooltip
               icon={<GrMore />}
-              message={`<p>${moment(
-                new Date(item?.reminderDate).toISOString().split('T')[0]
-              ).format('ddd, MMM D, YYYY')}</p>${
+              message={`${
                 displayDateForExactRecurringReminder > Date.now()
                   ? '<p>Displays <span>' +
                     handleReminderBufferFormat(item?.recurrenceBuffer) +
                     '</span> Prior</p>'
                   : '<p>Currently Displayed</p>'
-              }`}
+              }<p><span>${moment(
+                new Date(item?.reminderDate).toISOString().split('T')[0]
+              ).format(
+                'ddd, MMM D, YYYY'
+              )}</span></p><p>Interval: <span>${handleIntervalFormat(
+                item?.recurrenceInterval
+              )}</span></p>`}
             />
           )}
           {item?.type ? item?.type : item?.reminder}

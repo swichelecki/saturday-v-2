@@ -18,7 +18,6 @@ const ItemButtons = ({
   handleEditTask,
   itemId,
   isAwaitingEditResponse,
-  handleCancelEdit,
   handleDeleteTask,
   setIsOpen,
   isAwaitingDeleteResponse,
@@ -89,7 +88,6 @@ const ItemButtons = ({
         </button>
       ) : (
         <button
-          onClick={handleCancelEdit}
           className={`list-item__cancel-button ${handleCancelButtonClass()}`}
         >
           <TiCancel />

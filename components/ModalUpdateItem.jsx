@@ -1,39 +1,46 @@
 import { useState, useEffect, useRef } from 'react';
-import { FormTextField, FormCheckboxField } from 'components';
-import { createCategory } from '../services';
-import { SETTINGS_MISSING_CATEGORY } from 'constants';
+import { FormTextField } from 'components';
+import { updateTask } from '../services';
+import { FORM_ERROR_MISSING_UPDATE_TITLE } from 'constants';
 
-const ModalReminder = ({
+const ModalUpdateItem = ({
   userId,
+  itemToUpdate,
+  itemToEditId,
   items,
   setItems,
-  setOpenCloseModal,
   modalRef,
+  setTaskToEditId,
 }) => {
   const pageRef = useRef(null);
 
   const [form, setForm] = useState({
     userId,
-    priority: '',
+    title: '',
+    column: 1,
+    priority: 1,
     type: '',
+    description: '',
+    date: '',
+    dateAndTime: '',
     mandatoryDate: false,
   });
   const [errorMessage, setErrorMessage] = useState({
-    type: '',
+    title: '',
   });
   const [isAwaitingSubmitResponse, setIsAwaitingSubmitResponse] =
     useState(false);
 
   useEffect(() => {
-    if (!errorMessage.type) return;
-    setErrorMessage({ type: '' });
-  }, [form.type]);
+    if (!errorMessage.title) return;
+    setErrorMessage({ ...errorMessage, title: '' });
+  }, [form.title]);
 
   // handle keyboard events
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') handleCloseModal();
-      if (e.key === 'Enter') handleCreateCategory();
+      if (e.key === 'Enter') handleEditSubmit();
     };
 
     if (document && typeof document !== 'undefined') {
@@ -45,31 +52,43 @@ const ModalReminder = ({
     }
   }, [form]);
 
+  // set state to item to update
+  useEffect(() => {
+    setForm(itemToUpdate);
+  }, [itemToUpdate]);
+
   // state handlers
   const handleForm = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
-      priority: items?.length + 1,
     });
   };
 
-  const handleMandatoryDate = (e) => {
-    setForm({ ...form, mandatoryDate: e.target.checked });
-  };
-
-  // create category
-  const handleCreateCategory = () => {
-    if (!form.type) {
-      setErrorMessage({ type: SETTINGS_MISSING_CATEGORY });
+  // edit item
+  const handleEditSubmit = () => {
+    if (!form?.title) {
+      setErrorMessage({
+        title: FORM_ERROR_MISSING_UPDATE_TITLE,
+      });
       return;
     }
 
     setIsAwaitingSubmitResponse(true);
-    createCategory(form).then((res) => {
+    updateTask(form).then((res) => {
       if (res.status === 200) {
-        setItems((current) => [...current, res.item]);
-        setForm({ userId, priority: '', type: '', mandatoryDate: false });
+        setItems(
+          items?.map((item) => {
+            if (item?._id === itemToEditId) {
+              return {
+                ...item,
+                title: res?.item?.title,
+              };
+            } else {
+              return item;
+            }
+          })
+        );
       }
 
       if (res.status !== 200) {
@@ -84,44 +103,46 @@ const ModalReminder = ({
 
   const handleCloseModal = () => {
     modalRef.current.close();
-    setOpenCloseModal(false);
+    setTaskToEditId('');
     setForm({
       userId,
-      priority: '',
+      title: '',
+      column: 1,
+      priority: 1,
       type: '',
+      description: '',
+      date: '',
+      dateAndTime: '',
       mandatoryDate: false,
     });
-    setErrorMessage({ type: '' });
+    setErrorMessage({
+      item: '',
+    });
   };
 
   return (
     <div ref={pageRef}>
       <FormTextField
-        label={'Category'}
+        label={''}
         type={'text'}
-        id={'category'}
-        name={'type'}
-        value={form?.type}
+        id={'update'}
+        name={'title'}
+        value={form?.title}
         onChangeHandler={handleForm}
-        errorMessage={errorMessage.type}
-      />
-      <FormCheckboxField
-        label={'Date or Date & Time'}
-        id={'categoryDateTimeCheckbox'}
-        checked={form?.mandatoryDate}
-        onChangeHandler={handleMandatoryDate}
+        errorMessage={errorMessage.title}
       />
       <div className='modal__modal-button-wrapper'>
         <button onClick={handleCloseModal} className='modal__cancel-button'>
           Cancel
         </button>
-        <button className='modal__save-button' onClick={handleCreateCategory}>
+
+        <button className='modal__update-button' onClick={handleEditSubmit}>
           {isAwaitingSubmitResponse && <div className='loader'></div>}
-          Save
+          Update
         </button>
       </div>
     </div>
   );
 };
 
-export default ModalReminder;
+export default ModalUpdateItem;

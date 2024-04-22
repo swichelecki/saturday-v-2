@@ -1,6 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { ModalReminders, ModalCategory, ModalDelete } from 'components';
-import { MODAL_TYPE_REMINDER, MODAL_TYPE_CATEGORY } from 'constants';
+import {
+  ModalReminders,
+  ModalCategory,
+  ModalUpdateItem,
+  ModalDelete,
+} from 'components';
+import {
+  MODAL_TYPE_REMINDER,
+  MODAL_TYPE_CATEGORY,
+  MODAL_TYPE_UPDATE_ITEM,
+} from 'constants';
 
 const Modal = ({
   userId = '',
@@ -13,6 +22,7 @@ const Modal = ({
   headlineText,
   setItems = () => {},
   handleDeleteItem = () => {},
+  setTaskToEditId = () => {},
   setOpenCloseModal = () => {},
 }) => {
   const modalRef = useRef(null);
@@ -25,7 +35,9 @@ const Modal = ({
     <dialog
       ref={modalRef}
       className={`${
-        modalType === MODAL_TYPE_REMINDER || modalType === MODAL_TYPE_CATEGORY
+        modalType === MODAL_TYPE_REMINDER ||
+        modalType === MODAL_TYPE_CATEGORY ||
+        modalType === MODAL_TYPE_UPDATE_ITEM
           ? 'modal__form-modal'
           : 'modal'
       }`}
@@ -48,6 +60,16 @@ const Modal = ({
           items={items}
           setItems={setItems}
           setOpenCloseModal={setOpenCloseModal}
+          modalRef={modalRef}
+        />
+      ) : modalType === MODAL_TYPE_UPDATE_ITEM ? (
+        <ModalUpdateItem
+          userId={userId}
+          itemToUpdate={itemToUpdate}
+          itemToEditId={itemToEditId}
+          items={items}
+          setItems={setItems}
+          setTaskToEditId={setTaskToEditId}
           modalRef={modalRef}
         />
       ) : (

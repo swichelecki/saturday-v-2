@@ -7,15 +7,12 @@ import { MOBILE_BREAKPOINT } from 'constants';
 const MainControls = ({
   categories,
   handleOnSubmit,
-  handleEditSubmit,
   title,
   handleSetListItem,
   setListItem,
   type,
   column,
-  isUpdating,
   isAwaitingAddResponse,
-  isAwaitingUpdateResponse,
   priority,
 }) => {
   const width = useInnerWidth();
@@ -100,7 +97,7 @@ const MainControls = ({
         />
       </div>
       <div className='main-controls__bottom-controls'>
-        {checkbox && !isUpdating ? (
+        {checkbox ? (
           <Link
             href={{
               pathname: '/details',
@@ -109,14 +106,6 @@ const MainControls = ({
           >
             <span className='main-controls__create-button'>Create</span>
           </Link>
-        ) : isUpdating ? (
-          <button
-            onClick={handleEditSubmit}
-            className='main-controls__update-button'
-          >
-            {isAwaitingUpdateResponse && <div className='loader'></div>}
-            Update
-          </button>
         ) : (
           <button
             onClick={handleOnSubmit}
@@ -130,7 +119,7 @@ const MainControls = ({
           type='text'
           value={title}
           onChange={handleSetListItem}
-          disabled={checkbox && !isUpdating}
+          disabled={checkbox}
         />
       </div>
     </div>

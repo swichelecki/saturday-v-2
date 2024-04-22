@@ -17,6 +17,7 @@ export { default as SettingsItem } from './SettingsItem';
 export { default as Modal } from './Modal';
 export { default as ModalReminders } from './ModalReminders';
 export { default as ModalCategory } from './ModalCategory';
+export { default as ModalUpdateItem } from './ModalUpdateItem';
 export { default as ModalDelete } from './ModalDelete';
 export { default as FormErrorMessage } from './FormErrorMessage';
 export { default as Tooltip } from './Tooltip';

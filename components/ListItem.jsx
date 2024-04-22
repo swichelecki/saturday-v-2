@@ -23,7 +23,6 @@ let previousItemId = '';
 const ItemList = ({
   item,
   handleEditTask,
-  handleCancelEdit,
   handleDeleteTask,
   isAwaitingEditResponse,
   isAwaitingDeleteResponse,
@@ -506,7 +505,6 @@ const ItemList = ({
                 handleEditTask={handleEditTask}
                 itemId={item?._id}
                 isAwaitingEditResponse={isAwaitingEditResponse}
-                handleCancelEdit={handleCancelEdit}
                 handleDeleteTask={handleDeleteTask}
                 setIsOpen={setIsOpen}
                 isAwaitingDeleteResponse={isAwaitingDeleteResponse}
@@ -561,7 +559,6 @@ const ItemList = ({
             handleEditTask={handleEditTask}
             itemId={item?._id}
             isAwaitingEditResponse={isAwaitingEditResponse}
-            handleCancelEdit={handleCancelEdit}
             handleDeleteTask={handleDeleteTask}
             setIsOpen={setIsOpen}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}

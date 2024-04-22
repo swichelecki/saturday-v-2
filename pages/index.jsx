@@ -9,11 +9,13 @@ import Category from '../models/Category';
 import Reminder from '../models/Reminder';
 import { MainControls, ItemsColumn, Modal } from '../components';
 import { useInnerWidth } from '../hooks';
-import { submitTask, getTask, updateTask, deleteTask } from '../services';
+import { submitTask, getTask, deleteTask } from '../services';
 import { handleSortItemsAscending } from 'utilities';
 import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
+  MODAL_UPDATE_ITEM_HEADLINE,
+  MODAL_TYPE_UPDATE_ITEM,
 } from '../constants';
 
 const Reminders = dynamic(() => import('../components/Reminders'));
@@ -38,11 +40,8 @@ const Home = ({ tasks, categories, reminders, userId }) => {
     mandatoryDate: false,
   });
   const [priority, setPriority] = useState(0);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [taskToEditId, setTaskToEditId] = useState('');
   const [isAwaitingAddResponse, setIsAwaitingAddResponse] = useState(false);
-  const [isAwaitingUpdateResponse, setIsAwaitingUpdateResponse] =
-    useState(false);
   const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
@@ -144,9 +143,7 @@ const Home = ({ tasks, categories, reminders, userId }) => {
   // handle submit with Enter key
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Enter') {
-        !isUpdating ? handleOnSubmit() : handleEditSubmit();
-      }
+      if (e.key === 'Enter') handleOnSubmit();
     };
 
     if (document && typeof document !== 'undefined') {
@@ -206,53 +203,18 @@ const Home = ({ tasks, categories, reminders, userId }) => {
     setTaskToEditId(id);
     getTask(id).then((res) => {
       if (res.status === 200) {
-        setListItem(res.item);
-        setIsUpdating(true);
-      }
-
-      if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
-      }
-      setIsAwaitingEditResponse(false);
-    });
-  };
-
-  // edit item
-  const handleEditSubmit = () => {
-    if (!listItem?.title) {
-      // TODO: create user notifications
-      return;
-    }
-
-    setIsAwaitingUpdateResponse(true);
-    updateTask(listItem).then((res) => {
-      if (res.status === 200) {
-        setListItems(
-          listItems?.map((item) => {
-            if (item?._id === taskToEditId) {
-              return {
-                ...item,
-                title: res?.item?.title,
-              };
-            } else {
-              return item;
-            }
-          })
+        setShowModal(
+          <Modal
+            userId={userId}
+            itemToUpdate={res.item}
+            itemToEditId={id}
+            items={listItems}
+            setItems={setListItems}
+            setTaskToEditId={setTaskToEditId}
+            modalType={MODAL_TYPE_UPDATE_ITEM}
+            headlineText={MODAL_UPDATE_ITEM_HEADLINE}
+          />
         );
-        setIsUpdating(false);
-        setTaskToEditId('');
-        setListItem({
-          userId,
-          title: '',
-          column: res.item.column,
-          type: res.item.type,
-          priority,
-          description: '',
-          date: '',
-          dateAndTime: '',
-          mandatoryDate: false,
-        });
       }
 
       if (res.status !== 200) {
@@ -260,7 +222,7 @@ const Home = ({ tasks, categories, reminders, userId }) => {
         setShowToast(true);
       }
 
-      setIsAwaitingUpdateResponse(false);
+      setIsAwaitingEditResponse(false);
     });
   };
 
@@ -295,23 +257,6 @@ const Home = ({ tasks, categories, reminders, userId }) => {
     });
   };
 
-  // cancel item edit
-  const handleCancelEdit = () => {
-    setIsUpdating(false);
-    setTaskToEditId('');
-    setListItem({
-      userId,
-      title: '',
-      column: listItem.column,
-      type: listItem.type,
-      priority,
-      description: '',
-      date: '',
-      dateAndTime: '',
-      mandatoryDate: false,
-    });
-  };
-
   // close currently open item when a new item is opened
   const closeOpenItem = (currentItemId) => {
     allItems = Array.from(document.querySelectorAll('.list-item__item'));
@@ -329,15 +274,12 @@ const Home = ({ tasks, categories, reminders, userId }) => {
       <MainControls
         categories={categories}
         handleOnSubmit={handleOnSubmit}
-        handleEditSubmit={handleEditSubmit}
         title={listItem?.title}
         handleSetListItem={handleSetListItem}
         setListItem={setListItem}
         type={listItem?.type}
         column={listItem?.column}
-        isUpdating={isUpdating}
         isAwaitingAddResponse={isAwaitingAddResponse}
-        isAwaitingUpdateResponse={isAwaitingUpdateResponse}
         priority={priority}
       />
       {reminders && reminders?.length > 0 && (
@@ -351,7 +293,6 @@ const Home = ({ tasks, categories, reminders, userId }) => {
             items={Object.values(item)[0]}
             setListItems={setListItems}
             handleEditTask={handleEditTask}
-            handleCancelEdit={handleCancelEdit}
             handleDeleteTask={handleDeleteTask}
             taskToEditId={taskToEditId}
             isAwaitingEditResponse={isAwaitingEditResponse}
