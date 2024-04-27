@@ -211,6 +211,7 @@ const Home = ({ tasks, categories, reminders, userId }) => {
             items={listItems}
             setItems={setListItems}
             setTaskToEditId={setTaskToEditId}
+            handleCloseMobileItem={handleItemsTouchReset}
             modalType={MODAL_TYPE_UPDATE_ITEM}
             headlineText={MODAL_UPDATE_ITEM_HEADLINE}
           />

@@ -11,6 +11,7 @@ const ModalUpdateItem = ({
   setItems,
   modalRef,
   setTaskToEditId,
+  handleCloseMobileItem,
 }) => {
   const pageRef = useRef(null);
 
@@ -118,6 +119,7 @@ const ModalUpdateItem = ({
     setErrorMessage({
       item: '',
     });
+    handleCloseMobileItem();
   };
 
   return (

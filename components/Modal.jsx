@@ -24,6 +24,7 @@ const Modal = ({
   handleDeleteItem = () => {},
   setTaskToEditId = () => {},
   setOpenCloseModal = () => {},
+  handleCloseMobileItem = () => {},
 }) => {
   const modalRef = useRef(null);
 
@@ -71,6 +72,7 @@ const Modal = ({
           setItems={setItems}
           setTaskToEditId={setTaskToEditId}
           modalRef={modalRef}
+          handleCloseMobileItem={handleCloseMobileItem}
         />
       ) : (
         <ModalDelete
