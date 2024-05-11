@@ -51,6 +51,7 @@
     overflow: scroll;
     -ms-overflow-style: none; // IE and Edge
     scrollbar-width: none; // FireFox
+    transition: transform 300ms ease-out;
     &::-webkit-scrollbar {
       display: none; // Chrome and Safari
     }

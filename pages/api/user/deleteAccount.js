@@ -1,5 +1,6 @@
 import User from '../../../models/User';
 import Task from '../../../models/Task';
+import Reminder from '../../models/Reminder';
 import bcrypt from 'bcryptjs';
 
 export default async function deleteAccount(req, res) {
@@ -9,6 +10,7 @@ export default async function deleteAccount(req, res) {
 
     if (user && bcrypt.compare(password === user.password)) {
       await Task.deleteMany({ userId });
+      await Reminder.deleteMany({ userId });
       await User.deleteOne({ _id: userId });
       res.status(200).end();
     } else {

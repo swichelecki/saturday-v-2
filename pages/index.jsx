@@ -7,7 +7,7 @@ import { jwtVerify } from 'jose';
 import Task from '../models/Task';
 import Category from '../models/Category';
 import Reminder from '../models/Reminder';
-import { MainControls, ItemsColumn, Modal } from '../components';
+import { MainControls, Modal } from '../components';
 import { useInnerWidth } from '../hooks';
 import { submitTask, getTask, deleteTask } from '../services';
 import { handleSortItemsAscending } from 'utilities';
@@ -18,6 +18,7 @@ import {
   MODAL_TYPE_UPDATE_ITEM,
 } from '../constants';
 
+const ItemsColumn = dynamic(() => import('../components/ItemsColumn'));
 const Reminders = dynamic(() => import('../components/Reminders'));
 
 const Home = ({ tasks, categories, reminders, userId }) => {

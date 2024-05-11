@@ -15,20 +15,37 @@ const Reminders = ({ reminders }) => {
 
   const remindersWrapperRef = useRef(null);
   const remindersCarouselRef = useRef(null);
+  const carouselPositionRef = useRef(null);
 
   const [remindersItems, setReminders] = useState(reminders ?? []);
   const [reminderToUpdate, setReminderToUpdate] = useState({});
   const [showReminders, setShowReminders] = useState(true);
   const [isAwaitingResetResponse, setIsAwaitingResetResponse] = useState(false);
   const [showScrollButtons, setShowScrollButtons] = useState(false);
+  const [remindersWrapperClientRectRight, setRemindersWrapperClientRectRight] =
+    useState(0);
+  const [remindersWrapperClientRectLeft, setRemindersWrapperClientRectLeft] =
+    useState(0);
 
-  // handle display of scroll buttons
+  // handle display of scroll buttons and carousel resize
   useEffect(() => {
     const handleResize = () => {
       remindersCarouselRef?.current?.scrollWidth >
       remindersWrapperRef?.current?.offsetWidth
         ? setShowScrollButtons(true)
         : setShowScrollButtons(false);
+
+      setRemindersWrapperClientRectRight(
+        remindersWrapperRef?.current?.getBoundingClientRect().right
+      );
+      setRemindersWrapperClientRectLeft(
+        remindersWrapperRef?.current?.getBoundingClientRect().left
+      );
+
+      if (remindersCarouselRef.current && carouselPositionRef.current) {
+        remindersCarouselRef.current.style.transform = 'translateX(0)';
+        carouselPositionRef.current = 0;
+      }
     };
 
     if (width && window && typeof window !== 'undefined') {
@@ -88,31 +105,55 @@ const Reminders = ({ reminders }) => {
   };
 
   const handleScrollNext = () => {
-    // TODO
-    // get reminders
-    // get reminder with getBoundingClientRect().right that is > remindersWrapperRef getBoundingClientRect().right
-    // find out how much of that remidner is getting cut off
-    // move carousel that distance plus a bit more to show next reminder
-    // if no next reminder just move that much
-    /* console.log(
-      'remindersWrapperRef width ',
-      remindersWrapperRef.current.offsetWidth
-    );
-    console.log(
-      'remindersCarouselRef width ',
-      remindersCarouselRef.current.scrollWidth
-    );
+    const remindersToShow = [];
+    const reminders =
+      remindersWrapperRef.current.querySelectorAll('.reminders-item');
+    reminders.forEach((item) => {
+      if (
+        item.getBoundingClientRect().right >= remindersWrapperClientRectRight
+      ) {
+        remindersToShow.push(item);
+      }
+    });
+
+    if (remindersToShow.length === 0) return;
+
+    const nextReminderToShow = remindersToShow[0];
+    const nextReminderToShowClientRectRight =
+      nextReminderToShow.getBoundingClientRect().right;
+
+    carouselPositionRef.current +=
+      nextReminderToShowClientRectRight -
+      remindersWrapperClientRectRight +
+      (remindersToShow.length > 1 ? 24 : 8);
+
     remindersCarouselRef.current.style.overflow = 'visible';
-    remindersCarouselRef.current.style.transition = `transform 300ms ease-out`;
-    remindersCarouselRef.current.style.transform = `translateX(-146px)`; */
+    remindersCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
   };
 
   const handleScrollPrevious = () => {
-    /* 
-    TODO
+    const remindersToShow = [];
+    const reminders =
+      remindersWrapperRef.current.querySelectorAll('.reminders-item');
+    reminders.forEach((item) => {
+      if (item.getBoundingClientRect().left <= remindersWrapperClientRectLeft) {
+        remindersToShow.push(item);
+      }
+    });
+
+    if (remindersToShow.length === 0) return;
+
+    const nextReminderToShow = remindersToShow[remindersToShow.length - 1];
+    const nextReminderToShowClientRectLeft =
+      nextReminderToShow.getBoundingClientRect().left;
+
+    carouselPositionRef.current +=
+      nextReminderToShowClientRectLeft -
+      remindersWrapperClientRectLeft -
+      (remindersToShow.length > 1 ? 24 : 8);
+
     remindersCarouselRef.current.style.overflow = 'visible';
-    remindersCarouselRef.current.style.transition = `transform 300ms ease-out`;
-    remindersCarouselRef.current.style.transform = `translateX(146px)`; */
+    remindersCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
   };
 
   if (!remindersItems?.length) return <></>;
