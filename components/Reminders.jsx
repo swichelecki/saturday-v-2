@@ -62,9 +62,17 @@ const Reminders = ({ reminders }) => {
       const today = new Date();
       const startingDate = copyOfReminderToUpdate?.reminderDate;
       const interval = copyOfReminderToUpdate?.recurrenceInterval;
-      const date = new Date(startingDate);
-      date.setMonth(today.getMonth() + interval);
-      const nextDate = date.toISOString();
+      const reminderStartingDate = new Date(startingDate);
+
+      if (interval > 12) {
+        // set weekly reminder
+        reminderStartingDate.setTime(reminderStartingDate.getTime() + interval);
+      } else {
+        // set monthly reminder
+        reminderStartingDate.setMonth(today.getMonth() + interval);
+      }
+
+      const nextDate = reminderStartingDate.toISOString();
 
       copyOfReminderToUpdate = {
         ...copyOfReminderToUpdate,
@@ -104,6 +112,7 @@ const Reminders = ({ reminders }) => {
     });
   };
 
+  // scroll carousel to next reminder
   const handleScrollNext = () => {
     const remindersToShow = [];
     const reminders =
@@ -131,6 +140,7 @@ const Reminders = ({ reminders }) => {
     remindersCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
   };
 
+  // scroll carousel to previous reminder
   const handleScrollPrevious = () => {
     const remindersToShow = [];
     const reminders =

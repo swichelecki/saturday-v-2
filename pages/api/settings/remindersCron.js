@@ -22,17 +22,21 @@ export default async function remindersCron(req, res) {
     if (generalReminders?.length > 0) {
       for (const item of generalReminders) {
         const nextOccurrance = new Date(item?.reminderDate).getTime();
-        if (nextOccurrance <= Date.now() && item?.displayReminder === false) {
-          const {
-            _id,
-            userId,
-            reminder,
-            reminderDate,
-            recurrenceInterval,
-            recurrenceBuffer,
-            exactRecurringDate,
-          } = item;
+        const interval = item?.recurrenceInterval;
 
+        const {
+          _id,
+          userId,
+          reminder,
+          reminderDate,
+          recurrenceInterval,
+          recurrenceBuffer,
+          exactRecurringDate,
+          displayReminder,
+        } = item;
+
+        // show next occurance of reminder
+        if (nextOccurrance <= Date.now() && item?.displayReminder === false) {
           await Reminder.updateOne(
             { _id: _id },
             {
@@ -43,6 +47,31 @@ export default async function remindersCron(req, res) {
               recurrenceBuffer,
               exactRecurringDate,
               displayReminder: true,
+            }
+          );
+        }
+
+        // add interval to reminder not reset before next interval start date begins
+        if (
+          nextOccurrance + interval <= Date.now() &&
+          item?.displayReminder === true
+        ) {
+          const reminderStartingDate = new Date(item?.reminderDate);
+          reminderStartingDate.setTime(
+            reminderStartingDate.getTime() + interval
+          );
+          const nextDate = reminderStartingDate.toISOString();
+
+          await Reminder.updateOne(
+            { _id: _id },
+            {
+              userId,
+              reminder,
+              reminderDate: nextDate,
+              recurrenceInterval,
+              recurrenceBuffer,
+              exactRecurringDate,
+              displayReminder,
             }
           );
         }

@@ -32,6 +32,10 @@ export const FORM_ERROR_MISSING_REMINDER_INTERVAL =
 export const FORM_ERROR_MISSING_REMINDER_BUFFER = 'Reminder Buffer Required';
 export const FORM_ERROR_MISSING_UPDATE_TITLE = 'Title Required';
 export const FORM_REMINDER_INTERVAL_OPTIONS = [
+  { title: 'Weekly', name: 'recurrenceInterval', value: 604800000 },
+  { title: 'Every Two Weeks', name: 'recurrenceInterval', value: 1209600000 },
+  { title: 'Every Three Weeks', name: 'recurrenceInterval', value: 1814400000 },
+  { title: 'Every Four Weeks', name: 'recurrenceInterval', value: 2419200000 },
   { title: 'Monthly', name: 'recurrenceInterval', value: 1 },
   { title: 'Every Two Months', name: 'recurrenceInterval', value: 2 },
   { title: 'Every Three Months', name: 'recurrenceInterval', value: 3 },

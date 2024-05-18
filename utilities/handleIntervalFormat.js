@@ -1,9 +1,6 @@
 const handleIntervalFormat = (interval) => {
   let intervalFormatted = '';
   switch (interval) {
-    case 0:
-      intervalFormatted = '';
-      break;
     case 1:
       intervalFormatted = 'Monthly';
       break;
@@ -39,6 +36,18 @@ const handleIntervalFormat = (interval) => {
       break;
     case 12:
       intervalFormatted = 'Annually';
+      break;
+    case 604800000:
+      intervalFormatted = 'Weekly';
+      break;
+    case 1209600000:
+      intervalFormatted = 'Every Two Weeks';
+      break;
+    case 1814400000:
+      intervalFormatted = 'Every Three Weeks';
+      break;
+    case 2419200000:
+      intervalFormatted = 'Every Four Weeks';
       break;
   }
   return intervalFormatted;
