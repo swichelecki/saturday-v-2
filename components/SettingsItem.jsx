@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from 'context';
-import { Modal } from './';
-import { Tooltip } from './';
+import { Modal, ModalDelete, Tooltip } from 'components';
 import { handleReminderBufferFormat, handleIntervalFormat } from 'utilities';
 import moment from 'moment-timezone';
 import { GrDrag, GrMore } from 'react-icons/gr';
@@ -321,11 +320,13 @@ const SettingsItem = ({
           <button
             onClick={() => {
               setShowModal(
-                <Modal
-                  handleDeleteItem={handleDeleteItem}
-                  modalIdToDelete={item?._id}
-                  headlineText={MODAL_CONFIRM_DELETION_HEADLINE}
-                />
+                <Modal>
+                  <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
+                  <ModalDelete
+                    handleDeleteItem={handleDeleteItem}
+                    modalIdToDelete={item?._id}
+                  />
+                </Modal>
               );
               setIdToDelete(item?._id);
             }}

@@ -7,7 +7,12 @@ import { jwtVerify } from 'jose';
 import Task from '../models/Task';
 import Category from '../models/Category';
 import Reminder from '../models/Reminder';
-import { MainControls, Modal } from '../components';
+import {
+  MainControls,
+  Modal,
+  ModalDelete,
+  ModalUpdateItem,
+} from '../components';
 import { useInnerWidth } from '../hooks';
 import { submitTask, getTask, deleteTask } from '../services';
 import { handleSortItemsAscending } from 'utilities';
@@ -205,17 +210,18 @@ const Home = ({ tasks, categories, reminders, userId }) => {
     getTask(id).then((res) => {
       if (res.status === 200) {
         setShowModal(
-          <Modal
-            userId={userId}
-            itemToUpdate={res.item}
-            itemToEditId={id}
-            items={listItems}
-            setItems={setListItems}
-            setTaskToEditId={setTaskToEditId}
-            handleCloseMobileItem={handleItemsTouchReset}
-            modalType={MODAL_TYPE_UPDATE_ITEM}
-            headlineText={MODAL_UPDATE_ITEM_HEADLINE}
-          />
+          <Modal modalType={MODAL_TYPE_UPDATE_ITEM}>
+            <h2>{MODAL_UPDATE_ITEM_HEADLINE}</h2>
+            <ModalUpdateItem
+              userId={userId}
+              itemToUpdate={res.item}
+              itemToEditId={id}
+              items={listItems}
+              setItems={setListItems}
+              setTaskToEditId={setTaskToEditId}
+              handleCloseMobileItem={handleItemsTouchReset}
+            />
+          </Modal>
         );
       }
 
@@ -232,11 +238,13 @@ const Home = ({ tasks, categories, reminders, userId }) => {
   const handleDeleteTask = (id, confirmDeletion = false) => {
     if (confirmDeletion) {
       setShowModal(
-        <Modal
-          handleDeleteItem={handleDeleteTask}
-          modalIdToDelete={id}
-          headlineText={MODAL_CONFIRM_DELETION_HEADLINE}
-        />
+        <Modal>
+          <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
+          <ModalDelete
+            handleDeleteItem={handleDeleteTask}
+            modalIdToDelete={id}
+          />
+        </Modal>
       );
       return;
     }

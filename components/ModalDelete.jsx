@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import { useAppContext } from 'context';
 
-const ModalDelete = ({ handleDeleteItem, modalIdToDelete, modalRef }) => {
+const ModalDelete = ({ handleDeleteItem, modalIdToDelete }) => {
+  const { setShowModal } = useAppContext();
+
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
 
   const handleCloseModal = () => {
-    modalRef.current.close();
+    setShowModal(null);
   };
 
   return (

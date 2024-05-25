@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from 'context';
-import { SettingsItem, Modal } from 'components';
+import { SettingsItem, Modal, ModalCategory } from 'components';
 import { deleteCategory, updateCategory } from '../services';
 import { MODAL_TYPE_CATEGORY, MODAL_CREATE_CATEGORY_HEADLINE } from 'constants';
 
@@ -12,26 +12,9 @@ const CategoryControls = ({ categories, userId }) => {
   const { setShowToast, setServerError, setShowModal } = useAppContext();
 
   const [categoryItems, setCategoryItems] = useState(categories ?? []);
-  const [openCloseModal, setOpenCloseModal] = useState(false);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [draggableCategories, setDraggableCategories] = useState([]);
-
-  // control modal
-  useEffect(() => {
-    if (openCloseModal) {
-      setShowModal(
-        <Modal
-          userId={userId}
-          items={categoryItems}
-          setItems={setCategoryItems}
-          setOpenCloseModal={setOpenCloseModal}
-          modalType={MODAL_TYPE_CATEGORY}
-          headlineText={MODAL_CREATE_CATEGORY_HEADLINE}
-        />
-      );
-    }
-  }, [openCloseModal]);
 
   // delete category
   const handleDeleteCategory = (_id) => {
@@ -108,9 +91,18 @@ const CategoryControls = ({ categories, userId }) => {
       <div className='settings-controls'>
         <div className='settings-controls__button-wrapper'>
           <button
-            onClick={() => {
-              setOpenCloseModal(true);
-            }}
+            onClick={() =>
+              setShowModal(
+                <Modal modalType={MODAL_TYPE_CATEGORY}>
+                  <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>
+                  <ModalCategory
+                    userId={userId}
+                    items={categoryItems}
+                    setItems={setCategoryItems}
+                  />
+                </Modal>
+              )
+            }
             className='form-page__save-button'
           >
             Create

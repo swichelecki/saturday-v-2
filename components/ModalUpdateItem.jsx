@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FormTextField } from 'components';
 import { updateTask } from '../services';
+import { useAppContext } from 'context';
 import { FORM_ERROR_MISSING_UPDATE_TITLE } from 'constants';
 
 const ModalUpdateItem = ({
@@ -9,10 +10,11 @@ const ModalUpdateItem = ({
   itemToEditId,
   items,
   setItems,
-  modalRef,
   setTaskToEditId,
   handleCloseMobileItem,
 }) => {
+  const { setShowModal } = useAppContext();
+
   const pageRef = useRef(null);
 
   const [form, setForm] = useState({
@@ -103,7 +105,7 @@ const ModalUpdateItem = ({
   };
 
   const handleCloseModal = () => {
-    modalRef.current.close();
+    setShowModal(null);
     setTaskToEditId('');
     setForm({
       userId,

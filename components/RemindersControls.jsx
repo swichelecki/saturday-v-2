@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAppContext } from 'context';
-import { SettingsItem, Modal } from 'components';
+import { SettingsItem, Modal, ModalReminders } from 'components';
 import { deleteReminder, getReminder } from '../services';
 import {
   MODAL_CREATE_REMINDER_HEADLINE,
@@ -18,43 +18,10 @@ const RemindersControls = ({ reminders, userId }) => {
     useState(false);
   const [reminderToEditId, setReminderToEditId] = useState('');
   const [reminderToUpdate, setReminderToUpdate] = useState({});
-  const [modalCreateReminder, setModalCreateReminder] = useState(false);
-  const [modalUpdateReminder, setModalUpdateReminder] = useState(false);
   const [
     listItemIsAwaitingUpdateResponse,
     setListItemIsAwaitingUpdateResponse,
   ] = useState(false);
-
-  // control modal
-  useEffect(() => {
-    if (modalCreateReminder || modalUpdateReminder) {
-      setShowModal(
-        <Modal
-          userId={userId}
-          items={remindersItems}
-          setItems={setRemindersItems}
-          itemToUpdate={reminderToUpdate}
-          itemToEditId={reminderToEditId}
-          setOpenCloseModal={
-            modalCreateReminder
-              ? setModalCreateReminder
-              : setModalUpdateReminder
-          }
-          modalType={MODAL_TYPE_REMINDER}
-          modalOperation={
-            modalCreateReminder
-              ? MODAL_OPERATION_CREATE
-              : MODAL_OPERATION_UPDATE
-          }
-          headlineText={
-            modalCreateReminder
-              ? MODAL_CREATE_REMINDER_HEADLINE
-              : MODAL_UPDATE_REMINDER_HEADLINE
-          }
-        />
-      );
-    }
-  }, [modalCreateReminder, modalUpdateReminder]);
 
   // get reminder to update
   const handleReminderToUpdate = (id) => {
@@ -63,7 +30,19 @@ const RemindersControls = ({ reminders, userId }) => {
     getReminder(id).then((res) => {
       if (res.status === 200) {
         setReminderToUpdate(res.item);
-        setModalUpdateReminder(true);
+        setShowModal(
+          <Modal modalType={MODAL_TYPE_REMINDER}>
+            <h2>{MODAL_UPDATE_REMINDER_HEADLINE}</h2>
+            <ModalReminders
+              userId={userId}
+              items={remindersItems}
+              setItems={setRemindersItems}
+              itemToUpdate={res.item}
+              itemToEditId={id}
+              modalOperation={MODAL_OPERATION_UPDATE}
+            />
+          </Modal>
+        );
       }
 
       if (res.status !== 200) {
@@ -100,7 +79,19 @@ const RemindersControls = ({ reminders, userId }) => {
         <div className='settings-controls__button-wrapper'>
           <button
             onClick={() => {
-              setModalCreateReminder(true);
+              setShowModal(
+                <Modal modalType={MODAL_TYPE_REMINDER}>
+                  <h2>{MODAL_CREATE_REMINDER_HEADLINE}</h2>
+                  <ModalReminders
+                    userId={userId}
+                    items={remindersItems}
+                    setItems={setRemindersItems}
+                    itemToUpdate={reminderToUpdate}
+                    itemToEditId={reminderToEditId}
+                    modalOperation={MODAL_OPERATION_CREATE}
+                  />
+                </Modal>
+              );
             }}
             className='form-page__save-button'
           >

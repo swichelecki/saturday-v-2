@@ -1,15 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { FormTextField, FormCheckboxField } from 'components';
 import { createCategory } from '../services';
+import { useAppContext } from 'context';
 import { SETTINGS_MISSING_CATEGORY } from 'constants';
 
-const ModalReminder = ({
-  userId,
-  items,
-  setItems,
-  setOpenCloseModal,
-  modalRef,
-}) => {
+const ModalReminder = ({ userId, items, setItems }) => {
+  const { setShowModal } = useAppContext();
+
   const pageRef = useRef(null);
 
   const [form, setForm] = useState({
@@ -83,8 +80,7 @@ const ModalReminder = ({
   };
 
   const handleCloseModal = () => {
-    modalRef.current.close();
-    setOpenCloseModal(false);
+    setShowModal(null);
     setForm({
       userId,
       priority: '',
