@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppContext } from 'context';
 
 const ModalDelete = ({ handleDeleteItem, modalIdToDelete }) => {
@@ -6,6 +6,21 @@ const ModalDelete = ({ handleDeleteItem, modalIdToDelete }) => {
 
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
+
+  // handle keyboard events
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') handleCloseModal();
+    };
+
+    if (document && typeof document !== 'undefined') {
+      document.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, []);
 
   const handleCloseModal = () => {
     setShowModal(null);
