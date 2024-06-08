@@ -12,26 +12,40 @@ dialog {
 }
 
 .modal {
-  &__form-modal {
-    max-width: 500px;
-    width: 100%;
-    h2 {
-      margin-bottom: 24px;
-    }
+  max-width: 290px;
+  width: 100%;
+  h2 {
+    margin-bottom: 24px;
   }
   &__modal-button-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 24px;
-    margin-top: 24px;
+  }
+  &__form-modal--large,
+  &__form-modal--small {
+    max-width: 500px;
+    width: 100%;
+  }
+}
+
+@media screen and (max-height: 740px) {
+  dialog:-internal-dialog-in-top-layer {
+    position: absolute;
+  }
+
+  dialog.modal.modal__form-modal--large {
+    display: flex;
+    flex-direction: column;
+    margin: 16px auto;
+    max-height: unset;
   }
 }
 
 @media screen and (max-width: 600px) {
-  .modal {
-    &__form-modal {
-      width: 90%;
-    }
+  dialog.modal.modal__form-modal--large,
+  dialog.modal.modal__form-modal--small {
+    width: 90%;
   }
 }

@@ -1,28 +1,18 @@
 import { useEffect, useRef } from 'react';
-import {
-  MODAL_TYPE_REMINDER,
-  MODAL_TYPE_CATEGORY,
-  MODAL_TYPE_UPDATE_ITEM,
-} from 'constants';
 
-const Modal = ({ modalType, children }) => {
+const Modal = ({ className, children }) => {
   const modalRef = useRef(null);
 
   useEffect(() => {
     modalRef.current.showModal();
   }, []);
 
+  const getModalClassName = (className) => {
+    return className !== undefined ? `modal ${className}` : 'modal';
+  };
+
   return (
-    <dialog
-      ref={modalRef}
-      className={`${
-        modalType === MODAL_TYPE_REMINDER ||
-        modalType === MODAL_TYPE_CATEGORY ||
-        modalType === MODAL_TYPE_UPDATE_ITEM
-          ? 'modal__form-modal'
-          : 'modal'
-      }`}
-    >
+    <dialog ref={modalRef} className={getModalClassName(className)}>
       {children}
     </dialog>
   );

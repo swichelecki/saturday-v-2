@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { FormTextField, FormCheckboxField } from 'components';
 import { createCategory } from '../services';
 import { useAppContext } from 'context';
@@ -6,8 +6,6 @@ import { SETTINGS_MISSING_CATEGORY } from 'constants';
 
 const ModalReminder = ({ userId, items, setItems }) => {
   const { setShowModal } = useAppContext();
-
-  const pageRef = useRef(null);
 
   const [form, setForm] = useState({
     userId,
@@ -91,7 +89,7 @@ const ModalReminder = ({ userId, items, setItems }) => {
   };
 
   return (
-    <div ref={pageRef}>
+    <>
       <FormTextField
         label={'Category'}
         type={'text'}
@@ -116,7 +114,7 @@ const ModalReminder = ({ userId, items, setItems }) => {
           Save
         </button>
       </div>
-    </div>
+    </>
   );
 };
 

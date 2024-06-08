@@ -5,7 +5,6 @@ import { deleteReminder, getReminder } from '../services';
 import {
   MODAL_CREATE_REMINDER_HEADLINE,
   MODAL_UPDATE_REMINDER_HEADLINE,
-  MODAL_TYPE_REMINDER,
   MODAL_OPERATION_CREATE,
   MODAL_OPERATION_UPDATE,
 } from 'constants';
@@ -31,7 +30,7 @@ const RemindersControls = ({ reminders, userId }) => {
       if (res.status === 200) {
         setReminderToUpdate(res.item);
         setShowModal(
-          <Modal modalType={MODAL_TYPE_REMINDER}>
+          <Modal className='modal__form-modal--large'>
             <h2>{MODAL_UPDATE_REMINDER_HEADLINE}</h2>
             <ModalReminders
               userId={userId}
@@ -80,7 +79,7 @@ const RemindersControls = ({ reminders, userId }) => {
           <button
             onClick={() => {
               setShowModal(
-                <Modal modalType={MODAL_TYPE_REMINDER}>
+                <Modal className='modal__form-modal--large'>
                   <h2>{MODAL_CREATE_REMINDER_HEADLINE}</h2>
                   <ModalReminders
                     userId={userId}

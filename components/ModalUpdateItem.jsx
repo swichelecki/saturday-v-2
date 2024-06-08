@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { FormTextField } from 'components';
 import { updateTask } from '../services';
 import { useAppContext } from 'context';
@@ -14,8 +14,6 @@ const ModalUpdateItem = ({
   handleCloseMobileItem,
 }) => {
   const { setShowModal } = useAppContext();
-
-  const pageRef = useRef(null);
 
   const [form, setForm] = useState({
     userId,
@@ -125,7 +123,7 @@ const ModalUpdateItem = ({
   };
 
   return (
-    <div ref={pageRef}>
+    <>
       <FormTextField
         label={''}
         type={'text'}
@@ -145,7 +143,7 @@ const ModalUpdateItem = ({
           Update
         </button>
       </div>
-    </div>
+    </>
   );
 };
 

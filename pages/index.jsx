@@ -20,7 +20,6 @@ import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
   MODAL_UPDATE_ITEM_HEADLINE,
-  MODAL_TYPE_UPDATE_ITEM,
 } from '../constants';
 
 const ItemsColumn = dynamic(() => import('../components/ItemsColumn'));
@@ -210,7 +209,7 @@ const Home = ({ tasks, categories, reminders, userId }) => {
     getTask(id).then((res) => {
       if (res.status === 200) {
         setShowModal(
-          <Modal modalType={MODAL_TYPE_UPDATE_ITEM}>
+          <Modal>
             <h2>{MODAL_UPDATE_ITEM_HEADLINE}</h2>
             <ModalUpdateItem
               userId={userId}

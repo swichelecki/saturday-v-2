@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from 'context';
 import { SettingsItem, Modal, ModalCategory } from 'components';
 import { deleteCategory, updateCategory } from '../services';
-import { MODAL_TYPE_CATEGORY, MODAL_CREATE_CATEGORY_HEADLINE } from 'constants';
+import { MODAL_CREATE_CATEGORY_HEADLINE } from 'constants';
 
 const CategoryControls = ({ categories, userId }) => {
   const dragItemRef = useRef(null);
@@ -93,7 +93,7 @@ const CategoryControls = ({ categories, userId }) => {
           <button
             onClick={() =>
               setShowModal(
-                <Modal modalType={MODAL_TYPE_CATEGORY}>
+                <Modal className='modal__form-modal--small'>
                   <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>
                   <ModalCategory
                     userId={userId}
