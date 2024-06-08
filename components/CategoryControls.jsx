@@ -93,7 +93,7 @@ const CategoryControls = ({ categories, userId }) => {
           <button
             onClick={() =>
               setShowModal(
-                <Modal className='modal__form-modal--small'>
+                <Modal className='modal modal__form-modal--small'>
                   <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>
                   <ModalCategory
                     userId={userId}
@@ -108,9 +108,8 @@ const CategoryControls = ({ categories, userId }) => {
             Create
           </button>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
-            volutpat lacus eleifend tellus cursus iaculis. Morbi bibendum sit
-            amet nibh ornare convallis. Proin bibendum non eros at efficitur.
+            Create up to four primary categories representing areas of your life
+            in which you could use a bit of help keeping track of things.
           </p>
         </div>
         <div

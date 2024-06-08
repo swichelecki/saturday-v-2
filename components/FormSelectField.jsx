@@ -22,6 +22,7 @@ const FormSelectField = ({
           }}
           disabled={disabled}
           defaultValue={value}
+          id={id}
         >
           {value ? (
             <option value='' hidden>

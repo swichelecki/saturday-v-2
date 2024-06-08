@@ -5,14 +5,14 @@ const Modal = ({ className, children }) => {
 
   useEffect(() => {
     modalRef.current.showModal();
+    window.scrollTo(0, 0);
   }, []);
 
-  const getModalClassName = (className) => {
-    return className !== undefined ? `modal ${className}` : 'modal';
-  };
-
   return (
-    <dialog ref={modalRef} className={getModalClassName(className)}>
+    <dialog
+      ref={modalRef}
+      className={`${className !== undefined ? className : 'modal'}`}
+    >
       {children}
     </dialog>
   );

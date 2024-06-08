@@ -232,10 +232,15 @@ const ModalReminder = ({
   return (
     <div ref={pageRef}>
       <FormTextField
-        label={'Reminder'}
-        type={'text'}
-        id={'reminder'}
-        name={'reminder'}
+        label='Reminder Name'
+        subLabel={`${
+          modalOperation === MODAL_OPERATION_CREATE
+            ? 'Sum it up in a few words (e.g., Car Payment)'
+            : ''
+        }`}
+        type='text'
+        id='reminder'
+        name='reminder'
         value={form?.reminder}
         onChangeHandler={handleForm}
         errorMessage={errorMessage.reminder}
@@ -243,36 +248,45 @@ const ModalReminder = ({
       <FormTextField
         label={`${
           modalOperation === MODAL_OPERATION_CREATE
-            ? 'First Recurring Date'
-            : 'Next Recurring Date'
+            ? 'First Recurrence Date'
+            : 'Next Recurrence Date'
         }  `}
-        type={'date'}
-        id={'reminderDate'}
-        name={'reminderDate'}
+        subLabel={`${
+          modalOperation === MODAL_OPERATION_CREATE
+            ? 'Set the first date associated with this remidner'
+            : ''
+        }`}
+        type='date'
+        id='reminderDate'
+        name='reminderDate'
         value={form?.reminderDate}
         onChangeHandler={handleForm}
         errorMessage={errorMessage.reminderDate}
       />
       <FormSelectField
-        label={'Recurrence Interval'}
-        id={'reminderRecurrenceInterval'}
+        label='Recurrence Interval'
+        subLabel={`${
+          modalOperation === MODAL_OPERATION_CREATE
+            ? 'Set how often this reminder will reappear'
+            : ''
+        }`}
+        id='reminderRecurrenceInterval'
         value={handleIntervalFormat(form?.recurrenceInterval)}
         onChangeHandler={handleFormSelectField}
         options={FORM_REMINDER_INTERVAL_OPTIONS}
         errorMessage={errorMessage.recurrenceInterval}
       />
       <FormCheckboxField
-        label={'Happens on Specific Date'}
-        id={'remindersWithExactRecurringDate'}
+        label='Show Date & Early Display'
+        subLabel='Check the box if you want this reminder to appear before the next recurrence date. Set by how many weeks using the dropdown below. For example, when a birthday is coming up you may want the reminder to appear a week or two in advance.'
+        id='remindersWithExactRecurringDate'
         checked={form?.exactRecurringDate}
         onChangeHandler={handleReminderWithExactRecurringDate}
       />
       <FormSelectField
-        label={'Recurrence Buffer'}
-        subLabel={
-          'Dispaly reminder how many weeks in advance of remidner date:'
-        }
-        id={'reminderRecurrenceBuffer'}
+        label='Set Early Display'
+        subLabel='Set how many weeks in advance this reminder will appear.'
+        id='reminderRecurrenceBuffer'
         value={handleReminderBufferFormat(form?.recurrenceBuffer)}
         onChangeHandler={handleFormSelectField}
         options={FORM_REMINDER_BUFFER_OPTIONS}

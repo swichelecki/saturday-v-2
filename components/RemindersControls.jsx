@@ -30,7 +30,7 @@ const RemindersControls = ({ reminders, userId }) => {
       if (res.status === 200) {
         setReminderToUpdate(res.item);
         setShowModal(
-          <Modal className='modal__form-modal--large'>
+          <Modal className='modal modal__form-modal--large'>
             <h2>{MODAL_UPDATE_REMINDER_HEADLINE}</h2>
             <ModalReminders
               userId={userId}
@@ -79,7 +79,7 @@ const RemindersControls = ({ reminders, userId }) => {
           <button
             onClick={() => {
               setShowModal(
-                <Modal className='modal__form-modal--large'>
+                <Modal className='modal modal__form-modal--large'>
                   <h2>{MODAL_CREATE_REMINDER_HEADLINE}</h2>
                   <ModalReminders
                     userId={userId}
@@ -97,9 +97,9 @@ const RemindersControls = ({ reminders, userId }) => {
             Create
           </button>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
-            volutpat lacus eleifend tellus cursus iaculis. Morbi bibendum sit
-            amet nibh ornare convallis. Proin bibendum non eros at efficitur.
+            Create reminders for birthdays, anniversaries, bills, car
+            maintenance and the like here. If it is a recurring event or
+            obligation which you don’t want to forget, put it here.
           </p>
         </div>
         <div className='settings-controls__list-wrapper'>

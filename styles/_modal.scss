@@ -2,6 +2,10 @@ dialog::backdrop {
   background: rgba(0, 0, 0, 0.6);
 }
 
+dialog:-internal-dialog-in-top-layer {
+  position: absolute;
+}
+
 dialog {
   border: 0;
   padding: 32px 32px 48px;
@@ -30,11 +34,7 @@ dialog {
   }
 }
 
-@media screen and (max-height: 740px) {
-  dialog:-internal-dialog-in-top-layer {
-    position: absolute;
-  }
-
+@media screen and (max-height: 910px) {
   dialog.modal.modal__form-modal--large {
     display: flex;
     flex-direction: column;

@@ -43,4 +43,11 @@
       transform: rotate(45deg);
     }
   }
+  &__sublabel {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+    color: $color-list-item-svg;
+    margin-top: 6px;
+    font-size: 1rem; // 16px
+  }
 }

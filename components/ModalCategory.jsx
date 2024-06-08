@@ -91,17 +91,19 @@ const ModalReminder = ({ userId, items, setItems }) => {
   return (
     <>
       <FormTextField
-        label={'Category'}
-        type={'text'}
-        id={'category'}
-        name={'type'}
+        label='Category Name'
+        subLabel='Sum it up in one or two words (e.g., School, Shopping, Work, Appointments, etc.)'
+        type='text'
+        id='category'
+        name='type'
         value={form?.type}
         onChangeHandler={handleForm}
         errorMessage={errorMessage.type}
       />
       <FormCheckboxField
-        label={'Date or Date & Time'}
-        id={'categoryDateTimeCheckbox'}
+        label='Date or Date & Time'
+        subLabel='By default each item you create will be a simple one-liner. Check the box if this category requires dates or dates and times. This option allows you to add additional details as well.'
+        id='categoryDateTimeCheckbox'
         checked={form?.mandatoryDate}
         onChangeHandler={handleMandatoryDate}
       />
