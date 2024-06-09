@@ -61,3 +61,11 @@ export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
 export const MODAL_UPDATE_ITEM_HEADLINE = 'Update Item';
 export const MODAL_OPERATION_CREATE = 'CREATE';
 export const MODAL_OPERATION_UPDATE = 'UPDATE';
+export const AT_CATEGORY_LIMIT = 'Limit four categories!';
+export const AT_REMINDERS_LIMIT = 'Limit 25 reminders!';
+export const ITEM_ERROR_MESSAGES = {
+  isEmpty: false,
+  isEmptyMessage: 'Item field is empty!',
+  atItemLimit: false,
+  atItemLimitMessage: "Limit 50 items! Looks like it's time to get to work.",
+};

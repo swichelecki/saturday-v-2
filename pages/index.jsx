@@ -12,6 +12,7 @@ import {
   Modal,
   ModalDelete,
   ModalUpdateItem,
+  FormErrorMessage,
 } from '../components';
 import { useInnerWidth } from '../hooks';
 import { submitTask, getTask, deleteTask } from '../services';
@@ -20,6 +21,7 @@ import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
   MODAL_UPDATE_ITEM_HEADLINE,
+  ITEM_ERROR_MESSAGES,
 } from '../constants';
 
 const ItemsColumn = dynamic(() => import('../components/ItemsColumn'));
@@ -51,6 +53,7 @@ const Home = ({ tasks, categories, reminders, userId }) => {
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [allItemsTouchReset, setAllItemsTouchReset] = useState(false);
+  const [errorMessages, setErrorMessages] = useState(ITEM_ERROR_MESSAGES);
 
   const allItems = [];
 
@@ -160,6 +163,13 @@ const Home = ({ tasks, categories, reminders, userId }) => {
     }
   }, [listItem]);
 
+  // remove at-item-limit message after item deletion
+  useEffect(() => {
+    if (errorMessages?.atItemLimit && listItems?.length < 50) {
+      setErrorMessages({ ...errorMessages, atItemLimit: false });
+    }
+  }, [listItems]);
+
   // ensure all items are closed on mobile after new item is created or item is deleted
   const handleItemsTouchReset = () => {
     allItems = Array.from(document.querySelectorAll('.list-item__item'));
@@ -176,12 +186,23 @@ const Home = ({ tasks, categories, reminders, userId }) => {
       ...listItem,
       title: e.target.value,
     });
+
+    if (errorMessages?.isEmpty) {
+      setErrorMessages({ ...errorMessages, isEmpty: false });
+    }
   };
 
   // create new item
   const handleOnSubmit = () => {
+    // handle empty field message
     if (!listItem?.title) {
-      // TODO: create user notifications
+      setErrorMessages({ ...errorMessages, isEmpty: true });
+      return;
+    }
+
+    // handle at-item-limit message
+    if (listItems?.length >= 50) {
+      setErrorMessages({ ...errorMessages, atItemLimit: true });
       return;
     }
 
@@ -280,6 +301,16 @@ const Home = ({ tasks, categories, reminders, userId }) => {
 
   return (
     <div className='content-container'>
+      {(errorMessages?.isEmpty || errorMessages?.atItemLimit) && (
+        <FormErrorMessage
+          errorMessage={
+            errorMessages?.isEmpty
+              ? errorMessages?.isEmptyMessage
+              : errorMessages?.atItemLimitMessage
+          }
+          className='form-error-message form-error-message--position-static'
+        />
+      )}
       <MainControls
         categories={categories}
         handleOnSubmit={handleOnSubmit}

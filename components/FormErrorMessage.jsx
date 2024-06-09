@@ -1,8 +1,8 @@
 import { RiAlertFill } from 'react-icons/ri';
 
-const FormErrorMessage = ({ errorMessage }) => {
+const FormErrorMessage = ({ errorMessage, className }) => {
   return (
-    <div className='form-error-message'>
+    <div className={`${className ? className : 'form-error-message'}`}>
       <RiAlertFill />
       <span>{errorMessage}</span>
     </div>

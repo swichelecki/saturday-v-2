@@ -13,4 +13,9 @@
   border-radius: 4px;
   background-color: $button-orange-dark;
   color: $button-orange;
+  &--position-static {
+    position: static;
+    max-width: 970px;
+    justify-content: center;
+  }
 }

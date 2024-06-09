@@ -1,12 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppContext } from 'context';
-import { SettingsItem, Modal, ModalReminders } from 'components';
+import {
+  SettingsItem,
+  Modal,
+  ModalReminders,
+  FormErrorMessage,
+} from 'components';
 import { deleteReminder, getReminder } from '../services';
 import {
   MODAL_CREATE_REMINDER_HEADLINE,
   MODAL_UPDATE_REMINDER_HEADLINE,
   MODAL_OPERATION_CREATE,
   MODAL_OPERATION_UPDATE,
+  AT_REMINDERS_LIMIT,
 } from 'constants';
 
 const RemindersControls = ({ reminders, userId }) => {
@@ -21,6 +27,14 @@ const RemindersControls = ({ reminders, userId }) => {
     listItemIsAwaitingUpdateResponse,
     setListItemIsAwaitingUpdateResponse,
   ] = useState(false);
+  const [atRemindersLimit, setAtRemindersLimit] = useState(false);
+
+  // remove at-reminders-limit message after reminder deletion
+  useEffect(() => {
+    if (remindersItems?.length < 25 && atRemindersLimit) {
+      setAtRemindersLimit(false);
+    }
+  }, [remindersItems]);
 
   // get reminder to update
   const handleReminderToUpdate = (id) => {
@@ -78,24 +92,34 @@ const RemindersControls = ({ reminders, userId }) => {
         <div className='settings-controls__button-wrapper'>
           <button
             onClick={() => {
-              setShowModal(
-                <Modal className='modal modal__form-modal--large'>
-                  <h2>{MODAL_CREATE_REMINDER_HEADLINE}</h2>
-                  <ModalReminders
-                    userId={userId}
-                    items={remindersItems}
-                    setItems={setRemindersItems}
-                    itemToUpdate={reminderToUpdate}
-                    itemToEditId={reminderToEditId}
-                    modalOperation={MODAL_OPERATION_CREATE}
-                  />
-                </Modal>
-              );
+              if (remindersItems?.length < 25) {
+                setShowModal(
+                  <Modal className='modal modal__form-modal--large'>
+                    <h2>{MODAL_CREATE_REMINDER_HEADLINE}</h2>
+                    <ModalReminders
+                      userId={userId}
+                      items={remindersItems}
+                      setItems={setRemindersItems}
+                      itemToUpdate={reminderToUpdate}
+                      itemToEditId={reminderToEditId}
+                      modalOperation={MODAL_OPERATION_CREATE}
+                    />
+                  </Modal>
+                );
+              } else {
+                setAtRemindersLimit(true);
+              }
             }}
             className='form-page__save-button'
           >
             Create
           </button>
+          {atRemindersLimit && (
+            <FormErrorMessage
+              errorMessage={AT_REMINDERS_LIMIT}
+              className='form-error-message form-error-message--position-static'
+            />
+          )}
           <p>
             Create reminders for birthdays, anniversaries, bills, car
             maintenance and the like here. If it is a recurring event or

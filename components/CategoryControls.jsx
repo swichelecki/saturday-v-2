@@ -1,8 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from 'context';
-import { SettingsItem, Modal, ModalCategory } from 'components';
+import {
+  SettingsItem,
+  Modal,
+  ModalCategory,
+  FormErrorMessage,
+} from 'components';
 import { deleteCategory, updateCategory } from '../services';
-import { MODAL_CREATE_CATEGORY_HEADLINE } from 'constants';
+import { MODAL_CREATE_CATEGORY_HEADLINE, AT_CATEGORY_LIMIT } from 'constants';
 
 const CategoryControls = ({ categories, userId }) => {
   const dragItemRef = useRef(null);
@@ -15,6 +20,14 @@ const CategoryControls = ({ categories, userId }) => {
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [draggableCategories, setDraggableCategories] = useState([]);
+  const [atCategoryLimit, setAtCategoryLimit] = useState(false);
+
+  // remove at-category-limit message after category deletion
+  useEffect(() => {
+    if (categoryItems?.length < 4 && atCategoryLimit) {
+      setAtCategoryLimit(false);
+    }
+  }, [categoryItems]);
 
   // delete category
   const handleDeleteCategory = (_id) => {
@@ -91,22 +104,32 @@ const CategoryControls = ({ categories, userId }) => {
       <div className='settings-controls'>
         <div className='settings-controls__button-wrapper'>
           <button
-            onClick={() =>
-              setShowModal(
-                <Modal className='modal modal__form-modal--small'>
-                  <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>
-                  <ModalCategory
-                    userId={userId}
-                    items={categoryItems}
-                    setItems={setCategoryItems}
-                  />
-                </Modal>
-              )
-            }
+            onClick={() => {
+              if (categoryItems?.length < 4) {
+                setShowModal(
+                  <Modal className='modal modal__form-modal--small'>
+                    <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>
+                    <ModalCategory
+                      userId={userId}
+                      items={categoryItems}
+                      setItems={setCategoryItems}
+                    />
+                  </Modal>
+                );
+              } else {
+                setAtCategoryLimit(true);
+              }
+            }}
             className='form-page__save-button'
           >
             Create
           </button>
+          {atCategoryLimit && (
+            <FormErrorMessage
+              errorMessage={AT_CATEGORY_LIMIT}
+              className='form-error-message form-error-message--position-static'
+            />
+          )}
           <p>
             Create up to four primary categories representing areas of your life
             in which you could use a bit of help keeping track of things.

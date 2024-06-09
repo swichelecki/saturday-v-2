@@ -9,10 +9,7 @@ const Modal = ({ className, children }) => {
   }, []);
 
   return (
-    <dialog
-      ref={modalRef}
-      className={`${className !== undefined ? className : 'modal'}`}
-    >
+    <dialog ref={modalRef} className={`${className ? className : 'modal'}`}>
       {children}
     </dialog>
   );
