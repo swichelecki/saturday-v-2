@@ -1,6 +1,8 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppContext } from 'context';
 import { submitTask, updateTask } from '../services';
 import { FormTextField, FormWYSIWYGField, FormCheckboxField } from 'components';
@@ -14,7 +16,9 @@ const DetailsForm = ({ task }) => {
   const formRef = useRef(null);
 
   const router = useRouter();
-  const { priority, type, column, hasMandatoryDate } = router.query;
+
+  const params = useSearchParams();
+  const [priority, type, column, hasMandatoryDate] = params.values();
 
   const { userId, setShowToast, setServerError } = useAppContext();
 
@@ -163,42 +167,42 @@ const DetailsForm = ({ task }) => {
   return (
     <form onSubmit={onSubmit} ref={formRef} className='form-page'>
       <FormTextField
-        label={'Title'}
-        type={'text'}
-        id={'title'}
-        name={'title'}
+        label='Title'
+        type='text'
+        id='title'
+        name='title'
         value={form?.title}
         onChangeHandler={handleSetForm}
         errorMessage={errorMessage.title}
       />
       <FormWYSIWYGField
-        label={'Description'}
+        label='Description'
         value={form?.description}
         onChangeHandler={handleSetQuill}
         errorMessage={errorMessage.description}
       />
       <FormCheckboxField
-        label={'Confirm Deletion'}
+        label='Confirm Deletion'
         checked={form?.confirmDeletion}
         onChangeHandler={handleConfirmDeletion}
       />
       {form?.mandatoryDate && (
         <>
           <FormTextField
-            label={'Date'}
-            type={'date'}
-            id={'date'}
-            name={'date'}
+            label='Date'
+            type='date'
+            id='date'
+            name='date'
             value={form?.date && !form?.dateAndTime ? form?.date : ''}
             onChangeHandler={handleSetForm}
             errorMessage={errorMessage.dateOrDateAndTime}
             disabled={form?.dateAndTime}
           />
           <FormTextField
-            label={'Date & Time'}
-            type={'datetime-local'}
-            id={'dateAndTime'}
-            name={'dateAndTime'}
+            label='Date & Time'
+            type='datetime-local'
+            id='dateAndTime'
+            name='dateAndTime'
             value={form?.dateAndTime}
             onChangeHandler={handleSetForm}
             errorMessage={errorMessage.dateOrDateAndTime}

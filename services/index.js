@@ -35,7 +35,9 @@ export const deleteTask = async (id) => {
     body: JSON.stringify(id),
   });
 
-  return response;
+  const item = await response.json();
+
+  return { status: response.status, item };
 };
 
 export const updateTask = async (obj) => {

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import { ListItem } from './';
 import { useAppContext } from 'context';
@@ -71,15 +73,22 @@ const ItemsColumn = ({
     );
 
     setListItems((current) => {
-      return [
-        ...draggableItemsWithNewPriorities,
-        ...current.filter((item) => item.type !== heading),
+      const columnsDataWithResortedItems = [
+        ...current.filter((item) => Object.keys(item)[0] !== heading),
+        { [heading]: draggableItemsWithNewPriorities },
       ];
+
+      const columnsDataSortedByColumnNumber = columnsDataWithResortedItems.sort(
+        (objA, objB) =>
+          Object.values(objA)[0][0].column - Object.values(objB)[0][0].column
+      );
+
+      return columnsDataSortedByColumnNumber;
     });
   };
 
   if (!items?.length) {
-    return null;
+    return <></>;
   }
 
   return (

@@ -1,0 +1,46 @@
+import { Montserrat } from 'next/font/google';
+import { GloablContext } from '../components';
+import { Layout } from '../components';
+import '../styles/styles.scss';
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  weight: ['300', '400'],
+  variable: ['--montserrat'],
+});
+
+export const metadata = {
+  generator: 'Next.js',
+  applicationName: '',
+  title: { template: '%s | Saturday', default: 'Saturday' },
+  description: '',
+  keywords: ['', ''],
+  category: '',
+  metadataBase: new URL('https://localhost:3000'),
+  icons: {
+    icon: '/',
+    shortcut: '/',
+    apple: '/',
+  },
+  openGraph: {
+    title: '',
+    description: '',
+    url: '',
+    siteName: '',
+    images: '',
+    locale: 'en_US',
+    type: 'website',
+  },
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang='en'>
+      <body className={`${montserrat.variable}`}>
+        <GloablContext>
+          <Layout>{children}</Layout>
+        </GloablContext>
+      </body>
+    </html>
+  );
+}

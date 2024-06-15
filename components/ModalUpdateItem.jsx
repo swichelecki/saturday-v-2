@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { FormTextField } from 'components';
 import { updateTask } from '../services';
@@ -79,11 +81,19 @@ const ModalUpdateItem = ({
     updateTask(form).then((res) => {
       if (res.status === 200) {
         setItems(
-          items?.map((item) => {
-            if (item?._id === itemToEditId) {
+          items.map((item) => {
+            if (Object.keys(item)[0] === res.item.type) {
               return {
-                ...item,
-                title: res?.item?.title,
+                [Object.keys(item)[0]]: Object.values(item)[0].map((item) => {
+                  if (item._id === itemToEditId) {
+                    return {
+                      ...item,
+                      title: res.item.title,
+                    };
+                  } else {
+                    return item;
+                  }
+                }),
               };
             } else {
               return item;

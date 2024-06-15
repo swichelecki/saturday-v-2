@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import { FormTextField, FormCheckboxField, FormSelectField } from 'components';
 import { createReminder, updateReminder } from '../services';

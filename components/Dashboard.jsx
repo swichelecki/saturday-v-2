@@ -1,12 +1,8 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import connectDB from '../config/db';
 import { useAppContext } from 'context';
-import { getCookie } from 'cookies-next';
-import { jwtVerify } from 'jose';
-import Task from '../models/Task';
-import Category from '../models/Category';
-import Reminder from '../models/Reminder';
 import {
   MainControls,
   Modal,
@@ -16,7 +12,6 @@ import {
 } from '../components';
 import { useInnerWidth } from '../hooks';
 import { submitTask, getTask, deleteTask } from '../services';
-import { handleSortItemsAscending } from 'utilities';
 import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
@@ -27,14 +22,13 @@ import {
 const ItemsColumn = dynamic(() => import('../components/ItemsColumn'));
 const Reminders = dynamic(() => import('../components/Reminders'));
 
-const Home = ({ tasks, categories, reminders, userId }) => {
+const Dashboard = ({ tasks, categories, reminders, userId }) => {
   const width = useInnerWidth();
 
   const { setUserId, setShowToast, setServerError, setShowModal } =
     useAppContext();
 
   const [listItems, setListItems] = useState(tasks);
-  const [sortedListItems, setSortedListItems] = useState([]);
   const [listItem, setListItem] = useState({
     userId,
     title: '',
@@ -55,71 +49,13 @@ const Home = ({ tasks, categories, reminders, userId }) => {
   const [allItemsTouchReset, setAllItemsTouchReset] = useState(false);
   const [errorMessages, setErrorMessages] = useState(ITEM_ERROR_MESSAGES);
 
-  const allItems = [];
-
-  // dynamic column data sorting
-  useEffect(() => {
-    if (!listItems.length) {
-      setSortedListItems([]);
-      return;
-    }
-
-    // remove duplicates and return type and column order
-    const columnTypes = [
-      ...listItems.reduce(
-        (map, item) => map.set(item?.column, item?.type),
-        new Map()
-      ),
-    ];
-
-    // sort column order ascending
-    const sortedColumnTypes = columnTypes.sort((a, b) => a[0] - b[0]);
-
-    // create data structure
-    const columnsData = [];
-    for (const item of sortedColumnTypes) {
-      const obj = {};
-      obj[item[1]] = [];
-      columnsData.push(obj);
-    }
-
-    // add items to array
-    for (const item of listItems) {
-      for (const column of columnsData) {
-        if (Object.keys(column)[0] === item?.type) {
-          Object.values(column)[0].push(item);
-        }
-      }
-    }
-
-    // sort arrays by date asc when date is present
-    for (const item of columnsData) {
-      if (Object.values(item)[0][0]['date'] !== null) {
-        const itemsWithDatesSortedAsc = handleSortItemsAscending(
-          Object.values(item)[0],
-          'date'
-        );
-        Object.values(item)[0].length = 0;
-        Object.values(item)[0].push(...itemsWithDatesSortedAsc);
-      }
-    }
-
-    // set item type to first column type on page load
-    if (!sortedListItems.length) {
-      setListItem({
-        ...listItem,
-        type: categories[0]['type'],
-      });
-    }
-
-    setSortedListItems(columnsData);
-  }, [listItems, categories]);
+  let allItems = [];
 
   // set priority of next new item
   useEffect(() => {
     if (!listItem?.type) return;
 
-    const selectedCategoryData = sortedListItems.find(
+    const selectedCategoryData = listItems.find(
       (category) => Object.keys(category)[0] === listItem?.type
     );
 
@@ -131,21 +67,24 @@ const Home = ({ tasks, categories, reminders, userId }) => {
     const priorityOfNewItem = Object.values(selectedCategoryData)[0].length + 1;
 
     setPriority(priorityOfNewItem);
-  }, [listItem, sortedListItems]);
+  }, [listItem]);
 
   // ensure list item always has correct priorty of next new item
   useEffect(() => {
-    if (!sortedListItems.length) return;
-
     setListItem({
       ...listItem,
       priority,
     });
   }, [priority]);
 
-  // set global context user id
   useEffect(() => {
+    // set global context user id
     setUserId(userId);
+
+    setListItem({
+      ...listItem,
+      type: categories[0]['type'],
+    });
   }, []);
 
   // handle submit with Enter key
@@ -209,7 +148,17 @@ const Home = ({ tasks, categories, reminders, userId }) => {
     setIsAwaitingAddResponse(true);
     submitTask(listItem).then((res) => {
       if (res.status === 200) {
-        setListItems((current) => [...current, res.item]);
+        setListItems(
+          listItems.map((item) => {
+            if (Object.keys(item)[0] === res.item.type) {
+              return {
+                [Object.keys(item)[0]]: [...Object.values(item)[0], res.item],
+              };
+            } else {
+              return item;
+            }
+          })
+        );
         if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
         setListItem({ ...listItem, title: '' });
       }
@@ -272,7 +221,19 @@ const Home = ({ tasks, categories, reminders, userId }) => {
     setIsAwaitingDeleteResponse(true);
     deleteTask(id).then((res) => {
       if (res.status === 200) {
-        setListItems(listItems.filter((item) => item._id !== id));
+        setListItems(
+          listItems.map((item) => {
+            if (Object.keys(item)[0] === res.item.type) {
+              return {
+                [Object.keys(item)[0]]: Object.values(item)[0].filter(
+                  (item) => item._id !== id
+                ),
+              };
+            } else {
+              return item;
+            }
+          })
+        );
 
         if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
       }
@@ -326,7 +287,7 @@ const Home = ({ tasks, categories, reminders, userId }) => {
         <Reminders reminders={reminders} />
       )}
       <div className='items-column-wrapper'>
-        {sortedListItems?.map((item, index) => (
+        {listItems?.map((item, index) => (
           <ItemsColumn
             key={`items-column_${index}`}
             heading={Object.keys(item)[0]}
@@ -348,55 +309,4 @@ const Home = ({ tasks, categories, reminders, userId }) => {
   );
 };
 
-export async function getServerSideProps(context) {
-  try {
-    await connectDB();
-
-    const { req, res } = context;
-    const jwtSecret = process.env.JWT_SECRET;
-    const token = getCookie('saturday', { req, res });
-    let userId;
-
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(
-          token,
-          new TextEncoder().encode(jwtSecret)
-        );
-        if (payload?.id) {
-          userId = payload?.id;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    const tasks = await Task.find({ userId }).sort({
-      priority: 1,
-    });
-
-    const categories = await Category.find({ userId }).sort({
-      priority: 1,
-    });
-
-    const reminders = await Reminder.find({
-      userId,
-      displayReminder: true,
-    }).sort({
-      reminderDate: 1,
-    });
-
-    return {
-      props: {
-        tasks: JSON.parse(JSON.stringify(tasks)),
-        categories: JSON.parse(JSON.stringify(categories)),
-        reminders: JSON.parse(JSON.stringify(reminders)),
-        userId,
-      },
-    };
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export default Home;
+export default Dashboard;

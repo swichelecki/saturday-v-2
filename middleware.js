@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
+import { cookies } from 'next/headers';
 const jwtSecret = process.env.JWT_SECRET;
 
 export async function middleware(req) {
-  const token = req.cookies.get('saturday');
+  //const token = req.cookies.get('saturday');
+  const token = cookies().get('saturday');
   let user;
 
   if (token) {
     try {
       const { payload } = await jwtVerify(
-        token,
+        token?.value,
         new TextEncoder().encode(jwtSecret)
       );
       if (payload?.hasToken) {

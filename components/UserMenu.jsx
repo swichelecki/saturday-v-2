@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAppContext } from 'context';
 import { deleteCookie } from 'cookies-next';
@@ -16,7 +18,7 @@ const UserMenu = () => {
 
   const router = useRouter();
 
-  const { setUserId } = useAppContext();
+  const { userId, setUserId } = useAppContext();
 
   // close menu when clicking off of it or on it
   useEffect(() => {
@@ -51,6 +53,10 @@ const UserMenu = () => {
     router.push('/login');
   };
 
+  if (!userId) {
+    return <></>;
+  }
+
   return (
     <>
       <button
@@ -64,33 +70,27 @@ const UserMenu = () => {
         <ul>
           <li>
             <Link href='/settings'>
-              <a>
-                <MdSettings />
-                Settings
-              </a>
+              <MdSettings />
+              Settings
             </Link>
           </li>
           <li>
             <Link href='/account'>
-              <a>
-                <MdManageAccounts />
-                Account
-              </a>
+              <MdManageAccounts />
+              Account
             </Link>
           </li>
           <li>
             <Link href='/'>
-              <a>
-                <MdHome />
-                Home
-              </a>
+              <MdHome />
+              Home
             </Link>
           </li>
           <li>
-            <a role='button' onClick={handleUserLogOut} tabIndex='0'>
+            <div role='button' onClick={handleUserLogOut} tabIndex='0'>
               <MdOutlineLogout />
               Log Out
-            </a>
+            </div>
           </li>
         </ul>
       </nav>

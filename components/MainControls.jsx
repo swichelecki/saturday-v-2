@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import Link from 'next/link';
 import { useInnerWidth } from '../hooks';
@@ -88,8 +90,8 @@ const MainControls = ({
           </>
         )}
         <Checkbox
-          label={'Detailed'}
-          type={type}
+          label='Detailed'
+          hasMandatoryDate={hasMandatoryDate}
           checked={checkbox}
           onChangeHandler={
             !Boolean(hasMandatoryDate) ? handleSetCheckbox : () => {}

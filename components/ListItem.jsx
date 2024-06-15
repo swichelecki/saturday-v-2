@@ -1,7 +1,9 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import ItemButtons from './ItemButtons';
-import { useInnerWidth } from '../hooks';
+import { useInnerWidth, useIsMounted } from '../hooks';
 import {
   handleTodaysDateCheck,
   handleTransitionSpeed,
@@ -38,6 +40,7 @@ const ItemList = ({
   numberOfItemsInColumn,
 }) => {
   const width = useInnerWidth();
+  const isMounted = useIsMounted();
 
   const listItemRef = useRef(null);
   const listItemInnerRef = useRef(null);
@@ -490,10 +493,10 @@ const ItemList = ({
             onTouchEnd={handleSwipeXEnd}
           >
             <p>{item?.title}</p>
-            {width <= MOBILE_BREAKPOINT && <TbChevronRight />}
+            {isMounted && width <= MOBILE_BREAKPOINT && <TbChevronRight />}
           </div>
           <div className='list-item__item-right'>
-            {width > MOBILE_BREAKPOINT && (
+            {isMounted && width > MOBILE_BREAKPOINT && (
               <ItemButtons
                 date={item?.date}
                 dateAndTime={item?.dateAndTime}
@@ -547,7 +550,7 @@ const ItemList = ({
             : ''
         }`}
       >
-        {width <= MOBILE_BREAKPOINT && (
+        {isMounted && width <= MOBILE_BREAKPOINT && (
           <ItemButtons
             date={item?.date}
             dateAndTime={item?.dateAndTime}

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from 'context';
 import { RemindersItem } from 'components';

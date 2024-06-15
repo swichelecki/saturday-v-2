@@ -1,4 +1,4 @@
-import { Html, Head, Main, NextScript } from 'next/document';
+/* import { Html, Head, Main, NextScript } from 'next/document';
 
 // this file fixes error message caused by having link rel='stylesheet' in regular Head component
 // https://nextjs.org/docs/advanced-features/custom-document
@@ -25,3 +25,4 @@ export default function Document() {
     </Html>
   );
 }
+ */
