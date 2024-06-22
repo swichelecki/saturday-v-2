@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FormTextField, FormCheckboxField } from 'components';
-import { createCategory } from '../services';
-import { useAppContext } from 'context';
-import { SETTINGS_MISSING_CATEGORY } from 'constants';
+import { FormTextField, FormCheckboxField } from '../../components';
+import { createCategory } from '../../actions';
+import { useAppContext } from '../../context';
+import { SETTINGS_MISSING_CATEGORY } from '../../constants';
 
 const ModalReminder = ({ userId, items, setItems }) => {
   const { setShowModal } = useAppContext();
@@ -56,14 +56,15 @@ const ModalReminder = ({ userId, items, setItems }) => {
   };
 
   // create category
-  const handleCreateCategory = () => {
+  const handleCreateCategory = async (formData) => {
     if (!form.type) {
       setErrorMessage({ type: SETTINGS_MISSING_CATEGORY });
       return;
     }
 
     setIsAwaitingSubmitResponse(true);
-    createCategory(form).then((res) => {
+
+    createCategory(formData).then((res) => {
       if (res.status === 200) {
         setItems((current) => [...current, res.item]);
         setForm({ userId, priority: '', type: '', mandatoryDate: false });
@@ -91,7 +92,11 @@ const ModalReminder = ({ userId, items, setItems }) => {
   };
 
   return (
-    <>
+    <form
+      action={(formData) => {
+        handleCreateCategory(formData);
+      }}
+    >
       <FormTextField
         label='Category Name'
         subLabel='Sum it up in one or two words (e.g., School, Shopping, Work, Appointments, etc.)'
@@ -106,19 +111,22 @@ const ModalReminder = ({ userId, items, setItems }) => {
         label='Date or Date & Time'
         subLabel='By default each item you create will be a simple one-liner. Check the box if this category requires dates or dates and times. This option allows you to add additional details as well.'
         id='categoryDateTimeCheckbox'
+        name='mandatoryDate'
         checked={form?.mandatoryDate}
         onChangeHandler={handleMandatoryDate}
       />
+      <input type='hidden' name='userId' value={form?.userId} />
+      <input type='hidden' name='priority' value={form?.priority} />
       <div className='modal__modal-button-wrapper'>
         <button onClick={handleCloseModal} className='modal__cancel-button'>
           Cancel
         </button>
-        <button className='modal__save-button' onClick={handleCreateCategory}>
+        <button type='submit' className='modal__save-button'>
           {isAwaitingSubmitResponse && <div className='loader'></div>}
           Save
         </button>
       </div>
-    </>
+    </form>
   );
 };
 

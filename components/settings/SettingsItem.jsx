@@ -1,14 +1,17 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useAppContext } from 'context';
-import { Modal, ModalDelete, Tooltip } from 'components';
-import { handleReminderBufferFormat, handleIntervalFormat } from 'utilities';
+import { useAppContext } from '../../context';
+import { Modal, ModalDelete, Tooltip } from '../../components';
+import {
+  handleReminderBufferFormat,
+  handleIntervalFormat,
+} from '../../utilities';
 import moment from 'moment-timezone';
 import { GrDrag, GrMore } from 'react-icons/gr';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import { MdEdit } from 'react-icons/md';
-import { MODAL_CONFIRM_DELETION_HEADLINE } from 'constants';
+import { MODAL_CONFIRM_DELETION_HEADLINE } from '../../constants';
 
 const SettingsItem = ({
   item,

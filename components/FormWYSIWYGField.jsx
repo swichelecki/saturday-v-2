@@ -1,8 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { FormErrorMessage } from 'components';
-import { useIsMounted } from 'hooks';
+import { FormErrorMessage } from './';
+import { useIsMounted } from '../hooks';
 import 'react-quill/dist/quill.snow.css';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 

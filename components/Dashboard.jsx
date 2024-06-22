@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { useAppContext } from 'context';
+import { useAppContext } from '../context';
 import {
   MainControls,
   Modal,
@@ -11,7 +11,7 @@ import {
   FormErrorMessage,
 } from '../components';
 import { useInnerWidth } from '../hooks';
-import { submitTask, getTask, deleteTask } from '../services';
+import { createItem, getItem, deleteItem } from '../actions';
 import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
@@ -83,11 +83,12 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
 
     setListItem({
       ...listItem,
-      type: categories[0]['type'],
+      type: categories?.length ? categories[0]['type'] : '',
     });
   }, []);
 
   // handle submit with Enter key
+  // TODO: with form action a click event needs to be attached to the submit button
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Enter') handleOnSubmit();
@@ -132,7 +133,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
   };
 
   // create new item
-  const handleOnSubmit = () => {
+  const handleOnSubmit = (formData) => {
     // handle empty field message
     if (!listItem?.title) {
       setErrorMessages({ ...errorMessages, isEmpty: true });
@@ -146,7 +147,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
     }
 
     setIsAwaitingAddResponse(true);
-    submitTask(listItem).then((res) => {
+    createItem(formData).then((res) => {
       if (res.status === 200) {
         setListItems(
           listItems.map((item) => {
@@ -176,7 +177,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
   const handleEditTask = (id) => {
     setIsAwaitingEditResponse(true);
     setTaskToEditId(id);
-    getTask(id).then((res) => {
+    getItem(id).then((res) => {
       if (res.status === 200) {
         setShowModal(
           <Modal>
@@ -219,7 +220,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
     }
 
     setIsAwaitingDeleteResponse(true);
-    deleteTask(id).then((res) => {
+    deleteItem(id).then((res) => {
       if (res.status === 200) {
         setListItems(
           listItems.map((item) => {
@@ -282,6 +283,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
         column={listItem?.column}
         isAwaitingAddResponse={isAwaitingAddResponse}
         priority={priority}
+        userId={userId}
       />
       {reminders && reminders?.length > 0 && (
         <Reminders reminders={reminders} />

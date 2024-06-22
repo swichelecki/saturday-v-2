@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useInnerWidth } from '../hooks';
-import { Checkbox } from 'components';
-import { MOBILE_BREAKPOINT } from 'constants';
+import { Checkbox } from './';
+import { MOBILE_BREAKPOINT } from '../constants';
 
 const MainControls = ({
   categories,
@@ -16,6 +16,7 @@ const MainControls = ({
   column,
   isAwaitingAddResponse,
   priority,
+  userId,
 }) => {
   const width = useInnerWidth();
 
@@ -29,7 +30,12 @@ const MainControls = ({
   };
 
   return (
-    <div className='main-controls'>
+    <form
+      action={(formData) => {
+        handleOnSubmit(formData);
+      }}
+      className='main-controls'
+    >
       <div className='main-controls__top-controls'>
         {width && width <= MOBILE_BREAKPOINT ? (
           <div className='main-controls__select-wrapper'>
@@ -91,6 +97,7 @@ const MainControls = ({
         )}
         <Checkbox
           label='Detailed'
+          name='mandatoryDate'
           hasMandatoryDate={hasMandatoryDate}
           checked={checkbox}
           onChangeHandler={
@@ -110,7 +117,8 @@ const MainControls = ({
           </Link>
         ) : (
           <button
-            onClick={handleOnSubmit}
+            type='submit'
+            //onClick={handleOnSubmit}
             className='main-controls__add-button'
           >
             {isAwaitingAddResponse && <div className='loader'></div>}
@@ -119,12 +127,20 @@ const MainControls = ({
         )}
         <input
           type='text'
+          name='title'
           value={title}
           onChange={handleSetListItem}
           disabled={checkbox}
         />
       </div>
-    </div>
+      <input type='hidden' name='userId' value={userId} />
+      <input type='hidden' name='column' value={column} />
+      <input type='hidden' name='priority' value={priority} />
+      <input type='hidden' name='type' value={type} />
+      <input type='hidden' name='description' value='' />
+      <input type='hidden' name='date' value='' />
+      <input type='hidden' name='dateAndTime' value='' />
+    </form>
   );
 };
 

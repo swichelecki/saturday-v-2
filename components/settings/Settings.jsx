@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useAppContext } from 'context';
-import { CategoryControls, RemindersControls } from 'components';
+import { useAppContext } from '../../context';
+import { CategoryControls, RemindersControls } from '../../components';
 
 const Settings = ({ categories, reminders, userId }) => {
   const { setUserId } = useAppContext();

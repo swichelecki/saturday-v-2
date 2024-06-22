@@ -4,12 +4,15 @@ import { jwtVerify } from 'jose';
 import Task from '../../../models/Task';
 import { DetailsForm } from '../../../components';
 
+export const metadata = {
+  title: 'Details',
+};
+
 async function getFormData(id) {
   try {
     await connectDB();
     const jwtSecret = process.env.JWT_SECRET;
     const token = cookies().get('saturday');
-
     let userId;
 
     if (token) {
@@ -28,7 +31,7 @@ async function getFormData(id) {
 
     const task = await Task.find({ _id: id, userId });
 
-    return JSON.parse(JSON.stringify(task[0]));
+    return { task: JSON.parse(JSON.stringify(task[0])), userId };
   } catch (error) {
     console.log(error);
   }
@@ -36,7 +39,7 @@ async function getFormData(id) {
 
 export default async function EditDetails({ params }) {
   const { id } = params;
-  const task = await getFormData(id);
+  const { task, userId } = await getFormData(id);
 
-  return <DetailsForm task={task} />;
+  return <DetailsForm task={task} userId={userId} />;
 }

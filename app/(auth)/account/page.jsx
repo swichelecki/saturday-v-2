@@ -1,6 +1,10 @@
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
-import { Account } from 'components';
+import { Account } from '../../../components';
+
+export const metadata = {
+  title: 'Account',
+};
 
 async function getUserId() {
   try {

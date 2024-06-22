@@ -1,21 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAppContext } from 'context';
+import { useAppContext } from '../../context';
 import {
   SettingsItem,
   Modal,
   ModalReminders,
   FormErrorMessage,
-} from 'components';
-import { deleteReminder, getReminder } from '../services';
+} from '../../components';
+import { deleteReminder, getReminder } from '../../actions';
 import {
   MODAL_CREATE_REMINDER_HEADLINE,
   MODAL_UPDATE_REMINDER_HEADLINE,
   MODAL_OPERATION_CREATE,
   MODAL_OPERATION_UPDATE,
   AT_REMINDERS_LIMIT,
-} from 'constants';
+} from '../../constants';
 
 const RemindersControls = ({ reminders, userId }) => {
   const { setShowToast, setServerError, setShowModal } = useAppContext();

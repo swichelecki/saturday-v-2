@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FormTextField } from 'components';
-import { updateTask } from '../services';
-import { useAppContext } from 'context';
-import { FORM_ERROR_MISSING_UPDATE_TITLE } from 'constants';
+import { FormTextField } from '../components';
+import { updateItem } from '../actions';
+import { useAppContext } from '../context';
+import { FORM_ERROR_MISSING_UPDATE_TITLE } from '../constants';
 
 const ModalUpdateItem = ({
   userId,
@@ -40,6 +40,7 @@ const ModalUpdateItem = ({
   }, [form.title]);
 
   // handle keyboard events
+  // TODO: with form action a click event needs to be attached to the submit button
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') handleCloseModal();
@@ -69,7 +70,7 @@ const ModalUpdateItem = ({
   };
 
   // edit item
-  const handleEditSubmit = () => {
+  const handleEditSubmit = (formData) => {
     if (!form?.title) {
       setErrorMessage({
         title: FORM_ERROR_MISSING_UPDATE_TITLE,
@@ -78,7 +79,7 @@ const ModalUpdateItem = ({
     }
 
     setIsAwaitingSubmitResponse(true);
-    updateTask(form).then((res) => {
+    updateItem(formData).then((res) => {
       if (res.status === 200) {
         setItems(
           items.map((item) => {
@@ -133,7 +134,11 @@ const ModalUpdateItem = ({
   };
 
   return (
-    <>
+    <form
+      action={(formData) => {
+        handleEditSubmit(formData);
+      }}
+    >
       <FormTextField
         label={''}
         type={'text'}
@@ -148,12 +153,22 @@ const ModalUpdateItem = ({
           Cancel
         </button>
 
-        <button className='modal__update-button' onClick={handleEditSubmit}>
+        <button type='submit' className='modal__update-button'>
           {isAwaitingSubmitResponse && <div className='loader'></div>}
           Update
         </button>
       </div>
-    </>
+      <input type='hidden' name='userId' value={userId} />
+      <input type='hidden' name='_id' value={itemToUpdate?._id} />
+      <input type='hidden' name='column' value={itemToUpdate?.column} />
+      <input type='hidden' name='priority' value={itemToUpdate?.priority} />
+      <input type='hidden' name='type' value={itemToUpdate?.type} />
+      <input type='hidden' name='description' value='' />
+      <input type='hidden' name='confirmDeletion' value='false' />
+      <input type='hidden' name='date' value='' />
+      <input type='hidden' name='dateAndTime' value='' />
+      <input type='hidden' name='mandatoryDate' value='false' />
+    </form>
   );
 };
 

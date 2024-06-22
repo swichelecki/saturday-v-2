@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { handleDayNightCheck } from 'utilities';
+import { handleDayNightCheck } from '../utilities';
 import {
   BsFillSunFill,
   BsCloudSunFill,
@@ -26,7 +26,7 @@ const Weather = () => {
   const getWeather = async () => {
     const openMeteoApiUrl =
       'https://api.open-meteo.com/v1/forecast?latitude=41.9231&longitude=-87.7093&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=America%2FChicago&forecast_days=1';
-    const response = await fetch(openMeteoApiUrl, { cache: 'no-store' });
+    const response = await fetch(openMeteoApiUrl);
 
     if (response?.status >= 200 && response?.status <= 299) {
       const jsonResponse = await response?.json();

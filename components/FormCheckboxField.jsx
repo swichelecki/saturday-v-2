@@ -1,9 +1,10 @@
-import { Checkbox } from 'components';
+import { Checkbox } from './';
 
 const FormCheckboxField = ({
   label,
   subLabel,
   id,
+  name,
   checked,
   onChangeHandler,
 }) => {
@@ -13,6 +14,7 @@ const FormCheckboxField = ({
         label={label}
         subLabel={subLabel}
         id={id}
+        name={name}
         checked={checked}
         onChangeHandler={onChangeHandler}
       />

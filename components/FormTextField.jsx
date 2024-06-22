@@ -1,4 +1,4 @@
-import { FormErrorMessage } from 'components';
+import { FormErrorMessage } from './';
 import moment from 'moment-timezone';
 
 const FormTextField = ({

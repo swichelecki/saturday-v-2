@@ -1,21 +1,17 @@
 import connectDB from '../config/db';
-// TODO delete import if not needed
-//import { getCookie } from 'cookies-next';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import Task from '../models/Task';
 import Category from '../models/Category';
 import Reminder from '../models/Reminder';
-import { handleSortItemsAscending } from 'utilities';
+import { handleSortItemsAscending } from '../utilities';
 import { Dashboard } from '../components';
 
 async function getDashboardData() {
   try {
     await connectDB();
 
-    //const { req, res } = context;
     const jwtSecret = process.env.JWT_SECRET;
-    //const token = getCookie('saturday', { req, res });
     const token = cookies().get('saturday');
     let userId;
 

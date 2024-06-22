@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ListItem } from './';
-import { useAppContext } from 'context';
+import { useAppContext } from '../context';
 import { updateTask } from '../services';
 
 const ItemsColumn = ({
@@ -80,7 +80,7 @@ const ItemsColumn = ({
 
       const columnsDataSortedByColumnNumber = columnsDataWithResortedItems.sort(
         (objA, objB) =>
-          Object.values(objA)[0][0].column - Object.values(objB)[0][0].column
+          Object.values(objA)[0][0]?.column - Object.values(objB)[0][0]?.column
       );
 
       return columnsDataSortedByColumnNumber;

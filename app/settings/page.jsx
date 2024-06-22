@@ -2,7 +2,11 @@ import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import Category from '../../models/Category';
 import Reminder from '../../models/Reminder';
-import { Settings } from 'components';
+import { Settings } from '../../components';
+
+export const metadata = {
+  title: 'Settings',
+};
 
 async function getSettingsData() {
   try {
@@ -32,8 +36,8 @@ async function getSettingsData() {
     const reminders = await Reminder.find({ userId }).sort({ reminderDate: 1 });
 
     return {
-      categories: JSON.parse(JSON.stringify(categories)),
-      reminders: JSON.parse(JSON.stringify(reminders)),
+      categories: JSON.parse(JSON.stringify(categories)) ?? [],
+      reminders: JSON.parse(JSON.stringify(reminders)) ?? [],
       userId,
     };
   } catch (error) {

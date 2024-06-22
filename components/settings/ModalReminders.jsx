@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { FormTextField, FormCheckboxField, FormSelectField } from 'components';
-import { createReminder, updateReminder } from '../services';
-import { useAppContext } from 'context';
+import { FormTextField, FormCheckboxField, FormSelectField } from '..';
+import { createReminder, updateReminder } from '../../actions';
+import { useAppContext } from '../../context';
 import {
   handleSortItemsAscending,
   handleReminderBufferFormat,
   handleIntervalFormat,
-} from 'utilities';
+} from '../../utilities';
 import {
   FORM_REMINDER_INTERVAL_OPTIONS,
   FORM_REMINDER_BUFFER_OPTIONS,
@@ -18,7 +18,7 @@ import {
   FORM_ERROR_MISSING_REMINDER_BUFFER,
   MODAL_OPERATION_CREATE,
   MODAL_OPERATION_UPDATE,
-} from 'constants';
+} from '../../constants';
 
 const ModalReminder = ({
   userId,
@@ -130,7 +130,7 @@ const ModalReminder = ({
   };
 
   // add new reminder
-  const handleCreateReminder = () => {
+  const handleCreateReminder = (formData) => {
     if (
       !form.reminder ||
       !form.reminderDate ||
@@ -153,7 +153,7 @@ const ModalReminder = ({
     }
 
     setIsAwaitingSubmitResponse(true);
-    createReminder(form).then((res) => {
+    createReminder(formData).then((res) => {
       if (res.status === 200) {
         const copyOfRemindersItems = [...items];
         setItems(
@@ -184,9 +184,9 @@ const ModalReminder = ({
   };
 
   // update reminder
-  const handleUpdateReminder = () => {
+  const handleUpdateReminder = (formData) => {
     setIsAwaitingSubmitResponse(true);
-    updateReminder(form).then((res) => {
+    updateReminder(formData).then((res) => {
       if (res.status === 200) {
         setItems(
           handleSortItemsAscending(
@@ -232,7 +232,14 @@ const ModalReminder = ({
   };
 
   return (
-    <div ref={pageRef}>
+    <form
+      action={(formData) => {
+        modalOperation === MODAL_OPERATION_CREATE
+          ? handleCreateReminder(formData)
+          : handleUpdateReminder(formData);
+      }}
+      ref={pageRef}
+    >
       <FormTextField
         label='Reminder Name'
         subLabel={`${
@@ -273,6 +280,7 @@ const ModalReminder = ({
             : ''
         }`}
         id='reminderRecurrenceInterval'
+        name='recurrenceInterval'
         value={handleIntervalFormat(form?.recurrenceInterval)}
         onChangeHandler={handleFormSelectField}
         options={FORM_REMINDER_INTERVAL_OPTIONS}
@@ -282,6 +290,7 @@ const ModalReminder = ({
         label='Show Date & Early Display'
         subLabel='Check the box if you want this reminder to appear before the next recurrence date. Set by how many weeks using the dropdown below. For example, when a birthday is coming up you may want the reminder to appear a week or two in advance.'
         id='remindersWithExactRecurringDate'
+        name='exactRecurringDate'
         checked={form?.exactRecurringDate}
         onChangeHandler={handleReminderWithExactRecurringDate}
       />
@@ -289,32 +298,33 @@ const ModalReminder = ({
         label='Set Early Display'
         subLabel='Set how many weeks in advance this reminder will appear.'
         id='reminderRecurrenceBuffer'
+        name='recurrenceBuffer'
         value={handleReminderBufferFormat(form?.recurrenceBuffer)}
         onChangeHandler={handleFormSelectField}
         options={FORM_REMINDER_BUFFER_OPTIONS}
         errorMessage={errorMessage.recurrenceBuffer}
         disabled={!form?.exactRecurringDate}
       />
+      <input type='hidden' name='userId' value={userId} />
+      <input type='hidden' name='_id' value={itemToEditId} />
+      <input type='hidden' name='displayReminder' value={false} />
       <div className='modal__modal-button-wrapper'>
         <button onClick={handleCloseModal} className='modal__cancel-button'>
           Cancel
         </button>
         {modalOperation === MODAL_OPERATION_CREATE ? (
-          <button className='modal__save-button' onClick={handleCreateReminder}>
+          <button type='submit' className='modal__save-button'>
             {isAwaitingSubmitResponse && <div className='loader'></div>}
             Save
           </button>
         ) : (
-          <button
-            className='modal__update-button'
-            onClick={handleUpdateReminder}
-          >
+          <button type='submit' className='modal__update-button'>
             {isAwaitingSubmitResponse && <div className='loader'></div>}
             Update
           </button>
         )}
       </div>
-    </div>
+    </form>
   );
 };
 

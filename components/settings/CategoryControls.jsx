@@ -1,15 +1,18 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useAppContext } from 'context';
+import { useAppContext } from '../../context';
 import {
   SettingsItem,
   Modal,
   ModalCategory,
   FormErrorMessage,
-} from 'components';
-import { deleteCategory, updateCategory } from '../services';
-import { MODAL_CREATE_CATEGORY_HEADLINE, AT_CATEGORY_LIMIT } from 'constants';
+} from '../../components';
+import { deleteCategory, updateCategory } from '../../actions';
+import {
+  MODAL_CREATE_CATEGORY_HEADLINE,
+  AT_CATEGORY_LIMIT,
+} from '../../constants';
 
 const CategoryControls = ({ categories, userId }) => {
   const dragItemRef = useRef(null);
@@ -35,7 +38,7 @@ const CategoryControls = ({ categories, userId }) => {
   const handleDeleteCategory = (_id) => {
     setIsAwaitingDeleteResponse(true);
 
-    deleteCategory({ userId, _id }).then((res) => {
+    deleteCategory(userId, _id).then((res) => {
       if (res.status === 200) {
         setCategoryItems(categoryItems.filter((item) => item._id !== _id));
       }

@@ -3,8 +3,9 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAppContext } from 'context';
-import { deleteCookie } from 'cookies-next';
+import { useAppContext } from '../context';
+import { logoutUser } from '../actions';
+//import { deleteCookie } from 'cookies-next';
 import { FaUser } from 'react-icons/fa';
 import {
   MdOutlineLogout,
@@ -47,10 +48,14 @@ const UserMenu = () => {
   };
 
   // log out
-  const handleUserLogOut = () => {
-    deleteCookie('saturday');
-    setUserId(null);
-    router.push('/login');
+  const handleUserLogOut = async () => {
+    const response = await logoutUser();
+    if (response.status === 200) {
+      setUserId(null);
+      router.push('/login');
+    } else {
+      // TODO: Add error toast
+    }
   };
 
   if (!userId) {

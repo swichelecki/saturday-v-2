@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-// TODO: change cookie deletion to server side and delete cookies-next package
-import { deleteCookie } from 'cookies-next';
-import { updateUserPassword, deleteUserAccount } from '../services';
-import { useAppContext } from 'context';
-import { FormTextField } from 'components';
+import { changeUserPassword, deleteUserAccount } from '../actions';
+import { useAppContext } from '../context';
+import { FormTextField } from '../components';
 import {
   FORM_ERROR_MISSING_EMAIL,
   FORM_ERROR_MISSING_PASSWORD,
@@ -17,7 +15,7 @@ import {
   FORM_ERROR_MISSING_DELETE_CONFIRMATION,
   FORM_ERROR_MISSING_DELETE_MISMATCH,
   DELETE_MY_ACCOUNT,
-} from 'constants';
+} from '../constants';
 
 const Account = ({ userId }) => {
   const pageRef = useRef(null);
@@ -115,10 +113,8 @@ const Account = ({ userId }) => {
     setScrollToErrorMessage(false);
   }, [scrollToErrorMessage]);
 
-  // update password
-  const updatePassword = async (e) => {
-    e.preventDefault();
-
+  // change password
+  const changePassword = async (formData) => {
     if (
       !form.email ||
       !form.password ||
@@ -149,9 +145,8 @@ const Account = ({ userId }) => {
 
     setIsAwaitingChangePasswordResponse(true);
 
-    const response = await updateUserPassword(form);
+    const response = await changeUserPassword(formData);
     if (response.status === 200) {
-      deleteCookie('saturday');
       router.push('/login');
     } else if (response.status === 400) {
       setIsAwaitingChangePasswordResponse(false);
@@ -167,9 +162,7 @@ const Account = ({ userId }) => {
   };
 
   // delete account
-  const deleteAccount = async (e) => {
-    e.preventDefault();
-
+  const deleteAccount = async (formData) => {
     if (
       form.email &&
       form.password &&
@@ -198,9 +191,8 @@ const Account = ({ userId }) => {
 
     setIsAwaitingDeleteAccoungResponse(true);
 
-    const response = await deleteUserAccount(form);
+    const response = await deleteUserAccount(formData);
     if (response.status === 200) {
-      deleteCookie('saturday');
       router.push('/login');
     } else if (response.status === 403) {
       setIsAwaitingDeleteAccoungResponse(false);
@@ -217,70 +209,79 @@ const Account = ({ userId }) => {
 
   return (
     <div className='form-page' ref={pageRef}>
-      <form onSubmit={updatePassword}>
-        <h2>Update Password</h2>
+      <form
+        action={(formData) => {
+          changePassword(formData);
+        }}
+      >
+        <h2>Change Password</h2>
         <FormTextField
-          label={'Email'}
-          type={'email'}
-          id={'email'}
-          name={'email'}
+          label='Email'
+          type='email'
+          id='email'
+          name='email'
           value={form?.email}
           onChangeHandler={handleForm}
           errorMessage={errorMessage.email}
         />
         <FormTextField
-          label={'Current Password'}
-          type={'password'}
-          id={'password'}
-          name={'password'}
+          label='Current Password'
+          type='password'
+          id='password'
+          name='password'
           value={form?.password}
           onChangeHandler={handleForm}
           errorMessage={errorMessage.password}
         />
         <FormTextField
-          label={'New Password'}
-          type={'password'}
-          id={'newPassword'}
-          name={'newPassword'}
+          label='New Password'
+          type='password'
+          id='newPassword'
+          name='newPassword'
           value={form?.newPassword}
           onChangeHandler={handleForm}
           errorMessage={errorMessage.newPassword}
         />
         <FormTextField
-          label={'Confirm New Password'}
-          type={'password'}
-          id={'confirmNewPassword'}
-          name={'confirmNewPassword'}
+          label='Confirm New Password'
+          type='password'
+          id='confirmNewPassword'
+          name='confirmNewPassword'
           value={form?.confirmNewPassword}
           onChangeHandler={handleForm}
           errorMessage={errorMessage.confirmNewPassword}
         />
+        <FormTextField type='hidden' name='userId' value={userId} />
         <div className='form-page__buttons-wrapper'>
           <button
             type='submit'
             className='form-page__save-button form-page__update-button'
           >
             {isAwaitingChangePasswordResponse && <div className='loader'></div>}
-            Update Password
+            Change Password
           </button>
         </div>
       </form>
-      <form onSubmit={deleteAccount}>
+      <form
+        action={(formData) => {
+          deleteAccount(formData);
+        }}
+      >
         <h2>Delete Account</h2>
         <FormTextField
-          label={'Email'}
-          type={'email'}
-          id={'deleteEmail'}
-          name={'email'}
+          label='Email'
+          type='email'
+          id='deleteEmail'
+          name='email'
           value={form?.email}
           onChangeHandler={handleForm}
           errorMessage={errorMessage.deleteEmail}
         />
         <FormTextField
-          label={'Password'}
-          type={'password'}
-          id={'deletePassword'}
-          name={'password'}
+          label='Password'
+          type='password'
+          id='deletePassword'
+          name='password'
           value={form?.password}
           onChangeHandler={handleForm}
           errorMessage={errorMessage.deletePassword}
@@ -291,13 +292,14 @@ const Account = ({ userId }) => {
               Type "<i>Delete My Account</i>" into the Field Below
             </>
           }
-          type={'text'}
-          id={'deleteConfirmation'}
-          name={'deleteConfirmation'}
+          type='text'
+          id='deleteConfirmation'
+          name='deleteConfirmation'
           value={form?.deleteConfirmation}
           onChangeHandler={handleForm}
           errorMessage={errorMessage.deleteConfirmation}
         />
+        <FormTextField type='hidden' name='userId' value={userId} />
         <div className='form-page__buttons-wrapper'>
           <button type='submit' className='form-page__delete-button'>
             {isAwaitingDeleteAccoungResponse && <div className='loader'></div>}
