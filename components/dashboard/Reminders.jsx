@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useAppContext } from '../context';
-import { RemindersItem } from '../components';
-import { getReminder, updateReminder } from '../actions';
-import { useInnerWidth } from '../hooks';
-import { handleHiddenHeight } from '../utilities';
+import { useAppContext } from '../../context';
+import { RemindersItem } from '..';
+import { getReminder, updateReminder } from '../../actions';
+import { useInnerWidth } from '../../hooks';
+import { handleHiddenHeight } from '../../utilities';
 import moment from 'moment-timezone';
-import { MOBILE_BREAKPOINT } from '../constants';
+import { MOBILE_BREAKPOINT } from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
 const Reminders = ({ reminders }) => {

@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useInnerWidth } from '../hooks';
+import { useInnerWidth } from '../../hooks';
 import { MdEdit } from 'react-icons/md';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import { TiCancel } from 'react-icons/ti';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
-import { MOBILE_BREAKPOINT } from '../constants';
+import { MOBILE_BREAKPOINT } from '../../constants';
 
 const ItemButtons = ({
   date,

@@ -33,7 +33,7 @@ async function getDashboardData() {
       priority: 1,
     });
 
-    const categories = await Category.find({ userId }).sort({
+    const categoriesRaw = await Category.find({ userId }).sort({
       priority: 1,
     });
 
@@ -46,7 +46,9 @@ async function getDashboardData() {
 
     // create data shape for columns
     const tasks = JSON.parse(JSON.stringify(tasksRaw));
+    const categories = JSON.parse(JSON.stringify(categoriesRaw));
     const columnsData = [];
+    const allColumnTypes = [];
 
     // remove duplicates and return type and column order
     const columnTypes = [
@@ -63,6 +65,7 @@ async function getDashboardData() {
     for (const item of sortedColumnTypes) {
       const obj = {};
       obj[item[1]] = [];
+      allColumnTypes.push(item[1]);
       columnsData.push(obj);
     }
 
@@ -85,6 +88,13 @@ async function getDashboardData() {
 
         Object.values(item)[0].length = 0;
         Object.values(item)[0].push(...itemsWithDatesSortedAsc);
+      }
+    }
+
+    // add column types with no data
+    for (const category of categories) {
+      if (!allColumnTypes.includes(category?.type)) {
+        columnsData.push({ [category?.type]: [] });
       }
     }
 

@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ListItem } from './';
-import { useAppContext } from '../context';
-import { updateTask } from '../services';
+import { ListItem } from '../../components';
+import { useAppContext } from '../../context';
+import { updateItem } from '../../actions';
 
 const ItemsColumn = ({
   heading,
@@ -64,7 +64,7 @@ const ItemsColumn = ({
     );
 
     draggableItemsWithNewPriorities?.forEach((item) =>
-      updateTask(item).then((res) => {
+      updateItem(item).then((res) => {
         if (res.status !== 200) {
           setServerError(res.status);
           setShowToast(true);

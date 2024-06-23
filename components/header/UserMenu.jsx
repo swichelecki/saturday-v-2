@@ -3,8 +3,8 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAppContext } from '../context';
-import { logoutUser } from '../actions';
+import { useAppContext } from '../../context';
+import { logoutUser } from '../../actions';
 //import { deleteCookie } from 'cookies-next';
 import { FaUser } from 'react-icons/fa';
 import {

@@ -1,6 +1,8 @@
 import Link from 'next/link';
-import Weather from './Weather';
-import UserMenu from './UserMenu';
+import dynamic from 'next/dynamic';
+
+const Weather = dynamic(() => import('../../components/header/Weather'));
+const UserMenu = dynamic(() => import('../../components/header/UserMenu'));
 
 const Header = () => {
   return (

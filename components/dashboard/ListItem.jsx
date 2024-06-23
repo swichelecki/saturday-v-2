@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import ItemButtons from './ItemButtons';
-import { useInnerWidth, useIsMounted } from '../hooks';
+import { useInnerWidth, useIsMounted } from '../../hooks';
 import {
   handleTodaysDateCheck,
   handleTransitionSpeed,
   handleHiddenHeight,
-} from '../utilities';
+} from '../../utilities';
 import moment from 'moment-timezone';
 import { GrDrag } from 'react-icons/gr';
 import { MdEdit } from 'react-icons/md';
@@ -18,7 +18,7 @@ import {
   TOUCH_DURATION_THRESHOLD,
   MAX_MOVE_DISTANCE,
   MOBILE_BREAKPOINT,
-} from '../constants';
+} from '../../constants';
 
 let previousItemId = '';
 

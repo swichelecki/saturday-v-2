@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useInnerWidth } from '../hooks';
-import { Checkbox } from './';
-import { MOBILE_BREAKPOINT } from '../constants';
+import { useInnerWidth } from '../../hooks';
+import { Checkbox } from '..';
+import { MOBILE_BREAKPOINT } from '../../constants';
 
 const MainControls = ({
   categories,

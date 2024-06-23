@@ -2,25 +2,27 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { useAppContext } from '../context';
+import { useAppContext } from '../../context';
 import {
   MainControls,
   Modal,
   ModalDelete,
   ModalUpdateItem,
   FormErrorMessage,
-} from '../components';
-import { useInnerWidth } from '../hooks';
-import { createItem, getItem, deleteItem } from '../actions';
+} from '../../components';
+import { useInnerWidth } from '../../hooks';
+import { createItem, getItem, deleteItem } from '../../actions';
 import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
   MODAL_UPDATE_ITEM_HEADLINE,
   ITEM_ERROR_MESSAGES,
-} from '../constants';
+} from '../../constants';
 
-const ItemsColumn = dynamic(() => import('../components/ItemsColumn'));
-const Reminders = dynamic(() => import('../components/Reminders'));
+const ItemsColumn = dynamic(() =>
+  import('../../components/dashboard/ItemsColumn')
+);
+const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
 
 const Dashboard = ({ tasks, categories, reminders, userId }) => {
   const width = useInnerWidth();

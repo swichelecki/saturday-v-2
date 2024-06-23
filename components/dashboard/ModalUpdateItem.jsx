@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FormTextField } from '../components';
-import { updateItem } from '../actions';
-import { useAppContext } from '../context';
-import { FORM_ERROR_MISSING_UPDATE_TITLE } from '../constants';
+import { FormTextField } from '../../components';
+import { updateItem } from '../../actions';
+import { useAppContext } from '../../context';
+import { FORM_ERROR_MISSING_UPDATE_TITLE } from '../../constants';
 
 const ModalUpdateItem = ({
   userId,

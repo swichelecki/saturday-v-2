@@ -2,6 +2,7 @@
 
 import Task from '../../../models/Task';
 import Category from '../../../models/Category';
+import { revalidatePath } from 'next/cache';
 
 export default async function updateCategory(item) {
   try {
@@ -44,6 +45,8 @@ export default async function updateCategory(item) {
         }
       );
     });
+
+    revalidatePath('/');
 
     return { status: 200 };
   } catch (error) {

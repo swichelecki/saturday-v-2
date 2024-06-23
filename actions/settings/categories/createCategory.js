@@ -1,13 +1,14 @@
 'use server';
 
 import Category from '../../../models/Category';
-//import { revalidatePath } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 
 export default async function createCategory(formData) {
   try {
     const category = Object.fromEntries(formData);
     const result = await Category.create(category);
-    //revalidatePath('/settings');
+    revalidatePath('/');
+
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     console.log(error);

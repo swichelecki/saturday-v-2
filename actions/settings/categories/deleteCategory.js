@@ -2,7 +2,7 @@
 
 import Task from '../../../models/Task';
 import Category from '../../../models/Category';
-//import { revalidatePath } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 
 export default async function deleteCategory(userId, _id) {
   try {
@@ -10,7 +10,7 @@ export default async function deleteCategory(userId, _id) {
     const { type } = category;
     await Task.deleteMany({ type, userId });
     await Category.deleteOne({ _id: _id });
-    //revalidatePath('/settings');
+    revalidatePath('/');
 
     return { status: 200 };
   } catch (error) {

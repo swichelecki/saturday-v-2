@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { changeUserPassword, deleteUserAccount } from '../actions';
-import { useAppContext } from '../context';
-import { FormTextField } from '../components';
+import { changeUserPassword, deleteUserAccount } from '../../actions';
+import { useAppContext } from '../../context';
+import { FormTextField } from '..';
 import {
   FORM_ERROR_MISSING_EMAIL,
   FORM_ERROR_MISSING_PASSWORD,
@@ -15,7 +15,7 @@ import {
   FORM_ERROR_MISSING_DELETE_CONFIRMATION,
   FORM_ERROR_MISSING_DELETE_MISMATCH,
   DELETE_MY_ACCOUNT,
-} from '../constants';
+} from '../../constants';
 
 const Account = ({ userId }) => {
   const pageRef = useRef(null);

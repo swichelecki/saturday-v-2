@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { handleDayNightCheck } from '../utilities';
+import { handleDayNightCheck } from '../../utilities';
 import {
   BsFillSunFill,
   BsCloudSunFill,
