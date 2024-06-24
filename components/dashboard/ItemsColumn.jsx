@@ -63,14 +63,21 @@ const ItemsColumn = ({
       })
     );
 
-    draggableItemsWithNewPriorities?.forEach((item) =>
-      updateItem(item).then((res) => {
+    draggableItemsWithNewPriorities?.forEach((item) => {
+      const formData = new FormData();
+      for (let key in item) {
+        if (key !== 'date' && key !== 'dateAndTime') {
+          formData.append(key, item[key]);
+        }
+      }
+
+      updateItem(formData).then((res) => {
         if (res.status !== 200) {
           setServerError(res.status);
           setShowToast(true);
         }
-      })
-    );
+      });
+    });
 
     setListItems((current) => {
       const columnsDataWithResortedItems = [

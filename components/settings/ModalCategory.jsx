@@ -30,7 +30,6 @@ const ModalReminder = ({ userId, items, setItems }) => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') handleCloseModal();
-      if (e.key === 'Enter') handleCreateCategory();
     };
 
     if (document && typeof document !== 'undefined') {

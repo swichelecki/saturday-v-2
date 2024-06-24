@@ -90,7 +90,6 @@ const ModalReminder = ({
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') handleCloseModal();
-      if (e.key === 'Enter') handleCreateReminder();
     };
 
     if (document && typeof document !== 'undefined') {
@@ -305,8 +304,10 @@ const ModalReminder = ({
         errorMessage={errorMessage.recurrenceBuffer}
         disabled={!form?.exactRecurringDate}
       />
+      {modalOperation === MODAL_OPERATION_UPDATE && (
+        <input type='hidden' name='_id' value={itemToEditId} />
+      )}
       <input type='hidden' name='userId' value={userId} />
-      <input type='hidden' name='_id' value={itemToEditId} />
       <input type='hidden' name='displayReminder' value={false} />
       <div className='modal__modal-button-wrapper'>
         <button onClick={handleCloseModal} className='modal__cancel-button'>

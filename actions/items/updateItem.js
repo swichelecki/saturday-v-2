@@ -10,9 +10,12 @@ export default async function itemUpdate(formData) {
   try {
     const date = formData.get('dateAndTime')
       ? formData.get('dateAndTime').split('T')[0]
-      : formData.get('date');
+      : !formData.get('dateAndTime') && formData.get('date')
+      ? formData.get('date')
+      : null;
+
     const dateAndTime = formData.get('dateAndTime')
-      ? new Date(formData.get('dateAndTime')).toISOString()
+      ? formData.get('dateAndTime')
       : null;
 
     await Task.updateOne(
@@ -29,6 +32,7 @@ export default async function itemUpdate(formData) {
     );
 
     const result = await Task.find({ _id: _id });
+
     revalidatePath('/');
 
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };

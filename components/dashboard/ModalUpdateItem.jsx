@@ -44,7 +44,7 @@ const ModalUpdateItem = ({
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') handleCloseModal();
-      if (e.key === 'Enter') handleEditSubmit();
+      //if (e.key === 'Enter') handleEditSubmit();
     };
 
     if (document && typeof document !== 'undefined') {
@@ -140,10 +140,9 @@ const ModalUpdateItem = ({
       }}
     >
       <FormTextField
-        label={''}
-        type={'text'}
-        id={'update'}
-        name={'title'}
+        type='text'
+        id='update'
+        name='title'
         value={form?.title}
         onChangeHandler={handleForm}
         errorMessage={errorMessage.title}
@@ -163,10 +162,7 @@ const ModalUpdateItem = ({
       <input type='hidden' name='column' value={itemToUpdate?.column} />
       <input type='hidden' name='priority' value={itemToUpdate?.priority} />
       <input type='hidden' name='type' value={itemToUpdate?.type} />
-      <input type='hidden' name='description' value='' />
       <input type='hidden' name='confirmDeletion' value='false' />
-      <input type='hidden' name='date' value='' />
-      <input type='hidden' name='dateAndTime' value='' />
       <input type='hidden' name='mandatoryDate' value='false' />
     </form>
   );

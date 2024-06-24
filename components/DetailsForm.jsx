@@ -212,7 +212,7 @@ const DetailsForm = ({ task, userId }) => {
           />
         </>
       )}
-      <input type='hidden' name='_id' value={task?._id ?? undefined} />
+      <input type='hidden' name='_id' value={task?._id} />
       <input type='hidden' name='userId' value={task?.userId ?? userId} />
       <input type='hidden' name='priority' value={task?.priority ?? priority} />
       <input type='hidden' name='type' value={task?.type ?? type} />

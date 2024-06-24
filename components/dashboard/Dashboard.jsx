@@ -91,7 +91,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
 
   // handle submit with Enter key
   // TODO: with form action a click event needs to be attached to the submit button
-  useEffect(() => {
+  /*   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Enter') handleOnSubmit();
     };
@@ -103,7 +103,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
         document.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [listItem]);
+  }, [listItem]); */
 
   // remove at-item-limit message after item deletion
   useEffect(() => {

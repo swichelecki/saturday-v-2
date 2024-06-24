@@ -76,6 +76,7 @@ const MainControls = ({
                     ? ' main-controls__type-button--active'
                     : ''
                 }`}
+                type='button'
                 onClick={() => {
                   setListItem((curr) => ({
                     ...curr,
@@ -116,11 +117,7 @@ const MainControls = ({
             <span className='main-controls__create-button'>Create</span>
           </Link>
         ) : (
-          <button
-            type='submit'
-            //onClick={handleOnSubmit}
-            className='main-controls__add-button'
-          >
+          <button type='submit' className='main-controls__add-button'>
             {isAwaitingAddResponse && <div className='loader'></div>}
             Add
           </button>
