@@ -6,6 +6,8 @@ export const metadata = {
   title: 'Account',
 };
 
+export const dynamic = 'force-dynamic';
+
 async function getUserId() {
   try {
     const jwtSecret = process.env.JWT_SECRET;

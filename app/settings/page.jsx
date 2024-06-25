@@ -8,6 +8,8 @@ export const metadata = {
   title: 'Settings',
 };
 
+export const dynamic = 'force-dynamic';
+
 async function getSettingsData() {
   try {
     const jwtSecret = process.env.JWT_SECRET;
