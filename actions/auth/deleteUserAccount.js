@@ -15,7 +15,7 @@ export default async function deleteUserAccount(formData) {
 
     const user = await User.findOne({ email });
 
-    if (user && bcrypt.compare(password === user.password)) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       await Task.deleteMany({ userId });
       await Reminder.deleteMany({ userId });
       await Category.deleteMany({ userId });

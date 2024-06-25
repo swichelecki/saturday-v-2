@@ -13,7 +13,7 @@ export default async function userChangePassword(formData) {
 
     const user = await User.findOne({ email });
 
-    if (user && bcrypt.compare(password === user.password)) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(newPassword, salt);
 

@@ -21,7 +21,7 @@ export default async function createItem(formData) {
       : formData.get('date');
 
     const dateAndTime = formData.get('dateAndTime')
-      ? formData.get('dateAndTime')
+      ? new Date(formData.get('dateAndTime')).toISOString()
       : null;
 
     const result = await Task.create({

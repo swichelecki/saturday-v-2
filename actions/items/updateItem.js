@@ -15,7 +15,7 @@ export default async function itemUpdate(formData) {
       : null;
 
     const dateAndTime = formData.get('dateAndTime')
-      ? formData.get('dateAndTime')
+      ? new Date(formData.get('dateAndTime')).toISOString()
       : null;
 
     await Task.updateOne(
