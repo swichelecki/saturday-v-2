@@ -89,22 +89,6 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
     });
   }, []);
 
-  // handle submit with Enter key
-  // TODO: with form action a click event needs to be attached to the submit button
-  /*   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Enter') handleOnSubmit();
-    };
-
-    if (document && typeof document !== 'undefined') {
-      document.addEventListener('keydown', handleKeyDown);
-
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-      };
-    }
-  }, [listItem]); */
-
   // remove at-item-limit message after item deletion
   useEffect(() => {
     if (errorMessages?.atItemLimit && listItems?.length < 50) {

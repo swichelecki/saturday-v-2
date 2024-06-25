@@ -391,7 +391,7 @@ const ItemList = ({
 
   // y-axis end
   const handleDragYEnd = (e) => {
-    if (isDraggingYRef.current === false) return;
+    if (!isDraggingYRef.current) return;
 
     isDraggingYRef.current = false;
     listItemWrapperRef.current.removeAttribute('style');

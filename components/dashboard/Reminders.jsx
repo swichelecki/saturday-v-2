@@ -82,7 +82,12 @@ const Reminders = ({ reminders }) => {
         reminderDate: nextDate,
       };
 
-      updateReminder(copyOfReminderToUpdate).then((res) => {
+      const formDataReminder = new FormData();
+      for (let key in copyOfReminderToUpdate) {
+        formDataReminder.append(key, copyOfReminderToUpdate[key]);
+      }
+
+      updateReminder(formDataReminder).then((res) => {
         if (res.status === 200) {
           setReminders(
             remindersItems.filter((item) => item._id !== reminderToUpdate._id)

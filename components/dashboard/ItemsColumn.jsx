@@ -80,17 +80,13 @@ const ItemsColumn = ({
     });
 
     setListItems((current) => {
-      const columnsDataWithResortedItems = [
-        ...current.filter((item) => Object.keys(item)[0] !== heading),
-        { [heading]: draggableItemsWithNewPriorities },
-      ];
-
-      const columnsDataSortedByColumnNumber = columnsDataWithResortedItems.sort(
-        (objA, objB) =>
-          Object.values(objA)[0][0]?.column - Object.values(objB)[0][0]?.column
-      );
-
-      return columnsDataSortedByColumnNumber;
+      return current.map((item) => {
+        if (Object.keys(item)[0] !== heading) {
+          return item;
+        } else {
+          return { [heading]: draggableItemsWithNewPriorities };
+        }
+      });
     });
   };
 

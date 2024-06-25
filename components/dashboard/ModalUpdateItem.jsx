@@ -40,11 +40,9 @@ const ModalUpdateItem = ({
   }, [form.title]);
 
   // handle keyboard events
-  // TODO: with form action a click event needs to be attached to the submit button
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') handleCloseModal();
-      //if (e.key === 'Enter') handleEditSubmit();
     };
 
     if (document && typeof document !== 'undefined') {
