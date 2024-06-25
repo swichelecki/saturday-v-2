@@ -1,7 +1,9 @@
+import connectDB from '../../../../config/db';
 import Reminder from '../../../../models/Reminder';
 
 export async function GET(req) {
   try {
+    await connectDB();
     const reminders = await Reminder.find();
 
     if (!reminders?.length) return;
