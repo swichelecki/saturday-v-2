@@ -7,6 +7,8 @@ export const metadata = {
   title: 'Details',
 };
 
+export const dynamic = 'force-dynamic';
+
 async function getUserId() {
   try {
     await connectDB();

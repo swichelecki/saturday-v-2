@@ -7,6 +7,8 @@ import Reminder from '../models/Reminder';
 import { handleSortItemsAscending } from '../utilities';
 import { Dashboard } from '../components';
 
+export const dynamic = 'force-dynamic';
+
 async function getDashboardData() {
   try {
     await connectDB();
