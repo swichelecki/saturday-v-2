@@ -460,7 +460,7 @@ const ItemList = ({
             ) : (
               <p>
                 {isToday && 'Today, '}
-                {moment(item?.date?.split('T')[0]).format('dddd, MMMM D')}
+                {moment(item?.date).format('dddd, MMMM D')}
               </p>
             )}
           </div>
