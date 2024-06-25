@@ -96,7 +96,7 @@ async function getDashboardData() {
 
     return {
       tasks: columnsData ?? [],
-      categories: JSON.parse(JSON.stringify(categories)) ?? [],
+      categories: categories ?? [],
       reminders: JSON.parse(JSON.stringify(reminders)) ?? [],
       userId,
     };
