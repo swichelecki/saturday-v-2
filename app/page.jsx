@@ -50,12 +50,11 @@ async function getDashboardData() {
     const tasks = JSON.parse(JSON.stringify(tasksRaw));
     const categories = JSON.parse(JSON.stringify(categoriesRaw));
     const columnsData = [];
-    const allColumnTypes = [];
 
-    // remove duplicates and return type and column order
+    // return type and column order
     const columnTypes = [
-      ...tasks.reduce(
-        (map, item) => map.set(item?.column, item?.type),
+      ...categories.reduce(
+        (map, item) => map.set(item?.priority, item?.type),
         new Map()
       ),
     ];
@@ -67,7 +66,6 @@ async function getDashboardData() {
     for (const item of sortedColumnTypes) {
       const obj = {};
       obj[item[1]] = [];
-      allColumnTypes.push(item[1]);
       columnsData.push(obj);
     }
 
@@ -82,7 +80,10 @@ async function getDashboardData() {
 
     // sort arrays by date asc when date is present
     for (const item of columnsData) {
-      if (Object.values(item)[0][0]['date'] !== null) {
+      if (
+        Object.values(item)[0]?.legnth &&
+        Object.values(item)[0][0]['date'] !== null
+      ) {
         const itemsWithDatesSortedAsc = handleSortItemsAscending(
           Object.values(item)[0],
           'date'
@@ -90,13 +91,6 @@ async function getDashboardData() {
 
         Object.values(item)[0].length = 0;
         Object.values(item)[0].push(...itemsWithDatesSortedAsc);
-      }
-    }
-
-    // add column types with no data
-    for (const category of categories) {
-      if (!allColumnTypes.includes(category?.type)) {
-        columnsData.push({ [category?.type]: [] });
       }
     }
 
