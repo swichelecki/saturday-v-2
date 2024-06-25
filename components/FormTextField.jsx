@@ -1,8 +1,8 @@
-import { FormErrorMessage } from 'components';
+import { FormErrorMessage } from './';
 import moment from 'moment-timezone';
 
 const FormTextField = ({
-  label,
+  label = '',
   subLabel = '',
   type,
   id,
@@ -14,7 +14,7 @@ const FormTextField = ({
 }) => {
   return (
     <div className={`form-field${errorMessage ? ' form-field--error' : ''}`}>
-      <label htmlFor={id}>{label}</label>
+      {label && <label htmlFor={id}>{label}</label>}
       {subLabel && <p className='form-field__sublabel'>{subLabel}</p>}
       <input
         type={type}

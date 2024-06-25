@@ -44,7 +44,7 @@
     }
   }
   &__sublabel {
-    font-family: 'Source Sans Pro', sans-serif;
+    font-family: var(--sourceSans3), sans-serif;
     font-weight: 300;
     color: $color-list-item-svg;
     margin-top: 6px;

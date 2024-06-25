@@ -1,22 +1,30 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useAppContext } from 'context';
-import { submitTask, updateTask } from '../services';
-import { FormTextField, FormWYSIWYGField, FormCheckboxField } from 'components';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAppContext } from '../context';
+import { createItem, updateItem } from '../actions';
+import {
+  FormTextField,
+  FormWYSIWYGField,
+  FormCheckboxField,
+} from '../components';
 import {
   FORM_ERROR_MISSING_TITLE,
   FORM_ERROR_MISSING_DESCRIPTION,
   FORM_ERROR_MISSING_DATE,
-} from 'constants';
+} from '../constants';
 
-const DetailsForm = ({ task }) => {
+const DetailsForm = ({ task, userId }) => {
   const formRef = useRef(null);
 
   const router = useRouter();
-  const { priority, type, column, hasMandatoryDate } = router.query;
 
-  const { userId, setShowToast, setServerError } = useAppContext();
+  const params = useSearchParams();
+  const [priority, type, column, hasMandatoryDate] = params.values();
+
+  const { setShowToast, setServerError, setUserId } = useAppContext();
 
   const [form, setForm] = useState({
     _id: task?._id,
@@ -38,6 +46,10 @@ const DetailsForm = ({ task }) => {
   });
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
+
+  useEffect(() => {
+    setUserId(userId);
+  }, []);
 
   // remove error messages when adding data to fields
   useEffect(() => {
@@ -94,9 +106,7 @@ const DetailsForm = ({ task }) => {
     setForm({ ...form, description: value });
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-
+  const onSubmit = (formData) => {
     // error handling for missing required fields
     if (
       !form?.title ||
@@ -121,22 +131,10 @@ const DetailsForm = ({ task }) => {
       return;
     }
 
-    const formatDateAndTimeForMongoDB = (form) => {
-      return {
-        ...form,
-        dateAndTime: new Date(form?.dateAndTime).toISOString(),
-        date: form?.dateAndTime.split('T')[0],
-      };
-    };
-
-    const finalForm = form?.dateAndTime
-      ? formatDateAndTimeForMongoDB(form)
-      : form;
-
     setIsAwaitingSaveResponse(true);
 
     priority == undefined
-      ? updateTask(finalForm).then((res) => {
+      ? updateItem(formData).then((res) => {
           if (res.status === 200) {
             router.push('/');
           }
@@ -147,7 +145,7 @@ const DetailsForm = ({ task }) => {
             setIsAwaitingSaveResponse(false);
           }
         })
-      : submitTask(finalForm).then((res) => {
+      : createItem(formData).then((res) => {
           if (res.status === 200) {
             router.push('/');
           }
@@ -161,44 +159,52 @@ const DetailsForm = ({ task }) => {
   };
 
   return (
-    <form onSubmit={onSubmit} ref={formRef} className='form-page'>
+    <form
+      action={(formData) => {
+        onSubmit(formData);
+      }}
+      ref={formRef}
+      className='form-page'
+    >
       <FormTextField
-        label={'Title'}
-        type={'text'}
-        id={'title'}
-        name={'title'}
+        label='Title'
+        type='text'
+        id='title'
+        name='title'
         value={form?.title}
         onChangeHandler={handleSetForm}
         errorMessage={errorMessage.title}
       />
+      {/* TODO: may need better way to get data as this is not a real field */}
       <FormWYSIWYGField
-        label={'Description'}
+        label='Description'
         value={form?.description}
         onChangeHandler={handleSetQuill}
         errorMessage={errorMessage.description}
       />
       <FormCheckboxField
-        label={'Confirm Deletion'}
+        label='Confirm Deletion'
+        name='confirmDeletion'
         checked={form?.confirmDeletion}
         onChangeHandler={handleConfirmDeletion}
       />
       {form?.mandatoryDate && (
         <>
           <FormTextField
-            label={'Date'}
-            type={'date'}
-            id={'date'}
-            name={'date'}
+            label='Date'
+            type='date'
+            id='date'
+            name='date'
             value={form?.date && !form?.dateAndTime ? form?.date : ''}
             onChangeHandler={handleSetForm}
             errorMessage={errorMessage.dateOrDateAndTime}
             disabled={form?.dateAndTime}
           />
           <FormTextField
-            label={'Date & Time'}
-            type={'datetime-local'}
-            id={'dateAndTime'}
-            name={'dateAndTime'}
+            label='Date & Time'
+            type='datetime-local'
+            id='dateAndTime'
+            name='dateAndTime'
             value={form?.dateAndTime}
             onChangeHandler={handleSetForm}
             errorMessage={errorMessage.dateOrDateAndTime}
@@ -206,6 +212,17 @@ const DetailsForm = ({ task }) => {
           />
         </>
       )}
+      <input type='hidden' name='_id' value={task?._id} />
+      <input type='hidden' name='userId' value={task?.userId ?? userId} />
+      <input type='hidden' name='priority' value={task?.priority ?? priority} />
+      <input type='hidden' name='type' value={task?.type ?? type} />
+      <input type='hidden' name='column' value={task?.column ?? column} />
+      <input
+        type='hidden'
+        name='mandatoryDate'
+        value={task?.mandatoryDate ?? Boolean(hasMandatoryDate)}
+      />
+      <input type='hidden' name='description' value={form?.description} />
       <div className='form-page__buttons-wrapper'>
         <button type='submit' className='form-page__save-button'>
           {isAwaitingSaveResponse && <div className='loader'></div>}

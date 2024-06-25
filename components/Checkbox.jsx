@@ -1,10 +1,9 @@
-import { TYPE_UPCOMING } from 'constants';
-
 const Checkbox = ({
   label,
   subLabel = '',
   id = 'checkbox',
-  type = 'default',
+  name,
+  hasMandatoryDate,
   checked,
   onChangeHandler,
 }) => {
@@ -13,15 +12,16 @@ const Checkbox = ({
       <label
         className='checkbox__checkbox-container'
         htmlFor={id}
-        style={type === TYPE_UPCOMING && checked ? { cursor: 'no-drop' } : {}}
+        style={hasMandatoryDate && checked ? { cursor: 'no-drop' } : {}}
       >
         <span>{label}</span>
         <input
           type='checkbox'
           id={id}
-          onChange={onChangeHandler}
           checked={checked}
+          onChange={onChangeHandler}
         />
+        <input type='hidden' name={name} value={checked ? true : false} />
         <span className='checkbox__checkbox'></span>
       </label>
       {subLabel && <p className='checkbox__sublabel'>{subLabel}</p>}

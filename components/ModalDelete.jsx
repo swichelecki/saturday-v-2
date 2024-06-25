@@ -1,5 +1,7 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { useAppContext } from 'context';
+import { useAppContext } from '../context';
 
 const ModalDelete = ({ handleDeleteItem, modalIdToDelete }) => {
   const { setShowModal } = useAppContext();

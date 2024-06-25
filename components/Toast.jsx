@@ -1,6 +1,8 @@
+'use client';
+
 import { useRef, useEffect } from 'react';
 import { MdError, MdOutlineClear } from 'react-icons/md';
-import { SERVER_ERROR_MESSAGE } from 'constants';
+import { SERVER_ERROR_MESSAGE } from '../constants';
 
 const Toast = ({ serverError, setShowToast }) => {
   const toastRef = useRef(null);
