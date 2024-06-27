@@ -1,6 +1,7 @@
 'use server';
 
 import Task from '../../models/Task';
+import { handleServerErrorMessage } from '../../utilities';
 
 export default async function getItem(id) {
   try {
@@ -8,6 +9,7 @@ export default async function getItem(id) {
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     console.log(error);
-    return res.status(500).send(error);
+    const errorMessage = handleServerErrorMessage(error);
+    return { status: 500, error: errorMessage };
   }
 }

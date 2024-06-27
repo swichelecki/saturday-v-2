@@ -9,6 +9,7 @@ import {
   FormTextField,
   FormWYSIWYGField,
   FormCheckboxField,
+  Toast,
 } from '../components';
 import {
   FORM_ERROR_MISSING_TITLE,
@@ -24,7 +25,7 @@ const DetailsForm = ({ task, userId }) => {
   const params = useSearchParams();
   const [priority, type, column, hasMandatoryDate] = params.values();
 
-  const { setShowToast, setServerError, setUserId } = useAppContext();
+  const { setShowToast, setUserId } = useAppContext();
 
   const [form, setForm] = useState({
     _id: task?._id,
@@ -140,9 +141,7 @@ const DetailsForm = ({ task, userId }) => {
           }
 
           if (res.status !== 200) {
-            setServerError(res.status);
-            setShowToast(true);
-            setIsAwaitingSaveResponse(false);
+            setShowToast(<Toast serverError={res} />);
           }
         })
       : createItem(formData).then((res) => {
@@ -151,21 +150,13 @@ const DetailsForm = ({ task, userId }) => {
           }
 
           if (res.status !== 200) {
-            setServerError(res.status);
-            setShowToast(true);
-            setIsAwaitingSaveResponse(false);
+            setShowToast(<Toast serverError={res} />);
           }
         });
   };
 
   return (
-    <form
-      action={(formData) => {
-        onSubmit(formData);
-      }}
-      ref={formRef}
-      className='form-page'
-    >
+    <form action={onSubmit} ref={formRef} className='form-page'>
       <FormTextField
         label='Title'
         type='text'

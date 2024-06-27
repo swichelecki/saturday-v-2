@@ -9,6 +9,7 @@ import {
   ModalDelete,
   ModalUpdateItem,
   FormErrorMessage,
+  Toast,
 } from '../../components';
 import { useInnerWidth } from '../../hooks';
 import { createItem, getItem, deleteItem } from '../../actions';
@@ -27,8 +28,7 @@ const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
 const Dashboard = ({ tasks, categories, reminders, userId }) => {
   const width = useInnerWidth();
 
-  const { setUserId, setShowToast, setServerError, setShowModal } =
-    useAppContext();
+  const { setUserId, setShowToast, setShowModal } = useAppContext();
 
   const [listItems, setListItems] = useState(tasks);
   const [listItem, setListItem] = useState({
@@ -151,8 +151,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
 
       setIsAwaitingAddResponse(false);
@@ -182,8 +181,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
 
       setIsAwaitingEditResponse(false);
@@ -226,8 +224,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
 
       setShowModal(null);

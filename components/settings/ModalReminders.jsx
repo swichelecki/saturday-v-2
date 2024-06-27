@@ -1,7 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { FormTextField, FormCheckboxField, FormSelectField } from '..';
+import {
+  FormTextField,
+  FormCheckboxField,
+  FormSelectField,
+  Toast,
+} from '../../components';
 import { createReminder, updateReminder } from '../../actions';
 import { useAppContext } from '../../context';
 import {
@@ -28,7 +33,7 @@ const ModalReminder = ({
   itemToEditId,
   modalOperation,
 }) => {
-  const { setShowModal } = useAppContext();
+  const { setShowModal, setShowToast } = useAppContext();
 
   const pageRef = useRef(null);
 
@@ -173,8 +178,7 @@ const ModalReminder = ({
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
 
       setIsAwaitingSubmitResponse(false);
@@ -202,8 +206,7 @@ const ModalReminder = ({
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
 
       setIsAwaitingSubmitResponse(false);

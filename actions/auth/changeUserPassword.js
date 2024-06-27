@@ -3,6 +3,7 @@
 import User from '../../models/User';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
+import { handleServerErrorMessage } from '../../utilities';
 
 export default async function userChangePassword(formData) {
   try {
@@ -31,6 +32,7 @@ export default async function userChangePassword(formData) {
     }
   } catch (error) {
     console.log(error);
-    return { status: 500 };
+    const errorMessage = handleServerErrorMessage(error);
+    return { status: 500, error: errorMessage };
   }
 }

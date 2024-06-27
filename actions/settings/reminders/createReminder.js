@@ -1,7 +1,7 @@
 'use server';
 
 import Reminder from '../../../models/Reminder';
-//import { revalidatePath } from 'next/cache';
+import { handleServerErrorMessage } from '../../../utilities';
 
 export default async function createReminder(formData) {
   try {
@@ -10,6 +10,7 @@ export default async function createReminder(formData) {
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     console.log(error);
-    return { status: 500 };
+    const errorMessage = handleServerErrorMessage(error);
+    return { status: 500, error: errorMessage };
   }
 }

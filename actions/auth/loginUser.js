@@ -5,6 +5,7 @@ import User from '../../models/User';
 import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
 import bcrypt from 'bcryptjs';
+import { handleServerErrorMessage } from '../../utilities';
 const jwtSecret = process.env.JWT_SECRET;
 
 export default async function loginUser(formData) {
@@ -27,6 +28,7 @@ export default async function loginUser(formData) {
     }
   } catch (error) {
     console.log(error);
-    return { status: 500 };
+    const errorMessage = handleServerErrorMessage(error);
+    return { status: 500, error: errorMessage };
   }
 }

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAppContext } from '../../context';
 import { logoutUser } from '../../actions';
-//import { deleteCookie } from 'cookies-next';
+import { Toast } from '../../components';
 import { FaUser } from 'react-icons/fa';
 import {
   MdOutlineLogout,
@@ -54,7 +54,7 @@ const UserMenu = () => {
       setUserId(null);
       router.push('/login');
     } else {
-      // TODO: Add error toast
+      setShowToast(<Toast serverError={response} />);
     }
   };
 

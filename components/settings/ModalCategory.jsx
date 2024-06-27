@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FormTextField, FormCheckboxField } from '../../components';
+import { FormTextField, FormCheckboxField, Toast } from '../../components';
 import { createCategory } from '../../actions';
 import { useAppContext } from '../../context';
 import { SETTINGS_MISSING_CATEGORY } from '../../constants';
 
 const ModalReminder = ({ userId, items, setItems }) => {
-  const { setShowModal } = useAppContext();
+  const { setShowModal, setShowToast } = useAppContext();
 
   const [form, setForm] = useState({
     userId,
@@ -70,8 +70,7 @@ const ModalReminder = ({ userId, items, setItems }) => {
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
 
       setIsAwaitingSubmitResponse(false);
@@ -91,11 +90,7 @@ const ModalReminder = ({ userId, items, setItems }) => {
   };
 
   return (
-    <form
-      action={(formData) => {
-        handleCreateCategory(formData);
-      }}
-    >
+    <form action={handleCreateCategory}>
       <FormTextField
         label='Category Name'
         subLabel='Sum it up in one or two words (e.g., School, Shopping, Work, Appointments, etc.)'

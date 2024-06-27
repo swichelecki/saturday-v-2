@@ -5,7 +5,7 @@ import { loginUser } from '../../actions';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAppContext } from '../../context';
-import { FormTextField } from '../../components';
+import { FormTextField, Toast } from '../../components';
 import {
   FORM_ERROR_MISSING_EMAIL,
   FORM_ERROR_MISSING_PASSWORD,
@@ -15,7 +15,7 @@ import {
 const Login = () => {
   const router = useRouter();
 
-  const { setShowToast, setServerError } = useAppContext();
+  const { setShowToast } = useAppContext();
 
   const [form, setForm] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState({
@@ -59,20 +59,14 @@ const Login = () => {
         password: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
       });
     } else {
-      setServerError(response.status);
-      setShowToast(true);
+      setShowToast(<Toast serverError={response} />);
       setisAwaitingLogInResponse(false);
     }
   };
 
   return (
     <div className='entry-form__wrapper'>
-      <form
-        action={(formData) => {
-          onSubmit(formData);
-        }}
-        className='entry-form__form'
-      >
+      <form action={onSubmit} className='entry-form__form'>
         <div className='entry-form__form-controls-wrapper'>
           <FormTextField
             label={'Email'}

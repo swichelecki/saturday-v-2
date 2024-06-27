@@ -3,6 +3,7 @@
 import Task from '../../../models/Task';
 import Category from '../../../models/Category';
 import { revalidatePath } from 'next/cache';
+import { handleServerErrorMessage } from '../../../utilities';
 
 export default async function updateCategory(item) {
   try {
@@ -51,6 +52,7 @@ export default async function updateCategory(item) {
     return { status: 200 };
   } catch (error) {
     console.log(error);
-    return { status: 500 };
+    const errorMessage = handleServerErrorMessage(error);
+    return { status: 500, error: errorMessage };
   }
 }

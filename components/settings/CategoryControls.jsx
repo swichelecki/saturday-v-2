@@ -7,6 +7,7 @@ import {
   Modal,
   ModalCategory,
   FormErrorMessage,
+  Toast,
 } from '../../components';
 import { deleteCategory, updateCategory } from '../../actions';
 import {
@@ -19,7 +20,7 @@ const CategoryControls = ({ categories, userId }) => {
   const dragOverItemRef = useRef(null);
   const categoryItemWrapperRef = useRef(null);
 
-  const { setShowToast, setServerError, setShowModal } = useAppContext();
+  const { setShowToast, setShowModal } = useAppContext();
 
   const [categoryItems, setCategoryItems] = useState(categories ?? []);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
@@ -44,8 +45,7 @@ const CategoryControls = ({ categories, userId }) => {
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
 
       setShowModal(null);
@@ -94,8 +94,7 @@ const CategoryControls = ({ categories, userId }) => {
     draggableCategoriesWithNewPriorities?.forEach((item) =>
       updateCategory(item).then((res) => {
         if (res.status !== 200) {
-          setServerError(res.status);
-          setShowToast(true);
+          setShowToast(<Toast serverError={res} />);
         }
       })
     );

@@ -3,6 +3,7 @@
 import Task from '../../../models/Task';
 import Category from '../../../models/Category';
 import { revalidatePath } from 'next/cache';
+import { handleServerErrorMessage } from '../../../utilities';
 
 export default async function deleteCategory(userId, _id) {
   try {
@@ -15,6 +16,7 @@ export default async function deleteCategory(userId, _id) {
     return { status: 200 };
   } catch (error) {
     console.log(error);
-    return { status: 200 };
+    const errorMessage = handleServerErrorMessage(error);
+    return { status: 500, error: errorMessage };
   }
 }

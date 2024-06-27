@@ -1,6 +1,7 @@
 'use server';
 
 import Task from '../../models/Task';
+import { handleServerErrorMessage } from '../../utilities';
 import { revalidatePath } from 'next/cache';
 
 export default async function itemUpdate(formData) {
@@ -38,6 +39,7 @@ export default async function itemUpdate(formData) {
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     console.log(error);
-    return { status: 500 };
+    const errorMessage = handleServerErrorMessage(error);
+    return { status: 500, error: errorMessage };
   }
 }

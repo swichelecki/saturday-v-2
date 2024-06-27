@@ -7,6 +7,7 @@ import {
   Modal,
   ModalReminders,
   FormErrorMessage,
+  Toast,
 } from '../../components';
 import { deleteReminder, getReminder } from '../../actions';
 import {
@@ -18,7 +19,7 @@ import {
 } from '../../constants';
 
 const RemindersControls = ({ reminders, userId }) => {
-  const { setShowToast, setServerError, setShowModal } = useAppContext();
+  const { setShowToast, setShowModal } = useAppContext();
 
   const [remindersItems, setRemindersItems] = useState(reminders ?? []);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
@@ -61,8 +62,7 @@ const RemindersControls = ({ reminders, userId }) => {
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
       setListItemIsAwaitingUpdateResponse(false);
     });
@@ -78,8 +78,7 @@ const RemindersControls = ({ reminders, userId }) => {
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
 
       setShowModal(null);

@@ -5,19 +5,20 @@ import { createUserAccount } from '../../actions';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAppContext } from '../../context';
-import { FormTextField } from '../../components';
+import { FormTextField, Toast } from '../../components';
 import {
   FORM_ERROR_MISSING_EMAIL,
   FORM_ERROR_MISSING_PASSWORD,
   FORM_ERROR_PASSWORD_MISMATCH,
   FORM_ERROR_MISSING_CONFIRM_PASSWORD,
   INVALID_USER_DATA,
+  USER_ALREADY_EXISTS,
 } from '../../constants';
 
 const Signup = () => {
   const router = useRouter();
 
-  const { setShowToast, setServerError } = useAppContext();
+  const { setShowToast } = useAppContext();
 
   const [form, setForm] = useState({
     email: '',
@@ -81,21 +82,21 @@ const Signup = () => {
         email: INVALID_USER_DATA,
         password: INVALID_USER_DATA,
       });
+    } else if (response.status === 409) {
+      setisAwaitingLogInResponse(false);
+      setErrorMessage({
+        email: USER_ALREADY_EXISTS,
+        password: USER_ALREADY_EXISTS,
+      });
     } else {
-      setServerError(response.status);
-      setShowToast(true);
+      setShowToast(<Toast serverError={response} />);
       setisAwaitingLogInResponse(false);
     }
   };
 
   return (
     <div className='entry-form__wrapper'>
-      <form
-        action={(formData) => {
-          onSubmit(formData);
-        }}
-        className='entry-form__form'
-      >
+      <form action={onSubmit} className='entry-form__form'>
         <div className='entry-form__form-controls-wrapper'>
           <FormTextField
             label={'Email'}

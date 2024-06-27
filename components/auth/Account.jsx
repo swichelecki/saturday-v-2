@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { changeUserPassword, deleteUserAccount } from '../../actions';
 import { useAppContext } from '../../context';
-import { FormTextField } from '..';
+import { FormTextField, Toast } from '../../components';
 import {
   FORM_ERROR_MISSING_EMAIL,
   FORM_ERROR_MISSING_PASSWORD,
@@ -22,7 +22,7 @@ const Account = ({ userId }) => {
 
   const router = useRouter();
 
-  const { setUserId, setShowToast, setServerError } = useAppContext();
+  const { setUserId, setShowToast } = useAppContext();
 
   // set global context user id
   useEffect(() => {
@@ -155,8 +155,7 @@ const Account = ({ userId }) => {
         password: INVALID_USER_DATA,
       });
     } else {
-      setServerError(response.status);
-      setShowToast(true);
+      setShowToast(<Toast serverError={response} />);
       setIsAwaitingChangePasswordResponse(false);
     }
   };
@@ -201,19 +200,14 @@ const Account = ({ userId }) => {
         deletePassword: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
       });
     } else {
-      setServerError(response.status);
-      setShowToast(true);
+      setShowToast(<Toast serverError={response} />);
       setIsAwaitingDeleteAccoungResponse(false);
     }
   };
 
   return (
     <div className='form-page' ref={pageRef}>
-      <form
-        action={(formData) => {
-          changePassword(formData);
-        }}
-      >
+      <form action={changePassword}>
         <h2>Change Password</h2>
         <FormTextField
           label='Email'
@@ -262,11 +256,7 @@ const Account = ({ userId }) => {
           </button>
         </div>
       </form>
-      <form
-        action={(formData) => {
-          deleteAccount(formData);
-        }}
-      >
+      <form action={deleteAccount}>
         <h2>Delete Account</h2>
         <FormTextField
           label='Email'

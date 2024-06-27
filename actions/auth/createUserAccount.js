@@ -5,6 +5,7 @@ import User from '../../models/User';
 import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
 import bcrypt from 'bcryptjs';
+import { handleServerErrorMessage } from '../../utilities';
 const jwtSecret = process.env.JWT_SECRET;
 
 export default async function createUserAccount(formData) {
@@ -21,7 +22,7 @@ export default async function createUserAccount(formData) {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      throw new Error('User already exists');
+      return { status: 409 };
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -39,6 +40,7 @@ export default async function createUserAccount(formData) {
     }
   } catch (error) {
     console.log(error);
-    return { status: 500 };
+    const errorMessage = handleServerErrorMessage(error);
+    return { status: 500, error: errorMessage };
   }
 }

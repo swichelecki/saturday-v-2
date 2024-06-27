@@ -22,7 +22,8 @@ export const FORM_ERROR_MISSING_DELETE_CONFIRMATION =
 export const FORM_ERROR_MISSING_DELETE_MISMATCH =
   'Delete Confirmation is Not Correct';
 export const DELETE_MY_ACCOUNT = 'delete my account';
-export const INVALID_USER_DATA = 'Invalid User Data';
+export const INVALID_USER_DATA = 'Invalid user data';
+export const USER_ALREADY_EXISTS = 'User already exists';
 export const SERVER_ERROR_MESSAGE = 'A server error has occurred';
 export const SETTINGS_MISSING_CATEGORY = 'Category Required';
 export const FORM_ERROR_MISSING_REMINDER_TITLE = 'Reminder Required';

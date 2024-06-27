@@ -6,6 +6,7 @@ import Reminder from '../../models/Reminder';
 import Category from '../../models/Category';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
+import { handleServerErrorMessage } from '../../utilities';
 
 export default async function deleteUserAccount(formData) {
   try {
@@ -28,6 +29,7 @@ export default async function deleteUserAccount(formData) {
     }
   } catch (error) {
     console.log(error);
-    return { status: 500 };
+    const errorMessage = handleServerErrorMessage(error);
+    return { status: 500, error: errorMessage };
   }
 }

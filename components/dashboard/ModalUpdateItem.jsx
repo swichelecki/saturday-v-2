@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FormTextField } from '../../components';
+import { FormTextField, Toast } from '../../components';
 import { updateItem } from '../../actions';
 import { useAppContext } from '../../context';
 import { FORM_ERROR_MISSING_UPDATE_TITLE } from '../../constants';
@@ -15,7 +15,7 @@ const ModalUpdateItem = ({
   setTaskToEditId,
   handleCloseMobileItem,
 }) => {
-  const { setShowModal } = useAppContext();
+  const { setShowModal, setShowToast } = useAppContext();
 
   const [form, setForm] = useState({
     userId,
@@ -102,8 +102,7 @@ const ModalUpdateItem = ({
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
 
       setIsAwaitingSubmitResponse(false);
@@ -132,11 +131,7 @@ const ModalUpdateItem = ({
   };
 
   return (
-    <form
-      action={(formData) => {
-        handleEditSubmit(formData);
-      }}
-    >
+    <form action={handleEditSubmit}>
       <FormTextField
         type='text'
         id='update'

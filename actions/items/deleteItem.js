@@ -1,6 +1,7 @@
 'use server';
 
 import Task from '../../models/Task';
+import { handleServerErrorMessage } from '../../utilities';
 
 export default async function deleteTask(_id) {
   try {
@@ -9,6 +10,7 @@ export default async function deleteTask(_id) {
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     console.log(error);
-    return { status: 500 };
+    const errorMessage = handleServerErrorMessage(error);
+    return { status: 500, error: errorMessage };
   }
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
-import { RemindersItem } from '..';
+import { RemindersItem, Toast } from '../../components';
 import { getReminder, updateReminder } from '../../actions';
 import { useInnerWidth } from '../../hooks';
 import { handleHiddenHeight } from '../../utilities';
@@ -11,7 +11,7 @@ import { MOBILE_BREAKPOINT } from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
 const Reminders = ({ reminders }) => {
-  const { setShowToast, setServerError } = useAppContext();
+  const { setShowToast } = useAppContext();
 
   const width = useInnerWidth();
 
@@ -95,8 +95,7 @@ const Reminders = ({ reminders }) => {
         }
 
         if (res.status !== 200) {
-          setServerError(res.status);
-          setShowToast(true);
+          setShowToast(<Toast serverError={res} />);
         }
 
         setIsAwaitingResetResponse(false);
@@ -113,8 +112,7 @@ const Reminders = ({ reminders }) => {
       }
 
       if (res.status !== 200) {
-        setServerError(res.status);
-        setShowToast(true);
+        setShowToast(<Toast serverError={res} />);
       }
     });
   };

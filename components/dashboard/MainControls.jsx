@@ -30,12 +30,7 @@ const MainControls = ({
   };
 
   return (
-    <form
-      action={(formData) => {
-        handleOnSubmit(formData);
-      }}
-      className='main-controls'
-    >
+    <form action={handleOnSubmit} className='main-controls'>
       <div className='main-controls__top-controls'>
         {width && width <= MOBILE_BREAKPOINT ? (
           <div className='main-controls__select-wrapper'>

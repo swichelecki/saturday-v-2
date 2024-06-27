@@ -1,12 +1,10 @@
 import { createContext, useContext, useState } from 'react';
-import { Toast } from '../components';
 
 export const AppContext = createContext();
 
 export function AppWrapper({ children }) {
   const [userId, setUserId] = useState('');
-  const [showToast, setShowToast] = useState(false);
-  const [serverError, setServerError] = useState(0);
+  const [toast, setShowToast] = useState(null);
   const [modal, setShowModal] = useState(null);
 
   return (
@@ -14,18 +12,13 @@ export function AppWrapper({ children }) {
       value={{
         userId,
         setUserId,
-        showToast,
+        toast,
         setShowToast,
-        serverError,
-        setServerError,
+        modal,
         setShowModal,
       }}
     >
       {children}
-      {modal && modal}
-      {showToast && (
-        <Toast serverError={serverError} setShowToast={setShowToast} />
-      )}
     </AppContext.Provider>
   );
 }

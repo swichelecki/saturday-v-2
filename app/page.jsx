@@ -81,7 +81,7 @@ async function getDashboardData() {
     // sort arrays by date asc when date is present
     for (const item of columnsData) {
       if (
-        Object.values(item)[0]?.legnth &&
+        Object.values(item)[0]?.length &&
         Object.values(item)[0][0]['date'] !== null
       ) {
         const itemsWithDatesSortedAsc = handleSortItemsAscending(

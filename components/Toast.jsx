@@ -1,10 +1,12 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
+import { useAppContext } from '../context';
 import { MdError, MdOutlineClear } from 'react-icons/md';
-import { SERVER_ERROR_MESSAGE } from '../constants';
 
-const Toast = ({ serverError, setShowToast }) => {
+const Toast = ({ serverError }) => {
+  const { setShowToast } = useAppContext();
+
   const toastRef = useRef(null);
 
   useEffect(() => {
@@ -17,12 +19,12 @@ const Toast = ({ serverError, setShowToast }) => {
     <div ref={toastRef} className='toast-message'>
       <MdError />
       <div>
-        <p>{`${serverError} Error`}</p>
-        <p>{SERVER_ERROR_MESSAGE}</p>
+        <p>{`${serverError.status} Error`}</p>
+        <p>{serverError.error}</p>
       </div>
       <button
         onClick={() => {
-          setShowToast(false);
+          setShowToast(null);
         }}
       >
         <MdOutlineClear />
