@@ -21,24 +21,24 @@ export async function middleware(req) {
     }
   }
 
-  if (!user && req.nextUrl.pathname === '/login') {
+  if (
+    (!user && req.nextUrl.pathname === '/login') ||
+    (!user && req.nextUrl.pathname === '/signup')
+  ) {
     return NextResponse.next();
   }
 
-  if (!user && req.nextUrl.pathname === '/signup') {
-    return NextResponse.next();
-  }
-
-  if (!user && req.nextUrl.pathname !== '/login') {
-    req.nextUrl.pathname = '/login';
+  if (!user && req.nextUrl.pathname !== '/') {
+    req.nextUrl.pathname = '/';
     return NextResponse.redirect(req.nextUrl);
   }
 
   if (
     (user && req.nextUrl.pathname === '/login') ||
-    (user && req.nextUrl.pathname === '/signup')
+    (user && req.nextUrl.pathname === '/signup') ||
+    (user && req.nextUrl.pathname === '/')
   ) {
-    req.nextUrl.pathname = '/';
+    req.nextUrl.pathname = '/dashboard';
     return NextResponse.redirect(req.nextUrl);
   }
 
@@ -46,5 +46,5 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ['/login', '/signup', '/details/:path*', '/'],
+  matcher: ['/dashboard', '/login', '/signup', '/details/:path*', '/'],
 };

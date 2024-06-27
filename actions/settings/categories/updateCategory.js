@@ -47,7 +47,7 @@ export default async function updateCategory(item) {
       );
     });
 
-    revalidatePath('/');
+    revalidatePath('/dashboard');
 
     return { status: 200 };
   } catch (error) {

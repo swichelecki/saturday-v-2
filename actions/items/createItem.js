@@ -38,7 +38,7 @@ export default async function createItem(formData) {
       mandatoryDate,
     });
 
-    revalidatePath('/');
+    revalidatePath('/dashboard');
 
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {

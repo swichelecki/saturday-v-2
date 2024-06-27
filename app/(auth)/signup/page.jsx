@@ -1,9 +1,9 @@
 import { Signup } from '../../../components';
 
 export const metadata = {
-  title: 'Signup',
+  title: 'Sign Up',
 };
 
-export default async function SignupPage() {
+export default function SignupPage() {
   return <Signup />;
 }

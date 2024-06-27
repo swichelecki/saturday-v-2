@@ -34,7 +34,7 @@ export default async function itemUpdate(formData) {
 
     const result = await Task.find({ _id: _id });
 
-    revalidatePath('/');
+    revalidatePath('/dashboard');
 
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {

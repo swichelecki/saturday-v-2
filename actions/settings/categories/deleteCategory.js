@@ -11,7 +11,7 @@ export default async function deleteCategory(userId, _id) {
     const { type } = category;
     await Task.deleteMany({ type, userId });
     await Category.deleteOne({ _id: _id });
-    revalidatePath('/');
+    revalidatePath('/dashboard');
 
     return { status: 200 };
   } catch (error) {

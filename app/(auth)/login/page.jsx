@@ -1,9 +1,9 @@
 import { Login } from '../../../components';
 
 export const metadata = {
-  title: 'Login',
+  title: 'Log In',
 };
 
-export default async function LoginPage() {
+export default function LoginPage() {
   return <Login />;
 }

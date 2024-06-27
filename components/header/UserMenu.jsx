@@ -51,8 +51,8 @@ const UserMenu = () => {
   const handleUserLogOut = async () => {
     const response = await logoutUser();
     if (response.status === 200) {
-      setUserId(null);
-      router.push('/login');
+      setUserId('');
+      router.push('/');
     } else {
       setShowToast(<Toast serverError={response} />);
     }
@@ -86,9 +86,9 @@ const UserMenu = () => {
             </Link>
           </li>
           <li>
-            <Link href='/'>
+            <Link href='/dashboard'>
               <MdHome />
-              Home
+              Dashboard
             </Link>
           </li>
           <li>

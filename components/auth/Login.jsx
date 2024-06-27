@@ -51,7 +51,7 @@ const Login = () => {
 
     const response = await loginUser(formData);
     if (response.status === 200) {
-      router.push('/');
+      router.push('/dashboard');
     } else if (response.status === 403) {
       setisAwaitingLogInResponse(false);
       setErrorMessage({
@@ -91,7 +91,7 @@ const Login = () => {
               {isAwaitingLogInResponse && <div className='loader'></div>}
               Log In
             </button>
-            <Link href='/signup'>Sign up</Link>
+            <Link href='/signup'>Sign Up</Link>
           </div>
         </div>
       </form>

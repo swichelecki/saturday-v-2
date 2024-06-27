@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppContext } from '../context';
-import { Header } from './';
+import { Header } from '../components';
 
 const Layout = ({ children }) => {
   const { modal, toast } = useAppContext();

@@ -7,7 +7,7 @@ import { handleServerErrorMessage } from '../../../utilities';
 export default async function deleteReminder(id) {
   try {
     await Reminder.deleteOne({ _id: id });
-    revalidatePath('/');
+    revalidatePath('/dashboard');
     return { status: 200 };
   } catch (error) {
     console.log(error);

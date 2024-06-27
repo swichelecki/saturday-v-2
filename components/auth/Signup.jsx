@@ -75,7 +75,7 @@ const Signup = () => {
 
     const response = await createUserAccount(formData);
     if (response.status === 200) {
-      router.push('/');
+      router.push('/settings');
     } else if (response.status === 400) {
       setisAwaitingLogInResponse(false);
       setErrorMessage({
@@ -130,7 +130,7 @@ const Signup = () => {
               {isAwaitingLogInResponse && <div className='loader'></div>}
               Create Account
             </button>
-            <Link href='/login'>Log in</Link>
+            <Link href='/login'>Log In</Link>
           </div>
         </div>
       </form>
