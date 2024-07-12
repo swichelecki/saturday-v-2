@@ -536,10 +536,11 @@ const ItemList = ({
               />
             )}
             <div className='list-item__details-controls-left'>
-              <Link href={`/details/${item?._id}`}>
-                <span className='list-item__edit-button list-item__edit-button--desktop'>
-                  <MdEdit />
-                </span>
+              <Link
+                href={`/details/${item?._id}`}
+                className='list-item__edit-button list-item__edit-button--desktop'
+              >
+                <MdEdit />
               </Link>
             </div>
           </div>
