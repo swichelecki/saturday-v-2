@@ -5,13 +5,14 @@ button {
 }
 
 button.main-controls__type-button,
+a.main-controls__type-button,
 button.main-controls__add-button,
 span.main-controls__create-button,
 span.list-item__details-edit-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
 button.list-item__details-button,
-span.list-item__edit-button,
+a.list-item__edit-button,
 button.list-item__cancel-button,
 button.form-page__save-button,
 span.form-page__cancel-button,
@@ -37,7 +38,8 @@ button.modal__save-button {
   text-align: center;
 }
 
-button.main-controls__type-button {
+button.main-controls__type-button,
+a.main-controls__type-button {
   background-color: $color-background-secondary;
   color: $button-purple;
   box-shadow: 0 0 0 1px $color-border;
@@ -146,7 +148,7 @@ button.form-page__delete-button {
   }
 }
 
-span.list-item__edit-button,
+a.list-item__edit-button,
 button.form-page__save-button,
 button.modal__save-button {
   background-color: $button-green-dark;
@@ -190,7 +192,7 @@ span.form-page__cancel-button {
 button.list-item__details-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
-span.list-item__edit-button,
+a.list-item__edit-button,
 button.list-item__cancel-button {
   position: relative;
   padding: 0;
@@ -313,7 +315,7 @@ button.user-menu__button {
     min-width: 55px;
   }
 
-  span.list-item__edit-button--desktop {
+  a.list-item__edit-button--desktop {
     width: 55px;
     height: 35px;
     border-radius: 20px;

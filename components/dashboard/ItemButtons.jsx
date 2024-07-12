@@ -70,10 +70,11 @@ const ItemButtons = ({
         </button>
       ) : (date || dateAndTime) &&
         (!description || description === '<p><br></p>') ? (
-        <Link href={`/details/${itemId}`}>
-          <span className={`list-item__edit-button ${handleEditButtonClass()}`}>
-            <MdEdit />
-          </span>
+        <Link
+          href={`/details/${itemId}`}
+          className={`list-item__edit-button ${handleEditButtonClass()}`}
+        >
+          <MdEdit />
         </Link>
       ) : taskToEditId !== itemId || isAwaitingEditResponse ? (
         <button

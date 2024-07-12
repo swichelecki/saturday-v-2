@@ -1,4 +1,4 @@
-const handleHiddenHeight = (el) => {
+export const handleHiddenHeight = (el) => {
   if (!el?.cloneNode) {
     return null;
   }
@@ -20,5 +20,3 @@ const handleHiddenHeight = (el) => {
 
   return height;
 };
-
-export default handleHiddenHeight;

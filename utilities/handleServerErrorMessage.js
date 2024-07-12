@@ -1,6 +1,6 @@
 import { SERVER_ERROR_MESSAGE } from '../constants';
 
-const handleServerErrorMessage = (error) => {
+export const handleServerErrorMessage = (error) => {
   let message;
 
   if (error instanceof Error) {
@@ -15,5 +15,3 @@ const handleServerErrorMessage = (error) => {
 
   return message;
 };
-
-export default handleServerErrorMessage;

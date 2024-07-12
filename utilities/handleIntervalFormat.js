@@ -1,4 +1,4 @@
-const handleIntervalFormat = (interval) => {
+export const handleIntervalFormat = (interval) => {
   let intervalFormatted = '';
   switch (interval) {
     case 1:
@@ -52,5 +52,3 @@ const handleIntervalFormat = (interval) => {
   }
   return intervalFormatted;
 };
-
-export default handleIntervalFormat;

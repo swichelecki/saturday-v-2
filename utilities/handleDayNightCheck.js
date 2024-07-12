@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-const handleDayNightCheck = (weather_code) => {
+export const handleDayNightCheck = (weather_code) => {
   if (weather_code > 2) return weather_code;
 
   const FORMAT_TIME = 'HH:mm:ss';
@@ -55,5 +55,3 @@ const handleDayNightCheck = (weather_code) => {
     }
   }
 };
-
-export default handleDayNightCheck;

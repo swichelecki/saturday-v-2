@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
 import { useAppContext } from '../../context';
 
 const Weather = dynamic(() => import('../../components/header/Weather'));
@@ -9,6 +10,7 @@ const UserMenu = dynamic(() => import('../../components/header/UserMenu'));
 
 const Header = () => {
   const { userId } = useAppContext();
+  const pathname = usePathname();
 
   return (
     <header className='header'>
@@ -22,8 +24,12 @@ const Header = () => {
               <Weather />
               <UserMenu />
             </>
+          ) : pathname === '/' ? (
+            <Link href='/login' className=''>
+              Log In
+            </Link>
           ) : (
-            <Link href='/login'>Log In</Link>
+            ''
           )}
         </div>
       </div>

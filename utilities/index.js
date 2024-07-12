@@ -1,8 +1,9 @@
-export { default as handleTodaysDateCheck } from './handleTodaysDateCheck';
-export { default as handleTransitionSpeed } from './handleTransitionSpeed';
-export { default as handleDayNightCheck } from './handleDayNightCheck';
-export { default as handleSortItemsAscending } from './handleSortItemsAscending';
-export { default as handleHiddenHeight } from './handleHiddenHeight';
-export { default as handleReminderBufferFormat } from './handleReminderBufferFormat';
-export { default as handleIntervalFormat } from './handleIntervalFormat';
-export { default as handleServerErrorMessage } from './handleServerErrorMessage';
+export { handleTodaysDateCheck } from './handleTodaysDateCheck';
+export { handleTransitionSpeed } from './handleTransitionSpeed';
+export { handleDayNightCheck } from './handleDayNightCheck';
+export { handleSortItemsAscending } from './handleSortItemsAscending';
+export { handleHiddenHeight } from './handleHiddenHeight';
+export { handleReminderBufferFormat } from './handleReminderBufferFormat';
+export { handleIntervalFormat } from './handleIntervalFormat';
+export { handleServerErrorMessage } from './handleServerErrorMessage';
+export { handleDateNow } from './handleDateNow';

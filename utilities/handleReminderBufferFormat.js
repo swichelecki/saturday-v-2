@@ -1,4 +1,4 @@
-const handleReminderBufferFormat = (buffer) => {
+export const handleReminderBufferFormat = (buffer) => {
   let bufferFormatted = '';
   switch (buffer) {
     case 0:
@@ -16,5 +16,3 @@ const handleReminderBufferFormat = (buffer) => {
   }
   return bufferFormatted;
 };
-
-export default handleReminderBufferFormat;

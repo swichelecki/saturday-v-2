@@ -1,4 +1,4 @@
-const handleSortItemsAscending = (filteredUpcomingTasks, keyName) => {
+export const handleSortItemsAscending = (filteredUpcomingTasks, keyName) => {
   const tasksWithFormattedDate = filteredUpcomingTasks.map((item) => {
     return {
       ...item,
@@ -19,5 +19,3 @@ const handleSortItemsAscending = (filteredUpcomingTasks, keyName) => {
 
   return upcomingTasksSortedByDateAsc;
 };
-
-export default handleSortItemsAscending;

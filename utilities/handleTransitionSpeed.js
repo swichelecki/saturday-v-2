@@ -1,6 +1,6 @@
 import { MAX_TRANSITION_SPEED, MIN_TRANSITION_SPEED } from '../constants';
 
-const handleTransitionSpeed = (movedBy, duration) => {
+export const handleTransitionSpeed = (movedBy, duration) => {
   const velocity = movedBy / duration;
   const speed = movedBy / velocity;
 
@@ -10,5 +10,3 @@ const handleTransitionSpeed = (movedBy, duration) => {
     ? MIN_TRANSITION_SPEED
     : MAX_TRANSITION_SPEED;
 };
-
-export default handleTransitionSpeed;
