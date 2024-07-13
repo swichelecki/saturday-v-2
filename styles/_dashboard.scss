@@ -7,10 +7,17 @@
 
 .items-column-wrapper {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   width: 100%;
   gap: 18px;
+}
+
+.items-masonry-column {
+  flex: 0 0 312px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 10px;
 }
 
 @media screen and (max-width: 800px) {
@@ -25,8 +32,9 @@
   .content-container {
     gap: 0;
   }
-  .items-column-wrapper {
-    flex-direction: column;
+  .items-masonry-column {
+    flex: 1 1 auto;
+    width: 100%;
     gap: 0;
   }
 }

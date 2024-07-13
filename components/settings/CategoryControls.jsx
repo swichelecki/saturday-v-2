@@ -109,7 +109,7 @@ const CategoryControls = ({ categories, userId }) => {
         <div className='settings-controls__button-wrapper'>
           <button
             onClick={() => {
-              if (categoryItems?.length < 4) {
+              if (categoryItems?.length <= 12) {
                 setShowModal(
                   <Modal className='modal modal__form-modal--small'>
                     <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>

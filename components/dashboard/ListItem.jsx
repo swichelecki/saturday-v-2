@@ -425,7 +425,7 @@ const ItemList = ({
 
   const isToday = item?.mandatoryDate
     ? handleTodaysDateCheck(item?.date)
-    : null;
+    : false;
 
   return (
     <div

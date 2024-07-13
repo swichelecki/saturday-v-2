@@ -1,5 +1,5 @@
 .items-column {
-  flex: 0 0 312px;
+  flex: 1 1 auto;
   h2 {
     padding: 12px 24px;
     margin-bottom: 8px;
@@ -20,7 +20,6 @@
 
 @media screen and (max-width: 600px) {
   .items-column {
-    flex: 1 1 auto;
     h2 {
       margin-bottom: 0;
       border: 0;

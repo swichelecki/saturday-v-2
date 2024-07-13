@@ -3,7 +3,7 @@ import Reminder from '../../../../models/Reminder';
 
 export const revalidate = 0;
 
-export async function GET(req) {
+export async function GET() {
   try {
     await connectDB();
     const reminders = await Reminder.find();

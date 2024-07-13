@@ -42,6 +42,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
     dateAndTime: '',
     mandatoryDate: false,
   });
+  const [masonryItems, setMasonryItems] = useState([]);
   const [priority, setPriority] = useState(0);
   const [taskToEditId, setTaskToEditId] = useState('');
   const [isAwaitingAddResponse, setIsAwaitingAddResponse] = useState(false);
@@ -88,6 +89,41 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
       type: categories?.length ? categories[0]['type'] : '',
     });
   }, []);
+
+  // build masonry
+  useEffect(() => {
+    if (!window || !width) return;
+
+    const generateMasonry = (columns, listItems) => {
+      const masonryColumns = [];
+      const itemsCopy = [...listItems];
+      const items = itemsCopy.filter((item) => Object.values(item)[0]?.length);
+
+      // create columns array
+      for (let i = 0; i < columns; i++) {
+        masonryColumns.push({ [`column_${i}`]: [] });
+      }
+
+      // add items to columns array
+      for (let i = 0; i < items?.length; i++) {
+        const column = i % columns;
+        masonryColumns[column][`column_${column}`].push(items[i]);
+      }
+
+      setMasonryItems(masonryColumns);
+    };
+
+    const numberOfColumns =
+      width > 1400
+        ? 4
+        : width < 1400 && width > 1080
+        ? 3
+        : width < 1080 && width > 704
+        ? 2
+        : 1;
+
+    generateMasonry(numberOfColumns, listItems);
+  }, [listItems, width]);
 
   // remove at-item-limit message after item deletion
   useEffect(() => {
@@ -272,22 +308,29 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
         <Reminders reminders={reminders} />
       )}
       <div className='items-column-wrapper'>
-        {listItems?.map((item, index) => (
-          <ItemsColumn
-            key={`items-column_${index}`}
-            heading={Object.keys(item)[0]}
-            items={Object.values(item)[0]}
-            setListItems={setListItems}
-            handleEditTask={handleEditTask}
-            handleDeleteTask={handleDeleteTask}
-            taskToEditId={taskToEditId}
-            isAwaitingEditResponse={isAwaitingEditResponse}
-            isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-            closeOpenItem={closeOpenItem}
-            allItems={allItems}
-            setAllItemsTouchReset={setAllItemsTouchReset}
-            allItemsTouchReset={allItemsTouchReset}
-          />
+        {masonryItems.map((columnData, index) => (
+          <div
+            className='items-masonry-column'
+            key={`items-masonry-column_${index}`}
+          >
+            {Object.values(columnData)[0].map((item, index) => (
+              <ItemsColumn
+                key={`items-column_${index}`}
+                heading={Object.keys(item)[0]}
+                items={Object.values(item)[0]}
+                setListItems={setListItems}
+                handleEditTask={handleEditTask}
+                handleDeleteTask={handleDeleteTask}
+                taskToEditId={taskToEditId}
+                isAwaitingEditResponse={isAwaitingEditResponse}
+                isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+                closeOpenItem={closeOpenItem}
+                allItems={allItems}
+                setAllItemsTouchReset={setAllItemsTouchReset}
+                allItemsTouchReset={allItemsTouchReset}
+              />
+            ))}
+          </div>
         ))}
       </div>
     </div>
