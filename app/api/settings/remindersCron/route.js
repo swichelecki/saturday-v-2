@@ -1,6 +1,7 @@
 import connectDB from '../../../../config/db';
 import Reminder from '../../../../models/Reminder';
-import { handleDateNow } from '../../../../utilities';
+
+export const revalidate = 0;
 
 export async function GET(req) {
   try {
@@ -39,7 +40,7 @@ export async function GET(req) {
         } = item;
 
         // show next occurance of reminder
-        if (nextOccurrance <= handleDateNow() && !item?.displayReminder) {
+        if (nextOccurrance <= Date.now() && !item?.displayReminder) {
           await Reminder.updateOne(
             { _id: _id },
             {
@@ -55,10 +56,7 @@ export async function GET(req) {
         }
 
         // add interval to reminder not reset before next interval start date begins
-        if (
-          nextOccurrance + interval <= handleDateNow() &&
-          item?.displayReminder
-        ) {
+        if (nextOccurrance + interval <= Date.now() && item?.displayReminder) {
           const reminderStartingDate = new Date(item?.reminderDate);
           reminderStartingDate.setTime(
             reminderStartingDate.getTime() + interval
@@ -93,7 +91,7 @@ export async function GET(req) {
 
         // display
         if (
-          nextOccurrance > handleDateNow() &&
+          nextOccurrance > Date.now() &&
           reminderDateMinusBuffer <= today &&
           !item?.displayReminder
         ) {
@@ -122,7 +120,7 @@ export async function GET(req) {
         }
 
         // reschedule
-        if (nextOccurrance <= handleDateNow() && item?.displayReminder) {
+        if (nextOccurrance <= Date.now() && item?.displayReminder) {
           const interval = item?.recurrenceInterval;
           const date = new Date(item?.reminderDate);
           date.setMonth(date.getMonth() + interval);

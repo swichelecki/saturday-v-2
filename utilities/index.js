@@ -6,4 +6,3 @@ export { handleHiddenHeight } from './handleHiddenHeight';
 export { handleReminderBufferFormat } from './handleReminderBufferFormat';
 export { handleIntervalFormat } from './handleIntervalFormat';
 export { handleServerErrorMessage } from './handleServerErrorMessage';
-export { handleDateNow } from './handleDateNow';
