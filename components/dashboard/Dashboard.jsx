@@ -93,12 +93,11 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
   // build masonry
   useEffect(() => {
     if (!window || !width) return;
+    const itemsCopy = [...listItems];
+    const items = itemsCopy.filter((item) => Object.values(item)[0]?.length);
 
-    const generateMasonry = (columns, listItems) => {
+    const handleMasonry = (columns, items) => {
       const masonryColumns = [];
-      const itemsCopy = [...listItems];
-      const items = itemsCopy.filter((item) => Object.values(item)[0]?.length);
-
       // create columns array
       for (let i = 0; i < columns; i++) {
         masonryColumns.push({ [`column_${i}`]: [] });
@@ -114,15 +113,19 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
     };
 
     const numberOfColumns =
-      width > 1400
+      width >= 1400 && items?.length >= 4
         ? 4
-        : width < 1400 && width > 1080
+        : (width < 1400 && width >= 1080 && items?.length >= 3) ||
+          (items?.length === 3 && width >= 1080)
         ? 3
-        : width < 1080 && width > 704
+        : (width < 1080 && width >= 704 && items?.length >= 2) ||
+          (items?.length === 2 && width >= 704)
         ? 2
-        : 1;
+        : width < 704 || items?.length === 1
+        ? 1
+        : undefined;
 
-    generateMasonry(numberOfColumns, listItems);
+    handleMasonry(numberOfColumns, items);
   }, [listItems, width]);
 
   // remove at-item-limit message after item deletion

@@ -8,6 +8,7 @@ import {
   handleTodaysDateCheck,
   handleTransitionSpeed,
   handleHiddenHeight,
+  handleItemPastDueCheck,
 } from '../../utilities';
 import moment from 'moment-timezone';
 import { GrDrag } from 'react-icons/gr';
@@ -427,6 +428,10 @@ const ItemList = ({
     ? handleTodaysDateCheck(item?.date)
     : false;
 
+  const isPastDue = item?.mandatoryDate
+    ? handleItemPastDueCheck(item?.date)
+    : false;
+
   return (
     <div
       className='list-item__outer-wrapper'
@@ -444,12 +449,17 @@ const ItemList = ({
         {(item?.dateAndTime || item?.date) && (
           <div
             className={`list-item__upcoming-date-time${
-              isToday ? ' list-item__upcoming-date-time--is-today' : ''
+              isToday
+                ? ' list-item__upcoming-date-time--is-today'
+                : isPastDue
+                ? ' list-item__upcoming-date-time--pastDue'
+                : ''
             }`}
           >
             {item?.dateAndTime ? (
               <p>
-                {isToday && 'Today,'}{' '}
+                {isToday && 'Today, '}
+                {isPastDue && 'Past Due! '}
                 {moment(item?.dateAndTime)
                   .tz('America/Chicago')
                   .format('dddd, MMMM D,')}{' '}
@@ -460,6 +470,7 @@ const ItemList = ({
             ) : (
               <p>
                 {isToday && 'Today, '}
+                {isPastDue && 'Past Due! '}
                 {moment(item?.date).format('dddd, MMMM D')}
               </p>
             )}

@@ -21,8 +21,12 @@
       font-size: 1rem; // 16px
     }
     &--is-today {
-      background-color: $color-is-today;
+      background-color: $button-orange-dark;
       color: $button-orange;
+    }
+    &--pastDue {
+      background-color: $button-red-dark;
+      color: $button-red;
     }
   }
   &__item {

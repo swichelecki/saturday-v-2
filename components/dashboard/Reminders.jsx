@@ -6,7 +6,6 @@ import { RemindersItem, Toast } from '../../components';
 import { getReminder, updateReminder } from '../../actions';
 import { useInnerWidth } from '../../hooks';
 import { handleHiddenHeight } from '../../utilities';
-import moment from 'moment-timezone';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
@@ -206,12 +205,7 @@ const Reminders = ({ reminders }) => {
                 key={`reminder-item__${index}`}
                 id={item?._id}
                 title={item?.reminder}
-                date={
-                  item?.exactRecurringDate &&
-                  moment(item?.reminderDate.split('T')[0]).format(
-                    'dddd, MMMM D'
-                  )
-                }
+                date={item?.exactRecurringDate && item?.reminderDate}
                 isAwaitingResetResponse={isAwaitingResetResponse}
                 handleResetReminder={handleResetReminder}
               />

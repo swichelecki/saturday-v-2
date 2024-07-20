@@ -88,6 +88,7 @@ export async function GET() {
         const reminderDateMinusBuffer = reminderDateObject.setDate(
           reminderDateObject.getDate() - item?.recurrenceBuffer
         );
+        const twentyFourHours = 86400000;
 
         // display
         if (
@@ -120,7 +121,10 @@ export async function GET() {
         }
 
         // reschedule
-        if (nextOccurrance <= Date.now() && item?.displayReminder) {
+        if (
+          nextOccurrance + twentyFourHours < Date.now() &&
+          item?.displayReminder
+        ) {
           const interval = item?.recurrenceInterval;
           const date = new Date(item?.reminderDate);
           date.setMonth(date.getMonth() + interval);

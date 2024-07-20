@@ -220,15 +220,21 @@ const DetailsForm = ({ task, userId }) => {
         type='hidden'
         name='dateAndTime'
         value={
-          task?.dateAndTime
-            ? task?.dateAndTime
-            : handleDateAndTimeToUTC(form?.dateAndTimeState)
+          form?.dateAndTimeState
+            ? handleDateAndTimeToUTC(form?.dateAndTimeState)
+            : task?.dateAndTime
         }
       />
       <input
         type='hidden'
         name='date'
-        value={task?.date ? task?.date : form?.dateState.split('T')[0]}
+        value={
+          form?.dateState
+            ? form?.dateState.split('T')[0]
+            : form?.dateAndTimeState
+            ? form?.dateAndTimeState.split('T')[0]
+            : task?.date
+        }
       />
       <div className='form-page__buttons-wrapper'>
         <button type='submit' className='form-page__save-button'>

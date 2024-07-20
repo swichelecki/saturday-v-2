@@ -7,3 +7,4 @@ export { handleReminderBufferFormat } from './handleReminderBufferFormat';
 export { handleIntervalFormat } from './handleIntervalFormat';
 export { handleServerErrorMessage } from './handleServerErrorMessage';
 export { handleDateAndTimeToUTC } from './handleDateAndTimeToUTC';
+export { handleItemPastDueCheck } from './handleItemPastDueCheck';

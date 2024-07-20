@@ -8,12 +8,14 @@
   font-weight: 400;
   border-radius: 8px;
   background-color: $button-yellow-dark;
-  &__title {
-    color: $button-yellow;
-  }
+  color: $button-yellow;
   &__date {
     color: $color-font;
     font-size: 1rem; // 16px
     font-weight: 300;
+  }
+  &--today {
+    background-color: $button-orange-dark;
+    color: $button-orange;
   }
 }
