@@ -8,6 +8,7 @@ export default async function createItem(formData) {
   const {
     title,
     description,
+    dateAndTime,
     userId,
     priority,
     type,
@@ -20,10 +21,6 @@ export default async function createItem(formData) {
     const date = formData.get('dateAndTime')
       ? formData.get('dateAndTime').split('T')[0]
       : formData.get('date');
-
-    const dateAndTime = formData.get('dateAndTime')
-      ? new Date(formData.get('dateAndTime')).toISOString()
-      : null;
 
     const result = await Task.create({
       userId,

@@ -95,7 +95,10 @@ const DetailsForm = ({ task, userId }) => {
   const handleSetForm = (e) => {
     setForm({
       ...form,
-      [e.target.name]: e.target.value,
+      [e.target.name]:
+        e.target.name !== 'dateAndTime'
+          ? e.target.value
+          : new Date(e.target.value).toISOString(),
     });
   };
 

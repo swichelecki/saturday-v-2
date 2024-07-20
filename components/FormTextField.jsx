@@ -1,5 +1,3 @@
-'use client';
-
 import { FormErrorMessage } from './';
 import moment from 'moment-timezone';
 
