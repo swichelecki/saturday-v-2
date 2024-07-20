@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppContext } from '../context';
 import { createItem, updateItem } from '../actions';
+import { handleDateAndTimeToUTC } from '../utilities';
 import {
   FormTextField,
   FormWYSIWYGField,
@@ -33,8 +34,8 @@ const DetailsForm = ({ task, userId }) => {
     title: task?.title ?? '',
     description: task?.description ?? '',
     confirmDeletion: task?.confirmDeletion ?? false,
-    date: task?.date ?? '',
-    dateAndTime: task?.dateAndTime ?? '',
+    dateState: task?.date ?? '',
+    dateAndTimeState: task?.dateAndTime ?? '',
     priority: task?.priority ?? priority,
     type: task?.type ?? type,
     column: task?.column ?? column,
@@ -75,7 +76,7 @@ const DetailsForm = ({ task, userId }) => {
       ...errorMessage,
       dateOrDateAndTime: '',
     });
-  }, [form.date, form.dateAndTime]);
+  }, [form.dateState, form.dateAndTime]);
 
   // scroll up to topmost error message
   useEffect(() => {
@@ -95,10 +96,7 @@ const DetailsForm = ({ task, userId }) => {
   const handleSetForm = (e) => {
     setForm({
       ...form,
-      [e.target.name]:
-        e.target.name !== 'dateAndTime'
-          ? e.target.value
-          : new Date(e.target.value).toISOString(),
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -114,7 +112,7 @@ const DetailsForm = ({ task, userId }) => {
     // error handling for missing required fields
     if (
       !form?.title ||
-      (form.mandatoryDate && !form?.date && !form?.dateAndTime) ||
+      (form.mandatoryDate && !form?.dateState && !form?.dateAndTimeState) ||
       (!form.mandatoryDate &&
         (!form?.description || form.description === '<p><br></p>'))
     ) {
@@ -126,8 +124,8 @@ const DetailsForm = ({ task, userId }) => {
           FORM_ERROR_MISSING_DESCRIPTION,
         dateOrDateAndTime:
           form.mandatoryDate &&
-          !form.date &&
-          !form.dateAndTime &&
+          !form.dateState &&
+          !form.dateAndTimeState &&
           FORM_ERROR_MISSING_DATE,
       });
       setScrollToErrorMessage(true);
@@ -169,7 +167,6 @@ const DetailsForm = ({ task, userId }) => {
         onChangeHandler={handleSetForm}
         errorMessage={errorMessage.title}
       />
-      {/* TODO: may need better way to get data as this is not a real field */}
       <FormWYSIWYGField
         label='Description'
         value={form?.description}
@@ -188,21 +185,23 @@ const DetailsForm = ({ task, userId }) => {
             label='Date'
             type='date'
             id='date'
-            name='date'
-            value={form?.date && !form?.dateAndTime ? form?.date : ''}
+            name='dateState'
+            value={
+              form?.dateState && !form?.dateAndTimeState ? form?.dateState : ''
+            }
             onChangeHandler={handleSetForm}
             errorMessage={errorMessage.dateOrDateAndTime}
-            disabled={form?.dateAndTime}
+            disabled={form?.dateAndTimeState}
           />
           <FormTextField
             label='Date & Time'
             type='datetime-local'
             id='dateAndTime'
-            name='dateAndTime'
-            value={form?.dateAndTime}
+            name='dateAndTimeState'
+            value={form?.dateAndTimeState}
             onChangeHandler={handleSetForm}
             errorMessage={errorMessage.dateOrDateAndTime}
-            disabled={form?.date && !form?.dateAndTime}
+            disabled={form?.dateState && !form?.dateAndTimeState}
           />
         </>
       )}
@@ -217,6 +216,20 @@ const DetailsForm = ({ task, userId }) => {
         value={task?.mandatoryDate ?? Boolean(hasMandatoryDate)}
       />
       <input type='hidden' name='description' value={form?.description} />
+      <input
+        type='hidden'
+        name='dateAndTime'
+        value={
+          task?.dateAndTime
+            ? task?.dateAndTime
+            : handleDateAndTimeToUTC(form?.dateAndTimeState)
+        }
+      />
+      <input
+        type='hidden'
+        name='date'
+        value={task?.date ? task?.date : form?.dateState.split('T')[0]}
+      />
       <div className='form-page__buttons-wrapper'>
         <button type='submit' className='form-page__save-button'>
           {isAwaitingSaveResponse && <div className='loader'></div>}
