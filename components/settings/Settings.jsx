@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useAppContext } from '../../context';
 import { CategoryControls, RemindersControls } from '../../components';
 
-const Settings = ({ categories, reminders, userId }) => {
+const Settings = ({ categories, reminders, userId, newUser }) => {
   const { setUserId } = useAppContext();
 
   // set global context user id
@@ -14,8 +14,16 @@ const Settings = ({ categories, reminders, userId }) => {
 
   return (
     <div className='form-page'>
-      <CategoryControls categories={categories} userId={userId} />
-      <RemindersControls reminders={reminders} userId={userId} />
+      <CategoryControls
+        categories={categories}
+        userId={userId}
+        newUser={newUser}
+      />
+      <RemindersControls
+        reminders={reminders}
+        userId={userId}
+        newUser={newUser}
+      />
     </div>
   );
 };

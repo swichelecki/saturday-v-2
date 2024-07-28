@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { FormTextField, FormCheckboxField, Toast } from '../../components';
-import { createCategory } from '../../actions';
+import { createCategory, updateUserNoLongerNew } from '../../actions';
 import { useAppContext } from '../../context';
 import { SETTINGS_MISSING_CATEGORY } from '../../constants';
 
-const ModalReminder = ({ userId, items, setItems }) => {
+const ModalReminder = ({ userId, items, setItems, newUser }) => {
   const { setShowModal, setShowToast } = useAppContext();
 
   const [form, setForm] = useState({
@@ -67,6 +67,7 @@ const ModalReminder = ({ userId, items, setItems }) => {
       if (res.status === 200) {
         setItems((current) => [...current, res.item]);
         setForm({ userId, priority: '', type: '', mandatoryDate: false });
+        if (newUser) updateUserNoLongerNew(userId);
       }
 
       if (res.status !== 200) {

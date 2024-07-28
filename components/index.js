@@ -19,6 +19,7 @@ export { default as FormCheckboxField } from './FormCheckboxField';
 export { default as FormSelectField } from './FormSelectField';
 export { default as Settings } from './settings/Settings';
 export { default as CategoryControls } from './settings/CategoryControls';
+export { default as SettingsNewUserPrompt } from './settings/SettingsNewUserPrompt';
 export { default as RemindersControls } from './settings/RemindersControls';
 export { default as SettingsItem } from './settings/SettingsItem';
 export { default as Modal } from './Modal';

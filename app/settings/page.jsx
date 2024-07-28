@@ -14,8 +14,8 @@ async function getSettingsData() {
   try {
     const jwtSecret = process.env.JWT_SECRET;
     const token = cookies().get('saturday');
-
     let userId;
+    let newUser;
 
     if (token) {
       try {
@@ -25,6 +25,7 @@ async function getSettingsData() {
         );
         if (payload?.id) {
           userId = payload?.id;
+          newUser = payload?.newUser;
         }
       } catch (error) {
         console.log(error);
@@ -41,6 +42,7 @@ async function getSettingsData() {
       categories: JSON.parse(JSON.stringify(categories)) ?? [],
       reminders: JSON.parse(JSON.stringify(reminders)) ?? [],
       userId,
+      newUser,
     };
   } catch (error) {
     console.log(error);
@@ -48,9 +50,14 @@ async function getSettingsData() {
 }
 
 export default async function SettingsPage() {
-  const { categories, reminders, userId } = await getSettingsData();
+  const { categories, reminders, userId, newUser } = await getSettingsData();
 
   return (
-    <Settings categories={categories} reminders={reminders} userId={userId} />
+    <Settings
+      categories={categories}
+      reminders={reminders}
+      userId={userId}
+      newUser={newUser}
+    />
   );
 }

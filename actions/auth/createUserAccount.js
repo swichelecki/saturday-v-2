@@ -27,10 +27,18 @@ export default async function createUserAccount(formData) {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const user = await User.create({ email, password: hashedPassword });
+    const user = await User.create({
+      email,
+      password: hashedPassword,
+      newUser: true,
+    });
 
     if (user) {
-      const token = await new SignJWT({ hasToken: true, id: user._id })
+      const token = await new SignJWT({
+        hasToken: true,
+        id: user._id,
+        newUser: true,
+      })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
         .sign(new TextEncoder().encode(jwtSecret));
       cookies().set('saturday', token);

@@ -43,7 +43,7 @@
   .entry-form {
     &__wrapper {
       position: static;
-      align-items: start;
+      align-items: flex-start;
       transform: unset;
     }
   }

@@ -107,7 +107,6 @@ const Account = ({ userId }) => {
     const firstErrorNode = errorArray[0];
     window.scrollTo({
       top: firstErrorNode.offsetTop - 24,
-      left: 0,
       behavior: 'smooth',
     });
     setScrollToErrorMessage(false);

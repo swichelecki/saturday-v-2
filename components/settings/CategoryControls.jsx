@@ -8,6 +8,7 @@ import {
   ModalCategory,
   FormErrorMessage,
   Toast,
+  SettingsNewUserPrompt,
 } from '../../components';
 import { deleteCategory, updateCategory } from '../../actions';
 import {
@@ -15,18 +16,50 @@ import {
   AT_CATEGORY_LIMIT,
 } from '../../constants';
 
-const CategoryControls = ({ categories, userId }) => {
+const CategoryControls = ({ categories, userId, newUser }) => {
   const dragItemRef = useRef(null);
   const dragOverItemRef = useRef(null);
   const categoryItemWrapperRef = useRef(null);
 
-  const { setShowToast, setShowModal } = useAppContext();
+  const {
+    setShowToast,
+    setShowModal,
+    setShowPrompt,
+    prompt,
+    setIsRemindersPrompt,
+    isRemindersPrompt,
+  } = useAppContext();
 
   const [categoryItems, setCategoryItems] = useState(categories ?? []);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [draggableCategories, setDraggableCategories] = useState([]);
   const [atCategoryLimit, setAtCategoryLimit] = useState(false);
+
+  // handle new user prompt
+  useEffect(() => {
+    if (newUser && !isRemindersPrompt) {
+      const handleGotItButton = () => {
+        setShowPrompt(null);
+        setIsRemindersPrompt(true);
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth',
+        });
+      };
+
+      setShowPrompt(
+        <SettingsNewUserPrompt handleGotItButton={handleGotItButton}>
+          You must have at least 1 category created to use Saturday. Qui no
+          noster urbanitas. Luptatum voluptaria sadipscing an nec, mei in solum
+          mentitum. Solet detraxit similique per eu, praesent explicari
+          theophrastus duo te. Cum brute illud docendi ei, ut ubique recusabo
+          praesent has. Utroque fuisset pro ut, duo liber partiendo splendide
+          ei, dicit dicam te eos.
+        </SettingsNewUserPrompt>
+      );
+    }
+  }, []);
 
   // remove at-category-limit message after category deletion
   useEffect(() => {
@@ -106,6 +139,7 @@ const CategoryControls = ({ categories, userId }) => {
     <>
       <h2>Manage Categories</h2>
       <div className='settings-controls'>
+        {newUser && !isRemindersPrompt && prompt}
         <div className='settings-controls__button-wrapper'>
           <button
             onClick={() => {
@@ -117,6 +151,7 @@ const CategoryControls = ({ categories, userId }) => {
                       userId={userId}
                       items={categoryItems}
                       setItems={setCategoryItems}
+                      newUser={newUser}
                     />
                   </Modal>
                 );
@@ -125,6 +160,7 @@ const CategoryControls = ({ categories, userId }) => {
               }
             }}
             className='form-page__save-button'
+            id='createCategoryButton'
           >
             Create
           </button>
@@ -135,7 +171,7 @@ const CategoryControls = ({ categories, userId }) => {
             />
           )}
           <p>
-            Create up to four primary categories representing areas of your life
+            Create up to 12 primary categories representing areas of your life
             in which you could use a bit of help keeping track of things.
           </p>
         </div>

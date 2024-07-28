@@ -6,6 +6,7 @@ const jwtSecret = process.env.JWT_SECRET;
 export async function middleware(req) {
   const token = cookies().get('saturday');
   let user;
+  let newUser;
 
   if (token) {
     try {
@@ -15,6 +16,7 @@ export async function middleware(req) {
       );
       if (payload?.hasToken) {
         user = true;
+        newUser = payload?.newUser;
       }
     } catch (error) {
       console.log(error);
@@ -30,6 +32,11 @@ export async function middleware(req) {
 
   if (!user && req.nextUrl.pathname !== '/') {
     req.nextUrl.pathname = '/';
+    return NextResponse.redirect(req.nextUrl);
+  }
+
+  if (user && newUser && req.nextUrl.pathname !== '/account') {
+    req.nextUrl.pathname = '/settings';
     return NextResponse.redirect(req.nextUrl);
   }
 

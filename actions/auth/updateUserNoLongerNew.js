@@ -4,24 +4,31 @@ import connectDB from '../../config/db';
 import User from '../../models/User';
 import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
-import bcrypt from 'bcryptjs';
 import { handleServerErrorMessage } from '../../utilities';
 const jwtSecret = process.env.JWT_SECRET;
 
-export default async function loginUser(formData) {
+export default async function updateUserNoLongerNew(userId) {
   try {
     await connectDB();
 
-    const email = formData.get('email');
-    const password = formData.get('password');
+    const user = await User.findOne({ _id: userId });
 
-    const user = await User.findOne({ email });
+    if (user) {
+      await User.updateOne(
+        { _id: userId },
+        {
+          newUser: false,
+        }
+      );
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+      const userUpdated = await User.findOne({ _id: userId });
+
+      cookies().delete('saturday');
+
       const token = await new SignJWT({
         hasToken: true,
-        id: user._id,
-        newUser: user.newUser,
+        id: userUpdated._id,
+        newUser: userUpdated.newUser,
       })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
         .sign(new TextEncoder().encode(jwtSecret));
