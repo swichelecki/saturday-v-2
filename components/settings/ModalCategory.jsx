@@ -7,7 +7,7 @@ import { useAppContext } from '../../context';
 import { SETTINGS_MISSING_CATEGORY } from '../../constants';
 
 const ModalReminder = ({ userId, items, setItems, newUser }) => {
-  const { setShowModal, setShowToast } = useAppContext();
+  const { setShowModal, setShowToast, setIsDashboardPrompt } = useAppContext();
 
   const [form, setForm] = useState({
     userId,
@@ -67,7 +67,16 @@ const ModalReminder = ({ userId, items, setItems, newUser }) => {
       if (res.status === 200) {
         setItems((current) => [...current, res.item]);
         setForm({ userId, priority: '', type: '', mandatoryDate: false });
-        if (newUser) updateUserNoLongerNew(userId);
+        // handle new user
+        if (newUser) {
+          updateUserNoLongerNew(userId).then((response) => {
+            if (response.status === 200) {
+              setIsDashboardPrompt(true);
+            } else {
+              setShowToast(<Toast serverError={response} />);
+            }
+          });
+        }
       }
 
       if (res.status !== 200) {

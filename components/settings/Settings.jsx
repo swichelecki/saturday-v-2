@@ -2,14 +2,19 @@
 
 import { useEffect } from 'react';
 import { useAppContext } from '../../context';
+import { usePrompt } from '../../hooks';
 import { CategoryControls, RemindersControls } from '../../components';
 
 const Settings = ({ categories, reminders, userId, newUser }) => {
-  const { setUserId } = useAppContext();
+  const { setUserId, setIsCategoriesPrompt } = useAppContext();
 
-  // set global context user id
+  // if new user show prompts
+  usePrompt();
+
+  // set global context user id and first new user prompt
   useEffect(() => {
     setUserId(userId);
+    if (newUser) setIsCategoriesPrompt(true);
   }, []);
 
   return (
@@ -19,11 +24,7 @@ const Settings = ({ categories, reminders, userId, newUser }) => {
         userId={userId}
         newUser={newUser}
       />
-      <RemindersControls
-        reminders={reminders}
-        userId={userId}
-        newUser={newUser}
-      />
+      <RemindersControls reminders={reminders} userId={userId} />
     </div>
   );
 };

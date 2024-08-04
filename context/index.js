@@ -7,7 +7,9 @@ export function AppWrapper({ children }) {
   const [toast, setShowToast] = useState(null);
   const [modal, setShowModal] = useState(null);
   const [prompt, setShowPrompt] = useState(null);
+  const [isCategoriesPrompt, setIsCategoriesPrompt] = useState(false);
   const [isRemindersPrompt, setIsRemindersPrompt] = useState(false);
+  const [isDashboardPrompt, setIsDashboardPrompt] = useState(false);
 
   return (
     <AppContext.Provider
@@ -20,8 +22,12 @@ export function AppWrapper({ children }) {
         setShowModal,
         prompt,
         setShowPrompt,
+        isCategoriesPrompt,
+        setIsCategoriesPrompt,
         isRemindersPrompt,
         setIsRemindersPrompt,
+        isDashboardPrompt,
+        setIsDashboardPrompt,
       }}
     >
       {children}

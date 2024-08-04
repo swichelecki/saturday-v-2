@@ -191,6 +191,7 @@ const Account = ({ userId }) => {
 
     const response = await deleteUserAccount(formData);
     if (response.status === 200) {
+      setUserId('');
       router.push('/');
     } else if (response.status === 403) {
       setIsAwaitingDeleteAccoungResponse(false);

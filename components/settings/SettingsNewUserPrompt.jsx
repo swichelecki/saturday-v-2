@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { MdOutlineClear } from 'react-icons/md';
 
 const SettingsNewUserPrompt = ({ handleGotItButton, children }) => {
   const promptRef = useRef(null);
@@ -20,8 +21,8 @@ const SettingsNewUserPrompt = ({ handleGotItButton, children }) => {
   return (
     <div ref={promptRef} className='settings-prompt'>
       {children}
-      <button onClick={handleGotItButton} className=''>
-        Got It
+      <button onClick={handleGotItButton}>
+        <MdOutlineClear />
       </button>
     </div>
   );

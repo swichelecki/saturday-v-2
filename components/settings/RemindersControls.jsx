@@ -8,7 +8,6 @@ import {
   ModalReminders,
   FormErrorMessage,
   Toast,
-  SettingsNewUserPrompt,
 } from '../../components';
 import { deleteReminder, getReminder } from '../../actions';
 import {
@@ -19,15 +18,9 @@ import {
   AT_REMINDERS_LIMIT,
 } from '../../constants';
 
-const RemindersControls = ({ reminders, userId, newUser }) => {
-  const {
-    setShowToast,
-    setShowModal,
-    prompt,
-    setShowPrompt,
-    isRemindersPrompt,
-    setIsRemindersPrompt,
-  } = useAppContext();
+const RemindersControls = ({ reminders, userId }) => {
+  const { setShowToast, setShowModal, isRemindersPrompt, prompt } =
+    useAppContext();
 
   const [remindersItems, setRemindersItems] = useState(reminders ?? []);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
@@ -39,28 +32,6 @@ const RemindersControls = ({ reminders, userId, newUser }) => {
     setListItemIsAwaitingUpdateResponse,
   ] = useState(false);
   const [atRemindersLimit, setAtRemindersLimit] = useState(false);
-
-  // handle new user prompt
-  useEffect(() => {
-    if (newUser && isRemindersPrompt) {
-      const handleGotItButton = () => {
-        setShowPrompt(null);
-        setIsRemindersPrompt(false);
-        document.getElementById('createCategoryButton').click();
-      };
-
-      setShowPrompt(
-        <SettingsNewUserPrompt handleGotItButton={handleGotItButton}>
-          You don't need to fill these out to use Saturday. Qui no noster
-          urbanitas. Luptatum voluptaria sadipscing an nec, mei in solum
-          mentitum. Solet detraxit similique per eu, praesent explicari
-          theophrastus duo te. Cum brute illud docendi ei, ut ubique recusabo
-          praesent has. Utroque fuisset pro ut, duo liber partiendo splendide
-          ei, dicit dicam te eos.
-        </SettingsNewUserPrompt>
-      );
-    }
-  }, [isRemindersPrompt]);
 
   // remove at-reminders-limit message after reminder deletion
   useEffect(() => {
@@ -118,9 +89,9 @@ const RemindersControls = ({ reminders, userId, newUser }) => {
 
   return (
     <>
-      <h2>Manage Recurring Reminders</h2>
+      <h2 className='form-page__h2'>Manage Reminders</h2>
       <div className='settings-controls'>
-        {newUser && isRemindersPrompt && prompt}
+        {isRemindersPrompt && prompt}
         <div className='settings-controls__button-wrapper'>
           <button
             onClick={() => {

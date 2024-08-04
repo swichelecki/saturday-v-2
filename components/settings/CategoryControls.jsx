@@ -8,7 +8,6 @@ import {
   ModalCategory,
   FormErrorMessage,
   Toast,
-  SettingsNewUserPrompt,
 } from '../../components';
 import { deleteCategory, updateCategory } from '../../actions';
 import {
@@ -24,10 +23,9 @@ const CategoryControls = ({ categories, userId, newUser }) => {
   const {
     setShowToast,
     setShowModal,
-    setShowPrompt,
+    isCategoriesPrompt,
+    isDashboardPrompt,
     prompt,
-    setIsRemindersPrompt,
-    isRemindersPrompt,
   } = useAppContext();
 
   const [categoryItems, setCategoryItems] = useState(categories ?? []);
@@ -35,31 +33,6 @@ const CategoryControls = ({ categories, userId, newUser }) => {
     useState(false);
   const [draggableCategories, setDraggableCategories] = useState([]);
   const [atCategoryLimit, setAtCategoryLimit] = useState(false);
-
-  // handle new user prompt
-  useEffect(() => {
-    if (newUser && !isRemindersPrompt) {
-      const handleGotItButton = () => {
-        setShowPrompt(null);
-        setIsRemindersPrompt(true);
-        window.scrollTo({
-          top: document.body.scrollHeight,
-          behavior: 'smooth',
-        });
-      };
-
-      setShowPrompt(
-        <SettingsNewUserPrompt handleGotItButton={handleGotItButton}>
-          You must have at least 1 category created to use Saturday. Qui no
-          noster urbanitas. Luptatum voluptaria sadipscing an nec, mei in solum
-          mentitum. Solet detraxit similique per eu, praesent explicari
-          theophrastus duo te. Cum brute illud docendi ei, ut ubique recusabo
-          praesent has. Utroque fuisset pro ut, duo liber partiendo splendide
-          ei, dicit dicam te eos.
-        </SettingsNewUserPrompt>
-      );
-    }
-  }, []);
 
   // remove at-category-limit message after category deletion
   useEffect(() => {
@@ -137,9 +110,10 @@ const CategoryControls = ({ categories, userId, newUser }) => {
 
   return (
     <>
-      <h2>Manage Categories</h2>
+      <h2 className='form-page__h2'>Manage Categories</h2>
       <div className='settings-controls'>
-        {newUser && !isRemindersPrompt && prompt}
+        {isCategoriesPrompt && prompt}
+        {isDashboardPrompt && prompt}
         <div className='settings-controls__button-wrapper'>
           <button
             onClick={() => {
