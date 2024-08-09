@@ -33,6 +33,12 @@ const Signup = () => {
   const [isAwaitingLogInResponse, setisAwaitingLogInResponse] = useState(false);
 
   useEffect(() => {
+    if (window && typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!errorMessage.email) return;
     setErrorMessage({ ...errorMessage, email: '' });
   }, [form.email]);

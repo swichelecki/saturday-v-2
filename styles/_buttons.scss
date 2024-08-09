@@ -4,6 +4,7 @@ button {
   cursor: pointer;
 }
 
+a.homepage__signup,
 button.main-controls__type-button,
 a.main-controls__type-button,
 button.main-controls__add-button,
@@ -51,6 +52,15 @@ a.main-controls__type-button {
     color: $button-purple;
     opacity: 1;
   }
+}
+
+a.homepage__signup {
+  padding: 12px 16px;
+  font-size: 1.125rem; // 18px
+  border-radius: 26px;
+  box-shadow: 0 0 0 1px $button-purple;
+  background-color: $button-purple-dark;
+  color: $button-purple;
 }
 
 button.modal__update-button {
@@ -301,12 +311,19 @@ button.user-menu__button {
   min-width: 24px;
   height: 24px;
   color: $color-background;
-  font-size: 22px;
+  font-size: 1.375rem; // 22px
   background-color: $color-font;
   svg {
     width: 1rem;
     height: 1rem;
     pointer-events: none;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  a.homepage__signup {
+    padding: 8px 12px;
+    font-size: 1rem; // 16px
   }
 }
 

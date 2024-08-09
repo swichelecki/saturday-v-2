@@ -16,7 +16,7 @@
       background-color: $color-border;
     }
     & input:checked ~ .checkbox__checkbox {
-      background-color: $color-upcoming;
+      background-color: $button-purple-dark;
     }
     & input:checked ~ .checkbox__checkbox:after {
       display: block;

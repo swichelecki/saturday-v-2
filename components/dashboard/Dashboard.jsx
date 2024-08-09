@@ -92,7 +92,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
 
   // build masonry
   useEffect(() => {
-    if (!window || !width) return;
+    if (!width) return;
     const itemsCopy = [...listItems];
     const items = itemsCopy.filter((item) => Object.values(item)[0]?.length);
 
