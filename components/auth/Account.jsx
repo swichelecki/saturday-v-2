@@ -35,6 +35,8 @@ const Account = ({ userId }) => {
     password: '',
     newPassword: '',
     confirmNewPassword: '',
+    deleteEmail: '',
+    deletePassword: '',
     deleteConfirmation: '',
   });
   const [errorMessage, setErrorMessage] = useState({
@@ -113,7 +115,10 @@ const Account = ({ userId }) => {
   }, [scrollToErrorMessage]);
 
   // change password
-  const changePassword = async (formData) => {
+  const changePassword = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     if (
       !form.email ||
       !form.password ||
@@ -160,10 +165,13 @@ const Account = ({ userId }) => {
   };
 
   // delete account
-  const deleteAccount = async (formData) => {
+  const deleteAccount = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     if (
-      form.email &&
-      form.password &&
+      form.deleteEmail &&
+      form.deletePassword &&
       form.deleteConfirmation &&
       form.deleteConfirmation.toLowerCase() !== DELETE_MY_ACCOUNT
     ) {
@@ -175,11 +183,11 @@ const Account = ({ userId }) => {
       return;
     }
 
-    if (!form.email || !form.password || !form.deleteConfirmation) {
+    if (!form.deleteEmail || !form.deletePassword || !form.deleteConfirmation) {
       setErrorMessage({
         ...errorMessage,
-        deleteEmail: !form.email && FORM_ERROR_MISSING_EMAIL,
-        deletePassword: !form.password && FORM_ERROR_MISSING_PASSWORD,
+        deleteEmail: !form.deleteEmail && FORM_ERROR_MISSING_EMAIL,
+        deletePassword: !form.deletePassword && FORM_ERROR_MISSING_PASSWORD,
         deleteConfirmation:
           !form.deleteConfirmation && FORM_ERROR_MISSING_DELETE_CONFIRMATION,
       });
@@ -207,8 +215,8 @@ const Account = ({ userId }) => {
 
   return (
     <div className='form-page' ref={pageRef}>
-      <form action={changePassword}>
-        <h2>Change Password</h2>
+      <form onSubmit={changePassword}>
+        <h2 className='form-page__h2'>Change Password</h2>
         <FormTextField
           label='Email'
           type='email'
@@ -256,14 +264,14 @@ const Account = ({ userId }) => {
           </button>
         </div>
       </form>
-      <form action={deleteAccount}>
-        <h2>Delete Account</h2>
+      <form onSubmit={deleteAccount}>
+        <h2 className='form-page__h2'>Delete Account</h2>
         <FormTextField
           label='Email'
           type='email'
           id='deleteEmail'
-          name='email'
-          value={form?.email}
+          name='deleteEmail'
+          value={form?.deleteEmail}
           onChangeHandler={handleForm}
           errorMessage={errorMessage.deleteEmail}
         />
@@ -271,8 +279,8 @@ const Account = ({ userId }) => {
           label='Password'
           type='password'
           id='deletePassword'
-          name='password'
-          value={form?.password}
+          name='deletePassword'
+          value={form?.deletePassword}
           onChangeHandler={handleForm}
           errorMessage={errorMessage.deletePassword}
         />

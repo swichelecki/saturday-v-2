@@ -38,7 +38,10 @@ const Login = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const onSubmit = async (formData) => {
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     if (!form.email || !form.password) {
       setErrorMessage({
         email: form.email ? '' : FORM_ERROR_MISSING_EMAIL,
@@ -66,7 +69,7 @@ const Login = () => {
 
   return (
     <div className='entry-form__wrapper'>
-      <form action={onSubmit} className='entry-form__form'>
+      <form onSubmit={onSubmit} className='entry-form__form'>
         <div className='entry-form__form-controls-wrapper'>
           <FormTextField
             label={'Email'}

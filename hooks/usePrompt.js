@@ -51,7 +51,13 @@ export const usePrompt = () => {
       const handleGotItButton = () => {
         setShowPrompt(null);
         setIsRemindersPrompt(false);
-        document.getElementById('createCategoryButton').click();
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
+        setTimeout(() => {
+          document.getElementById('createCategoryButton').click();
+        }, 500);
       };
 
       setShowPrompt(
@@ -80,7 +86,7 @@ export const usePrompt = () => {
             <IoIosInformationCircle />
             Dashboard
           </h2>
-          Great! You have your first category. When you are ready to start using
+          One down! Create more categories and when you are ready to start using
           Saturday, go to your dashboard by clicking "Saturday" at the top left,
           or the user icon at the top right and then select Dashboard from the
           menu.

@@ -4,6 +4,8 @@
   position: relative;
   margin-bottom: 32px;
   label {
+    display: flex;
+    align-self: start;
     margin-bottom: 6px;
     font-family: var(--montserrat), sans-serif;
     font-weight: 400;

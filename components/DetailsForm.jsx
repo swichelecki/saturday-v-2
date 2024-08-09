@@ -107,7 +107,10 @@ const DetailsForm = ({ task, userId }) => {
     setForm({ ...form, description: value });
   };
 
-  const onSubmit = (formData) => {
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     // error handling for missing required fields
     if (
       !form?.title ||
@@ -156,7 +159,7 @@ const DetailsForm = ({ task, userId }) => {
   };
 
   return (
-    <form action={onSubmit} ref={formRef} className='form-page'>
+    <form onSubmit={onSubmit} ref={formRef} className='form-page'>
       <FormTextField
         label='Title'
         type='text'

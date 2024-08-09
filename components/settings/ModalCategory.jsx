@@ -55,7 +55,10 @@ const ModalReminder = ({ userId, items, setItems, newUser }) => {
   };
 
   // create category
-  const handleCreateCategory = async (formData) => {
+  const handleCreateCategory = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     if (!form.type) {
       setErrorMessage({ type: SETTINGS_MISSING_CATEGORY });
       return;
@@ -100,7 +103,7 @@ const ModalReminder = ({ userId, items, setItems, newUser }) => {
   };
 
   return (
-    <form action={handleCreateCategory}>
+    <form onSubmit={handleCreateCategory}>
       <FormTextField
         label='Category Name'
         subLabel='Sum it up in one or two words (e.g., School, Shopping, Work, Appointments, etc.)'

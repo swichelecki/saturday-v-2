@@ -158,7 +158,10 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
   };
 
   // create new item
-  const handleOnSubmit = (formData) => {
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     // handle empty field message
     if (!listItem?.title) {
       setErrorMessages({ ...errorMessages, isEmpty: true });

@@ -68,7 +68,10 @@ const ModalUpdateItem = ({
   };
 
   // edit item
-  const handleEditSubmit = (formData) => {
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     if (!form?.title) {
       setErrorMessage({
         title: FORM_ERROR_MISSING_UPDATE_TITLE,
@@ -131,7 +134,7 @@ const ModalUpdateItem = ({
   };
 
   return (
-    <form action={handleEditSubmit}>
+    <form onSubmit={handleEditSubmit}>
       <FormTextField
         type='text'
         id='update'

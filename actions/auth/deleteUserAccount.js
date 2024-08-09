@@ -11,8 +11,8 @@ import { handleServerErrorMessage } from '../../utilities';
 export default async function deleteUserAccount(formData) {
   try {
     const userId = formData.get('userId');
-    const email = formData.get('email');
-    const password = formData.get('password');
+    const email = formData.get('deleteEmail');
+    const password = formData.get('deletePassword');
 
     const user = await User.findOne({ email });
 

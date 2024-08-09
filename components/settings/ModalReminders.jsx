@@ -133,7 +133,10 @@ const ModalReminder = ({
   };
 
   // add new reminder
-  const handleCreateReminder = (formData) => {
+  const handleCreateReminder = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     if (
       !form.reminder ||
       !form.reminderDate ||
@@ -186,7 +189,10 @@ const ModalReminder = ({
   };
 
   // update reminder
-  const handleUpdateReminder = (formData) => {
+  const handleUpdateReminder = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     setIsAwaitingSubmitResponse(true);
     updateReminder(formData).then((res) => {
       if (res.status === 200) {
@@ -234,7 +240,7 @@ const ModalReminder = ({
 
   return (
     <form
-      action={(formData) => {
+      onSubmit={(formData) => {
         modalOperation === MODAL_OPERATION_CREATE
           ? handleCreateReminder(formData)
           : handleUpdateReminder(formData);
