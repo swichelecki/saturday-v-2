@@ -15,11 +15,9 @@ export async function GET() {
 
     // sort reminders by type
     for (const item of reminders) {
-      if (item?.exactRecurringDate) {
-        exactRecurringDateReminders.push(item);
-      } else {
-        generalReminders.push(item);
-      }
+      item?.exactRecurringDate
+        ? exactRecurringDateReminders.push(item)
+        : generalReminders.push(item);
     }
 
     // display general reminders

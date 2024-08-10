@@ -15,8 +15,8 @@ const Header = () => {
   return (
     <header className='header'>
       <div className='header__inner-wrapper'>
-        <Link href='/dashboard'>
-          <h1>Saturday</h1>
+        <Link href='/dashboard' className='h1'>
+          Saturday
         </Link>
         <div className='header__content-right'>
           {userId ? (

@@ -9,11 +9,7 @@ import {
 } from '../../components';
 import { createReminder, updateReminder } from '../../actions';
 import { useAppContext } from '../../context';
-import {
-  handleSortItemsAscending,
-  handleReminderBufferFormat,
-  handleIntervalFormat,
-} from '../../utilities';
+import { handleSortItemsAscending } from '../../utilities';
 import {
   FORM_REMINDER_INTERVAL_OPTIONS,
   FORM_REMINDER_BUFFER_OPTIONS,
@@ -288,7 +284,7 @@ const ModalReminder = ({
         }`}
         id='reminderRecurrenceInterval'
         name='recurrenceInterval'
-        value={handleIntervalFormat(form?.recurrenceInterval)}
+        value={form?.recurrenceInterval}
         onChangeHandler={handleFormSelectField}
         options={FORM_REMINDER_INTERVAL_OPTIONS}
         errorMessage={errorMessage.recurrenceInterval}
@@ -306,7 +302,7 @@ const ModalReminder = ({
         subLabel='Set how many weeks in advance this reminder will appear.'
         id='reminderRecurrenceBuffer'
         name='recurrenceBuffer'
-        value={handleReminderBufferFormat(form?.recurrenceBuffer)}
+        value={form?.recurrenceBuffer}
         onChangeHandler={handleFormSelectField}
         options={FORM_REMINDER_BUFFER_OPTIONS}
         errorMessage={errorMessage.recurrenceBuffer}

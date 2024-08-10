@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FormErrorMessage } from './';
 
 const FormSelectField = ({
@@ -14,7 +14,12 @@ const FormSelectField = ({
   errorMessage,
   disabled = false,
 }) => {
-  const [optionValue, setOptionValue] = useState(value ?? '');
+  const [optionValue, setOptionValue] = useState('');
+
+  useEffect(() => {
+    setOptionValue(value);
+  }, [value]);
+
   return (
     <div className={`form-field${errorMessage ? ' form-field--error' : ''}`}>
       <label htmlFor={id}>{label}</label>
@@ -30,27 +35,33 @@ const FormSelectField = ({
           defaultValue={value}
           id={id}
         >
-          {value ? (
-            <option value='' hidden>
-              {value}
-            </option>
-          ) : (
-            <option value='' disabled hidden>
-              Select
-            </option>
-          )}
+          {!optionValue && <option hidden>Select</option>}
           {options?.map((item, index) => (
-            <option
-              key={`form-select-option_${id}_${index}`}
-              value={JSON.stringify(item)}
-            >
-              {item?.title}
-            </option>
+            <>
+              {optionValue && optionValue === item?.value ? (
+                <option
+                  key={`form-select-option_${id}_${index}`}
+                  value={JSON.stringify(item)}
+                  selected
+                >
+                  {item?.title}
+                </option>
+              ) : (
+                <>
+                  <option
+                    key={`form-select-option_${id}_${index}`}
+                    value={JSON.stringify(item)}
+                  >
+                    {item?.title}
+                  </option>
+                </>
+              )}
+            </>
           ))}
         </select>
       </div>
       {errorMessage && <FormErrorMessage errorMessage={errorMessage} />}
-      <input type='hidden' name={name} value={optionValue || 0} />
+      <input type='hidden' name={name} value={optionValue} />
     </div>
   );
 };

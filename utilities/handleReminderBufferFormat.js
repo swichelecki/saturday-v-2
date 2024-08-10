@@ -1,18 +1,8 @@
+import { FORM_REMINDER_BUFFER_OPTIONS } from '../constants';
+
 export const handleReminderBufferFormat = (buffer) => {
-  let bufferFormatted = '';
-  switch (buffer) {
-    case 0:
-      bufferFormatted = '';
-      break;
-    case 7:
-      bufferFormatted = 'One Week';
-      break;
-    case 14:
-      bufferFormatted = 'Two Weeks';
-      break;
-    case 21:
-      bufferFormatted = 'Three Weeks';
-      break;
-  }
-  return bufferFormatted;
+  const bufferObject = FORM_REMINDER_BUFFER_OPTIONS?.find(
+    (item) => item?.value === buffer
+  );
+  return bufferObject['title'];
 };
