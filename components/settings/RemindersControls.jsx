@@ -15,7 +15,7 @@ import {
   MODAL_UPDATE_REMINDER_HEADLINE,
   MODAL_OPERATION_CREATE,
   MODAL_OPERATION_UPDATE,
-  AT_REMINDERS_LIMIT,
+  REMINDERS_ITEM_LIMIT,
 } from '../../constants';
 
 const RemindersControls = ({ reminders, userId }) => {
@@ -35,7 +35,7 @@ const RemindersControls = ({ reminders, userId }) => {
 
   // remove at-reminders-limit message after reminder deletion
   useEffect(() => {
-    if (remindersItems?.length < 25 && atRemindersLimit) {
+    if (remindersItems?.length < REMINDERS_ITEM_LIMIT && atRemindersLimit) {
       setAtRemindersLimit(false);
     }
   }, [remindersItems]);
@@ -95,7 +95,7 @@ const RemindersControls = ({ reminders, userId }) => {
         <div className='settings-controls__button-wrapper'>
           <button
             onClick={() => {
-              if (remindersItems?.length < 25) {
+              if (remindersItems?.length < REMINDERS_ITEM_LIMIT) {
                 setShowModal(
                   <Modal className='modal modal__form-modal--large'>
                     <h2>{MODAL_CREATE_REMINDER_HEADLINE}</h2>
@@ -119,7 +119,7 @@ const RemindersControls = ({ reminders, userId }) => {
           </button>
           {atRemindersLimit && (
             <FormErrorMessage
-              errorMessage={AT_REMINDERS_LIMIT}
+              errorMessage={`Limit ${REMINDERS_ITEM_LIMIT} reminders!`}
               className='form-error-message form-error-message--position-static'
             />
           )}

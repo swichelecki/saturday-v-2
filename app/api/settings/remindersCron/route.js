@@ -1,5 +1,6 @@
 import connectDB from '../../../../config/db';
 import Reminder from '../../../../models/Reminder';
+import { BY_WEEK_INTERVALS } from '../../../../constants';
 
 export const revalidate = 0;
 
@@ -20,10 +21,11 @@ export async function GET() {
         : generalReminders.push(item);
     }
 
-    // display general reminders
+    // handle general reminders
     if (generalReminders?.length > 0) {
       for (const item of generalReminders) {
-        const nextOccurrance = new Date(item?.reminderDate).getTime();
+        const reminderStartingDate = new Date(item?.reminderDate);
+        const nextOccurrance = reminderStartingDate.getTime();
         const interval = item?.recurrenceInterval;
 
         const {
@@ -37,7 +39,7 @@ export async function GET() {
           displayReminder,
         } = item;
 
-        // show next occurance of reminder
+        // dispaly general reminders
         if (nextOccurrance <= Date.now() && !item?.displayReminder) {
           await Reminder.updateOne(
             { _id: _id },
@@ -53,9 +55,12 @@ export async function GET() {
           );
         }
 
-        // add interval to reminder not reset before next interval start date begins
-        if (nextOccurrance + interval <= Date.now() && item?.displayReminder) {
-          const reminderStartingDate = new Date(item?.reminderDate);
+        // add interval to by-week reminders not reset before next interval start date begins
+        if (
+          BY_WEEK_INTERVALS.includes(interval) &&
+          nextOccurrance + interval <= Date.now() &&
+          item?.displayReminder
+        ) {
           reminderStartingDate.setTime(
             reminderStartingDate.getTime() + interval
           );
@@ -74,10 +79,34 @@ export async function GET() {
             }
           );
         }
+
+        // add interval to by-month reminders not reset before next interval start date begins
+        if (
+          !BY_WEEK_INTERVALS.includes(interval) &&
+          reminderStartingDate.setMonth(
+            reminderStartingDate.getMonth() + interval
+          ) <= Date.now() &&
+          item?.displayReminder
+        ) {
+          const nextDate = reminderStartingDate.toISOString();
+
+          await Reminder.updateOne(
+            { _id: _id },
+            {
+              userId,
+              reminder,
+              reminderDate: nextDate,
+              recurrenceInterval,
+              recurrenceBuffer,
+              exactRecurringDate,
+              displayReminder,
+            }
+          );
+        }
       }
     }
 
-    // display reminders with exact recurring date
+    // handle reminders with exact recurring date
     if (exactRecurringDateReminders?.length > 0) {
       for (const item of exactRecurringDateReminders) {
         const today = new Date().getTime();
@@ -88,7 +117,7 @@ export async function GET() {
         );
         const twentyFourHours = 86400000;
 
-        // display
+        // display reminders with exact recurring date
         if (
           nextOccurrance > Date.now() &&
           reminderDateMinusBuffer <= today &&
@@ -118,7 +147,7 @@ export async function GET() {
           );
         }
 
-        // reschedule
+        // reschedule reminders with exact recurring date
         if (
           nextOccurrance + twentyFourHours < Date.now() &&
           item?.displayReminder

@@ -278,9 +278,7 @@ const SettingsItem = ({
                 new Date(item?.reminderDate).getTime() > Date.now()
                   ? '<p>Next Display Date</p>'
                   : '<p>Currently Displayed</p>'
-              }<p><span>${moment(
-                new Date(item?.reminderDate).toISOString().split('T')[0]
-              ).format(
+              }<p><span>${moment(item?.reminderDate.split('T')[0]).format(
                 'ddd, MMM D, YYYY'
               )}</span></p><p>Interval: <span>${handleIntervalFormat(
                 item?.recurrenceInterval
@@ -296,9 +294,7 @@ const SettingsItem = ({
                     handleReminderBufferFormat(item?.recurrenceBuffer) +
                     '</span> Prior</p>'
                   : '<p>Currently Displayed</p>'
-              }<p><span>${moment(
-                new Date(item?.reminderDate).toISOString().split('T')[0]
-              ).format(
+              }<p><span>${moment(item?.reminderDate.split('T')[0]).format(
                 'ddd, MMM D, YYYY'
               )}</span></p><p>Interval: <span>${handleIntervalFormat(
                 item?.recurrenceInterval

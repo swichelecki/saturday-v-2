@@ -18,6 +18,7 @@ import {
   MODAL_CONFIRM_DELETION_HEADLINE,
   MODAL_UPDATE_ITEM_HEADLINE,
   ITEM_ERROR_MESSAGES,
+  LIST_ITEM_LIMIT,
 } from '../../constants';
 
 const ItemsColumn = dynamic(() =>
@@ -50,6 +51,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [allItemsTouchReset, setAllItemsTouchReset] = useState(false);
+  const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
   const [errorMessages, setErrorMessages] = useState(ITEM_ERROR_MESSAGES);
 
   let allItems = [];
@@ -95,6 +97,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
     if (!width) return;
     const itemsCopy = [...listItems];
     const items = itemsCopy.filter((item) => Object.values(item)[0]?.length);
+    let total = 0;
 
     const handleMasonry = (columns, items) => {
       const masonryColumns = [];
@@ -107,9 +110,12 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
       for (let i = 0; i < items?.length; i++) {
         const column = i % columns;
         masonryColumns[column][`column_${column}`].push(items[i]);
+        total += Object.values(items[i])[0]?.length;
       }
 
       setMasonryItems(masonryColumns);
+      // total number of items for limit handling
+      setTotalNumberOfItems(total);
     };
 
     const numberOfColumns =
@@ -130,10 +136,10 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
 
   // remove at-item-limit message after item deletion
   useEffect(() => {
-    if (errorMessages?.atItemLimit && listItems?.length < 50) {
+    if (errorMessages?.atItemLimit && totalNumberOfItems < LIST_ITEM_LIMIT) {
       setErrorMessages({ ...errorMessages, atItemLimit: false });
     }
-  }, [listItems]);
+  }, [totalNumberOfItems]);
 
   // ensure all items are closed on mobile after new item is created or item is deleted
   const handleItemsTouchReset = () => {
@@ -169,7 +175,7 @@ const Dashboard = ({ tasks, categories, reminders, userId }) => {
     }
 
     // handle at-item-limit message
-    if (listItems?.length >= 50) {
+    if (totalNumberOfItems >= LIST_ITEM_LIMIT) {
       setErrorMessages({ ...errorMessages, atItemLimit: true });
       return;
     }

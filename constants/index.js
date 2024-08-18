@@ -4,6 +4,9 @@ export const TOUCH_DURATION_THRESHOLD = 400;
 export const MAX_MOVE_DISTANCE = -146;
 export const MAX_TRANSITION_SPEED = 100;
 export const MIN_TRANSITION_SPEED = 500;
+export const LIST_ITEM_LIMIT = 50;
+export const CATEGORY_ITEM_LIMIT = 12;
+export const REMINDERS_ITEM_LIMIT = 25;
 export const FORM_ERROR_MISSING_TITLE = 'Title Required';
 export const FORM_ERROR_MISSING_DESCRIPTION = 'Description Required';
 export const FORM_ERROR_MISSING_DATE = 'Date or Date & Time Required';
@@ -32,6 +35,9 @@ export const FORM_ERROR_MISSING_REMINDER_INTERVAL =
   'Reminder Interval Required';
 export const FORM_ERROR_MISSING_REMINDER_BUFFER = 'Reminder Buffer Required';
 export const FORM_ERROR_MISSING_UPDATE_TITLE = 'Title Required';
+export const BY_WEEK_INTERVALS = [
+  604800000, 1209600000, 1814400000, 2419200000,
+];
 export const FORM_REMINDER_INTERVAL_OPTIONS = [
   { title: 'Weekly', name: 'recurrenceInterval', value: 604800000 },
   { title: 'Every Two Weeks', name: 'recurrenceInterval', value: 1209600000 },
@@ -62,8 +68,6 @@ export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
 export const MODAL_UPDATE_ITEM_HEADLINE = 'Update Item';
 export const MODAL_OPERATION_CREATE = 'CREATE';
 export const MODAL_OPERATION_UPDATE = 'UPDATE';
-export const AT_CATEGORY_LIMIT = 'Limit four categories!';
-export const AT_REMINDERS_LIMIT = 'Limit 25 reminders!';
 export const ITEM_ERROR_MESSAGES = {
   isEmpty: false,
   isEmptyMessage: 'Item field is empty!',

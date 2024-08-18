@@ -6,7 +6,7 @@ import { RemindersItem, Toast } from '../../components';
 import { getReminder, updateReminder } from '../../actions';
 import { useInnerWidth } from '../../hooks';
 import { handleHiddenHeight } from '../../utilities';
-import { MOBILE_BREAKPOINT } from '../../constants';
+import { MOBILE_BREAKPOINT, BY_WEEK_INTERVALS } from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
 const Reminders = ({ reminders }) => {
@@ -59,18 +59,18 @@ const Reminders = ({ reminders }) => {
   useEffect(() => {
     if (isAwaitingResetResponse) {
       let copyOfReminderToUpdate = { ...reminderToUpdate };
-
-      const today = new Date();
       const startingDate = copyOfReminderToUpdate?.reminderDate;
       const interval = copyOfReminderToUpdate?.recurrenceInterval;
       const reminderStartingDate = new Date(startingDate);
 
-      if (interval > 12) {
+      if (BY_WEEK_INTERVALS.includes(interval)) {
         // set weekly reminder
         reminderStartingDate.setTime(reminderStartingDate.getTime() + interval);
       } else {
         // set monthly reminder
-        reminderStartingDate.setMonth(today.getMonth() + interval);
+        reminderStartingDate.setMonth(
+          reminderStartingDate.getMonth() + interval
+        );
       }
 
       const nextDate = reminderStartingDate.toISOString();

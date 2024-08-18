@@ -12,7 +12,7 @@ import {
 import { deleteCategory, updateCategory } from '../../actions';
 import {
   MODAL_CREATE_CATEGORY_HEADLINE,
-  AT_CATEGORY_LIMIT,
+  CATEGORY_ITEM_LIMIT,
 } from '../../constants';
 
 const CategoryControls = ({ categories, userId, newUser }) => {
@@ -36,7 +36,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
 
   // remove at-category-limit message after category deletion
   useEffect(() => {
-    if (categoryItems?.length < 4 && atCategoryLimit) {
+    if (categoryItems?.length < CATEGORY_ITEM_LIMIT && atCategoryLimit) {
       setAtCategoryLimit(false);
     }
   }, [categoryItems]);
@@ -117,7 +117,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
         <div className='settings-controls__button-wrapper'>
           <button
             onClick={() => {
-              if (categoryItems?.length <= 12) {
+              if (categoryItems?.length < CATEGORY_ITEM_LIMIT) {
                 setShowModal(
                   <Modal className='modal modal__form-modal--small'>
                     <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>
@@ -140,7 +140,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
           </button>
           {atCategoryLimit && (
             <FormErrorMessage
-              errorMessage={AT_CATEGORY_LIMIT}
+              errorMessage={`Limit ${CATEGORY_ITEM_LIMIT} categories!`}
               className='form-error-message form-error-message--position-static'
             />
           )}
