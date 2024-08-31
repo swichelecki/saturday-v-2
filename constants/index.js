@@ -74,3 +74,95 @@ export const ITEM_ERROR_MESSAGES = {
   atItemLimit: false,
   atItemLimitMessage: "Limit 50 items! Looks like it's time to get to work.",
 };
+export const FORM_TIMEZONES = [
+  { title: 'America/Adak', name: 'timezone', value: 'America/Adak' },
+  { title: 'America/Anchorage', name: 'timezone', value: 'America/Anchorage' },
+  { title: 'America/Bois', name: 'timezone', value: 'America/Bois' },
+  { title: 'America/Chicago', name: 'timezone', value: 'America/Chicago' },
+  { title: 'America/Denver', name: 'timezone', value: 'America/Denver' },
+  { title: 'America/Detroit', name: 'timezone', value: 'America/Detroit' },
+  {
+    title: 'America/Indiana/Indianapolis',
+    name: 'timezone',
+    value: 'America/Indiana/Indianapolis',
+  },
+  {
+    title: 'America/Indiana/Knox',
+    name: 'timezone',
+    value: 'America/Indiana/Knox',
+  },
+  {
+    title: 'America/Indiana/Marengo',
+    name: 'timezone',
+    value: 'America/Indiana/Marengo',
+  },
+  {
+    title: 'America/Indiana/Petersburg',
+    name: 'timezone',
+    value: 'America/Indiana/Petersburg',
+  },
+  {
+    title: 'America/Indiana/Tell_City',
+    name: 'timezone',
+    value: 'America/Indiana/Tell_City',
+  },
+  {
+    title: 'America/Indiana/Vevay',
+    name: 'timezone',
+    value: 'America/Indiana/Vevay',
+  },
+  {
+    title: 'America/Indiana/Vincennes',
+    name: 'timezone',
+    value: 'America/Indiana/Vincennes',
+  },
+  {
+    title: 'America/Indiana/Winamac',
+    name: 'timezone',
+    value: 'America/Indiana/Winamac',
+  },
+  { title: 'America/Juneau', name: 'timezone', value: 'America/Juneau' },
+  {
+    title: 'America/Kentucky/Louisville',
+    name: 'timezone',
+    value: 'America/Kentucky/Louisville',
+  },
+  {
+    title: 'America/Kentucky/Monticello',
+    name: 'timezone',
+    value: 'America/Kentucky/Monticello',
+  },
+  {
+    title: 'America/Los_Angeles',
+    name: 'timezone',
+    value: 'America/Los_Angeles',
+  },
+  { title: 'America/Menominee', name: 'timezone', value: 'America/Menominee' },
+  {
+    title: 'America/Metlakatla',
+    name: 'timezone',
+    value: 'America/Metlakatla',
+  },
+  { title: 'America/New_York', name: 'timezone', value: 'America/New_York' },
+  { title: 'America/Nome', name: 'timezone', value: 'America/Nome' },
+  {
+    title: 'America/North_Dakota/Beulah',
+    name: 'timezone',
+    value: 'America/North_Dakota/Beulah',
+  },
+  {
+    title: 'America/North_Dakota/Center',
+    name: 'timezone',
+    value: 'America/North_Dakota/Center',
+  },
+  {
+    title: 'America/North_Dakota/New_Salem',
+    name: 'timezone',
+    value: 'America/North_Dakota/New_Salem',
+  },
+  { title: 'America/Phoenix', name: 'timezone', value: 'America/Phoenix' },
+  { title: 'America/Sitka', name: 'timezone', value: 'America/Sitka' },
+  { title: 'America/Yakutat', name: 'timezone', value: 'America/Yakutat' },
+  { title: 'Pacific/Honolulu', name: 'timezone', value: 'Pacific/Honolulu' },
+];
+export const FORM_ERROR_MISSING_TIMEZONE = 'Timezone Required';

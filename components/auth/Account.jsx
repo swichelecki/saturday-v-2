@@ -2,10 +2,16 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { changeUserPassword, deleteUserAccount } from '../../actions';
-import { useAppContext } from '../../context';
-import { FormTextField, Toast } from '../../components';
 import {
+  changeUserPassword,
+  deleteUserAccount,
+  changeUserTimezone,
+} from '../../actions';
+import { useAppContext } from '../../context';
+import { FormTextField, FormSelectField, Toast } from '../../components';
+import {
+  FORM_TIMEZONES,
+  FORM_ERROR_MISSING_TIMEZONE,
   FORM_ERROR_MISSING_EMAIL,
   FORM_ERROR_MISSING_PASSWORD,
   FORM_ERROR_MISSING_NEW_PASSWORD,
@@ -17,16 +23,18 @@ import {
   DELETE_MY_ACCOUNT,
 } from '../../constants';
 
-const Account = ({ userId }) => {
+const Account = ({ userId, timezone }) => {
   const pageRef = useRef(null);
 
   const router = useRouter();
 
-  const { setUserId, setShowToast } = useAppContext();
+  const { setUserId, setShowToast, setTimezone } = useAppContext();
 
-  // set global context user id
+  // set global context user id and timezone and state timezone
   useEffect(() => {
     setUserId(userId);
+    setTimezone(timezone);
+    setForm({ ...form, timezone });
   }, []);
 
   const [form, setForm] = useState({
@@ -38,6 +46,7 @@ const Account = ({ userId }) => {
     deleteEmail: '',
     deletePassword: '',
     deleteConfirmation: '',
+    timezone: '',
   });
   const [errorMessage, setErrorMessage] = useState({
     email: '',
@@ -47,6 +56,7 @@ const Account = ({ userId }) => {
     deleteEmail: '',
     deletePassword: '',
     deleteConfirmation: '',
+    timezone: '',
   });
   const [
     isAwaitingChangePasswordResponse,
@@ -55,6 +65,16 @@ const Account = ({ userId }) => {
   const [isAwaitingDeleteAccoungResponse, setIsAwaitingDeleteAccoungResponse] =
     useState(false);
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
+  const [
+    isAwaitingChangeTimezoneResponse,
+    setIsAwaitingChangeTimezoneResponse,
+  ] = useState(false);
+
+  // error handling
+  useEffect(() => {
+    if (!errorMessage.timezone) return;
+    setErrorMessage({ ...errorMessage, timezone: '' });
+  }, [form.timezone]);
 
   useEffect(() => {
     if (!errorMessage.email) return;
@@ -96,10 +116,6 @@ const Account = ({ userId }) => {
     setErrorMessage({ ...errorMessage, deleteConfirmation: '' });
   }, [form.deleteConfirmation]);
 
-  const handleForm = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
   // scroll up to topmost error message
   useEffect(() => {
     if (!scrollToErrorMessage) return;
@@ -113,6 +129,37 @@ const Account = ({ userId }) => {
     });
     setScrollToErrorMessage(false);
   }, [scrollToErrorMessage]);
+
+  const handleForm = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFormSelectField = (optionName, optionValue) => {
+    setForm({ ...form, [optionName]: optionValue });
+  };
+
+  // change timezone
+  const changeTimezone = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    if (!form.timezone) {
+      setErrorMessage({
+        ...errorMessage,
+        timezone: FORM_ERROR_MISSING_TIMEZONE,
+      });
+    }
+
+    setIsAwaitingChangeTimezoneResponse(true);
+
+    const response = await changeUserTimezone(formData);
+    if (response.status === 200) {
+      setIsAwaitingChangeTimezoneResponse(false);
+    } else {
+      setShowToast(<Toast serverError={response} />);
+      setIsAwaitingChangePasswordResponse(false);
+    }
+  };
 
   // change password
   const changePassword = async (e) => {
@@ -215,6 +262,28 @@ const Account = ({ userId }) => {
 
   return (
     <div className='form-page' ref={pageRef}>
+      <form onSubmit={changeTimezone}>
+        <h2 className='form-page__h2'>Change Timezone</h2>
+        <FormSelectField
+          label='Timezone'
+          id='timezone'
+          name='timezone'
+          value={form?.timezone}
+          onChangeHandler={handleFormSelectField}
+          options={FORM_TIMEZONES}
+          errorMessage={errorMessage.timezone}
+        />
+        <input type='hidden' name='userId' value={userId} />
+        <div className='form-page__buttons-wrapper'>
+          <button
+            type='submit'
+            className='form-page__save-button form-page__update-button'
+          >
+            {isAwaitingChangeTimezoneResponse && <div className='loader'></div>}
+            Change Timezone
+          </button>
+        </div>
+      </form>
       <form onSubmit={changePassword}>
         <h2 className='form-page__h2'>Change Password</h2>
         <FormTextField
@@ -253,7 +322,7 @@ const Account = ({ userId }) => {
           onChangeHandler={handleForm}
           errorMessage={errorMessage.confirmNewPassword}
         />
-        <FormTextField type='hidden' name='userId' value={userId} />
+        <input type='hidden' name='userId' value={userId} />
         <div className='form-page__buttons-wrapper'>
           <button
             type='submit'
@@ -297,7 +366,7 @@ const Account = ({ userId }) => {
           onChangeHandler={handleForm}
           errorMessage={errorMessage.deleteConfirmation}
         />
-        <FormTextField type='hidden' name='userId' value={userId} />
+        <input type='hidden' name='userId' value={userId} />
         <div className='form-page__buttons-wrapper'>
           <button type='submit' className='form-page__delete-button'>
             {isAwaitingDeleteAccoungResponse && <div className='loader'></div>}

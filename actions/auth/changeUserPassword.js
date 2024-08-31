@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { handleServerErrorMessage } from '../../utilities';
 
-export default async function userChangePassword(formData) {
+export default async function changeUserPassword(formData) {
   try {
     const userId = formData.get('userId');
     const email = formData.get('email');

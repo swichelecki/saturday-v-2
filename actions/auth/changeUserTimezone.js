@@ -1,20 +1,20 @@
 'use server';
 
-import connectDB from '../../config/db';
 import User from '../../models/User';
 import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
 import { handleServerErrorMessage } from '../../utilities';
 const jwtSecret = process.env.JWT_SECRET;
 
-export default async function updateUserNoLongerNew(userId) {
+export default async function changeUserTimezone(formData) {
   try {
-    await connectDB();
+    const timezone = formData.get('timezone');
+    const userId = formData.get('userId');
 
     await User.updateOne(
       { _id: userId },
       {
-        newUser: false,
+        timezone,
       }
     );
 

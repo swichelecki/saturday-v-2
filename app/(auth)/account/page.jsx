@@ -12,8 +12,8 @@ async function getUserId() {
   try {
     const jwtSecret = process.env.JWT_SECRET;
     const token = cookies().get('saturday');
-
     let userId;
+    let timezone;
 
     if (token) {
       try {
@@ -23,20 +23,21 @@ async function getUserId() {
         );
         if (payload?.id) {
           userId = payload?.id;
+          timezone = payload?.timezone;
         }
       } catch (error) {
         console.log(error);
       }
     }
 
-    return userId;
+    return { userId, timezone };
   } catch (error) {
     console.log(error);
   }
 }
 
 export default async function AccountPage() {
-  const userId = await getUserId();
+  const { userId, timezone } = await getUserId();
 
-  return <Account userId={userId} />;
+  return <Account userId={userId} timezone={timezone} />;
 }
