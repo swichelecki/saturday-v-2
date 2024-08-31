@@ -21,6 +21,7 @@ export default async function loginUser(formData) {
       const token = await new SignJWT({
         hasToken: true,
         id: user._id,
+        timezone: user.timezone,
         newUser: user.newUser,
       })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })

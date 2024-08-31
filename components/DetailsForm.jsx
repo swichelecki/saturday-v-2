@@ -18,7 +18,7 @@ import {
   FORM_ERROR_MISSING_DATE,
 } from '../constants';
 
-const DetailsForm = ({ task, userId }) => {
+const DetailsForm = ({ task, userId, timezone }) => {
   const formRef = useRef(null);
 
   const router = useRouter();
@@ -26,7 +26,7 @@ const DetailsForm = ({ task, userId }) => {
   const params = useSearchParams();
   const [priority, type, column, hasMandatoryDate] = params.values();
 
-  const { setShowToast, setUserId } = useAppContext();
+  const { setShowToast, setUserId, setTimezone } = useAppContext();
 
   const [form, setForm] = useState({
     _id: task?._id,
@@ -50,7 +50,9 @@ const DetailsForm = ({ task, userId }) => {
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
   useEffect(() => {
+    // set global context user id and timezone
     setUserId(userId);
+    setTimezone(timezone);
   }, []);
 
   // remove error messages when adding data to fields

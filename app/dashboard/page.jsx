@@ -20,6 +20,7 @@ async function getDashboardData() {
     const jwtSecret = process.env.JWT_SECRET;
     const token = cookies().get('saturday');
     let userId;
+    let timezone;
 
     if (token) {
       try {
@@ -29,6 +30,7 @@ async function getDashboardData() {
         );
         if (payload?.id) {
           userId = payload?.id;
+          timezone = payload?.timezone;
         }
       } catch (error) {
         console.log(error);
@@ -103,6 +105,7 @@ async function getDashboardData() {
       categories: categories ?? [],
       reminders: JSON.parse(JSON.stringify(reminders)) ?? [],
       userId,
+      timezone,
     };
   } catch (error) {
     console.log(error);
@@ -111,7 +114,7 @@ async function getDashboardData() {
 
 export default async function DashboarPage() {
   const dashboardData = await getDashboardData();
-  const { tasks, categories, reminders, userId } = dashboardData;
+  const { tasks, categories, reminders, userId, timezone } = dashboardData;
 
   return (
     <Dashboard
@@ -119,6 +122,7 @@ export default async function DashboarPage() {
       categories={categories}
       reminders={reminders}
       userId={userId}
+      timezone={timezone}
     />
   );
 }

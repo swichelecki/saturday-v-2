@@ -28,6 +28,7 @@ export default async function updateUserNoLongerNew(userId) {
       const token = await new SignJWT({
         hasToken: true,
         id: userUpdated._id,
+        timezone: user.timezone,
         newUser: userUpdated.newUser,
       })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })

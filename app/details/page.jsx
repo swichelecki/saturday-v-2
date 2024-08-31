@@ -15,6 +15,7 @@ async function getUserId() {
     const jwtSecret = process.env.JWT_SECRET;
     const token = cookies().get('saturday');
     let userId;
+    let timezone;
 
     if (token) {
       try {
@@ -24,20 +25,21 @@ async function getUserId() {
         );
         if (payload?.id) {
           userId = payload?.id;
+          timezone = payload?.timezone;
         }
       } catch (error) {
         console.log(error);
       }
     }
 
-    return userId;
+    return { userId, timezone };
   } catch (error) {
     console.log(error);
   }
 }
 
 export default async function AddDetails() {
-  const userId = await getUserId();
+  const { userId, timezone } = await getUserId();
 
-  return <DetailsForm userId={userId} />;
+  return <DetailsForm userId={userId} timezone={timezone} />;
 }

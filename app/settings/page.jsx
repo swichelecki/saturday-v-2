@@ -16,6 +16,7 @@ async function getSettingsData() {
     const token = cookies().get('saturday');
     let userId;
     let newUser;
+    let timezone;
 
     if (token) {
       try {
@@ -26,6 +27,7 @@ async function getSettingsData() {
         if (payload?.id) {
           userId = payload?.id;
           newUser = payload?.newUser;
+          timezone = payload?.timezone;
         }
       } catch (error) {
         console.log(error);
@@ -43,6 +45,7 @@ async function getSettingsData() {
       reminders: JSON.parse(JSON.stringify(reminders)) ?? [],
       userId,
       newUser,
+      timezone,
     };
   } catch (error) {
     console.log(error);
@@ -50,7 +53,8 @@ async function getSettingsData() {
 }
 
 export default async function SettingsPage() {
-  const { categories, reminders, userId, newUser } = await getSettingsData();
+  const { categories, reminders, userId, newUser, timezone } =
+    await getSettingsData();
 
   return (
     <Settings
@@ -58,6 +62,7 @@ export default async function SettingsPage() {
       reminders={reminders}
       userId={userId}
       newUser={newUser}
+      timezone={timezone}
     />
   );
 }

@@ -1,3 +1,6 @@
+'use client';
+
+import { useAppContext } from '../context';
 import { FormErrorMessage } from './';
 import moment from 'moment-timezone';
 
@@ -12,6 +15,8 @@ const FormTextField = ({
   errorMessage,
   disabled = false,
 }) => {
+  const { timezone } = useAppContext();
+
   return (
     <div className={`form-field${errorMessage ? ' form-field--error' : ''}`}>
       {label && <label htmlFor={id}>{label}</label>}
@@ -24,7 +29,7 @@ const FormTextField = ({
           type === 'date'
             ? value?.split('T')[0]
             : type === 'datetime-local'
-            ? moment(value).tz('America/Chicago').format('yyyy-MM-DDTHH:mm')
+            ? moment(value).tz(timezone).format('yyyy-MM-DDTHH:mm')
             : value
         }
         onChange={onChangeHandler}

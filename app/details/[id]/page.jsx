@@ -16,6 +16,7 @@ async function getFormData(id) {
     const jwtSecret = process.env.JWT_SECRET;
     const token = cookies().get('saturday');
     let userId;
+    let timezone;
 
     if (token) {
       try {
@@ -25,6 +26,7 @@ async function getFormData(id) {
         );
         if (payload?.id) {
           userId = payload?.id;
+          timezone = payload?.timezone;
         }
       } catch (error) {
         console.log(error);
@@ -33,7 +35,7 @@ async function getFormData(id) {
 
     const task = await Task.find({ _id: id, userId });
 
-    return { task: JSON.parse(JSON.stringify(task[0])), userId };
+    return { task: JSON.parse(JSON.stringify(task[0])), userId, timezone };
   } catch (error) {
     console.log(error);
   }
@@ -41,7 +43,7 @@ async function getFormData(id) {
 
 export default async function EditDetails({ params }) {
   const { id } = params;
-  const { task, userId } = await getFormData(id);
+  const { task, userId, timezone } = await getFormData(id);
 
-  return <DetailsForm task={task} userId={userId} />;
+  return <DetailsForm task={task} userId={userId} timezone={timezone} />;
 }

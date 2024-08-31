@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useAppContext } from '../../context';
 import ItemButtons from './ItemButtons';
 import { useInnerWidth, useIsMounted } from '../../hooks';
 import {
@@ -40,6 +41,8 @@ const ItemList = ({
   listItemWrapperRef,
   numberOfItemsInColumn,
 }) => {
+  const { timezone } = useAppContext();
+
   const width = useInnerWidth();
   const isMounted = useIsMounted();
 
@@ -461,11 +464,9 @@ const ItemList = ({
                 {isToday && 'Today, '}
                 {isPastDue && 'Past Due! '}
                 {moment(item?.dateAndTime)
-                  .tz('America/Chicago')
+                  .tz(timezone)
                   .format('dddd, MMMM D,')}{' '}
-                {moment(item?.dateAndTime)
-                  .tz('America/Chicago')
-                  .format('h:mm A')}{' '}
+                {moment(item?.dateAndTime).tz(timezone).format('h:mm A')}{' '}
               </p>
             ) : (
               <p>

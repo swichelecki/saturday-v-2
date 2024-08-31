@@ -5,15 +5,16 @@ import { useAppContext } from '../../context';
 import { usePrompt } from '../../hooks';
 import { CategoryControls, RemindersControls } from '../../components';
 
-const Settings = ({ categories, reminders, userId, newUser }) => {
-  const { setUserId, setIsCategoriesPrompt } = useAppContext();
+const Settings = ({ categories, reminders, userId, newUser, timezone }) => {
+  const { setUserId, setTimezone, setIsCategoriesPrompt } = useAppContext();
 
   // if new user show prompts
   usePrompt();
 
-  // set global context user id and first new user prompt
+  // set global context user id, timezine first new user prompt
   useEffect(() => {
     setUserId(userId);
+    setTimezone(timezone);
     if (newUser) setIsCategoriesPrompt(true);
   }, []);
 

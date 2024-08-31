@@ -4,6 +4,7 @@ export const AppContext = createContext();
 
 export function AppWrapper({ children }) {
   const [userId, setUserId] = useState('');
+  const [timezone, setTimezone] = useState('');
   const [toast, setShowToast] = useState(null);
   const [modal, setShowModal] = useState(null);
   const [prompt, setShowPrompt] = useState(null);
@@ -16,6 +17,8 @@ export function AppWrapper({ children }) {
       value={{
         userId,
         setUserId,
+        timezone,
+        setTimezone,
         toast,
         setShowToast,
         modal,

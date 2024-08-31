@@ -2,7 +2,7 @@
 
 import connectDB from '../../config/db';
 import User from '../../models/User';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { SignJWT } from 'jose';
 import bcrypt from 'bcryptjs';
 import { handleServerErrorMessage } from '../../utilities';
@@ -12,24 +12,34 @@ export default async function createUserAccount(formData) {
   try {
     await connectDB();
 
+    const headerList = headers();
+
     const email = formData.get('email');
     const password = formData.get('password');
 
-    if (!email || !password) {
-      throw new Error('Missing required user data');
-    }
+    if (!email || !password) throw new Error('Missing required user data');
 
     const userExists = await User.findOne({ email });
 
-    if (userExists) {
-      return { status: 409 };
-    }
+    if (userExists) return { status: 409 };
+
+    let ipAddress = headerList.get('x-forwarded-for')?.split(',')[0];
+
+    if (!ipAddress) ipAddress = headerList.get('x-real-ip') || 'unknown';
+
+    // if localhost use America/Chicago ip address
+    if (ipAddress === '::1') ipAddress = '73.111.204.162';
+
+    const response = await fetch(`http://ip-api.com/json/${ipAddress}`);
+    const locationData = await response.json();
+    const { timezone } = locationData;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = await User.create({
       email,
       password: hashedPassword,
+      timezone,
       newUser: true,
     });
 
@@ -37,6 +47,7 @@ export default async function createUserAccount(formData) {
       const token = await new SignJWT({
         hasToken: true,
         id: user._id,
+        timezone,
         newUser: true,
       })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })

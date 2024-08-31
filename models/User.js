@@ -11,6 +11,10 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    timezone: {
+      type: String,
+      required: true,
+    },
     newUser: {
       type: Boolean,
       required: true,
