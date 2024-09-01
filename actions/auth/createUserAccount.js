@@ -30,7 +30,9 @@ export default async function createUserAccount(formData) {
     // if localhost use America/Chicago ip address
     if (ipAddress === '::1') ipAddress = '73.111.204.162';
 
-    const response = await fetch(`http://ip-api.com/json/${ipAddress}`);
+    const response = await fetch(
+      `http://ip-api.com/json/${ipAddress}?fields=timezone`
+    );
     const locationData = await response.json();
     const { timezone } = locationData;
 

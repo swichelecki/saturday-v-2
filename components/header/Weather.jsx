@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getLocation } from '../../actions';
 import { handleDayNightCheck } from '../../utilities';
 import {
   BsFillSunFill,
@@ -22,13 +23,19 @@ const Weather = () => {
   const [todaysHigh, setTodaysHigh] = useState(0);
   const [todaysLow, setTodaysLow] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [city, setCity] = useState('');
 
   const getWeather = async () => {
-    const openMeteoApiUrl =
-      'https://api.open-meteo.com/v1/forecast?latitude=41.9231&longitude=-87.7093&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timeformat=unixtime&timezone=America%2FChicago&forecast_days=1';
+    const locationData = await getLocation();
+    const { location } = locationData;
+    const { lat, lon, city } = location;
+
+    if (!lat || !lon || !city) throw new Error('Error fetching location');
+
+    const openMeteoApiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&forecast_days=1`;
     const response = await fetch(openMeteoApiUrl);
 
-    if (response?.status >= 200 && response?.status <= 299) {
+    if (response.ok) {
       const jsonResponse = await response?.json();
       const { current, daily } = jsonResponse;
       const { temperature_2m, weather_code } = current;
@@ -38,6 +45,7 @@ const Weather = () => {
       setWeatherCode(handleDayNightCheck(weather_code));
       setTodaysHigh(Math.round(temperature_2m_max));
       setTodaysLow(Math.round(temperature_2m_min));
+      setCity(city);
       setIsLoading(false);
     } else {
       console.log(
@@ -86,7 +94,7 @@ const Weather = () => {
             <span>&deg;</span>
           </p>
         </div>
-        <p className='weather__location'>Chicago</p>
+        <p className='weather__location'>{city}</p>
       </div>
       <div className='weather__high-low-wrapper'>
         <p>

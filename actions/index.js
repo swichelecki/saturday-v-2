@@ -16,3 +16,4 @@ export { default as createReminder } from './settings/reminders/createReminder';
 export { default as deleteReminder } from './settings/reminders/deleteReminder';
 export { default as getReminder } from './settings/reminders/getReminder';
 export { default as updateReminder } from './settings/reminders/updateReminder';
+export { default as getLocation } from './utilities/getLocation';
