@@ -35,7 +35,7 @@ const Weather = () => {
     const openMeteoApiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&forecast_days=1`;
     const response = await fetch(openMeteoApiUrl);
 
-    if (response.ok) {
+    if (response.status === 200) {
       const jsonResponse = await response?.json();
       const { current, daily } = jsonResponse;
       const { temperature_2m, weather_code } = current;

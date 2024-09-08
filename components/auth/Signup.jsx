@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createUserAccount } from '../../actions';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { z } from 'zod';
 import { useAppContext } from '../../context';
 import { FormTextField, Toast } from '../../components';
 import {
@@ -13,6 +14,8 @@ import {
   FORM_ERROR_MISSING_CONFIRM_PASSWORD,
   INVALID_USER_DATA,
   USER_ALREADY_EXISTS,
+  FORM_CHARACTER_LIMIT_50,
+  FORM_ERROR_INVALID_EMAIL,
 } from '../../constants';
 
 const Signup = () => {
@@ -38,68 +41,76 @@ const Signup = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (!errorMessage.email) return;
-    setErrorMessage({ ...errorMessage, email: '' });
-  }, [form.email]);
-
-  useEffect(() => {
-    if (!errorMessage.password) return;
-    setErrorMessage({ ...errorMessage, password: '' });
-  }, [form.password]);
-
-  useEffect(() => {
-    if (!errorMessage.confirmPassword) return;
-    setErrorMessage({ ...errorMessage, confirmPassword: '' });
-  }, [form.confirmPassword]);
-
   const handleForm = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+
+    if (errorMessage[e.target.name]) {
+      setErrorMessage({ ...errorMessage, [e.target.name]: '' });
+    }
   };
+
+  const CreateUserSchema = z
+    .object({
+      email: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_EMAIL)
+        .email(FORM_ERROR_INVALID_EMAIL)
+        .max(50, FORM_CHARACTER_LIMIT_50),
+      password: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_PASSWORD)
+        .max(50, FORM_CHARACTER_LIMIT_50),
+      confirmPassword: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_CONFIRM_PASSWORD)
+        .max(50, FORM_CHARACTER_LIMIT_50),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: FORM_ERROR_PASSWORD_MISMATCH,
+      path: ['confirmPassword'],
+    });
 
   const onSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    if (!form.email || !form.password || !form.confirmPassword) {
-      setErrorMessage({
-        email: form.email ? '' : FORM_ERROR_MISSING_EMAIL,
-        password: form.password ? '' : FORM_ERROR_MISSING_PASSWORD,
-        confirmPassword: form.confirmPassword
-          ? ''
-          : FORM_ERROR_MISSING_CONFIRM_PASSWORD,
-      });
-      return;
-    }
+    const CreateUserSchemaValidated = CreateUserSchema.safeParse({
+      email: formData.get('email'),
+      password: formData.get('password'),
+      confirmPassword: formData.get('confirmPassword'),
+    });
 
-    if (form.password !== form.confirmPassword) {
-      setErrorMessage({
-        password: FORM_ERROR_PASSWORD_MISMATCH,
-        confirmPassword: FORM_ERROR_PASSWORD_MISMATCH,
-      });
-      return;
-    }
+    const { success, error } = CreateUserSchemaValidated;
 
-    setisAwaitingLogInResponse(true);
-
-    const response = await createUserAccount(formData);
-    if (response.status === 200) {
-      router.push('/settings');
-    } else if (response.status === 400) {
-      setisAwaitingLogInResponse(false);
+    if (!success) {
+      const { email, password, confirmPassword } = error.flatten().fieldErrors;
       setErrorMessage({
-        email: INVALID_USER_DATA,
-        password: INVALID_USER_DATA,
-      });
-    } else if (response.status === 409) {
-      setisAwaitingLogInResponse(false);
-      setErrorMessage({
-        email: USER_ALREADY_EXISTS,
-        password: USER_ALREADY_EXISTS,
+        email: email?.[0],
+        password: password?.[0],
+        confirmPassword: confirmPassword?.[0],
       });
     } else {
-      setShowToast(<Toast serverError={response} />);
-      setisAwaitingLogInResponse(false);
+      setisAwaitingLogInResponse(true);
+
+      const response = await createUserAccount(formData);
+      if (response.status === 200) {
+        router.push('/settings');
+      } else if (response.status === 400) {
+        setisAwaitingLogInResponse(false);
+        setErrorMessage({
+          email: INVALID_USER_DATA,
+          password: INVALID_USER_DATA,
+        });
+      } else if (response.status === 409) {
+        setisAwaitingLogInResponse(false);
+        setErrorMessage({
+          email: USER_ALREADY_EXISTS,
+          password: USER_ALREADY_EXISTS,
+        });
+      } else {
+        setShowToast(<Toast serverError={response} />);
+        setisAwaitingLogInResponse(false);
+      }
     }
   };
 
@@ -108,28 +119,28 @@ const Signup = () => {
       <form onSubmit={onSubmit} className='entry-form__form'>
         <div className='entry-form__form-controls-wrapper'>
           <FormTextField
-            label={'Email'}
-            type={'email'}
-            id={'email'}
-            name={'email'}
+            label='Email'
+            type='email novalidate'
+            id='email'
+            name='email'
             value={form?.email}
             onChangeHandler={handleForm}
             errorMessage={errorMessage.email}
           />
           <FormTextField
-            label={'Password'}
-            type={'password'}
-            id={'password'}
-            name={'password'}
+            label='Password'
+            type='password'
+            id='password'
+            name='password'
             value={form?.password}
             onChangeHandler={handleForm}
             errorMessage={errorMessage.password}
           />
           <FormTextField
-            label={'Confirm Password'}
-            type={'password'}
-            id={'confirmPassword'}
-            name={'confirmPassword'}
+            label='Confirm Password'
+            type='password'
+            id='confirmPassword'
+            name='confirmPassword'
             value={form?.confirmPassword}
             onChangeHandler={handleForm}
             errorMessage={errorMessage.confirmPassword}

@@ -9,7 +9,7 @@
     position: relative;
     height: 55px;
     border-radius: 8px;
-    padding: 0 8px 0 16px;
+    padding: 0 8px 0 0;
     text-transform: capitalize;
     user-select: none;
     border: 1px solid $color-border;
@@ -22,9 +22,10 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
   }
   &__drag-zone {
+    padding: 12px 4px 12px 16px;
     cursor: grab;
     svg {
       position: relative;

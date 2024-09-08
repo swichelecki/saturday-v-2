@@ -1,15 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { loginUser } from '../../actions';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { z } from 'zod';
+import { loginUser } from '../../actions';
 import { useAppContext } from '../../context';
 import { FormTextField, Toast } from '../../components';
 import {
   FORM_ERROR_MISSING_EMAIL,
   FORM_ERROR_MISSING_PASSWORD,
   FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+  FORM_CHARACTER_LIMIT_50,
+  FORM_ERROR_INVALID_EMAIL,
 } from '../../constants';
 
 const Login = () => {
@@ -30,46 +33,56 @@ const Login = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (!errorMessage.email) return;
-    setErrorMessage({ ...errorMessage, email: '' });
-  }, [form.email]);
-
-  useEffect(() => {
-    if (!errorMessage.password) return;
-    setErrorMessage({ ...errorMessage, password: '' });
-  }, [form.password]);
-
   const handleForm = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+
+    if (errorMessage[e.target.name]) {
+      setErrorMessage({ ...errorMessage, [e.target.name]: '' });
+    }
   };
+
+  const LoginSchema = z.object({
+    email: z
+      .string()
+      .min(1, FORM_ERROR_MISSING_EMAIL)
+      .email(FORM_ERROR_INVALID_EMAIL)
+      .max(50, FORM_CHARACTER_LIMIT_50),
+    password: z
+      .string()
+      .min(1, FORM_ERROR_MISSING_PASSWORD)
+      .max(50, FORM_CHARACTER_LIMIT_50),
+  });
 
   const onSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    if (!form.email || !form.password) {
-      setErrorMessage({
-        email: form.email ? '' : FORM_ERROR_MISSING_EMAIL,
-        password: form.password ? '' : FORM_ERROR_MISSING_PASSWORD,
-      });
-      return;
-    }
+    const LoginDataValidated = LoginSchema.safeParse({
+      email: formData.get('email'),
+      password: formData.get('password'),
+    });
 
-    setisAwaitingLogInResponse(true);
+    const { success, error } = LoginDataValidated;
 
-    const response = await loginUser(formData);
-    if (response.status === 200) {
-      router.push('/dashboard');
-    } else if (response.status === 403) {
-      setisAwaitingLogInResponse(false);
-      setErrorMessage({
-        email: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
-        password: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
-      });
+    if (!success) {
+      const { email, password } = error.flatten().fieldErrors;
+      setErrorMessage({ email: email?.[0], password: password?.[0] });
     } else {
-      setShowToast(<Toast serverError={response} />);
-      setisAwaitingLogInResponse(false);
+      setisAwaitingLogInResponse(true);
+
+      const response = await loginUser(formData);
+      if (response.status === 200) {
+        router.push('/dashboard');
+      } else if (response.status === 403) {
+        setisAwaitingLogInResponse(false);
+        setErrorMessage({
+          email: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+          password: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+        });
+      } else {
+        setShowToast(<Toast serverError={response} />);
+        setisAwaitingLogInResponse(false);
+      }
     }
   };
 
@@ -78,19 +91,19 @@ const Login = () => {
       <form onSubmit={onSubmit} className='entry-form__form'>
         <div className='entry-form__form-controls-wrapper'>
           <FormTextField
-            label={'Email'}
-            type={'email'}
-            id={'email'}
-            name={'email'}
+            label='Email'
+            type='email novalidate'
+            id='email'
+            name='email'
             value={form?.email}
             onChangeHandler={handleForm}
             errorMessage={errorMessage.email}
           />
           <FormTextField
-            label={'Password'}
-            type={'password'}
-            id={'password'}
-            name={'password'}
+            label='Password'
+            type='password'
+            id='password'
+            name='password'
             value={form?.password}
             onChangeHandler={handleForm}
             errorMessage={errorMessage.password}
