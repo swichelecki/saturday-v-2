@@ -254,7 +254,11 @@ const SettingsItem = ({
       data-settings-item-index={index}
     >
       <div className='settings-item__inner-wrapper'>
-        <div className='settings-item__title-wrapper'>
+        <div
+          className={`settings-item__title-wrapper ${
+            item?.reminder && 'settings-item__title-wrapper--padding-left'
+          }`}
+        >
           {!item?.reminder && (
             <div
               className='settings-item__drag-zone'

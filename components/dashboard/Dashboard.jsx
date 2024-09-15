@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { z } from 'zod';
 import { useAppContext } from '../../context';
 import {
   MainControls,
@@ -17,8 +18,10 @@ import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
   MODAL_UPDATE_ITEM_HEADLINE,
-  ITEM_ERROR_MESSAGES,
   LIST_ITEM_LIMIT,
+  ITEM_ERROR_MISSING_ITEM,
+  ITEM_ERROR_AT_ITEM_LIMIT,
+  FORM_CHARACTER_LIMIT_30,
 } from '../../constants';
 
 const ItemsColumn = dynamic(() =>
@@ -53,7 +56,7 @@ const Dashboard = ({ tasks, categories, reminders, userId, timezone }) => {
     useState(false);
   const [allItemsTouchReset, setAllItemsTouchReset] = useState(false);
   const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
-  const [errorMessages, setErrorMessages] = useState(ITEM_ERROR_MESSAGES);
+  const [errorMessages, setErrorMessages] = useState('');
 
   let allItems = [];
 
@@ -159,52 +162,65 @@ const Dashboard = ({ tasks, categories, reminders, userId, timezone }) => {
       title: e.target.value,
     });
 
-    if (errorMessages?.isEmpty) {
-      setErrorMessages({ ...errorMessages, isEmpty: false });
+    if (errorMessages) {
+      setErrorMessages('');
     }
   };
+
+  const itemSchema = z
+    .object({
+      title: z
+        .string()
+        .min(1, ITEM_ERROR_MISSING_ITEM)
+        .max(30, FORM_CHARACTER_LIMIT_30),
+      itemLimit: z.number(),
+    })
+    .refine((data) => Number(data.itemLimit) < LIST_ITEM_LIMIT, {
+      message: ITEM_ERROR_AT_ITEM_LIMIT,
+      path: ['itemLimit'],
+    });
 
   // create new item
   const handleOnSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    // handle empty field message
-    if (!listItem?.title) {
-      setErrorMessages({ ...errorMessages, isEmpty: true });
-      return;
-    }
-
-    // handle at-item-limit message
-    if (totalNumberOfItems >= LIST_ITEM_LIMIT) {
-      setErrorMessages({ ...errorMessages, atItemLimit: true });
-      return;
-    }
-
-    setIsAwaitingAddResponse(true);
-    createItem(formData).then((res) => {
-      if (res.status === 200) {
-        setListItems(
-          listItems.map((item) => {
-            if (Object.keys(item)[0] === res.item.type) {
-              return {
-                [Object.keys(item)[0]]: [...Object.values(item)[0], res.item],
-              };
-            } else {
-              return item;
-            }
-          })
-        );
-        if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
-        setListItem({ ...listItem, title: '' });
-      }
-
-      if (res.status !== 200) {
-        setShowToast(<Toast serverError={res} />);
-      }
-
-      setIsAwaitingAddResponse(false);
+    const itemSchemaValidated = itemSchema.safeParse({
+      title: formData.get('title'),
+      itemLimit: totalNumberOfItems,
     });
+
+    const { success, error } = itemSchemaValidated;
+
+    if (!success) {
+      const { title, itemLimit } = error.flatten().fieldErrors;
+      setErrorMessages(title?.[0] ? title?.[0] : itemLimit?.[0]);
+    } else {
+      setIsAwaitingAddResponse(true);
+      createItem(formData).then((res) => {
+        if (res.status === 200) {
+          setListItems(
+            listItems.map((item) => {
+              if (Object.keys(item)[0] === res.item.type) {
+                return {
+                  [Object.keys(item)[0]]: [...Object.values(item)[0], res.item],
+                };
+              } else {
+                return item;
+              }
+            })
+          );
+          if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+          setListItem({ ...listItem, title: '' });
+        }
+
+        if (res.status !== 200) {
+          setShowToast(<Toast serverError={res} />);
+        }
+
+        setIsAwaitingAddResponse(false);
+      });
+    }
   };
 
   // get item to edit
@@ -295,13 +311,9 @@ const Dashboard = ({ tasks, categories, reminders, userId, timezone }) => {
 
   return (
     <div className='content-container'>
-      {(errorMessages?.isEmpty || errorMessages?.atItemLimit) && (
+      {errorMessages && (
         <FormErrorMessage
-          errorMessage={
-            errorMessages?.isEmpty
-              ? errorMessages?.isEmptyMessage
-              : errorMessages?.atItemLimitMessage
-          }
+          errorMessage={errorMessages}
           className='form-error-message form-error-message--position-static'
         />
       )}

@@ -26,9 +26,7 @@
   }
   &__buttons-wrapper {
     display: flex;
-    button.form-page__save-button {
-      margin-right: 12px;
-    }
+    gap: 12px;
   }
   &__update-button,
   &__logout-button {

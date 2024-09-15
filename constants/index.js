@@ -7,7 +7,10 @@ export const MIN_TRANSITION_SPEED = 500;
 export const LIST_ITEM_LIMIT = 50;
 export const CATEGORY_ITEM_LIMIT = 12;
 export const REMINDERS_ITEM_LIMIT = 25;
+export const FORM_CHARACTER_LIMIT_16 = 'Limit 16 Characters';
+export const FORM_CHARACTER_LIMIT_30 = 'Limit 30 Characters';
 export const FORM_CHARACTER_LIMIT_50 = 'Limit 50 Characters';
+export const FORM_CHARACTER_LIMIT_500 = 'Limit 500 Characters';
 export const FORM_ERROR_MISSING_TITLE = 'Title Required';
 export const FORM_ERROR_MISSING_DESCRIPTION = 'Description Required';
 export const FORM_ERROR_MISSING_DATE = 'Date or Date & Time Required';
@@ -27,12 +30,14 @@ export const FORM_ERROR_MISSING_DELETE_CONFIRMATION =
 export const FORM_ERROR_MISSING_DELETE_MISMATCH =
   'Delete Confirmation is Not Correct';
 export const DELETE_MY_ACCOUNT = 'delete my account';
-export const INVALID_USER_DATA = 'Invalid user data';
-export const USER_ALREADY_EXISTS = 'User already exists';
-export const SERVER_ERROR_MESSAGE = 'A server error has occurred';
+export const INVALID_USER_DATA = 'Invalid User Data';
+export const USER_ALREADY_EXISTS = 'User Already Exists';
+export const SERVER_ERROR_MESSAGE = 'A Server Error has Occurred';
 export const SETTINGS_MISSING_CATEGORY = 'Category Required';
 export const FORM_ERROR_MISSING_REMINDER_TITLE = 'Reminder Required';
 export const FORM_ERROR_MISSING_REMINDER_DATE = 'Reminder Date Required';
+export const FORM_ERROR_REMINDER_DATE_FUTURE =
+  'Reminder Date Must be in the Future';
 export const FORM_ERROR_MISSING_REMINDER_INTERVAL =
   'Reminder Interval Required';
 export const FORM_ERROR_MISSING_REMINDER_BUFFER = 'Reminder Buffer Required';
@@ -70,12 +75,9 @@ export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
 export const MODAL_UPDATE_ITEM_HEADLINE = 'Update Item';
 export const MODAL_OPERATION_CREATE = 'CREATE';
 export const MODAL_OPERATION_UPDATE = 'UPDATE';
-export const ITEM_ERROR_MESSAGES = {
-  isEmpty: false,
-  isEmptyMessage: 'Item field is empty!',
-  atItemLimit: false,
-  atItemLimitMessage: "Limit 50 items! Looks like it's time to get to work.",
-};
+export const ITEM_ERROR_MISSING_ITEM = 'Item field is empty!';
+export const ITEM_ERROR_AT_ITEM_LIMIT =
+  "Limit 50 items! Looks like it's time to get to work.";
 export const FORM_TIMEZONES = [
   { title: 'America/Adak', name: 'timezone', value: 'America/Adak' },
   { title: 'America/Anchorage', name: 'timezone', value: 'America/Anchorage' },

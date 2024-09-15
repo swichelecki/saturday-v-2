@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createUserAccount } from '../../actions';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { z } from 'zod';
+import { createUserAccount } from '../../actions';
 import { useAppContext } from '../../context';
 import { FormTextField, Toast } from '../../components';
 import {
@@ -49,7 +49,7 @@ const Signup = () => {
     }
   };
 
-  const CreateUserSchema = z
+  const createUserSchema = z
     .object({
       email: z
         .string()
@@ -74,13 +74,13 @@ const Signup = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    const CreateUserSchemaValidated = CreateUserSchema.safeParse({
+    const createUserSchemaValidated = createUserSchema.safeParse({
       email: formData.get('email'),
       password: formData.get('password'),
       confirmPassword: formData.get('confirmPassword'),
     });
 
-    const { success, error } = CreateUserSchemaValidated;
+    const { success, error } = createUserSchemaValidated;
 
     if (!success) {
       const { email, password, confirmPassword } = error.flatten().fieldErrors;

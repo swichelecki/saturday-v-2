@@ -1,10 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { z } from 'zod';
 import { FormTextField, Toast } from '../../components';
 import { updateItem } from '../../actions';
 import { useAppContext } from '../../context';
-import { FORM_ERROR_MISSING_UPDATE_TITLE } from '../../constants';
+import {
+  FORM_ERROR_MISSING_UPDATE_TITLE,
+  FORM_CHARACTER_LIMIT_30,
+} from '../../constants';
 
 const ModalUpdateItem = ({
   userId,
@@ -28,16 +32,9 @@ const ModalUpdateItem = ({
     dateAndTime: '',
     mandatoryDate: false,
   });
-  const [errorMessage, setErrorMessage] = useState({
-    title: '',
-  });
+  const [errorMessage, setErrorMessage] = useState('');
   const [isAwaitingSubmitResponse, setIsAwaitingSubmitResponse] =
     useState(false);
-
-  useEffect(() => {
-    if (!errorMessage.title) return;
-    setErrorMessage({ ...errorMessage, title: '' });
-  }, [form.title]);
 
   // handle keyboard events
   useEffect(() => {
@@ -65,52 +62,67 @@ const ModalUpdateItem = ({
       ...form,
       [e.target.name]: e.target.value,
     });
+
+    if (errorMessage) {
+      setErrorMessage('');
+    }
   };
+
+  const itemSchema = z.object({
+    title: z
+      .string()
+      .min(1, FORM_ERROR_MISSING_UPDATE_TITLE)
+      .max(30, FORM_CHARACTER_LIMIT_30),
+  });
 
   // edit item
   const handleEditSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    if (!form?.title) {
-      setErrorMessage({
-        title: FORM_ERROR_MISSING_UPDATE_TITLE,
-      });
-      return;
-    }
-
-    setIsAwaitingSubmitResponse(true);
-    updateItem(formData).then((res) => {
-      if (res.status === 200) {
-        setItems(
-          items.map((item) => {
-            if (Object.keys(item)[0] === res.item.type) {
-              return {
-                [Object.keys(item)[0]]: Object.values(item)[0].map((item) => {
-                  if (item._id === itemToEditId) {
-                    return {
-                      ...item,
-                      title: res.item.title,
-                    };
-                  } else {
-                    return item;
-                  }
-                }),
-              };
-            } else {
-              return item;
-            }
-          })
-        );
-      }
-
-      if (res.status !== 200) {
-        setShowToast(<Toast serverError={res} />);
-      }
-
-      setIsAwaitingSubmitResponse(false);
-      handleCloseModal();
+    const itemSchemaValidated = itemSchema.safeParse({
+      title: formData.get('title'),
     });
+
+    const { success, error } = itemSchemaValidated;
+
+    if (!success) {
+      const { title } = error.flatten().fieldErrors;
+      setErrorMessage(title?.[0]);
+    } else {
+      setIsAwaitingSubmitResponse(true);
+      updateItem(formData).then((res) => {
+        if (res.status === 200) {
+          setItems(
+            items.map((item) => {
+              if (Object.keys(item)[0] === res.item.type) {
+                return {
+                  [Object.keys(item)[0]]: Object.values(item)[0].map((item) => {
+                    if (item._id === itemToEditId) {
+                      return {
+                        ...item,
+                        title: res.item.title,
+                      };
+                    } else {
+                      return item;
+                    }
+                  }),
+                };
+              } else {
+                return item;
+              }
+            })
+          );
+        }
+
+        if (res.status !== 200) {
+          setShowToast(<Toast serverError={res} />);
+        }
+
+        setIsAwaitingSubmitResponse(false);
+        handleCloseModal();
+      });
+    }
   };
 
   const handleCloseModal = () => {
@@ -141,10 +153,14 @@ const ModalUpdateItem = ({
         name='title'
         value={form?.title}
         onChangeHandler={handleForm}
-        errorMessage={errorMessage.title}
+        errorMessage={errorMessage}
       />
       <div className='modal__modal-button-wrapper'>
-        <button onClick={handleCloseModal} className='modal__cancel-button'>
+        <button
+          onClick={handleCloseModal}
+          type='button'
+          className='modal__cancel-button'
+        >
           Cancel
         </button>
 

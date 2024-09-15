@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { z } from 'zod';
 import {
   FormTextField,
   FormCheckboxField,
@@ -15,10 +16,12 @@ import {
   FORM_REMINDER_BUFFER_OPTIONS,
   FORM_ERROR_MISSING_REMINDER_TITLE,
   FORM_ERROR_MISSING_REMINDER_DATE,
+  FORM_ERROR_REMINDER_DATE_FUTURE,
   FORM_ERROR_MISSING_REMINDER_INTERVAL,
   FORM_ERROR_MISSING_REMINDER_BUFFER,
   MODAL_OPERATION_CREATE,
   MODAL_OPERATION_UPDATE,
+  FORM_CHARACTER_LIMIT_30,
 } from '../../constants';
 
 const ModalReminder = ({
@@ -51,26 +54,6 @@ const ModalReminder = ({
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
   const [isAwaitingSubmitResponse, setIsAwaitingSubmitResponse] =
     useState(false);
-
-  useEffect(() => {
-    if (!errorMessage.reminder) return;
-    setErrorMessage({ ...errorMessage, reminder: '' });
-  }, [form.reminder]);
-
-  useEffect(() => {
-    if (!errorMessage.reminderDate) return;
-    setErrorMessage({ ...errorMessage, reminderDate: '' });
-  }, [form.reminderDate]);
-
-  useEffect(() => {
-    if (!errorMessage.recurrenceInterval) return;
-    setErrorMessage({ ...errorMessage, recurrenceInterval: '' });
-  }, [form.recurrenceInterval]);
-
-  useEffect(() => {
-    if (!errorMessage.recurrenceBuffer) return;
-    setErrorMessage({ ...errorMessage, recurrenceBuffer: '' });
-  }, [form.recurrenceBuffer]);
 
   // scroll up to topmost error message
   useEffect(() => {
@@ -114,74 +97,117 @@ const ModalReminder = ({
       ...form,
       [e.target.name]: e.target.value,
     });
+
+    if (errorMessage[e.target.name]) {
+      setErrorMessage({ ...errorMessage, [e.target.name]: '' });
+    }
   };
 
   const handleReminderWithExactRecurringDate = (e) => {
     setForm({
       ...form,
       exactRecurringDate: e.target.checked,
-      recurrenceBuffer: '',
+      recurrenceBuffer: 0,
     });
+
+    if (errorMessage.recurrenceBuffer) {
+      setErrorMessage({ ...errorMessage, recurrenceBuffer: '' });
+    }
   };
 
   const handleFormSelectField = (optionName, optionValue) => {
     setForm({ ...form, [optionName]: optionValue });
+
+    if (errorMessage[optionName]) {
+      setErrorMessage({ ...errorMessage, [optionName]: '' });
+    }
   };
+
+  const reminderSchema = z
+    .object({
+      reminder: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_REMINDER_TITLE)
+        .max(30, FORM_CHARACTER_LIMIT_30),
+      reminderDate: z.string().date(FORM_ERROR_MISSING_REMINDER_DATE),
+      recurrenceInterval: z.string(),
+      exactRecurringDate: z.string(),
+      recurrenceBuffer: z.string(),
+    })
+    .refine((data) => new Date(data.reminderDate).getTime() > Date.now(), {
+      message: FORM_ERROR_REMINDER_DATE_FUTURE,
+      path: ['reminderDate'],
+    })
+    .refine((data) => data.recurrenceInterval !== '0', {
+      message: FORM_ERROR_MISSING_REMINDER_INTERVAL,
+      path: ['recurrenceInterval'],
+    })
+    .refine(
+      (data) =>
+        (data.exactRecurringDate === 'true' && data.recurrenceBuffer !== '0') ||
+        (data.exactRecurringDate === 'false' && data.recurrenceBuffer === '0'),
+      {
+        message: FORM_ERROR_MISSING_REMINDER_BUFFER,
+        path: ['recurrenceBuffer'],
+      }
+    );
 
   // add new reminder
   const handleCreateReminder = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    if (
-      !form.reminder ||
-      !form.reminderDate ||
-      !form.recurrenceInterval ||
-      (form.exactRecurringDate && !form.recurrenceBuffer)
-    ) {
+    const reminderSchemaValidated = reminderSchema.safeParse({
+      reminder: formData.get('reminder'),
+      reminderDate: formData.get('reminderDate'),
+      recurrenceInterval: formData.get('recurrenceInterval'),
+      exactRecurringDate: formData.get('exactRecurringDate'),
+      recurrenceBuffer: formData.get('recurrenceBuffer'),
+    });
+
+    const { success, error } = reminderSchemaValidated;
+
+    if (!success) {
+      const { reminder, reminderDate, recurrenceInterval, recurrenceBuffer } =
+        error.flatten().fieldErrors;
+
       setErrorMessage({
-        ...errorMessage,
-        reminder: !form.reminder && FORM_ERROR_MISSING_REMINDER_TITLE,
-        reminderDate: !form.reminderDate && FORM_ERROR_MISSING_REMINDER_DATE,
-        recurrenceInterval:
-          !form.recurrenceInterval && FORM_ERROR_MISSING_REMINDER_INTERVAL,
-        recurrenceBuffer:
-          form.exactRecurringDate &&
-          !form.recurrenceBuffer &&
-          FORM_ERROR_MISSING_REMINDER_BUFFER,
+        reminder: reminder?.[0],
+        reminderDate: reminderDate?.[0],
+        recurrenceInterval: recurrenceInterval?.[0],
+        recurrenceBuffer: recurrenceBuffer?.[0],
       });
       setScrollToErrorMessage(true);
-      return;
+    } else {
+      setIsAwaitingSubmitResponse(true);
+      createReminder(formData).then((res) => {
+        if (res.status === 200) {
+          const copyOfRemindersItems = [...items];
+          setItems(
+            handleSortItemsAscending(
+              [...copyOfRemindersItems, res.item],
+              'reminderDate'
+            )
+          );
+          setForm({
+            userId,
+            reminder: '',
+            reminderDate: '',
+            recurrenceInterval: 0,
+            recurrenceBuffer: 0,
+            exactRecurringDate: false,
+            displayReminder: false,
+          });
+        }
+
+        if (res.status !== 200) {
+          setShowToast(<Toast serverError={res} />);
+        }
+
+        setIsAwaitingSubmitResponse(false);
+        handleCloseModal();
+      });
     }
-
-    setIsAwaitingSubmitResponse(true);
-    createReminder(formData).then((res) => {
-      if (res.status === 200) {
-        const copyOfRemindersItems = [...items];
-        setItems(
-          handleSortItemsAscending(
-            [...copyOfRemindersItems, res.item],
-            'reminderDate'
-          )
-        );
-        setForm({
-          userId,
-          reminder: '',
-          reminderDate: '',
-          recurrenceInterval: 0,
-          recurrenceBuffer: 0,
-          exactRecurringDate: false,
-          displayReminder: false,
-        });
-      }
-
-      if (res.status !== 200) {
-        setShowToast(<Toast serverError={res} />);
-      }
-
-      setIsAwaitingSubmitResponse(false);
-      handleCloseModal();
-    });
   };
 
   // update reminder
@@ -189,30 +215,52 @@ const ModalReminder = ({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    setIsAwaitingSubmitResponse(true);
-    updateReminder(formData).then((res) => {
-      if (res.status === 200) {
-        setItems(
-          handleSortItemsAscending(
-            items?.map((item) => {
-              if (item?._id === itemToEditId) {
-                return res?.item;
-              } else {
-                return item;
-              }
-            }),
-            'reminderDate'
-          )
-        );
-      }
-
-      if (res.status !== 200) {
-        setShowToast(<Toast serverError={res} />);
-      }
-
-      setIsAwaitingSubmitResponse(false);
-      handleCloseModal();
+    const reminderSchemaValidated = reminderSchema.safeParse({
+      reminder: formData.get('reminder'),
+      reminderDate: formData.get('reminderDate'),
+      recurrenceInterval: formData.get('recurrenceInterval'),
+      exactRecurringDate: formData.get('exactRecurringDate'),
+      recurrenceBuffer: formData.get('recurrenceBuffer'),
     });
+
+    const { success, error } = reminderSchemaValidated;
+
+    if (!success) {
+      const { reminder, reminderDate, recurrenceInterval, recurrenceBuffer } =
+        error.flatten().fieldErrors;
+      setErrorMessage({
+        reminder: reminder?.[0],
+        reminderDate: reminderDate?.[0],
+        recurrenceInterval: recurrenceInterval?.[0],
+        recurrenceBuffer: recurrenceBuffer?.[0],
+      });
+      setScrollToErrorMessage(true);
+    } else {
+      setIsAwaitingSubmitResponse(true);
+      updateReminder(formData).then((res) => {
+        if (res.status === 200) {
+          setItems(
+            handleSortItemsAscending(
+              items?.map((item) => {
+                if (item?._id === itemToEditId) {
+                  return res?.item;
+                } else {
+                  return item;
+                }
+              }),
+              'reminderDate'
+            )
+          );
+        }
+
+        if (res.status !== 200) {
+          setShowToast(<Toast serverError={res} />);
+        }
+
+        setIsAwaitingSubmitResponse(false);
+        handleCloseModal();
+      });
+    }
   };
 
   const handleCloseModal = () => {
@@ -314,7 +362,11 @@ const ModalReminder = ({
       <input type='hidden' name='userId' value={userId} />
       <input type='hidden' name='displayReminder' value={false} />
       <div className='modal__modal-button-wrapper'>
-        <button onClick={handleCloseModal} className='modal__cancel-button'>
+        <button
+          onClick={handleCloseModal}
+          type='button'
+          className='modal__cancel-button'
+        >
           Cancel
         </button>
         {modalOperation === MODAL_OPERATION_CREATE ? (

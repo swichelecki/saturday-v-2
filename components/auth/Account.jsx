@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { z } from 'zod';
 import {
   changeUserPassword,
   deleteUserAccount,
@@ -13,6 +14,7 @@ import {
   FORM_TIMEZONES,
   FORM_ERROR_MISSING_TIMEZONE,
   FORM_ERROR_MISSING_EMAIL,
+  FORM_ERROR_INVALID_EMAIL,
   FORM_ERROR_MISSING_PASSWORD,
   FORM_ERROR_MISSING_NEW_PASSWORD,
   FORM_ERROR_MISSING_NEW_CONFIRM_PASSWORD,
@@ -21,6 +23,7 @@ import {
   FORM_ERROR_MISSING_DELETE_CONFIRMATION,
   FORM_ERROR_MISSING_DELETE_MISMATCH,
   DELETE_MY_ACCOUNT,
+  FORM_CHARACTER_LIMIT_50,
 } from '../../constants';
 
 const Account = ({ userId, timezone }) => {
@@ -70,52 +73,6 @@ const Account = ({ userId, timezone }) => {
     setIsAwaitingChangeTimezoneResponse,
   ] = useState(false);
 
-  // error handling
-  useEffect(() => {
-    if (!errorMessage.timezone) return;
-    setErrorMessage({ ...errorMessage, timezone: '' });
-  }, [form.timezone]);
-
-  useEffect(() => {
-    if (!errorMessage.email) return;
-    setErrorMessage({ ...errorMessage, email: '' });
-  }, [form.email]);
-
-  useEffect(() => {
-    if (!errorMessage.password) return;
-    setErrorMessage({ ...errorMessage, password: '' });
-  }, [form.password]);
-
-  useEffect(() => {
-    if (!errorMessage.newPassword) return;
-    setErrorMessage({ ...errorMessage, newPassword: '' });
-  }, [form.newPassword]);
-
-  useEffect(() => {
-    if (!errorMessage.confirmNewPassword) return;
-    setErrorMessage({ ...errorMessage, confirmNewPassword: '' });
-  }, [form.confirmNewPassword]);
-
-  useEffect(() => {
-    if (!errorMessage.confirmNewPassword) return;
-    setErrorMessage({ ...errorMessage, confirmNewPassword: '' });
-  }, [form.confirmNewPassword]);
-
-  useEffect(() => {
-    if (!errorMessage.deleteEmail) return;
-    setErrorMessage({ ...errorMessage, deleteEmail: '' });
-  }, [form.email]);
-
-  useEffect(() => {
-    if (!errorMessage.deletePassword) return;
-    setErrorMessage({ ...errorMessage, deletePassword: '' });
-  }, [form.password]);
-
-  useEffect(() => {
-    if (!errorMessage.deleteConfirmation) return;
-    setErrorMessage({ ...errorMessage, deleteConfirmation: '' });
-  }, [form.deleteConfirmation]);
-
   // scroll up to topmost error message
   useEffect(() => {
     if (!scrollToErrorMessage) return;
@@ -132,10 +89,18 @@ const Account = ({ userId, timezone }) => {
 
   const handleForm = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+
+    if (errorMessage[e.target.name]) {
+      setErrorMessage({ ...errorMessage, [e.target.name]: '' });
+    }
   };
 
   const handleFormSelectField = (optionName, optionValue) => {
     setForm({ ...form, [optionName]: optionValue });
+
+    if (errorMessage[optionName]) {
+      setErrorMessage({ ...errorMessage, [optionName]: '' });
+    }
   };
 
   // change timezone
@@ -161,102 +126,137 @@ const Account = ({ userId, timezone }) => {
     }
   };
 
+  const changePasswordSchema = z
+    .object({
+      email: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_EMAIL)
+        .email(FORM_ERROR_INVALID_EMAIL)
+        .max(50, FORM_CHARACTER_LIMIT_50),
+      password: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_PASSWORD)
+        .max(50, FORM_CHARACTER_LIMIT_50),
+      newPassword: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_NEW_PASSWORD)
+        .max(50, FORM_CHARACTER_LIMIT_50),
+      confirmNewPassword: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_NEW_CONFIRM_PASSWORD)
+        .max(50, FORM_CHARACTER_LIMIT_50),
+    })
+    .refine((data) => data.newPassword === data.confirmNewPassword, {
+      message: FORM_ERROR_PASSWORD_MISMATCH,
+      path: ['confirmNewPassword'],
+    });
+
   // change password
   const changePassword = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    if (
-      !form.email ||
-      !form.password ||
-      !form.newPassword ||
-      !form.confirmNewPassword
-    ) {
+    const changePasswordSchemaValidated = changePasswordSchema.safeParse({
+      email: formData.get('email'),
+      password: formData.get('password'),
+      newPassword: formData.get('newPassword'),
+      confirmNewPassword: formData.get('confirmNewPassword'),
+    });
+
+    const { success, error } = changePasswordSchemaValidated;
+
+    if (!success) {
+      const { email, password, newPassword, confirmNewPassword } =
+        error.flatten().fieldErrors;
       setErrorMessage({
-        ...errorMessage,
-        email: !form.email && FORM_ERROR_MISSING_EMAIL,
-        password: !form.password && FORM_ERROR_MISSING_PASSWORD,
-        newPassword: !form.newPassword && FORM_ERROR_MISSING_NEW_PASSWORD,
-        confirmNewPassword:
-          !form.confirmNewPassword && FORM_ERROR_MISSING_NEW_CONFIRM_PASSWORD,
+        email: email?.[0],
+        password: password?.[0],
+        newPassword: newPassword?.[0],
+        confirmNewPassword: confirmNewPassword?.[0],
       });
       setScrollToErrorMessage(true);
-      return;
-    }
-
-    if (form.newPassword !== form.confirmNewPassword) {
-      setErrorMessage({
-        ...errorMessage,
-        newPassword: FORM_ERROR_PASSWORD_MISMATCH,
-        confirmNewPassword: FORM_ERROR_PASSWORD_MISMATCH,
-      });
-      setScrollToErrorMessage(true);
-      return;
-    }
-
-    setIsAwaitingChangePasswordResponse(true);
-
-    const response = await changeUserPassword(formData);
-    if (response.status === 200) {
-      router.push('/login');
-    } else if (response.status === 400) {
-      setIsAwaitingChangePasswordResponse(false);
-      setErrorMessage({
-        email: INVALID_USER_DATA,
-        password: INVALID_USER_DATA,
-      });
     } else {
-      setShowToast(<Toast serverError={response} />);
-      setIsAwaitingChangePasswordResponse(false);
+      setIsAwaitingChangePasswordResponse(true);
+
+      const response = await changeUserPassword(formData);
+      if (response.status === 200) {
+        router.push('/login');
+      } else if (response.status === 400) {
+        setIsAwaitingChangePasswordResponse(false);
+        setErrorMessage({
+          email: INVALID_USER_DATA,
+          password: INVALID_USER_DATA,
+        });
+      } else {
+        setShowToast(<Toast serverError={response} />);
+        setIsAwaitingChangePasswordResponse(false);
+      }
     }
   };
+
+  const deletePasswordSchema = z
+    .object({
+      deleteEmail: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_EMAIL)
+        .email(FORM_ERROR_INVALID_EMAIL)
+        .max(50, FORM_CHARACTER_LIMIT_50),
+      deletePassword: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_PASSWORD)
+        .max(50, FORM_CHARACTER_LIMIT_50),
+      deleteConfirmation: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_DELETE_CONFIRMATION)
+        .max(50, FORM_CHARACTER_LIMIT_50),
+    })
+    .refine(
+      (data) => data.deleteConfirmation.toLowerCase() === DELETE_MY_ACCOUNT,
+      {
+        message: FORM_ERROR_MISSING_DELETE_MISMATCH,
+        path: ['deleteConfirmation'],
+      }
+    );
 
   // delete account
   const deleteAccount = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    if (
-      form.deleteEmail &&
-      form.deletePassword &&
-      form.deleteConfirmation &&
-      form.deleteConfirmation.toLowerCase() !== DELETE_MY_ACCOUNT
-    ) {
+    const deletePasswordSchemaValidated = deletePasswordSchema.safeParse({
+      deleteEmail: formData.get('deleteEmail'),
+      deletePassword: formData.get('deletePassword'),
+      deleteConfirmation: formData.get('deleteConfirmation'),
+    });
+
+    const { success, error } = deletePasswordSchemaValidated;
+
+    if (!success) {
+      const { deleteEmail, deletePassword, deleteConfirmation } =
+        error.flatten().fieldErrors;
       setErrorMessage({
-        ...errorMessage,
-        deleteConfirmation: FORM_ERROR_MISSING_DELETE_MISMATCH,
+        deleteEmail: deleteEmail?.[0],
+        deletePassword: deletePassword?.[0],
+        deleteConfirmation: deleteConfirmation?.[0],
       });
       setScrollToErrorMessage(true);
-      return;
-    }
-
-    if (!form.deleteEmail || !form.deletePassword || !form.deleteConfirmation) {
-      setErrorMessage({
-        ...errorMessage,
-        deleteEmail: !form.deleteEmail && FORM_ERROR_MISSING_EMAIL,
-        deletePassword: !form.deletePassword && FORM_ERROR_MISSING_PASSWORD,
-        deleteConfirmation:
-          !form.deleteConfirmation && FORM_ERROR_MISSING_DELETE_CONFIRMATION,
-      });
-      setScrollToErrorMessage(true);
-      return;
-    }
-
-    setIsAwaitingDeleteAccoungResponse(true);
-
-    const response = await deleteUserAccount(formData);
-    if (response.status === 200) {
-      setUserId('');
-      router.push('/');
-    } else if (response.status === 403) {
-      setIsAwaitingDeleteAccoungResponse(false);
-      setErrorMessage({
-        deleteEmail: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
-        deletePassword: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
-      });
     } else {
-      setShowToast(<Toast serverError={response} />);
-      setIsAwaitingDeleteAccoungResponse(false);
+      setIsAwaitingDeleteAccoungResponse(true);
+
+      const response = await deleteUserAccount(formData);
+      if (response.status === 200) {
+        setUserId('');
+        router.push('/');
+      } else if (response.status === 403) {
+        setIsAwaitingDeleteAccoungResponse(false);
+        setErrorMessage({
+          deleteEmail: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+          deletePassword: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+        });
+      } else {
+        setShowToast(<Toast serverError={response} />);
+        setIsAwaitingDeleteAccoungResponse(false);
+      }
     }
   };
 
@@ -288,7 +288,7 @@ const Account = ({ userId, timezone }) => {
         <h2 className='form-page__h2'>Change Password</h2>
         <FormTextField
           label='Email'
-          type='email'
+          type='email novalidate'
           id='email'
           name='email'
           value={form?.email}
@@ -337,7 +337,7 @@ const Account = ({ userId, timezone }) => {
         <h2 className='form-page__h2'>Delete Account</h2>
         <FormTextField
           label='Email'
-          type='email'
+          type='email novalidate'
           id='deleteEmail'
           name='deleteEmail'
           value={form?.deleteEmail}

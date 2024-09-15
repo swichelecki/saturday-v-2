@@ -41,7 +41,7 @@ const Login = () => {
     }
   };
 
-  const LoginSchema = z.object({
+  const loginSchema = z.object({
     email: z
       .string()
       .min(1, FORM_ERROR_MISSING_EMAIL)
@@ -57,12 +57,12 @@ const Login = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    const LoginDataValidated = LoginSchema.safeParse({
+    const loginDataValidated = loginSchema.safeParse({
       email: formData.get('email'),
       password: formData.get('password'),
     });
 
-    const { success, error } = LoginDataValidated;
+    const { success, error } = loginDataValidated;
 
     if (!success) {
       const { email, password } = error.flatten().fieldErrors;

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { z } from 'zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppContext } from '../context';
 import { createItem, updateItem } from '../actions';
@@ -16,6 +17,8 @@ import {
   FORM_ERROR_MISSING_TITLE,
   FORM_ERROR_MISSING_DESCRIPTION,
   FORM_ERROR_MISSING_DATE,
+  FORM_CHARACTER_LIMIT_30,
+  FORM_CHARACTER_LIMIT_500,
 } from '../constants';
 
 const DetailsForm = ({ task, userId, timezone }) => {
@@ -44,7 +47,8 @@ const DetailsForm = ({ task, userId, timezone }) => {
   const [errorMessage, setErrorMessage] = useState({
     title: '',
     description: '',
-    dateOrDateAndTime: '',
+    dateState: '',
+    dateAndTimeState: '',
   });
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
@@ -54,31 +58,6 @@ const DetailsForm = ({ task, userId, timezone }) => {
     setUserId(userId);
     setTimezone(timezone);
   }, []);
-
-  // remove error messages when adding data to fields
-  useEffect(() => {
-    if (!errorMessage.title) return;
-    setErrorMessage({
-      ...errorMessage,
-      title: '',
-    });
-  }, [form.title]);
-
-  useEffect(() => {
-    if (!errorMessage.description) return;
-    setErrorMessage({
-      ...errorMessage,
-      description: '',
-    });
-  }, [form.description]);
-
-  useEffect(() => {
-    if (!errorMessage.dateOrDateAndTime) return;
-    setErrorMessage({
-      ...errorMessage,
-      dateOrDateAndTime: '',
-    });
-  }, [form.dateState, form.dateAndTime]);
 
   // scroll up to topmost error message
   useEffect(() => {
@@ -99,6 +78,14 @@ const DetailsForm = ({ task, userId, timezone }) => {
       ...form,
       [e.target.name]: e.target.value,
     });
+
+    if (errorMessage[e.target.name]) {
+      setErrorMessage({ ...errorMessage, [e.target.name]: '' });
+    }
+
+    if (e.target.name === 'dateAndTimeState') {
+      setErrorMessage({ ...errorMessage, dateState: '' });
+    }
   };
 
   const handleConfirmDeletion = (e) => {
@@ -107,57 +94,91 @@ const DetailsForm = ({ task, userId, timezone }) => {
 
   const handleSetQuill = (value) => {
     setForm({ ...form, description: value });
+
+    if (errorMessage.description) {
+      setErrorMessage({ ...errorMessage, description: '' });
+    }
   };
+
+  const detailsFormSchema = z
+    .object({
+      title: z
+        .string()
+        .min(1, FORM_ERROR_MISSING_TITLE)
+        .max(30, FORM_CHARACTER_LIMIT_30),
+      description: z.string().max(500, FORM_CHARACTER_LIMIT_500),
+      date: z.string(),
+      dateAndTime: z.string(),
+      mandatoryDate: z.boolean(),
+    })
+    .refine(
+      (data) =>
+        data.mandatoryDate ||
+        (!data.mandatoryDate &&
+          data.description?.length > 0 &&
+          data.description !== '<p><br></p>'),
+      {
+        message: FORM_ERROR_MISSING_DESCRIPTION,
+        path: ['description'],
+      }
+    )
+    .refine(
+      (data) =>
+        (data.mandatoryDate && data.date?.length > 0) ||
+        (data.mandatoryDate && data.dateAndTime?.length > 0) ||
+        !data.mandatoryDate,
+      {
+        message: FORM_ERROR_MISSING_DATE,
+        path: ['date'],
+      }
+    );
 
   const onSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    // error handling for missing required fields
-    if (
-      !form?.title ||
-      (form.mandatoryDate && !form?.dateState && !form?.dateAndTimeState) ||
-      (!form.mandatoryDate &&
-        (!form?.description || form.description === '<p><br></p>'))
-    ) {
+    const detailsFormSchemaValidated = detailsFormSchema.safeParse({
+      title: formData.get('title'),
+      description: formData.get('description'),
+      date: form.dateState,
+      dateAndTime: form.dateAndTimeState,
+      mandatoryDate: form.mandatoryDate,
+    });
+
+    const { success, error } = detailsFormSchemaValidated;
+
+    if (!success) {
+      const { title, description, date } = error.flatten().fieldErrors;
       setErrorMessage({
-        title: !form.title && FORM_ERROR_MISSING_TITLE,
-        description:
-          (!form.description || form.description === '<p><br></p>') &&
-          !form.mandatoryDate &&
-          FORM_ERROR_MISSING_DESCRIPTION,
-        dateOrDateAndTime:
-          form.mandatoryDate &&
-          !form.dateState &&
-          !form.dateAndTimeState &&
-          FORM_ERROR_MISSING_DATE,
+        title: title?.[0],
+        description: description?.[0],
+        dateState: date?.[0],
+        dateAndTimeState: date?.[0],
       });
       setScrollToErrorMessage(true);
+    } else {
+      setIsAwaitingSaveResponse(true);
 
-      return;
+      priority == undefined
+        ? updateItem(formData).then((res) => {
+            if (res.status === 200) {
+              router.push('/');
+            }
+
+            if (res.status !== 200) {
+              setShowToast(<Toast serverError={res} />);
+            }
+          })
+        : createItem(formData).then((res) => {
+            if (res.status === 200) {
+              router.push('/');
+            }
+
+            if (res.status !== 200) {
+              setShowToast(<Toast serverError={res} />);
+            }
+          });
     }
-
-    setIsAwaitingSaveResponse(true);
-
-    priority == undefined
-      ? updateItem(formData).then((res) => {
-          if (res.status === 200) {
-            router.push('/');
-          }
-
-          if (res.status !== 200) {
-            setShowToast(<Toast serverError={res} />);
-          }
-        })
-      : createItem(formData).then((res) => {
-          if (res.status === 200) {
-            router.push('/');
-          }
-
-          if (res.status !== 200) {
-            setShowToast(<Toast serverError={res} />);
-          }
-        });
   };
 
   return (
@@ -194,7 +215,7 @@ const DetailsForm = ({ task, userId, timezone }) => {
               form?.dateState && !form?.dateAndTimeState ? form?.dateState : ''
             }
             onChangeHandler={handleSetForm}
-            errorMessage={errorMessage.dateOrDateAndTime}
+            errorMessage={errorMessage.dateState}
             disabled={form?.dateAndTimeState}
           />
           <FormTextField
@@ -204,7 +225,7 @@ const DetailsForm = ({ task, userId, timezone }) => {
             name='dateAndTimeState'
             value={form?.dateAndTimeState}
             onChangeHandler={handleSetForm}
-            errorMessage={errorMessage.dateOrDateAndTime}
+            errorMessage={errorMessage.dateState}
             disabled={form?.dateState && !form?.dateAndTimeState}
           />
         </>
@@ -241,13 +262,13 @@ const DetailsForm = ({ task, userId, timezone }) => {
         }
       />
       <div className='form-page__buttons-wrapper'>
+        <Link href='/'>
+          <span className='form-page__cancel-button'>Cancel</span>
+        </Link>
         <button type='submit' className='form-page__save-button'>
           {isAwaitingSaveResponse && <div className='loader'></div>}
           Save
         </button>
-        <Link href='/'>
-          <span className='form-page__cancel-button'>Cancel</span>
-        </Link>
       </div>
     </form>
   );
