@@ -42,6 +42,7 @@ export default async function createUserAccount(formData) {
       email,
       password: hashedPassword,
       timezone,
+      admin: false,
       newUser: true,
     });
 
@@ -50,6 +51,7 @@ export default async function createUserAccount(formData) {
         hasToken: true,
         id: user._id,
         timezone,
+        admin: false,
         newUser: true,
       })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })

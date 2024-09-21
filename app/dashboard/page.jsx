@@ -8,7 +8,7 @@ import { handleSortItemsAscending } from '../../utilities';
 import { Dashboard } from '../../components';
 
 export const metadata = {
-  title: 'Dashboard',
+  title: 'Saturday Dashboard',
 };
 
 export const dynamic = 'force-dynamic';
@@ -21,6 +21,7 @@ async function getDashboardData() {
     const token = cookies().get('saturday');
     let userId;
     let timezone;
+    let admin;
 
     if (token) {
       try {
@@ -31,6 +32,7 @@ async function getDashboardData() {
         if (payload?.id) {
           userId = payload?.id;
           timezone = payload?.timezone;
+          admin = payload?.admin;
         }
       } catch (error) {
         console.log(error);
@@ -104,8 +106,7 @@ async function getDashboardData() {
       tasks: columnsData ?? [],
       categories: categories ?? [],
       reminders: JSON.parse(JSON.stringify(reminders)) ?? [],
-      userId,
-      timezone,
+      user: { userId, timezone, admin },
     };
   } catch (error) {
     console.log(error);
@@ -114,15 +115,14 @@ async function getDashboardData() {
 
 export default async function DashboarPage() {
   const dashboardData = await getDashboardData();
-  const { tasks, categories, reminders, userId, timezone } = dashboardData;
+  const { tasks, categories, reminders, user } = dashboardData;
 
   return (
     <Dashboard
       tasks={tasks}
       categories={categories}
       reminders={reminders}
-      userId={userId}
-      timezone={timezone}
+      user={user}
     />
   );
 }

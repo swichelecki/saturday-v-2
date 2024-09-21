@@ -4,7 +4,7 @@ import { jwtVerify } from 'jose';
 import { DetailsForm } from '../../components';
 
 export const metadata = {
-  title: 'Details',
+  title: 'Saturday Details',
 };
 
 export const dynamic = 'force-dynamic';
@@ -16,6 +16,7 @@ async function getUserId() {
     const token = cookies().get('saturday');
     let userId;
     let timezone;
+    let admin;
 
     if (token) {
       try {
@@ -26,20 +27,21 @@ async function getUserId() {
         if (payload?.id) {
           userId = payload?.id;
           timezone = payload?.timezone;
+          admin = payload?.admin;
         }
       } catch (error) {
         console.log(error);
       }
     }
 
-    return { userId, timezone };
+    return { userId, timezone, admin };
   } catch (error) {
     console.log(error);
   }
 }
 
 export default async function AddDetails() {
-  const { userId, timezone } = await getUserId();
+  const user = await getUserId();
 
-  return <DetailsForm userId={userId} timezone={timezone} />;
+  return <DetailsForm user={user} />;
 }

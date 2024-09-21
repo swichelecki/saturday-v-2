@@ -5,7 +5,7 @@ import Reminder from '../../models/Reminder';
 import { Settings } from '../../components';
 
 export const metadata = {
-  title: 'Settings',
+  title: 'Saturday Settings',
 };
 
 export const dynamic = 'force-dynamic';
@@ -17,6 +17,7 @@ async function getSettingsData() {
     let userId;
     let newUser;
     let timezone;
+    let admin;
 
     if (token) {
       try {
@@ -26,8 +27,9 @@ async function getSettingsData() {
         );
         if (payload?.id) {
           userId = payload?.id;
-          newUser = payload?.newUser;
           timezone = payload?.timezone;
+          admin = payload?.admin;
+          newUser = payload?.newUser;
         }
       } catch (error) {
         console.log(error);
@@ -43,9 +45,12 @@ async function getSettingsData() {
     return {
       categories: JSON.parse(JSON.stringify(categories)) ?? [],
       reminders: JSON.parse(JSON.stringify(reminders)) ?? [],
-      userId,
-      newUser,
-      timezone,
+      user: {
+        userId,
+        timezone,
+        admin,
+        newUser,
+      },
     };
   } catch (error) {
     console.log(error);
@@ -53,16 +58,7 @@ async function getSettingsData() {
 }
 
 export default async function SettingsPage() {
-  const { categories, reminders, userId, newUser, timezone } =
-    await getSettingsData();
+  const { categories, reminders, user } = await getSettingsData();
 
-  return (
-    <Settings
-      categories={categories}
-      reminders={reminders}
-      userId={userId}
-      newUser={newUser}
-      timezone={timezone}
-    />
-  );
+  return <Settings categories={categories} reminders={reminders} user={user} />;
 }

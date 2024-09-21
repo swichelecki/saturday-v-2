@@ -22,6 +22,7 @@ export default async function loginUser(formData) {
         hasToken: true,
         id: user._id,
         timezone: user.timezone,
+        admin: user.admin,
         newUser: user.newUser,
       })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })

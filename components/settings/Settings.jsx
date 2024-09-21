@@ -5,8 +5,10 @@ import { useAppContext } from '../../context';
 import { usePrompt } from '../../hooks';
 import { CategoryControls, RemindersControls } from '../../components';
 
-const Settings = ({ categories, reminders, userId, newUser, timezone }) => {
-  const { setUserId, setTimezone, setIsCategoriesPrompt } = useAppContext();
+const Settings = ({ categories, reminders, user }) => {
+  const { userId, newUser, timezone, admin } = user;
+  const { setUserId, setTimezone, setIsCategoriesPrompt, setIsAdmin } =
+    useAppContext();
 
   // if new user show prompts
   usePrompt();
@@ -15,6 +17,7 @@ const Settings = ({ categories, reminders, userId, newUser, timezone }) => {
   useEffect(() => {
     setUserId(userId);
     setTimezone(timezone);
+    setIsAdmin(admin);
     if (newUser) setIsCategoriesPrompt(true);
   }, []);
 

@@ -26,17 +26,17 @@ import {
   FORM_CHARACTER_LIMIT_50,
 } from '../../constants';
 
-const Account = ({ userId, timezone }) => {
+const Account = ({ user }) => {
   const pageRef = useRef(null);
-
   const router = useRouter();
-
-  const { setUserId, setShowToast, setTimezone } = useAppContext();
+  const { userId, timezone, admin } = user;
+  const { setUserId, setShowToast, setTimezone, setIsAdmin } = useAppContext();
 
   // set global context user id and timezone and state timezone
   useEffect(() => {
     setUserId(userId);
     setTimezone(timezone);
+    setIsAdmin(admin);
     setForm({ ...form, timezone });
   }, []);
 

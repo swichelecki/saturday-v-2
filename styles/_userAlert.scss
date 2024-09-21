@@ -1,0 +1,33 @@
+.user-alert {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 6px;
+  background-color: $button-blue-dark;
+  color: $color-font;
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    svg {
+      fill: $color-font;
+      width: 1.3rem;
+      height: 1.3rem;
+    }
+  }
+  &--homepage {
+    background-color: $button-blue;
+    color: $color-white;
+    font-weight: 400;
+    button {
+      svg {
+        fill: $color-white;
+      }
+    }
+  }
+}

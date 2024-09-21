@@ -5,7 +5,7 @@ import Task from '../../../models/Task';
 import { DetailsForm } from '../../../components';
 
 export const metadata = {
-  title: 'Details',
+  title: 'Saturday Details',
 };
 
 export const dynamic = 'force-dynamic';
@@ -17,6 +17,7 @@ async function getFormData(id) {
     const token = cookies().get('saturday');
     let userId;
     let timezone;
+    let admin;
 
     if (token) {
       try {
@@ -27,6 +28,7 @@ async function getFormData(id) {
         if (payload?.id) {
           userId = payload?.id;
           timezone = payload?.timezone;
+          admin = payload?.admin;
         }
       } catch (error) {
         console.log(error);
@@ -35,7 +37,10 @@ async function getFormData(id) {
 
     const task = await Task.find({ _id: id, userId });
 
-    return { task: JSON.parse(JSON.stringify(task[0])), userId, timezone };
+    return {
+      task: JSON.parse(JSON.stringify(task[0])),
+      user: { userId, timezone, admin },
+    };
   } catch (error) {
     console.log(error);
   }
@@ -43,7 +48,7 @@ async function getFormData(id) {
 
 export default async function EditDetails({ params }) {
   const { id } = params;
-  const { task, userId, timezone } = await getFormData(id);
+  const { task, user } = await getFormData(id);
 
-  return <DetailsForm task={task} userId={userId} timezone={timezone} />;
+  return <DetailsForm task={task} user={user} />;
 }

@@ -29,10 +29,10 @@ const ItemsColumn = dynamic(() =>
 );
 const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
 
-const Dashboard = ({ tasks, categories, reminders, userId, timezone }) => {
+const Dashboard = ({ tasks, categories, reminders, user }) => {
   const width = useInnerWidth();
-
-  const { setUserId, setShowToast, setShowModal, setTimezone } =
+  const { userId, timezone, admin } = user;
+  const { setUserId, setShowToast, setShowModal, setTimezone, setIsAdmin } =
     useAppContext();
 
   const [listItems, setListItems] = useState(tasks);
@@ -90,6 +90,7 @@ const Dashboard = ({ tasks, categories, reminders, userId, timezone }) => {
     // set global context user id and timezone
     setUserId(userId);
     setTimezone(timezone);
+    setIsAdmin(admin);
     setListItem({
       ...listItem,
       type: categories?.length ? categories[0]['type'] : '',

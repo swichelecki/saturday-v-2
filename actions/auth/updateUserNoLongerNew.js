@@ -26,6 +26,7 @@ export default async function updateUserNoLongerNew(userId) {
       hasToken: true,
       id: userUpdated._id,
       timezone: userUpdated.timezone,
+      admin: userUpdated.admin,
       newUser: userUpdated.newUser,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })

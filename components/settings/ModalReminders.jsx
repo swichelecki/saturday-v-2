@@ -16,7 +16,7 @@ import {
   FORM_REMINDER_BUFFER_OPTIONS,
   FORM_ERROR_MISSING_REMINDER_TITLE,
   FORM_ERROR_MISSING_REMINDER_DATE,
-  FORM_ERROR_REMINDER_DATE_FUTURE,
+  FORM_ERROR_REMINDER_DATE_IN_PAST,
   FORM_ERROR_MISSING_REMINDER_INTERVAL,
   FORM_ERROR_MISSING_REMINDER_BUFFER,
   MODAL_OPERATION_CREATE,
@@ -135,7 +135,7 @@ const ModalReminder = ({
       recurrenceBuffer: z.string(),
     })
     .refine((data) => new Date(data.reminderDate).getTime() > Date.now(), {
-      message: FORM_ERROR_REMINDER_DATE_FUTURE,
+      message: FORM_ERROR_REMINDER_DATE_IN_PAST,
       path: ['reminderDate'],
     })
     .refine((data) => data.recurrenceInterval !== '0', {

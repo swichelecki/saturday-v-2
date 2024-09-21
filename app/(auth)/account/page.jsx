@@ -3,7 +3,7 @@ import { jwtVerify } from 'jose';
 import { Account } from '../../../components';
 
 export const metadata = {
-  title: 'Account',
+  title: 'Saturday Account',
 };
 
 export const dynamic = 'force-dynamic';
@@ -14,6 +14,7 @@ async function getUserId() {
     const token = cookies().get('saturday');
     let userId;
     let timezone;
+    let admin;
 
     if (token) {
       try {
@@ -24,20 +25,21 @@ async function getUserId() {
         if (payload?.id) {
           userId = payload?.id;
           timezone = payload?.timezone;
+          admin = payload?.admin;
         }
       } catch (error) {
         console.log(error);
       }
     }
 
-    return { userId, timezone };
+    return { userId, timezone, admin };
   } catch (error) {
     console.log(error);
   }
 }
 
 export default async function AccountPage() {
-  const { userId, timezone } = await getUserId();
+  const user = await getUserId();
 
-  return <Account userId={userId} timezone={timezone} />;
+  return <Account user={user} />;
 }

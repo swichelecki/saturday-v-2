@@ -1,6 +1,6 @@
 import connectDB from '../../../../config/db';
 import Reminder from '../../../../models/Reminder';
-import { BY_WEEK_INTERVALS } from '../../../../constants';
+import { BY_WEEK_INTERVALS, TWENTYFOUR_HOURS } from '../../../../constants';
 
 export const revalidate = 0;
 
@@ -115,7 +115,6 @@ export async function GET() {
         const reminderDateMinusBuffer = reminderDateObject.setDate(
           reminderDateObject.getDate() - item?.recurrenceBuffer
         );
-        const twentyFourHours = 86400000;
 
         // display reminders with exact recurring date
         if (
@@ -149,7 +148,7 @@ export async function GET() {
 
         // reschedule reminders with exact recurring date
         if (
-          nextOccurrance + twentyFourHours < Date.now() &&
+          nextOccurrance + TWENTYFOUR_HOURS < Date.now() &&
           item?.displayReminder
         ) {
           const interval = item?.recurrenceInterval;

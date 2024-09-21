@@ -16,20 +16,20 @@ import {
 import {
   FORM_ERROR_MISSING_TITLE,
   FORM_ERROR_MISSING_DESCRIPTION,
+  FORM_ERROR_DATE_NOT_TODAY_OR_GREATER,
   FORM_ERROR_MISSING_DATE,
   FORM_CHARACTER_LIMIT_30,
   FORM_CHARACTER_LIMIT_500,
+  TWENTYFOUR_HOURS,
 } from '../constants';
 
-const DetailsForm = ({ task, userId, timezone }) => {
+const DetailsForm = ({ task, user }) => {
   const formRef = useRef(null);
-
   const router = useRouter();
-
   const params = useSearchParams();
   const [priority, type, column, hasMandatoryDate] = params.values();
-
-  const { setShowToast, setUserId, setTimezone } = useAppContext();
+  const { userId, timezone, admin } = user;
+  const { setShowToast, setUserId, setTimezone, setIsAdmin } = useAppContext();
 
   const [form, setForm] = useState({
     _id: task?._id,
@@ -57,6 +57,7 @@ const DetailsForm = ({ task, userId, timezone }) => {
     // set global context user id and timezone
     setUserId(userId);
     setTimezone(timezone);
+    setIsAdmin(admin);
   }, []);
 
   // scroll up to topmost error message
@@ -129,6 +130,21 @@ const DetailsForm = ({ task, userId, timezone }) => {
         !data.mandatoryDate,
       {
         message: FORM_ERROR_MISSING_DATE,
+        path: ['date'],
+      }
+    )
+    .refine(
+      (data) =>
+        (data.mandatoryDate &&
+          data.date?.length > 0 &&
+          new Date(data.date).getTime() >= Date.now() - TWENTYFOUR_HOURS) ||
+        (data.mandatoryDate &&
+          data.dateAndTime?.length > 0 &&
+          new Date(data.dateAndTime).getTime() >=
+            Date.now() - TWENTYFOUR_HOURS) ||
+        !data.mandatoryDate,
+      {
+        message: FORM_ERROR_DATE_NOT_TODAY_OR_GREATER,
         path: ['date'],
       }
     );

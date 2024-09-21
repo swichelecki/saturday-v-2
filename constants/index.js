@@ -7,6 +7,7 @@ export const MIN_TRANSITION_SPEED = 500;
 export const LIST_ITEM_LIMIT = 50;
 export const CATEGORY_ITEM_LIMIT = 12;
 export const REMINDERS_ITEM_LIMIT = 25;
+export const TWENTYFOUR_HOURS = 86400000;
 export const FORM_CHARACTER_LIMIT_16 = 'Limit 16 Characters';
 export const FORM_CHARACTER_LIMIT_30 = 'Limit 30 Characters';
 export const FORM_CHARACTER_LIMIT_50 = 'Limit 50 Characters';
@@ -14,6 +15,8 @@ export const FORM_CHARACTER_LIMIT_500 = 'Limit 500 Characters';
 export const FORM_ERROR_MISSING_TITLE = 'Title Required';
 export const FORM_ERROR_MISSING_DESCRIPTION = 'Description Required';
 export const FORM_ERROR_MISSING_DATE = 'Date or Date & Time Required';
+export const FORM_ERROR_DATE_NOT_TODAY_OR_GREATER =
+  'Date Must Be Today or in the Future';
 export const FORM_ERROR_MISSING_EMAIL = 'Email Address Required';
 export const FORM_ERROR_INVALID_EMAIL = 'Invalid Email Address';
 export const FORM_ERROR_MISSING_PASSWORD = 'Password Required';
@@ -24,11 +27,11 @@ export const FORM_ERROR_MISSING_NEW_CONFIRM_PASSWORD =
 export const FORM_ERROR_INCORRECT_EMAIL_PASSWORD =
   'Incorrect Email Address or Password';
 export const FORM_ERROR_PASSWORD_MISMATCH =
-  'Password and Confirm Password do not match';
+  'Password and Confirm Password Do Not Match';
 export const FORM_ERROR_MISSING_DELETE_CONFIRMATION =
   'Delete Confirmation Required';
 export const FORM_ERROR_MISSING_DELETE_MISMATCH =
-  'Delete Confirmation is Not Correct';
+  'Delete Confirmation Is Not Correct';
 export const DELETE_MY_ACCOUNT = 'delete my account';
 export const INVALID_USER_DATA = 'Invalid User Data';
 export const USER_ALREADY_EXISTS = 'User Already Exists';
@@ -36,8 +39,8 @@ export const SERVER_ERROR_MESSAGE = 'A Server Error has Occurred';
 export const SETTINGS_MISSING_CATEGORY = 'Category Required';
 export const FORM_ERROR_MISSING_REMINDER_TITLE = 'Reminder Required';
 export const FORM_ERROR_MISSING_REMINDER_DATE = 'Reminder Date Required';
-export const FORM_ERROR_REMINDER_DATE_FUTURE =
-  'Reminder Date Must be in the Future';
+export const FORM_ERROR_REMINDER_DATE_IN_PAST =
+  'Reminder Date Must Be in the Future';
 export const FORM_ERROR_MISSING_REMINDER_INTERVAL =
   'Reminder Interval Required';
 export const FORM_ERROR_MISSING_REMINDER_BUFFER = 'Reminder Buffer Required';

@@ -1,7 +1,7 @@
 import { Login } from '../../../components';
 
 export const metadata = {
-  title: 'Log In',
+  title: 'Saturday Log In',
 };
 
 export default function LoginPage() {

@@ -26,6 +26,7 @@ export default async function changeUserTimezone(formData) {
       hasToken: true,
       id: userUpdated._id,
       timezone: userUpdated.timezone,
+      admin: userUpdated.admin,
       newUser: userUpdated.newUser,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
