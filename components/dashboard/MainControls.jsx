@@ -1,10 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useInnerWidth } from '../../hooks';
 import { Checkbox } from '..';
-import { MOBILE_BREAKPOINT } from '../../constants';
 
 const MainControls = ({
   categories,
@@ -18,11 +16,17 @@ const MainControls = ({
   priority,
   userId,
 }) => {
-  const width = useInnerWidth();
-
   const [checkbox, setCheckbox] = useState(false);
   const [isCheckedByUser, setIsCheckedByUser] = useState(false);
   const [hasMandatoryDate, setHasMandatoryDate] = useState('');
+
+  // check if first category has detailed view on page load
+  useEffect(() => {
+    if (categories[0]?.mandatoryDate) {
+      setCheckbox(true);
+      setHasMandatoryDate(true);
+    }
+  }, []);
 
   const handleSetCheckbox = (e) => {
     setCheckbox(e.target.checked);
@@ -32,65 +36,33 @@ const MainControls = ({
   return (
     <form onSubmit={handleOnSubmit} className='main-controls'>
       <div className='main-controls__top-controls'>
-        {(width && width <= MOBILE_BREAKPOINT) || categories?.length > 4 ? (
-          <div className='main-controls__select-wrapper'>
-            <select
-              onChange={(e) => {
-                const category = JSON.parse(e.currentTarget.value);
-                setListItem((curr) => ({
-                  ...curr,
-                  type: category?.type,
-                  column: category?.priority,
-                }));
-                setCheckbox((current) =>
-                  (isCheckedByUser && current === true) ||
-                  category?.mandatoryDate
-                    ? true
-                    : false
-                );
-                setHasMandatoryDate(category?.mandatoryDate ? 'true' : '');
-              }}
-            >
-              {categories?.map((item, index) => (
-                <option
-                  key={`category-option_${index}`}
-                  value={JSON.stringify(item)}
-                >
-                  {item?.type}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : (
-          <>
+        <div className='main-controls__select-wrapper'>
+          <select
+            onChange={(e) => {
+              const category = JSON.parse(e.currentTarget.value);
+              setListItem((curr) => ({
+                ...curr,
+                type: category?.type,
+                column: category?.priority,
+              }));
+              setCheckbox((current) =>
+                (isCheckedByUser && current === true) || category?.mandatoryDate
+                  ? true
+                  : false
+              );
+              setHasMandatoryDate(category?.mandatoryDate ? 'true' : '');
+            }}
+          >
             {categories?.map((item, index) => (
-              <button
-                key={`category-button_${index}`}
-                className={`main-controls__type-button${
-                  type === item?.type
-                    ? ' main-controls__type-button--active'
-                    : ''
-                }`}
-                type='button'
-                onClick={() => {
-                  setListItem((curr) => ({
-                    ...curr,
-                    type: item?.type,
-                    column: item?.priority,
-                  }));
-                  setCheckbox((current) =>
-                    (isCheckedByUser && current === true) || item?.mandatoryDate
-                      ? true
-                      : false
-                  );
-                  setHasMandatoryDate(item?.mandatoryDate ? 'true' : '');
-                }}
+              <option
+                key={`category-option_${index}`}
+                value={JSON.stringify(item)}
               >
                 {item?.type}
-              </button>
+              </option>
             ))}
-          </>
-        )}
+          </select>
+        </div>
         <Checkbox
           label='Detailed'
           name='mandatoryDate'

@@ -5,8 +5,6 @@ button {
 }
 
 a.homepage__signup,
-button.main-controls__type-button,
-a.main-controls__type-button,
 button.main-controls__add-button,
 span.main-controls__create-button,
 span.list-item__details-edit-button,
@@ -37,21 +35,6 @@ button.modal__save-button {
   letter-spacing: 0.5px;
   font-weight: 400;
   text-align: center;
-}
-
-button.main-controls__type-button,
-a.main-controls__type-button {
-  background-color: $color-background-secondary;
-  color: $button-purple;
-  box-shadow: 0 0 0 1px $color-border;
-  opacity: 0.8;
-  text-transform: capitalize;
-  &--active {
-    box-shadow: 0 0 0 1px $button-purple;
-    background-color: $button-purple-dark;
-    color: $button-purple;
-    opacity: 1;
-  }
 }
 
 a.homepage__signup {
@@ -328,11 +311,6 @@ button.user-menu__button {
 }
 
 @media screen and (max-width: 600px) {
-  button.main-controls__type-button {
-    font-size: 0.875rem; // 14px
-    min-width: 55px;
-  }
-
   a.list-item__edit-button--desktop {
     width: 55px;
     height: 35px;
