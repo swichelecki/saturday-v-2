@@ -6,7 +6,10 @@ import { cookies, headers } from 'next/headers';
 import { SignJWT } from 'jose';
 import bcrypt from 'bcryptjs';
 import { handleServerErrorMessage } from '../../utilities';
+import { Resend } from 'resend';
+import { UserCreatedEmail } from '../../components';
 const jwtSecret = process.env.JWT_SECRET;
+const resendApiKey = process.env.RESEND_API_KEY;
 
 export default async function createUserAccount(formData) {
   try {
@@ -31,10 +34,10 @@ export default async function createUserAccount(formData) {
     if (ipAddress === '::1') ipAddress = '73.111.204.162';
 
     const response = await fetch(
-      `http://ip-api.com/json/${ipAddress}?fields=timezone`
+      `http://ip-api.com/json/${ipAddress}?fields=timezone,continent,country,regionName,city`
     );
     const locationData = await response.json();
-    const { timezone } = locationData;
+    const { timezone, continent, country, regionName, city } = locationData;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -57,6 +60,27 @@ export default async function createUserAccount(formData) {
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
         .sign(new TextEncoder().encode(jwtSecret));
       cookies().set('saturday', token);
+
+      const resend = new Resend(resendApiKey);
+
+      const { error } = await resend.emails.send({
+        from: 'Saturday <contact@wichelecki.com>',
+        to: 'swichelecki@gmail.com',
+        subject: 'Saturday User Account Created',
+        react: UserCreatedEmail({
+          email,
+          timezone,
+          continent,
+          country,
+          regionName,
+          city,
+        }),
+      });
+
+      if (error) {
+        console.log('Resend error: ', error);
+      }
+
       return { status: 200 };
     } else {
       return { status: 400 };

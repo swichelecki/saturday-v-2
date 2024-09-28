@@ -30,3 +30,6 @@ export { default as ModalDelete } from './ModalDelete';
 export { default as FormErrorMessage } from './FormErrorMessage';
 export { default as Tooltip } from './Tooltip';
 export { default as Toast } from './Toast';
+export { default as UserCreatedEmail } from './emails/UserCreatedEmail';
+export { default as ContactFormEmail } from './emails/ContactFormEmail';
+export { default as ContactForm } from './ContactForm';

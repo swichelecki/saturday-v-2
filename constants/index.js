@@ -12,6 +12,7 @@ export const FORM_CHARACTER_LIMIT_16 = 'Limit 16 Characters';
 export const FORM_CHARACTER_LIMIT_30 = 'Limit 30 Characters';
 export const FORM_CHARACTER_LIMIT_50 = 'Limit 50 Characters';
 export const FORM_CHARACTER_LIMIT_500 = 'Limit 500 Characters';
+export const FORM_CHARACTER_LIMIT_1000 = 'Limit 1000 Characters';
 export const FORM_ERROR_MISSING_TITLE = 'Title Required';
 export const FORM_ERROR_MISSING_DESCRIPTION = 'Description Required';
 export const FORM_ERROR_MISSING_DATE = 'Date or Date & Time Required';
@@ -45,6 +46,8 @@ export const FORM_ERROR_MISSING_REMINDER_INTERVAL =
   'Reminder Interval Required';
 export const FORM_ERROR_MISSING_REMINDER_BUFFER = 'Reminder Buffer Required';
 export const FORM_ERROR_MISSING_UPDATE_TITLE = 'Title Required';
+export const FORM_ERROR_MISSING_SUBJECT = 'Subject Required';
+export const FORM_ERROR_MISSING_MESSAGE = 'Message Required';
 export const BY_WEEK_INTERVALS = [
   604800000, 1209600000, 1814400000, 2419200000,
 ];
