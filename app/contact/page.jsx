@@ -8,6 +8,8 @@ export const metadata = {
   title: 'Saturday Contact',
 };
 
+export const dynamic = 'force-dynamic';
+
 async function getUser() {
   try {
     await connectDB();
