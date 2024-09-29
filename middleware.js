@@ -35,6 +35,10 @@ export async function middleware(req) {
     return NextResponse.redirect(req.nextUrl);
   }
 
+  if (user && newUser && req.nextUrl.pathname === '/settings') {
+    return NextResponse.next();
+  }
+
   if (user && newUser && req.nextUrl.pathname !== '/account') {
     req.nextUrl.pathname = '/settings';
     return NextResponse.redirect(req.nextUrl);
