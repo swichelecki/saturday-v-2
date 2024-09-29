@@ -155,6 +155,7 @@ const ContactForm = ({ user }) => {
           errorMessage={errorMessage.subject}
         />
         <FormWYSIWYGField
+          label='Message'
           hasToolbar={false}
           value={form?.message}
           onChangeHandler={handleSetQuill}

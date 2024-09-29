@@ -20,7 +20,7 @@ const UserMenu = () => {
 
   const router = useRouter();
 
-  const { userId, setUserId } = useAppContext();
+  const { userId, setUserId, setIsAdmin } = useAppContext();
 
   // close menu when clicking off of it or on it
   useEffect(() => {
@@ -53,6 +53,7 @@ const UserMenu = () => {
     const response = await logoutUser();
     if (response.status === 200) {
       setUserId('');
+      setIsAdmin(false);
       router.push('/');
     } else {
       setShowToast(<Toast serverError={response} />);

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
+import { useIsMounted } from '../../hooks';
 import { useAppContext } from '../../context';
 
 const Weather = dynamic(() => import('../../components/header/Weather'));
@@ -10,12 +11,13 @@ const UserMenu = dynamic(() => import('../../components/header/UserMenu'));
 const UserAlert = dynamic(() => import('../../components/header/UserAlert'));
 
 const Header = () => {
+  const isMounted = useIsMounted();
   const { userId, isAdmin } = useAppContext();
   const pathname = usePathname();
 
   return (
     <>
-      {!isAdmin && <UserAlert />}
+      {isMounted && !isAdmin && <UserAlert />}
       <header className='header'>
         <div className='header__inner-wrapper'>
           <Link href='/dashboard' className='h1'>
