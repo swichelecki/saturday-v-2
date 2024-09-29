@@ -1,4 +1,4 @@
-import { Montserrat } from 'next/font/google';
+import { Montserrat, Source_Sans_3 } from 'next/font/google';
 import { GloablContext } from '../components';
 import { Layout } from '../components';
 import '../styles/styles.scss';
@@ -7,6 +7,12 @@ const montserrat = Montserrat({
   subsets: ['latin'],
   weight: ['300', '400'],
   variable: ['--montserrat'],
+});
+
+const sourceSansPro = Source_Sans_3({
+  subsets: ['latin'],
+  weight: ['300', '400'],
+  variable: ['--source-sans-pro'],
 });
 
 export const metadata = {
@@ -36,7 +42,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang='en'>
-      <body className={`${montserrat.variable}`}>
+      <body className={`${montserrat.variable} ${sourceSansPro.variable}`}>
         <GloablContext>
           <Layout>{children}</Layout>
         </GloablContext>
