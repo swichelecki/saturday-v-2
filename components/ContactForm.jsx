@@ -38,6 +38,8 @@ const ContactForm = ({ user }) => {
   const [isAwaitingContactFormResponse, setIsAwaitingContactFormResponse] =
     useState(false);
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
+  const [showContactMessageConfirmation, setShowContactMessageConfirmation] =
+    useState(false);
 
   // scroll up to topmost error message
   useEffect(() => {
@@ -118,6 +120,11 @@ const ContactForm = ({ user }) => {
       const response = await createContactMessage(formData);
       if (response.status === 200) {
         setIsAwaitingContactFormResponse(false);
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
+        setShowContactMessageConfirmation(true);
       } else {
         setShowToast(<Toast serverError={response} />);
         setIsAwaitingContactFormResponse(false);
@@ -126,43 +133,46 @@ const ContactForm = ({ user }) => {
   };
 
   return (
-    <form onSubmit={onSubmit} ref={formRef} className='form-page'>
-      <h2 className='form-page__h2'>Contact</h2>
-      <FormTextField
-        label='Email'
-        type='email novalidate'
-        id='email'
-        name='email'
-        value={email}
-        disabled
-      />
-      <FormTextField
-        label='Subject'
-        type='text'
-        id='subject'
-        name='subject'
-        value={form?.subject}
-        onChangeHandler={handleForm}
-        errorMessage={errorMessage.subject}
-      />
-      <FormWYSIWYGField
-        hasToolbar={false}
-        value={form?.message}
-        onChangeHandler={handleSetQuill}
-        errorMessage={errorMessage.message}
-      />
-      <input type='hidden' name='message' value={form?.message} />
-      <input type='hidden' name='email' value={email} />
-      <div className='form-page__buttons-wrapper'>
-        <Link href='/'>
-          <span className='form-page__cancel-button'>Cancel</span>
-        </Link>
-        <button type='submit' className='form-page__save-button'>
-          {isAwaitingContactFormResponse && <div className='loader'></div>}
-          Submit
-        </button>
-      </div>
-    </form>
+    <div className='content-container'>
+      {showContactMessageConfirmation && <div>Thanks for the feedback!</div>}
+      <form onSubmit={onSubmit} ref={formRef} className='form-page'>
+        <h2 className='form-page__h2'>Contact</h2>
+        <FormTextField
+          label='Email'
+          type='email novalidate'
+          id='email'
+          name='email'
+          value={email}
+          disabled
+        />
+        <FormTextField
+          label='Subject'
+          type='text'
+          id='subject'
+          name='subject'
+          value={form?.subject}
+          onChangeHandler={handleForm}
+          errorMessage={errorMessage.subject}
+        />
+        <FormWYSIWYGField
+          hasToolbar={false}
+          value={form?.message}
+          onChangeHandler={handleSetQuill}
+          errorMessage={errorMessage.message}
+        />
+        <input type='hidden' name='message' value={form?.message} />
+        <input type='hidden' name='email' value={email} />
+        <div className='form-page__buttons-wrapper'>
+          <Link href='/'>
+            <span className='form-page__cancel-button'>Cancel</span>
+          </Link>
+          <button type='submit' className='form-page__save-button'>
+            {isAwaitingContactFormResponse && <div className='loader'></div>}
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
