@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getLocation } from '../../actions';
+import { getWeather } from '../../actions';
+import { useAppContext } from '../../context';
 import { handleDayNightCheck } from '../../utilities';
+import { Toast } from '../../components';
 import {
   BsFillSunFill,
   BsCloudSunFill,
@@ -18,6 +20,8 @@ import {
 const ICON_MAP = new Map();
 
 const Weather = () => {
+  const { setShowToast } = useAppContext();
+
   const [temperature, setTemperature] = useState(0);
   const [weatherCode, setWeatherCode] = useState(0);
   const [todaysHigh, setTodaysHigh] = useState(0);
@@ -25,19 +29,11 @@ const Weather = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [city, setCity] = useState('');
 
-  const getWeather = async () => {
-    const locationData = await getLocation();
-    const { location } = locationData;
-    const { lat, lon, city } = location;
-
-    if (!lat || !lon || !city) throw new Error('Error fetching location');
-
-    const openMeteoApiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&forecast_days=1`;
-    const response = await fetch(openMeteoApiUrl);
-
+  const getWeatherData = async () => {
+    const response = await getWeather();
     if (response.status === 200) {
-      const jsonResponse = await response?.json();
-      const { current, daily } = jsonResponse;
+      const { weatherData, city } = response.response;
+      const { current, daily } = weatherData;
       const { temperature_2m, weather_code } = current;
       const { temperature_2m_max, temperature_2m_min } = daily;
 
@@ -48,15 +44,12 @@ const Weather = () => {
       setCity(city);
       setIsLoading(false);
     } else {
-      console.log(
-        `Error requesting weather. Status code: ${response?.status}`,
-        response?.statusText ? `Error message: ${response?.statusText}` : ''
-      );
+      setShowToast(<Toast serverError={response} />);
     }
   };
 
   useEffect(() => {
-    getWeather();
+    getWeatherData();
   }, []);
 
   useEffect(() => {

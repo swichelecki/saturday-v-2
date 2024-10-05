@@ -79,13 +79,15 @@
       box-shadow: unset;
     }
   }
-  .ql-container.ql-snow,
-  .ql-editor.ql-blank {
+  .ql-container.ql-snow {
     font-size: 1.125rem; // 18px
     min-height: 200px;
     font-family: inherit;
     line-height: 1.56;
     background-color: $color-input;
+    .ql-editor.ql-blank {
+      min-height: 198px;
+    }
     p,
     ul,
     ol {

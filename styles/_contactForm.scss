@@ -1,0 +1,18 @@
+.contact-form {
+  input[type='email novalidate'] {
+    color: $color-font;
+  }
+  .quill {
+    .ql-toolbar.ql-snow {
+      display: none;
+    }
+  }
+  .ql-container.ql-snow,
+  .ql-editor.ql-blank {
+    border-top-right-radius: 9px;
+    border-top-left-radius: 9px;
+  }
+  .ql-container.ql-snow {
+    border-top: 1px solid $color-border !important;
+  }
+}

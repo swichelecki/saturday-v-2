@@ -55,7 +55,6 @@
     &--upcoming {
       width: 100%;
       padding: 16px;
-      position: relative;
     }
   }
   &__item-swipe-zone > svg {
@@ -79,9 +78,9 @@
     right: 0;
     display: flex;
     justify-content: flex-end;
-    height: 55px;
+    height: 57px;
     &--upcoming {
-      top: 35px;
+      top: 37px;
     }
   }
   &__details {
@@ -147,7 +146,7 @@
     &__item-swipe-zone {
       font-size: 1.25rem; // 20px
       &--upcoming {
-        padding: 15px 16px;
+        padding: 15px 16px 14px 16px;
       }
     }
     &__item-right {

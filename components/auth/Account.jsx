@@ -120,6 +120,7 @@ const Account = ({ user }) => {
     const response = await changeUserTimezone(formData);
     if (response.status === 200) {
       setIsAwaitingChangeTimezoneResponse(false);
+      setShowToast(<Toast isSuccess message='Timezone updated!' />);
     } else {
       setShowToast(<Toast serverError={response} />);
       setIsAwaitingChangePasswordResponse(false);
@@ -246,6 +247,7 @@ const Account = ({ user }) => {
       const response = await deleteUserAccount(formData);
       if (response.status === 200) {
         setUserId('');
+        setIsAdmin(false);
         router.push('/');
       } else if (response.status === 403) {
         setIsAwaitingDeleteAccoungResponse(false);

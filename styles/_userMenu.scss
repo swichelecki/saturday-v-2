@@ -2,8 +2,9 @@
   &__nav {
     display: none;
     position: absolute;
+    top: 55px;
     right: 48px;
-    bottom: -155px;
+    //bottom: -155px;
     background-color: $color-background-dark;
     border-radius: 12px;
     z-index: 1;
@@ -45,6 +46,14 @@
   .user-menu {
     &__nav {
       right: 24px;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .user-menu {
+    &__nav {
+      top: 43px;
     }
   }
 }
