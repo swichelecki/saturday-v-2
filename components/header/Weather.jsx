@@ -30,9 +30,10 @@ const Weather = () => {
   const [city, setCity] = useState('');
 
   const getWeatherData = async () => {
-    const response = await getWeather();
-    if (response.status === 200) {
-      const { weatherData, city } = response.response;
+    const res = await getWeather();
+    if (res.status === 200) {
+      const { data } = res;
+      const { weatherData, city } = data;
       const { current, daily } = weatherData;
       const { temperature_2m, weather_code } = current;
       const { temperature_2m_max, temperature_2m_min } = daily;

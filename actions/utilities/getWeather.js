@@ -26,7 +26,7 @@ export default async function getWeather() {
     const weatherRes = await fetch(openMeteoApiUrl);
     const weatherData = await weatherRes?.json();
 
-    return { status: 200, response: { weatherData, city } };
+    return { status: 200, data: { weatherData, city } };
   } catch (error) {
     console.log(error);
     const errorMessage = handleServerErrorMessage(error);
