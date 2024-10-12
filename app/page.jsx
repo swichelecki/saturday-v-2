@@ -17,7 +17,7 @@ export default function Home() {
             you concise and on point.
           </p>
           <Link href='/signup' className='homepage__signup'>
-            Organize the Everyday Now
+            Get Organized Now
           </Link>
         </div>
         <div className='homepage__hero-right'>
@@ -72,7 +72,7 @@ export default function Home() {
       <div className='homepage__direct-cta'>
         <h2 className='h1'>Ready for Super Simple Life Management?</h2>
         <Link href='/signup' className='homepage__signup'>
-          Organize the Everyday Now
+          Get Organized Now
         </Link>
       </div>
     </div>

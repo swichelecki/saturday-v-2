@@ -12,6 +12,7 @@ import {
   handleItemPastDueCheck,
 } from '../../utilities';
 import moment from 'moment-timezone';
+import DOMPurify from 'isomorphic-dompurify';
 import { GrDrag } from 'react-icons/gr';
 import { MdEdit } from 'react-icons/md';
 import { TbChevronRight } from 'react-icons/tb';
@@ -544,7 +545,9 @@ const ItemList = ({
             {item?.description && (
               <div
                 className='list-item__details-quill-wrapper'
-                dangerouslySetInnerHTML={{ __html: item?.description }}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(item?.description) ?? '',
+                }}
               />
             )}
             <div className='list-item__details-controls-left'>

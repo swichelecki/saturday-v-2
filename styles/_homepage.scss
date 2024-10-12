@@ -6,7 +6,12 @@
     left: 0;
     bottom: 0;
     z-index: -1;
-    background-image: linear-gradient($button-blue-dark, transparent);
+    background: linear-gradient(
+      120deg,
+      rgb($color-gradiant-darkest, 1) 30%,
+      rgb($color-gradiant-dark, 1) 46%,
+      rgb($button-blue-dark, 0.9) 90%
+    );
   }
   &__wrapper {
     display: flex;
