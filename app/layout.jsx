@@ -18,7 +18,10 @@ const sourceSansPro = Source_Sans_3({
 export const metadata = {
   generator: 'Next.js',
   applicationName: '',
-  title: { template: '%s | Saturday', default: 'Saturday' },
+  title: {
+    template: '%s | Saturday Simple Life Organizer',
+    default: 'Saturday Simple Life Organizer',
+  },
   description: '',
   keywords: ['', ''],
   category: '',

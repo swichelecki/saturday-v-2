@@ -1,14 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { z } from 'zod';
 import { FormTextField, Toast } from '../../components';
 import { updateItem } from '../../actions';
 import { useAppContext } from '../../context';
-import {
-  FORM_ERROR_MISSING_UPDATE_TITLE,
-  FORM_CHARACTER_LIMIT_30,
-} from '../../constants';
+import { updateItemSchema } from '../../schemas/schemas';
 
 const ModalUpdateItem = ({
   userId,
@@ -68,23 +64,16 @@ const ModalUpdateItem = ({
     }
   };
 
-  const itemSchema = z.object({
-    title: z
-      .string()
-      .min(1, FORM_ERROR_MISSING_UPDATE_TITLE)
-      .max(30, FORM_CHARACTER_LIMIT_30),
-  });
-
   // edit item
   const handleEditSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    const itemSchemaValidated = itemSchema.safeParse({
+    const updateItemSchemaValidated = updateItemSchema.safeParse({
       title: formData.get('title'),
     });
 
-    const { success, error } = itemSchemaValidated;
+    const { success, error } = updateItemSchemaValidated;
 
     if (!success) {
       const { title } = error.flatten().fieldErrors;

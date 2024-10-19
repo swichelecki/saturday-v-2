@@ -8,7 +8,7 @@ import { handleSortItemsAscending } from '../../utilities';
 import { Dashboard } from '../../components';
 
 export const metadata = {
-  title: 'Saturday Dashboard',
+  title: 'Dashboard',
 };
 
 export const dynamic = 'force-dynamic';

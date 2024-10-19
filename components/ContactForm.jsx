@@ -5,15 +5,7 @@ import Link from 'next/link';
 import { FormTextField, FormWYSIWYGField, Toast } from './';
 import { useAppContext } from '../context';
 import { createContactMessage } from '../actions';
-import z from 'zod';
-import {
-  FORM_ERROR_MISSING_EMAIL,
-  FORM_ERROR_INVALID_EMAIL,
-  FORM_ERROR_MISSING_SUBJECT,
-  FORM_ERROR_MISSING_MESSAGE,
-  FORM_CHARACTER_LIMIT_50,
-  FORM_CHARACTER_LIMIT_1000,
-} from '../constants';
+import { contactFormSchema } from '../schemas/schemas';
 
 const ContactForm = ({ user }) => {
   const formRef = useRef(null);
@@ -38,8 +30,6 @@ const ContactForm = ({ user }) => {
   const [isAwaitingContactFormResponse, setIsAwaitingContactFormResponse] =
     useState(false);
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
-  const [showContactMessageConfirmation, setShowContactMessageConfirmation] =
-    useState(false);
 
   // scroll up to topmost error message
   useEffect(() => {
@@ -64,7 +54,10 @@ const ContactForm = ({ user }) => {
   };
 
   const handleSetQuill = (value) => {
-    if (value === '<p><br></p>') return;
+    if (value === '<p><br></p>') {
+      setForm({ ...form, message: '' });
+      return;
+    }
 
     setForm({ ...form, message: value });
 
@@ -72,30 +65,6 @@ const ContactForm = ({ user }) => {
       setErrorMessage({ ...errorMessage, message: '' });
     }
   };
-
-  const contactFormSchema = z
-    .object({
-      email: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_EMAIL)
-        .email(FORM_ERROR_INVALID_EMAIL)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-      subject: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_SUBJECT)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-      message: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_MESSAGE)
-        .max(1000, FORM_CHARACTER_LIMIT_1000),
-    })
-    .refine(
-      (data) => data.message?.length > 0 && data.message !== '<p><br></p>',
-      {
-        message: FORM_ERROR_MISSING_MESSAGE,
-        path: ['message'],
-      }
-    );
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -127,12 +96,7 @@ const ContactForm = ({ user }) => {
           top: 0,
           behavior: 'smooth',
         });
-        setShowToast(
-          <Toast
-            isSuccess
-            message="Thanks for the feedback! We'll be in touch soon."
-          />
-        );
+        setShowToast(<Toast isSuccess message='Thanks for the feedback!' />);
       } else {
         setShowToast(<Toast serverError={response} />);
         setIsAwaitingContactFormResponse(false);

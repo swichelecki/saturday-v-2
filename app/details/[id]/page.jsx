@@ -5,7 +5,7 @@ import Task from '../../../models/Task';
 import { DetailsForm } from '../../../components';
 
 export const metadata = {
-  title: 'Saturday Details',
+  title: 'Details',
 };
 
 export const dynamic = 'force-dynamic';

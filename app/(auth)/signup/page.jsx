@@ -1,7 +1,7 @@
 import { Signup } from '../../../components';
 
 export const metadata = {
-  title: 'Saturday Sign Up',
+  title: 'Sign Up',
 };
 
 export default function SignupPage() {

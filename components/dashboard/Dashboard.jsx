@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { z } from 'zod';
 import { useAppContext } from '../../context';
 import {
   MainControls,
@@ -14,14 +13,11 @@ import {
 } from '../../components';
 import { useInnerWidth } from '../../hooks';
 import { createItem, getItem, deleteItem } from '../../actions';
+import { itemSchema } from '../../schemas/schemas';
 import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
   MODAL_UPDATE_ITEM_HEADLINE,
-  LIST_ITEM_LIMIT,
-  ITEM_ERROR_MISSING_ITEM,
-  ITEM_ERROR_AT_ITEM_LIMIT,
-  FORM_CHARACTER_LIMIT_30,
 } from '../../constants';
 
 const ItemsColumn = dynamic(() =>
@@ -167,19 +163,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
       setErrorMessages('');
     }
   };
-
-  const itemSchema = z
-    .object({
-      title: z
-        .string()
-        .min(1, ITEM_ERROR_MISSING_ITEM)
-        .max(30, FORM_CHARACTER_LIMIT_30),
-      itemLimit: z.number(),
-    })
-    .refine((data) => Number(data.itemLimit) < LIST_ITEM_LIMIT, {
-      message: ITEM_ERROR_AT_ITEM_LIMIT,
-      path: ['itemLimit'],
-    });
 
   // create new item
   const handleOnSubmit = (e) => {

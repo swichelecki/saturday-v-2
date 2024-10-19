@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { z } from 'zod';
 import {
   FormTextField,
   FormCheckboxField,
@@ -11,17 +10,12 @@ import {
 import { createReminder, updateReminder } from '../../actions';
 import { useAppContext } from '../../context';
 import { handleSortItemsAscending } from '../../utilities';
+import { reminderSchema } from '../../schemas/schemas';
 import {
   FORM_REMINDER_INTERVAL_OPTIONS,
   FORM_REMINDER_BUFFER_OPTIONS,
-  FORM_ERROR_MISSING_REMINDER_TITLE,
-  FORM_ERROR_MISSING_REMINDER_DATE,
-  FORM_ERROR_REMINDER_DATE_IN_PAST,
-  FORM_ERROR_MISSING_REMINDER_INTERVAL,
-  FORM_ERROR_MISSING_REMINDER_BUFFER,
   MODAL_OPERATION_CREATE,
   MODAL_OPERATION_UPDATE,
-  FORM_CHARACTER_LIMIT_30,
 } from '../../constants';
 
 const ModalReminder = ({
@@ -122,35 +116,6 @@ const ModalReminder = ({
       setErrorMessage({ ...errorMessage, [optionName]: '' });
     }
   };
-
-  const reminderSchema = z
-    .object({
-      reminder: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_REMINDER_TITLE)
-        .max(30, FORM_CHARACTER_LIMIT_30),
-      reminderDate: z.string().date(FORM_ERROR_MISSING_REMINDER_DATE),
-      recurrenceInterval: z.string(),
-      exactRecurringDate: z.string(),
-      recurrenceBuffer: z.string(),
-    })
-    .refine((data) => new Date(data.reminderDate).getTime() > Date.now(), {
-      message: FORM_ERROR_REMINDER_DATE_IN_PAST,
-      path: ['reminderDate'],
-    })
-    .refine((data) => data.recurrenceInterval !== '0', {
-      message: FORM_ERROR_MISSING_REMINDER_INTERVAL,
-      path: ['recurrenceInterval'],
-    })
-    .refine(
-      (data) =>
-        (data.exactRecurringDate === 'true' && data.recurrenceBuffer !== '0') ||
-        (data.exactRecurringDate === 'false' && data.recurrenceBuffer === '0'),
-      {
-        message: FORM_ERROR_MISSING_REMINDER_BUFFER,
-        path: ['recurrenceBuffer'],
-      }
-    );
 
   // add new reminder
   const handleCreateReminder = (e) => {

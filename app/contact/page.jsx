@@ -5,7 +5,7 @@ import { jwtVerify } from 'jose';
 import { ContactForm } from '../../components';
 
 export const metadata = {
-  title: 'Saturday Contact',
+  title: 'Contact',
 };
 
 export const dynamic = 'force-dynamic';

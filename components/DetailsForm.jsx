@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { z } from 'zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppContext } from '../context';
 import { createItem, updateItem } from '../actions';
@@ -13,15 +12,7 @@ import {
   FormCheckboxField,
   Toast,
 } from '../components';
-import {
-  FORM_ERROR_MISSING_TITLE,
-  FORM_ERROR_MISSING_DESCRIPTION,
-  FORM_ERROR_DATE_NOT_TODAY_OR_GREATER,
-  FORM_ERROR_MISSING_DATE,
-  FORM_CHARACTER_LIMIT_30,
-  FORM_CHARACTER_LIMIT_500,
-  TWENTYFOUR_HOURS,
-} from '../constants';
+import { detailsFormSchema } from '../schemas/schemas';
 
 const DetailsForm = ({ task, user }) => {
   const formRef = useRef(null);
@@ -94,60 +85,17 @@ const DetailsForm = ({ task, user }) => {
   };
 
   const handleSetQuill = (value) => {
+    if (value === '<p><br></p>') {
+      setForm({ ...form, description: '' });
+      return;
+    }
+
     setForm({ ...form, description: value });
 
     if (errorMessage.description) {
       setErrorMessage({ ...errorMessage, description: '' });
     }
   };
-
-  const detailsFormSchema = z
-    .object({
-      title: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_TITLE)
-        .max(30, FORM_CHARACTER_LIMIT_30),
-      description: z.string().max(500, FORM_CHARACTER_LIMIT_500),
-      date: z.string(),
-      dateAndTime: z.string(),
-      mandatoryDate: z.boolean(),
-    })
-    .refine(
-      (data) =>
-        data.mandatoryDate ||
-        (!data.mandatoryDate &&
-          data.description?.length > 0 &&
-          data.description !== '<p><br></p>'),
-      {
-        message: FORM_ERROR_MISSING_DESCRIPTION,
-        path: ['description'],
-      }
-    )
-    .refine(
-      (data) =>
-        (data.mandatoryDate && data.date?.length > 0) ||
-        (data.mandatoryDate && data.dateAndTime?.length > 0) ||
-        !data.mandatoryDate,
-      {
-        message: FORM_ERROR_MISSING_DATE,
-        path: ['date'],
-      }
-    )
-    .refine(
-      (data) =>
-        (data.mandatoryDate &&
-          data.date?.length > 0 &&
-          new Date(data.date).getTime() >= Date.now() - TWENTYFOUR_HOURS) ||
-        (data.mandatoryDate &&
-          data.dateAndTime?.length > 0 &&
-          new Date(data.dateAndTime).getTime() >=
-            Date.now() - TWENTYFOUR_HOURS) ||
-        !data.mandatoryDate,
-      {
-        message: FORM_ERROR_DATE_NOT_TODAY_OR_GREATER,
-        path: ['date'],
-      }
-    );
 
   const onSubmit = (e) => {
     e.preventDefault();

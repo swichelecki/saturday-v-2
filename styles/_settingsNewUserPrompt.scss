@@ -9,20 +9,15 @@
   border-radius: 12px;
   z-index: 2;
   opacity: 0;
-  color: $button-orange;
-  border-left: 16px solid $button-orange;
-  background-color: $button-orange-dark;
+  color: $color-font;
+  border-left: 16px solid $button-green;
+  background-color: $button-green-dark;
   box-shadow: 0 0 20px 10px $color-background-dark;
   h2 {
     display: flex;
     align-items: center;
-    gap: 12px;
     font-size: 30px; // 32px
     margin-bottom: 18px;
-    svg {
-      font-size: 2rem; // 34px
-      fill: $button-orange;
-    }
   }
   button {
     display: flex;
@@ -35,7 +30,7 @@
     background-color: transparent;
     svg {
       font-size: 2rem; // 34px
-      fill: $button-orange;
+      fill: $color-font;
     }
   }
 }

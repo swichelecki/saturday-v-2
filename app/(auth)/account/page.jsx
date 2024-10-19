@@ -3,7 +3,7 @@ import { jwtVerify } from 'jose';
 import { Account } from '../../../components';
 
 export const metadata = {
-  title: 'Saturday Account',
+  title: 'Account',
 };
 
 export const dynamic = 'force-dynamic';

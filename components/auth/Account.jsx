@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { z } from 'zod';
 import {
   changeUserPassword,
   deleteUserAccount,
@@ -11,19 +10,13 @@ import {
 import { useAppContext } from '../../context';
 import { FormTextField, FormSelectField, Toast } from '../../components';
 import {
+  changePasswordSchema,
+  deleteAccountSchema,
+} from '../../schemas/schemas';
+import {
   FORM_TIMEZONES,
   FORM_ERROR_MISSING_TIMEZONE,
-  FORM_ERROR_MISSING_EMAIL,
-  FORM_ERROR_INVALID_EMAIL,
-  FORM_ERROR_MISSING_PASSWORD,
-  FORM_ERROR_MISSING_NEW_PASSWORD,
-  FORM_ERROR_MISSING_NEW_CONFIRM_PASSWORD,
-  FORM_ERROR_PASSWORD_MISMATCH,
   FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
-  FORM_ERROR_MISSING_DELETE_CONFIRMATION,
-  FORM_ERROR_MISSING_DELETE_MISMATCH,
-  DELETE_MY_ACCOUNT,
-  FORM_CHARACTER_LIMIT_50,
 } from '../../constants';
 
 const Account = ({ user }) => {
@@ -127,31 +120,6 @@ const Account = ({ user }) => {
     }
   };
 
-  const changePasswordSchema = z
-    .object({
-      email: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_EMAIL)
-        .email(FORM_ERROR_INVALID_EMAIL)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-      password: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_PASSWORD)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-      newPassword: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_NEW_PASSWORD)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-      confirmNewPassword: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_NEW_CONFIRM_PASSWORD)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-    })
-    .refine((data) => data.newPassword === data.confirmNewPassword, {
-      message: FORM_ERROR_PASSWORD_MISMATCH,
-      path: ['confirmNewPassword'],
-    });
-
   // change password
   const changePassword = async (e) => {
     e.preventDefault();
@@ -195,42 +163,18 @@ const Account = ({ user }) => {
     }
   };
 
-  const deletePasswordSchema = z
-    .object({
-      deleteEmail: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_EMAIL)
-        .email(FORM_ERROR_INVALID_EMAIL)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-      deletePassword: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_PASSWORD)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-      deleteConfirmation: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_DELETE_CONFIRMATION)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-    })
-    .refine(
-      (data) => data.deleteConfirmation.toLowerCase() === DELETE_MY_ACCOUNT,
-      {
-        message: FORM_ERROR_MISSING_DELETE_MISMATCH,
-        path: ['deleteConfirmation'],
-      }
-    );
-
   // delete account
   const deleteAccount = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    const deletePasswordSchemaValidated = deletePasswordSchema.safeParse({
+    const deleteAccountSchemaValidated = deleteAccountSchema.safeParse({
       deleteEmail: formData.get('deleteEmail'),
       deletePassword: formData.get('deletePassword'),
       deleteConfirmation: formData.get('deleteConfirmation'),
     });
 
-    const { success, error } = deletePasswordSchemaValidated;
+    const { success, error } = deleteAccountSchemaValidated;
 
     if (!success) {
       const { deleteEmail, deletePassword, deleteConfirmation } =

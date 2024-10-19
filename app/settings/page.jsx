@@ -5,7 +5,7 @@ import Reminder from '../../models/Reminder';
 import { Settings } from '../../components';
 
 export const metadata = {
-  title: 'Saturday Settings',
+  title: 'Settings',
 };
 
 export const dynamic = 'force-dynamic';

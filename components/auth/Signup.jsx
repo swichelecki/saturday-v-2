@@ -3,20 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { z } from 'zod';
 import { createUserAccount } from '../../actions';
 import { useAppContext } from '../../context';
 import { FormTextField, Toast } from '../../components';
-import {
-  FORM_ERROR_MISSING_EMAIL,
-  FORM_ERROR_MISSING_PASSWORD,
-  FORM_ERROR_PASSWORD_MISMATCH,
-  FORM_ERROR_MISSING_CONFIRM_PASSWORD,
-  INVALID_USER_DATA,
-  USER_ALREADY_EXISTS,
-  FORM_CHARACTER_LIMIT_50,
-  FORM_ERROR_INVALID_EMAIL,
-} from '../../constants';
+import { createUserSchema } from '../../schemas/schemas';
+import { INVALID_USER_DATA, USER_ALREADY_EXISTS } from '../../constants';
 
 const Signup = () => {
   const router = useRouter();
@@ -48,27 +39,6 @@ const Signup = () => {
       setErrorMessage({ ...errorMessage, [e.target.name]: '' });
     }
   };
-
-  const createUserSchema = z
-    .object({
-      email: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_EMAIL)
-        .email(FORM_ERROR_INVALID_EMAIL)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-      password: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_PASSWORD)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-      confirmPassword: z
-        .string()
-        .min(1, FORM_ERROR_MISSING_CONFIRM_PASSWORD)
-        .max(50, FORM_CHARACTER_LIMIT_50),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: FORM_ERROR_PASSWORD_MISMATCH,
-      path: ['confirmPassword'],
-    });
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -115,46 +85,42 @@ const Signup = () => {
   };
 
   return (
-    <div className='entry-form__wrapper'>
-      <form onSubmit={onSubmit} className='entry-form__form'>
-        <div className='entry-form__form-controls-wrapper'>
-          <FormTextField
-            label='Email'
-            type='email novalidate'
-            id='email'
-            name='email'
-            value={form?.email}
-            onChangeHandler={handleForm}
-            errorMessage={errorMessage.email}
-          />
-          <FormTextField
-            label='Password'
-            type='password'
-            id='password'
-            name='password'
-            value={form?.password}
-            onChangeHandler={handleForm}
-            errorMessage={errorMessage.password}
-          />
-          <FormTextField
-            label='Confirm Password'
-            type='password'
-            id='confirmPassword'
-            name='confirmPassword'
-            value={form?.confirmPassword}
-            onChangeHandler={handleForm}
-            errorMessage={errorMessage.confirmPassword}
-          />
-          <div className='entry-form__form-row'>
-            <button type='submit' className='entry-form__button'>
-              {isAwaitingLogInResponse && <div className='loader'></div>}
-              Create Account
-            </button>
-            <Link href='/login'>Log In</Link>
-          </div>
-        </div>
-      </form>
-    </div>
+    <form onSubmit={onSubmit} className='entry-form__form'>
+      <FormTextField
+        label='Email'
+        type='email novalidate'
+        id='email'
+        name='email'
+        value={form?.email}
+        onChangeHandler={handleForm}
+        errorMessage={errorMessage.email}
+      />
+      <FormTextField
+        label='Password'
+        type='password'
+        id='password'
+        name='password'
+        value={form?.password}
+        onChangeHandler={handleForm}
+        errorMessage={errorMessage.password}
+      />
+      <FormTextField
+        label='Confirm Password'
+        type='password'
+        id='confirmPassword'
+        name='confirmPassword'
+        value={form?.confirmPassword}
+        onChangeHandler={handleForm}
+        errorMessage={errorMessage.confirmPassword}
+      />
+      <div className='entry-form__form-row'>
+        <button type='submit' className='entry-form__button'>
+          {isAwaitingLogInResponse && <div className='loader'></div>}
+          Create Account
+        </button>
+        <Link href='/login'>Log In</Link>
+      </div>
+    </form>
   );
 };
 

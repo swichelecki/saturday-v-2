@@ -2,7 +2,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ImCheckmark } from 'react-icons/im';
 // real image should live in ../public
-//import homepageImage from '../public/favicon.ico';
+// import homepageImage from '../public/favicon.ico';
+// saturdaysimpleorganizer.com
+// saturdaysimplelife.com
+// saturdaysimplelifeorganizer.com
 
 export default function Home() {
   return (
@@ -12,9 +15,9 @@ export default function Home() {
         <div className='homepage__hero-left'>
           <h1>Organize Your Life, Simply</h1>
           <p>
-            Saturday is your place for super simple life management. Organize
-            the everyday with Saturday’s customizable interface designed to keep
-            you concise and on point.
+            Saturday is your free, super simple life organizer. Manage all your
+            everyday tasks and obligations with Saturday’s customizable
+            interface designed to keep you concise.
           </p>
           <Link href='/signup' className='homepage__signup'>
             Get Organized Now
@@ -44,8 +47,8 @@ export default function Home() {
               Never Miss a Beat
             </h3>
             <p>
-              Whether it’s your weekly grind or reoccurring events and dates,
-              never lose track of a thing.
+              Whether it’s your weekly grind or reoccurring obligations and
+              dates, never lose track of a thing.
             </p>
           </div>
           <div className='homepage__benefit'>

@@ -1,14 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { z } from 'zod';
 import { FormTextField, FormCheckboxField, Toast } from '../../components';
 import { createCategory, updateUserNoLongerNew } from '../../actions';
 import { useAppContext } from '../../context';
-import {
-  SETTINGS_MISSING_CATEGORY,
-  FORM_CHARACTER_LIMIT_16,
-} from '../../constants';
+import { categorySchema } from '../../schemas/schemas';
 
 const ModalReminder = ({ userId, items, setItems, newUser }) => {
   const { setShowModal, setShowToast, setIsDashboardPrompt } = useAppContext();
@@ -56,13 +52,6 @@ const ModalReminder = ({ userId, items, setItems, newUser }) => {
   const handleMandatoryDate = (e) => {
     setForm({ ...form, mandatoryDate: e.target.checked });
   };
-
-  const categorySchema = z.object({
-    type: z
-      .string()
-      .min(1, SETTINGS_MISSING_CATEGORY)
-      .max(16, FORM_CHARACTER_LIMIT_16),
-  });
 
   // create category
   const handleCreateCategory = (e) => {

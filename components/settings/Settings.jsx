@@ -13,7 +13,7 @@ const Settings = ({ categories, reminders, user }) => {
   // if new user show prompts
   usePrompt();
 
-  // set global context user id, timezine first new user prompt
+  // set global contexts
   useEffect(() => {
     setUserId(userId);
     setTimezone(timezone);

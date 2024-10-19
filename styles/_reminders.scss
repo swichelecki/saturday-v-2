@@ -90,3 +90,13 @@
     }
   }
 }
+
+@media screen and (max-width: 600px) {
+  .reminders {
+    &__wrapper {
+      & > button {
+        padding: 12px 16px;
+      }
+    }
+  }
+}
