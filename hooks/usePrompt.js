@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { updateUserNoLongerNew } from '../actions';
 import { useAppContext } from '../context';
 
 const SettingsNewUserPrompt = dynamic(() =>
   import('../components/settings/SettingsNewUserPrompt')
 );
 
-export const usePrompt = () => {
+export const usePrompt = (userId) => {
   const {
     isCategoriesPrompt,
     setIsCategoriesPrompt,
@@ -61,7 +62,7 @@ export const usePrompt = () => {
           <h2>Reminders</h2>
           You don't need to set these up now to use Saturday. Reminders are for
           tasks and events with recurring intervals&#8212;birthdays,
-          anniversaries, mortgage payments, car payments, etc.
+          anniversaries, bills, car maintenance, etc.
         </SettingsNewUserPrompt>
       );
     }
@@ -69,8 +70,14 @@ export const usePrompt = () => {
     // handle new user dashboard prompt
     if (isDashboardPrompt) {
       const handleGotItButton = () => {
-        setShowPrompt(null);
-        setIsDashboardPrompt(false);
+        updateUserNoLongerNew(userId).then((response) => {
+          if (response.status === 200) {
+            setShowPrompt(null);
+            setIsDashboardPrompt(false);
+          } else {
+            setShowToast(<Toast serverError={response} />);
+          }
+        });
       };
 
       setShowPrompt(

@@ -3,9 +3,6 @@ import Image from 'next/image';
 import { ImCheckmark } from 'react-icons/im';
 // real image should live in ../public
 // import homepageImage from '../public/favicon.ico';
-// saturdaysimpleorganizer.com
-// saturdaysimplelife.com
-// saturdaysimplelifeorganizer.com
 
 export default function Home() {
   return (
@@ -73,7 +70,7 @@ export default function Home() {
         </div>
       </div>
       <div className='homepage__direct-cta'>
-        <h2 className='h1'>Ready for Super Simple Life Management?</h2>
+        <h2 className='h1'>Ready to Organize Your Life, Simply?</h2>
         <Link href='/signup' className='homepage__signup'>
           Get Organized Now
         </Link>

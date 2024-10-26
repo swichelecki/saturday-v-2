@@ -25,6 +25,7 @@
       border: 1px solid $color-border;
       cursor: pointer;
       appearance: none;
+      text-transform: capitalize;
     }
     &:after {
       content: '';

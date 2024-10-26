@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FormTextField, FormCheckboxField, Toast } from '../../components';
-import { createCategory, updateUserNoLongerNew } from '../../actions';
+import { createCategory } from '../../actions';
 import { useAppContext } from '../../context';
 import { categorySchema } from '../../schemas/schemas';
 
@@ -74,16 +74,7 @@ const ModalReminder = ({ userId, items, setItems, newUser }) => {
         if (res.status === 200) {
           setItems((current) => [...current, res.item]);
           setForm({ userId, priority: '', type: '', mandatoryDate: false });
-          // handle new user
-          if (newUser) {
-            updateUserNoLongerNew(userId).then((response) => {
-              if (response.status === 200) {
-                setIsDashboardPrompt(true);
-              } else {
-                setShowToast(<Toast serverError={response} />);
-              }
-            });
-          }
+          if (newUser) setIsDashboardPrompt(true);
         }
 
         if (res.status !== 200) {
@@ -111,7 +102,7 @@ const ModalReminder = ({ userId, items, setItems, newUser }) => {
     <form onSubmit={handleCreateCategory}>
       <FormTextField
         label='Category Name'
-        subLabel='Sum it up in one or two words (e.g., School, Shopping, Work, Appointments, etc.)'
+        subLabel='Sum it up in one or two words (e.g., Schoolwork, Grocery List, Work, Appointments, Events, etc.)'
         type='text'
         id='category'
         name='type'
@@ -121,7 +112,7 @@ const ModalReminder = ({ userId, items, setItems, newUser }) => {
       />
       <FormCheckboxField
         label='Date or Date & Time'
-        subLabel='By default each item you create will be a simple one-liner. Check the box if this category requires dates or dates and times. This option allows you to add additional details as well.'
+        subLabel='Check the box if this category requires dates or dates and times. This option allows you to add additional details as well.'
         id='categoryDateTimeCheckbox'
         name='mandatoryDate'
         checked={form?.mandatoryDate}

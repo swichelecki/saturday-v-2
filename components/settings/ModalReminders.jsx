@@ -260,7 +260,7 @@ const ModalReminder = ({
         label='Reminder Name'
         subLabel={`${
           modalOperation === MODAL_OPERATION_CREATE
-            ? 'Sum it up in a few words (e.g., Car Payment)'
+            ? "Sum it up succinctly (e.g., Car Payment, Mom's Birthday, etc.)"
             : ''
         }`}
         type='text'
@@ -303,7 +303,7 @@ const ModalReminder = ({
         errorMessage={errorMessage.recurrenceInterval}
       />
       <FormCheckboxField
-        label='Show Date & Early Display'
+        label='Early Display & Show Date'
         subLabel='Check the box if you want this reminder to appear before the next recurrence date. Set by how many weeks using the dropdown below. For example, when a birthday is coming up you may want the reminder to appear a week or two in advance.'
         id='remindersWithExactRecurringDate'
         name='exactRecurringDate'

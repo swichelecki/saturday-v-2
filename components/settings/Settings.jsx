@@ -11,7 +11,7 @@ const Settings = ({ categories, reminders, user }) => {
     useAppContext();
 
   // if new user show prompts
-  usePrompt();
+  usePrompt(userId);
 
   // set global contexts
   useEffect(() => {
@@ -23,6 +23,9 @@ const Settings = ({ categories, reminders, user }) => {
 
   return (
     <div className='form-page'>
+      {newUser && (
+        <div className='settings-prompt__new-user-background-overlay' />
+      )}
       <CategoryControls
         categories={categories}
         userId={userId}

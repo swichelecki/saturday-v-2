@@ -64,7 +64,7 @@ export default async function createUserAccount(formData) {
       const resend = new Resend(resendApiKey);
 
       const { error } = await resend.emails.send({
-        from: 'Saturday <contact@wichelecki.com>',
+        from: 'Saturday <contact@saturdaysimplelife.com>',
         to: 'swichelecki@gmail.com',
         subject: 'Saturday User Account Created',
         react: UserCreatedEmail({

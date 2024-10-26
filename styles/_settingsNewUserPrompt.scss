@@ -12,7 +12,6 @@
   color: $color-font;
   border-left: 16px solid $button-green;
   background-color: $button-green-dark;
-  box-shadow: 0 0 20px 10px $color-background-dark;
   h2 {
     display: flex;
     align-items: center;
@@ -32,6 +31,15 @@
       font-size: 2rem; // 34px
       fill: $color-font;
     }
+  }
+  &__new-user-background-overlay {
+    background: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
   }
 }
 

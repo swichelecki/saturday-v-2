@@ -110,7 +110,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
 
   return (
     <>
-      <h2 className='form-page__h2'>Manage Categories</h2>
+      <h2 className='form-page__h2'>Categories</h2>
       <div className='settings-controls'>
         {isCategoriesPrompt && prompt}
         {isDashboardPrompt && prompt}
@@ -145,8 +145,9 @@ const CategoryControls = ({ categories, userId, newUser }) => {
             />
           )}
           <p>
-            Create up to 12 primary categories representing areas of your life
-            in which you could use a bit of help keeping track of things.
+            Create up to 12 categories representing areas of your life in which
+            you could use a bit of help keeping track of things&#8212;work,
+            school, shopping, appointments, events, etc.
           </p>
         </div>
         <div
