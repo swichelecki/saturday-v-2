@@ -185,10 +185,13 @@ export const contactFormSchema = z
       .min(1, FORM_ERROR_MISSING_MESSAGE)
       .max(1000, FORM_CHARACTER_LIMIT_1000),
   })
-  .refine((data) => data.message?.length > 0, {
-    message: FORM_ERROR_MISSING_MESSAGE,
-    path: ['message'],
-  });
+  .refine(
+    (data) => data.message?.length > 0 && data.message !== '<p><br></p>',
+    {
+      message: FORM_ERROR_MISSING_MESSAGE,
+      path: ['message'],
+    }
+  );
 
 export const changePasswordSchema = z
   .object({

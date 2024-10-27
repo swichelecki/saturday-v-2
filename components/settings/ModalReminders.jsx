@@ -260,7 +260,7 @@ const ModalReminder = ({
         label='Reminder Name'
         subLabel={`${
           modalOperation === MODAL_OPERATION_CREATE
-            ? "Sum it up succinctly (e.g., Car Payment, Mom's Birthday, etc.)"
+            ? 'Sum it up succinctly (e.g., Car Payment, Mom’s Birthday, etc.)'
             : ''
         }`}
         type='text'

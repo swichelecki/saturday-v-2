@@ -54,11 +54,6 @@ const ContactForm = ({ user }) => {
   };
 
   const handleSetQuill = (value) => {
-    if (value === '<p><br></p>') {
-      setForm({ ...form, message: '' });
-      return;
-    }
-
     setForm({ ...form, message: value });
 
     if (errorMessage.message) {
@@ -90,8 +85,8 @@ const ContactForm = ({ user }) => {
 
       const response = await createContactMessage(formData);
       if (response.status === 200) {
-        setForm({ subject: '', message: '' });
         setIsAwaitingContactFormResponse(false);
+        setForm({ subject: '', message: '<p><br></p>' });
         window.scrollTo({
           top: 0,
           behavior: 'smooth',

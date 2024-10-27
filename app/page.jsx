@@ -12,9 +12,9 @@ export default function Home() {
         <div className='homepage__hero-left'>
           <h1>Organize Your Life, Simply</h1>
           <p>
-            Saturday is your free, super simple life organizer. Manage all your
-            everyday tasks and obligations with Saturday’s customizable
-            interface designed to keep you concise.
+            Saturday is your free, super simple life organizer. Manage all of
+            your everyday tasks and obligations with Saturday’s customizable
+            interface designed to simplify your life.
           </p>
           <Link href='/signup' className='homepage__signup'>
             Get Organized Now

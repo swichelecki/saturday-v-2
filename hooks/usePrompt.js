@@ -60,7 +60,7 @@ export const usePrompt = (userId) => {
       setShowPrompt(
         <SettingsNewUserPrompt handleGotItButton={handleGotItButton}>
           <h2>Reminders</h2>
-          You don't need to set these up now to use Saturday. Reminders are for
+          You don’t need to set these up now to use Saturday. Reminders are for
           tasks and events with recurring intervals&#8212;birthdays,
           anniversaries, bills, car maintenance, etc.
         </SettingsNewUserPrompt>
