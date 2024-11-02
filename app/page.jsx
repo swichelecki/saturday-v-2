@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ImCheckmark } from 'react-icons/im';
-// real image should live in ../public
-// import homepageImage from '../public/favicon.ico';
+import homepageImage from '../public/saturday-homepage.webp';
 
 export default function Home() {
   return (
@@ -12,7 +11,7 @@ export default function Home() {
         <div className='homepage__hero-left'>
           <h1>Organize Your Life, Simply</h1>
           <p>
-            Saturday is your free, super simple life organizer. Manage all of
+            Saturday is your free, super simple daily organizer. Manage all of
             your everyday tasks and obligations with Saturday’s customizable
             interface designed to simplify your life.
           </p>
@@ -22,16 +21,13 @@ export default function Home() {
         </div>
         <div className='homepage__hero-right'>
           <Image
-            // TODO: remove dummyimage.com domain from next.config.js
-            src='https://dummyimage.com/794x447/1d2125/fff.jpg'
-            //src={homepageImage}
-            width={794}
-            height={447}
-            sizes='(max-width: 768px) calc(100vw - 48px), 1200px'
+            src={homepageImage}
+            width={720}
+            height={405}
+            sizes='(max-width: 768px) calc(100vw - 48px), 1000px'
             quality={100}
             priority
             alt='Example of Saturday dashboard'
-            className='homepage__grid-item--hero'
           />
         </div>
       </div>
@@ -70,7 +66,7 @@ export default function Home() {
         </div>
       </div>
       <div className='homepage__direct-cta'>
-        <h2 className='h1'>Ready to Organize Your Life, Simply?</h2>
+        <h2 className='h1'>Ready for Saturday?</h2>
         <Link href='/signup' className='homepage__signup'>
           Get Organized Now
         </Link>

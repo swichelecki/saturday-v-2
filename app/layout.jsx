@@ -17,28 +17,28 @@ const sourceSansPro = Source_Sans_3({
 
 export const metadata = {
   generator: 'Next.js',
-  applicationName: '',
+  applicationName: 'Saturday Simple Life',
   title: {
-    template: '%s | Saturday Simple Life Organizer',
-    default: 'Saturday Simple Life Organizer',
+    template: '%s | Saturday Simple Life',
+    default: 'Saturday Simple Life | Your Free Daily Organizer',
   },
-  description: '',
-  keywords: ['', ''],
-  category: '',
-  metadataBase: new URL('https://localhost:3000'),
-  icons: {
-    icon: '/',
-    shortcut: '/',
-    apple: '/',
-  },
+  description:
+    'Saturday is your free, super simple daily organizer. Manage all of your everyday tasks and obligations with Saturday’s customizable interface designed to simplify your life.',
+  keywords: ['organizer', 'scheduler', 'task manager', 'todo list'],
+  metadataBase: new URL('https://www.saturdaysimplelife.com'),
   openGraph: {
-    title: '',
-    description: '',
-    url: '',
-    siteName: '',
-    images: '',
+    url: 'https://www.saturdaysimplelife.com',
+    siteName: 'Saturday Simple Life',
+    images: '/',
     locale: 'en_US',
     type: 'website',
+  },
+  appleWebApp: {
+    title: 'Saturday',
+    statusBarStyle: 'black-translucent',
+  },
+  icons: {
+    apple: '/',
   },
 };
 
