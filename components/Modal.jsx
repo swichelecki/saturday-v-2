@@ -11,6 +11,7 @@ const Modal = ({ className, children, showCloseButton = true }) => {
 
   useEffect(() => {
     modalRef.current.showModal();
+    window.scrollTo(0, 0);
   }, []);
 
   return (
