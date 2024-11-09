@@ -10,6 +10,7 @@ dialog {
   border: 0;
   padding: 32px 32px 48px;
   border-radius: 12px;
+  overflow: visible;
   background-color: $color-background;
   color: $color-font;
   border: 1px solid $color-border;
@@ -18,6 +19,25 @@ dialog {
 .modal {
   max-width: 295px;
   width: 100%;
+  position: relative;
+  & > button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px $color-font;
+    background-color: $color-background-dark;
+    color: $color-font;
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
   h2 {
     margin-bottom: 24px;
   }
@@ -31,6 +51,28 @@ dialog {
   &__form-modal--small {
     max-width: 500px;
     width: 100%;
+  }
+  &__image-modal {
+    max-width: 1000px;
+    width: 100%;
+    padding: unset;
+    border: unset;
+    & > button {
+      top: -12px;
+      right: -12px;
+    }
+    img {
+      border-radius: 12px;
+    }
+  }
+}
+
+@media screen and (max-width: 1080px) {
+  dialog.modal.modal__image-modal {
+    & > button {
+      top: 18px;
+      right: 18px;
+    }
   }
 }
 

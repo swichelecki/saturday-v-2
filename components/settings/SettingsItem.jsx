@@ -325,7 +325,7 @@ const SettingsItem = ({
           <button
             onClick={() => {
               setShowModal(
-                <Modal>
+                <Modal showCloseButton={false}>
                   <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
                   <ModalDelete
                     handleDeleteItem={handleDeleteItem}

@@ -3,16 +3,17 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  padding: 6px;
+  padding: 4px;
   background-color: $button-blue-dark;
   color: $color-font;
+  font-size: 1rem; // 16px
   button {
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: transparent;
     position: absolute;
-    top: 6px;
+    top: 4px;
     right: 6px;
     svg {
       fill: $color-font;

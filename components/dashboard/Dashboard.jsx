@@ -214,7 +214,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     getItem(id).then((res) => {
       if (res.status === 200) {
         setShowModal(
-          <Modal>
+          <Modal showCloseButton={false}>
             <h2>{MODAL_UPDATE_ITEM_HEADLINE}</h2>
             <ModalUpdateItem
               userId={userId}
@@ -241,7 +241,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
   const handleDeleteTask = (id, confirmDeletion = false) => {
     if (confirmDeletion) {
       setShowModal(
-        <Modal>
+        <Modal showCloseButton={false}>
           <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
           <ModalDelete
             handleDeleteItem={handleDeleteTask}
