@@ -6,7 +6,7 @@ import Reminder from '../../models/Reminder';
 import Category from '../../models/Category';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
-import { revalidatePath } from 'next/cache';
+//import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../utilities';
 
 export default async function deleteUserAccount(formData) {
@@ -23,7 +23,7 @@ export default async function deleteUserAccount(formData) {
       await Category.deleteMany({ userId });
       await User.deleteOne({ _id: userId });
       (await cookies()).delete('saturday');
-      revalidatePath('/');
+      //revalidatePath('/');
 
       return { status: 200 };
     } else {

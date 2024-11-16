@@ -2,7 +2,7 @@
 
 import Task from '../../../models/Task';
 import Category from '../../../models/Category';
-import { revalidatePath } from 'next/cache';
+//import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../../utilities';
 
 export default async function deleteCategory(userId, _id) {
@@ -11,7 +11,7 @@ export default async function deleteCategory(userId, _id) {
     const { type } = category;
     await Task.deleteMany({ type, userId });
     await Category.deleteOne({ _id: _id });
-    revalidatePath('/dashboard');
+    //revalidatePath('/dashboard');
 
     return { status: 200 };
   } catch (error) {
