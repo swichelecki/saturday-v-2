@@ -14,7 +14,7 @@ async function getFormData(id) {
   try {
     await connectDB();
     const jwtSecret = process.env.JWT_SECRET;
-    const token = cookies().get('saturday');
+    const token = (await cookies()).get('saturday');
     let userId;
     let timezone;
     let admin;
@@ -46,7 +46,8 @@ async function getFormData(id) {
   }
 }
 
-export default async function EditDetails({ params }) {
+export default async function EditDetails(props) {
+  const params = await props.params;
   const { id } = params;
   const { task, user } = await getFormData(id);
 

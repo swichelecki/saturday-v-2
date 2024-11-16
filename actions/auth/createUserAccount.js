@@ -15,7 +15,7 @@ export default async function createUserAccount(formData) {
   try {
     await connectDB();
 
-    const headerList = headers();
+    const headerList = await headers();
 
     const email = formData.get('email');
     const password = formData.get('password');
@@ -59,7 +59,7 @@ export default async function createUserAccount(formData) {
       })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
         .sign(new TextEncoder().encode(jwtSecret));
-      cookies().set('saturday', token);
+      (await cookies()).set('saturday', token);
 
       const resend = new Resend(resendApiKey);
 

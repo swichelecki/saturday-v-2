@@ -20,7 +20,7 @@ export default async function changeUserTimezone(formData) {
 
     const userUpdated = await User.findOne({ _id: userId });
 
-    cookies().delete('saturday');
+    (await cookies()).delete('saturday');
 
     const token = await new SignJWT({
       hasToken: true,
@@ -31,7 +31,7 @@ export default async function changeUserTimezone(formData) {
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .sign(new TextEncoder().encode(jwtSecret));
-    cookies().set('saturday', token);
+    (await cookies()).set('saturday', token);
     return { status: 200 };
   } catch (error) {
     console.log(error);

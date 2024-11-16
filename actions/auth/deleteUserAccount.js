@@ -22,7 +22,7 @@ export default async function deleteUserAccount(formData) {
       await Reminder.deleteMany({ userId });
       await Category.deleteMany({ userId });
       await User.deleteOne({ _id: userId });
-      cookies().delete('saturday');
+      (await cookies()).delete('saturday');
       revalidatePath('/');
 
       return { status: 200 };

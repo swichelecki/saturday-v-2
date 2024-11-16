@@ -14,7 +14,7 @@ async function getUser() {
   try {
     await connectDB();
     const jwtSecret = process.env.JWT_SECRET;
-    const token = cookies().get('saturday');
+    const token = (await cookies()).get('saturday');
     let userId;
     let timezone;
     let admin;

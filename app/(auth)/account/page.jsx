@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 async function getUserId() {
   try {
     const jwtSecret = process.env.JWT_SECRET;
-    const token = cookies().get('saturday');
+    const token = (await cookies()).get('saturday');
     let userId;
     let timezone;
     let admin;

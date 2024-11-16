@@ -27,7 +27,7 @@ export default async function loginUser(formData) {
       })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
         .sign(new TextEncoder().encode(jwtSecret));
-      cookies().set('saturday', token);
+      (await cookies()).set('saturday', token);
       return { status: 200 };
     } else {
       return { status: 403 };

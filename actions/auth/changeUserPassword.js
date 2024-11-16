@@ -25,7 +25,7 @@ export default async function changeUserPassword(formData) {
         }
       );
 
-      cookies().delete('saturday');
+      (await cookies()).delete('saturday');
       return { status: 200 };
     } else {
       return { status: 400 };

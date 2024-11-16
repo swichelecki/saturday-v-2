@@ -5,7 +5,7 @@ import { handleServerErrorMessage } from '../../utilities';
 
 export default async function getWeather() {
   try {
-    const headerList = headers();
+    const headerList = await headers();
 
     let ipAddress = headerList.get('x-forwarded-for')?.split(',')[0];
 

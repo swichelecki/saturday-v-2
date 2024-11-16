@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 const jwtSecret = process.env.JWT_SECRET;
 
 export async function middleware(req) {
-  const token = cookies().get('saturday');
+  const token = (await cookies()).get('saturday');
   let user;
   let newUser;
 

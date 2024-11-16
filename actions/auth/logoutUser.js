@@ -6,7 +6,7 @@ import { handleServerErrorMessage } from '../../utilities';
 
 export default async function logoutUser() {
   try {
-    cookies().delete('saturday');
+    (await cookies()).delete('saturday');
     revalidatePath('/');
     return { status: 200 };
   } catch (error) {
