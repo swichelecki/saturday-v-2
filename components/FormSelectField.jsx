@@ -35,11 +35,7 @@ const FormSelectField = ({
           defaultValue={value}
           id={id}
         >
-          {!optionValue && (
-            <option hidden key='form-select-option_hidden'>
-              Select
-            </option>
-          )}
+          {!optionValue && <option hidden>Select</option>}
           {options?.map((item, index) => (
             <>
               {optionValue && optionValue === item?.value ? (
@@ -51,14 +47,12 @@ const FormSelectField = ({
                   {item?.title}
                 </option>
               ) : (
-                <>
-                  <option
-                    key={`form-select-option_${id}_${index}`}
-                    value={JSON.stringify(item)}
-                  >
-                    {item?.title}
-                  </option>
-                </>
+                <option
+                  key={`form-select-option_${id}_${index}`}
+                  value={JSON.stringify(item)}
+                >
+                  {item?.title}
+                </option>
               )}
             </>
           ))}

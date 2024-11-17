@@ -1,7 +1,6 @@
 'use server';
 
 import Task from '../../models/Task';
-//import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../utilities';
 
 export default async function createItem(formData) {
@@ -31,8 +30,6 @@ export default async function createItem(formData) {
       confirmDeletion,
       mandatoryDate,
     });
-
-    //revalidatePath('/dashboard');
 
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {

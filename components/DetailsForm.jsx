@@ -104,8 +104,8 @@ const DetailsForm = ({ task, user }) => {
     const detailsFormSchemaValidated = detailsFormSchema.safeParse({
       title: formData.get('title'),
       description: formData.get('description'),
-      date: form.dateState,
-      dateAndTime: form.dateAndTimeState,
+      date: form.dateState || '',
+      dateAndTime: form.dateAndTimeState || '',
       mandatoryDate: form.mandatoryDate,
     });
 

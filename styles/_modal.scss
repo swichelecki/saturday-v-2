@@ -2,9 +2,11 @@ dialog::backdrop {
   background: rgba(0, 0, 0, 0.6);
 }
 
-dialog:-internal-dialog-in-top-layer {
-  position: absolute;
-}
+// TODO: this is how to limit scrolling when modal shown
+/* .form-page {
+  height: 1025px;
+  overflow: hidden;
+} */
 
 dialog {
   border: 0;

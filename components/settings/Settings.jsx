@@ -11,7 +11,7 @@ const Settings = ({ categories, reminders, user }) => {
     useAppContext();
 
   // if new user show prompts
-  usePrompt(userId);
+  usePrompt(userId, newUser);
 
   // set global contexts
   useEffect(() => {

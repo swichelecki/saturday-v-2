@@ -2,7 +2,6 @@
 
 import Task from '../../../models/Task';
 import Category from '../../../models/Category';
-//import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../../utilities';
 
 export default async function updateCategory(item) {
@@ -46,8 +45,6 @@ export default async function updateCategory(item) {
         }
       );
     });
-
-    //revalidatePath('/dashboard');
 
     return { status: 200 };
   } catch (error) {

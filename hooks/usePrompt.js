@@ -7,7 +7,7 @@ const SettingsNewUserPrompt = dynamic(() =>
   import('../components/settings/SettingsNewUserPrompt')
 );
 
-export const usePrompt = (userId) => {
+export const usePrompt = (userId, newUser) => {
   const {
     isCategoriesPrompt,
     setIsCategoriesPrompt,
@@ -19,7 +19,7 @@ export const usePrompt = (userId) => {
   } = useAppContext();
 
   useEffect(() => {
-    if (!isCategoriesPrompt && !isRemindersPrompt && !isDashboardPrompt) return;
+    if (!newUser) return;
 
     // handle new user categories prompt
     if (isCategoriesPrompt) {

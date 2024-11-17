@@ -1,7 +1,6 @@
 'use server';
 
 import Reminder from '../../../models/Reminder';
-//import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../../utilities';
 
 export default async function updateReminder(formData) {
@@ -31,8 +30,6 @@ export default async function updateReminder(formData) {
     );
 
     const result = await Reminder.find({ _id: _id });
-
-    //revalidatePath('/dashboard');
 
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {

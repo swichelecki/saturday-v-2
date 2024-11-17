@@ -2,6 +2,7 @@ import connectDB from '../../../../config/db';
 import Reminder from '../../../../models/Reminder';
 import { BY_WEEK_INTERVALS, TWENTYFOUR_HOURS } from '../../../../constants';
 
+//delete after you know it works without it
 //export const revalidate = 0;
 
 export async function GET() {

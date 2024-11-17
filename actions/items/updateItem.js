@@ -2,7 +2,6 @@
 
 import Task from '../../models/Task';
 import { handleServerErrorMessage } from '../../utilities';
-//import { revalidatePath } from 'next/cache';
 
 export default async function itemUpdate(formData) {
   const { _id, title, description, priority, column, confirmDeletion } =
@@ -33,8 +32,6 @@ export default async function itemUpdate(formData) {
     );
 
     const result = await Task.find({ _id: _id });
-
-    //revalidatePath('/dashboard');
 
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
