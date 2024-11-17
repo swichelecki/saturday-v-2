@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "html-react-parser": "^5.1.18",
     "isomorphic-dompurify": "^2.16.0",
     "jose": "^4.14.0",
     "moment": "^2.29.4",
