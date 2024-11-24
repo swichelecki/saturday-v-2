@@ -48,23 +48,22 @@ const Login = () => {
 
     if (!success) {
       const { email, password } = error.flatten().fieldErrors;
-      setErrorMessage({ email: email?.[0], password: password?.[0] });
-    } else {
-      setisAwaitingLogInResponse(true);
+      return setErrorMessage({ email: email?.[0], password: password?.[0] });
+    }
 
-      const response = await loginUser(formData);
-      if (response.status === 200) {
-        router.push('/dashboard');
-      } else if (response.status === 403) {
-        setisAwaitingLogInResponse(false);
-        setErrorMessage({
-          email: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
-          password: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
-        });
-      } else {
-        setShowToast(<Toast serverError={response} />);
-        setisAwaitingLogInResponse(false);
-      }
+    setisAwaitingLogInResponse(true);
+    const response = await loginUser(formData);
+    if (response.status === 200) {
+      router.push('/dashboard');
+    } else if (response.status === 403) {
+      setisAwaitingLogInResponse(false);
+      setErrorMessage({
+        email: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+        password: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+      });
+    } else {
+      setShowToast(<Toast serverError={response} />);
+      setisAwaitingLogInResponse(false);
     }
   };
 

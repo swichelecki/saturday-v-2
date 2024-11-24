@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 
-export const useInnerWidth = () => {
-  const [innerWidth, setInnerWidth] = useState(0);
+export const useInnerHeight = () => {
+  const [innerHeight, setInnerHeight] = useState(0);
 
   useEffect(() => {
-    setInnerWidth(window.innerWidth);
+    setInnerHeight(window.innerHeight);
   }, []);
 
   useEffect(() => {
     window.addEventListener('resize', () => {
-      setInnerWidth(window.innerWidth);
+      setInnerHeight(window.innerHeight);
     });
 
     return () => {
       window.removeEventListener('resize', () => {});
     };
-  }, [innerWidth]);
+  }, [innerHeight]);
 
-  return innerWidth;
+  return innerHeight;
 };

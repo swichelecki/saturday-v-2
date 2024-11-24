@@ -11,6 +11,7 @@ import { useAppContext } from '../../context';
 import { FormTextField, FormSelectField, Toast } from '../../components';
 import {
   changePasswordSchema,
+  changeTimezoneSchema,
   deleteAccountSchema,
 } from '../../schemas/schemas';
 import {
@@ -101,15 +102,20 @@ const Account = ({ user }) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    if (!form.timezone) {
-      setErrorMessage({
+    const changeTimezoneSchemaValidated = changeTimezoneSchema.safeParse({
+      userId: formData.get('userId'),
+      timezone: formData.get('timezone'),
+    });
+
+    const { success } = changeTimezoneSchemaValidated;
+    if (!success) {
+      return setErrorMessage({
         ...errorMessage,
         timezone: FORM_ERROR_MISSING_TIMEZONE,
       });
     }
 
     setIsAwaitingChangeTimezoneResponse(true);
-
     const response = await changeUserTimezone(formData);
     if (response.status === 200) {
       setIsAwaitingChangeTimezoneResponse(false);
@@ -126,6 +132,7 @@ const Account = ({ user }) => {
     const formData = new FormData(e.currentTarget);
 
     const changePasswordSchemaValidated = changePasswordSchema.safeParse({
+      userId: formData.get('userId'),
       email: formData.get('email'),
       password: formData.get('password'),
       newPassword: formData.get('newPassword'),
@@ -133,7 +140,6 @@ const Account = ({ user }) => {
     });
 
     const { success, error } = changePasswordSchemaValidated;
-
     if (!success) {
       const { email, password, newPassword, confirmNewPassword } =
         error.flatten().fieldErrors;
@@ -144,22 +150,22 @@ const Account = ({ user }) => {
         confirmNewPassword: confirmNewPassword?.[0],
       });
       setScrollToErrorMessage(true);
-    } else {
-      setIsAwaitingChangePasswordResponse(true);
+      return;
+    }
 
-      const response = await changeUserPassword(formData);
-      if (response.status === 200) {
-        router.push('/login');
-      } else if (response.status === 400) {
-        setIsAwaitingChangePasswordResponse(false);
-        setErrorMessage({
-          email: INVALID_USER_DATA,
-          password: INVALID_USER_DATA,
-        });
-      } else {
-        setShowToast(<Toast serverError={response} />);
-        setIsAwaitingChangePasswordResponse(false);
-      }
+    setIsAwaitingChangePasswordResponse(true);
+    const response = await changeUserPassword(formData);
+    if (response.status === 200) {
+      router.push('/login');
+    } else if (response.status === 403) {
+      setIsAwaitingChangePasswordResponse(false);
+      setErrorMessage({
+        email: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+        password: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+      });
+    } else {
+      setShowToast(<Toast serverError={response} />);
+      setIsAwaitingChangePasswordResponse(false);
     }
   };
 
@@ -169,13 +175,13 @@ const Account = ({ user }) => {
     const formData = new FormData(e.currentTarget);
 
     const deleteAccountSchemaValidated = deleteAccountSchema.safeParse({
+      userId: formData.get('userId'),
       deleteEmail: formData.get('deleteEmail'),
       deletePassword: formData.get('deletePassword'),
       deleteConfirmation: formData.get('deleteConfirmation'),
     });
 
     const { success, error } = deleteAccountSchemaValidated;
-
     if (!success) {
       const { deleteEmail, deletePassword, deleteConfirmation } =
         error.flatten().fieldErrors;
@@ -185,24 +191,24 @@ const Account = ({ user }) => {
         deleteConfirmation: deleteConfirmation?.[0],
       });
       setScrollToErrorMessage(true);
-    } else {
-      setIsAwaitingDeleteAccoungResponse(true);
+      return;
+    }
 
-      const response = await deleteUserAccount(formData);
-      if (response.status === 200) {
-        setUserId('');
-        setIsAdmin(false);
-        router.push('/');
-      } else if (response.status === 403) {
-        setIsAwaitingDeleteAccoungResponse(false);
-        setErrorMessage({
-          deleteEmail: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
-          deletePassword: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
-        });
-      } else {
-        setShowToast(<Toast serverError={response} />);
-        setIsAwaitingDeleteAccoungResponse(false);
-      }
+    setIsAwaitingDeleteAccoungResponse(true);
+    const response = await deleteUserAccount(formData);
+    if (response.status === 200) {
+      setUserId('');
+      setIsAdmin(false);
+      router.push('/');
+    } else if (response.status === 403) {
+      setIsAwaitingDeleteAccoungResponse(false);
+      setErrorMessage({
+        deleteEmail: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+        deletePassword: FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+      });
+    } else {
+      setShowToast(<Toast serverError={response} />);
+      setIsAwaitingDeleteAccoungResponse(false);
     }
   };
 

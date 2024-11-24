@@ -24,7 +24,6 @@ import {
   FORM_CHARACTER_LIMIT_16,
   FORM_CHARACTER_LIMIT_30,
   FORM_CHARACTER_LIMIT_50,
-  FORM_CHARACTER_LIMIT_500,
   FORM_CHARACTER_LIMIT_1000,
   LIST_ITEM_LIMIT,
   ITEM_ERROR_MISSING_ITEM,
@@ -100,7 +99,7 @@ export const detailsFormSchema = z
       .string()
       .min(1, FORM_ERROR_MISSING_TITLE)
       .max(30, FORM_CHARACTER_LIMIT_30),
-    description: z.string().max(500, FORM_CHARACTER_LIMIT_500),
+    description: z.string().max(1000, FORM_CHARACTER_LIMIT_1000),
     date: z.string(),
     dateAndTime: z.string(),
     mandatoryDate: z.boolean(),
@@ -140,6 +139,23 @@ export const detailsFormSchema = z
     }
   );
 
+export const itemFormDataSchema = z.object({
+  _id: z.string(),
+  userId: z.string(),
+  title: z
+    .string()
+    .min(1, FORM_ERROR_MISSING_TITLE)
+    .max(30, FORM_CHARACTER_LIMIT_30),
+  column: z.string(),
+  priority: z.string(),
+  type: z.string(),
+  description: z.string().max(1000, FORM_CHARACTER_LIMIT_1000),
+  date: z.string(),
+  dateAndTime: z.string(),
+  mandatoryDate: z.string(),
+  confirmDeletion: z.string(),
+});
+
 export const reminderSchema = z
   .object({
     reminder: z
@@ -171,6 +187,7 @@ export const reminderSchema = z
 
 export const contactFormSchema = z
   .object({
+    userId: z.string(),
     email: z
       .string()
       .min(1, FORM_ERROR_MISSING_EMAIL)
@@ -195,6 +212,7 @@ export const contactFormSchema = z
 
 export const changePasswordSchema = z
   .object({
+    userId: z.string(),
     email: z
       .string()
       .min(1, FORM_ERROR_MISSING_EMAIL)
@@ -218,8 +236,14 @@ export const changePasswordSchema = z
     path: ['confirmNewPassword'],
   });
 
+export const changeTimezoneSchema = z.object({
+  userId: z.string(),
+  timezone: z.string(),
+});
+
 export const deleteAccountSchema = z
   .object({
+    userId: z.string(),
     deleteEmail: z
       .string()
       .min(1, FORM_ERROR_MISSING_EMAIL)

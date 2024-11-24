@@ -66,6 +66,7 @@ const ContactForm = ({ user }) => {
     const formData = new FormData(e.currentTarget);
 
     const contactFormValidated = contactFormSchema.safeParse({
+      userId: formData.get('userId'),
       email: formData.get('email'),
       subject: formData.get('subject'),
       message: formData.get('message'),
@@ -80,22 +81,22 @@ const ContactForm = ({ user }) => {
         message: message?.[0],
       });
       setScrollToErrorMessage(true);
-    } else {
-      setIsAwaitingContactFormResponse(true);
+      return;
+    }
 
-      const response = await createContactMessage(formData);
-      if (response.status === 200) {
-        setIsAwaitingContactFormResponse(false);
-        setForm({ subject: '', message: '<p><br></p>' });
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        });
-        setShowToast(<Toast isSuccess message='Thanks for the feedback!' />);
-      } else {
-        setShowToast(<Toast serverError={response} />);
-        setIsAwaitingContactFormResponse(false);
-      }
+    setIsAwaitingContactFormResponse(true);
+    const response = await createContactMessage(formData);
+    if (response.status === 200) {
+      setIsAwaitingContactFormResponse(false);
+      setForm({ subject: '', message: '<p><br></p>' });
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+      setShowToast(<Toast isSuccess message='Thanks for the feedback!' />);
+    } else {
+      setShowToast(<Toast serverError={response} />);
+      setIsAwaitingContactFormResponse(false);
     }
   };
 
@@ -128,6 +129,7 @@ const ContactForm = ({ user }) => {
       />
       <input type='hidden' name='message' value={form?.message} />
       <input type='hidden' name='email' value={email} />
+      <input type='hidden' name='userId' value={userId} />
       <div className='form-page__buttons-wrapper'>
         <Link href='/'>
           <span className='form-page__cancel-button'>Cancel</span>

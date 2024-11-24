@@ -42,6 +42,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     date: '',
     dateAndTime: '',
     mandatoryDate: false,
+    confirmDeletion: false,
   });
   const [masonryItems, setMasonryItems] = useState([]);
   const [priority, setPriority] = useState(0);
@@ -178,40 +179,40 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
 
     if (!success) {
       const { title, itemLimit } = error.flatten().fieldErrors;
-      setErrorMessages(title?.[0] ? title?.[0] : itemLimit?.[0]);
-    } else {
-      setIsAwaitingAddResponse(true);
-      createItem(formData).then((res) => {
-        if (res.status === 200) {
-          setListItems(
-            listItems.map((item) => {
-              if (Object.keys(item)[0] === res.item.type) {
-                return {
-                  [Object.keys(item)[0]]: [...Object.values(item)[0], res.item],
-                };
-              } else {
-                return item;
-              }
-            })
-          );
-          if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
-          setListItem({ ...listItem, title: '' });
-        }
-
-        if (res.status !== 200) {
-          setShowToast(<Toast serverError={res} />);
-        }
-
-        setIsAwaitingAddResponse(false);
-      });
+      return setErrorMessages(title?.[0] ? title?.[0] : itemLimit?.[0]);
     }
+
+    setIsAwaitingAddResponse(true);
+    createItem(formData).then((res) => {
+      if (res.status === 200) {
+        setListItems(
+          listItems.map((item) => {
+            if (Object.keys(item)[0] === res.item.type) {
+              return {
+                [Object.keys(item)[0]]: [...Object.values(item)[0], res.item],
+              };
+            } else {
+              return item;
+            }
+          })
+        );
+        if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+        setListItem({ ...listItem, title: '' });
+      }
+
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
+
+      setIsAwaitingAddResponse(false);
+    });
   };
 
   // get item to edit
   const handleEditTask = (id) => {
     setIsAwaitingEditResponse(true);
     setTaskToEditId(id);
-    getItem(id).then((res) => {
+    getItem(id, userId).then((res) => {
       if (res.status === 200) {
         setShowModal(
           <Modal showCloseButton={false}>
@@ -253,7 +254,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     }
 
     setIsAwaitingDeleteResponse(true);
-    deleteItem(id).then((res) => {
+    deleteItem(id, userId).then((res) => {
       if (res.status === 200) {
         setListItems(
           listItems.map((item) => {

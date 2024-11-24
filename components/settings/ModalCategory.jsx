@@ -5,6 +5,7 @@ import { FormTextField, FormCheckboxField, Toast } from '../../components';
 import { createCategory } from '../../actions';
 import { useAppContext } from '../../context';
 import { categorySchema } from '../../schemas/schemas';
+import { handleModalResetPageScrolling } from '../../utilities';
 
 const ModalReminder = ({ userId, items, setItems, newUser }) => {
   const { setShowModal, setShowToast, setIsDashboardPrompt } = useAppContext();
@@ -96,6 +97,7 @@ const ModalReminder = ({ userId, items, setItems, newUser }) => {
       mandatoryDate: false,
     });
     setErrorMessage({ type: '' });
+    handleModalResetPageScrolling();
   };
 
   return (
@@ -122,7 +124,10 @@ const ModalReminder = ({ userId, items, setItems, newUser }) => {
       <input type='hidden' name='priority' value={form?.priority} />
       <div className='modal__modal-button-wrapper'>
         <button
-          onClick={handleCloseModal}
+          onClick={() => {
+            handleCloseModal();
+            handleModalResetPageScrolling();
+          }}
           type='button'
           className='modal__cancel-button'
         >

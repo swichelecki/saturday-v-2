@@ -7,7 +7,7 @@ import { createUserAccount } from '../../actions';
 import { useAppContext } from '../../context';
 import { FormTextField, Toast } from '../../components';
 import { createUserSchema } from '../../schemas/schemas';
-import { INVALID_USER_DATA, USER_ALREADY_EXISTS } from '../../constants';
+import { USER_ALREADY_EXISTS } from '../../constants';
 
 const Signup = () => {
   const router = useRouter();
@@ -54,33 +54,26 @@ const Signup = () => {
 
     if (!success) {
       const { email, password, confirmPassword } = error.flatten().fieldErrors;
-      setErrorMessage({
+      return setErrorMessage({
         email: email?.[0],
         password: password?.[0],
         confirmPassword: confirmPassword?.[0],
       });
-    } else {
-      setisAwaitingLogInResponse(true);
+    }
 
-      const response = await createUserAccount(formData);
-      if (response.status === 200) {
-        router.push('/settings');
-      } else if (response.status === 400) {
-        setisAwaitingLogInResponse(false);
-        setErrorMessage({
-          email: INVALID_USER_DATA,
-          password: INVALID_USER_DATA,
-        });
-      } else if (response.status === 409) {
-        setisAwaitingLogInResponse(false);
-        setErrorMessage({
-          email: USER_ALREADY_EXISTS,
-          password: USER_ALREADY_EXISTS,
-        });
-      } else {
-        setShowToast(<Toast serverError={response} />);
-        setisAwaitingLogInResponse(false);
-      }
+    setisAwaitingLogInResponse(true);
+    const response = await createUserAccount(formData);
+    if (response.status === 200) {
+      router.push('/settings');
+    } else if (response.status === 409) {
+      setisAwaitingLogInResponse(false);
+      setErrorMessage({
+        email: USER_ALREADY_EXISTS,
+        password: USER_ALREADY_EXISTS,
+      });
+    } else {
+      setShowToast(<Toast serverError={response} />);
+      setisAwaitingLogInResponse(false);
     }
   };
 

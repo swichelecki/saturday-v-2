@@ -6,9 +6,26 @@ import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
 import bcrypt from 'bcryptjs';
 import { handleServerErrorMessage } from '../../utilities';
+import { loginSchema } from '../../schemas/schemas';
 const jwtSecret = process.env.JWT_SECRET;
 
 export default async function loginUser(formData) {
+  if (!(formData instanceof FormData)) {
+    return {
+      status: 400,
+      error: 'Not FormData',
+    };
+  }
+
+  // check that data shape is correct
+  const loginDataValidated = loginSchema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+  });
+
+  const { success } = loginDataValidated;
+  if (!success) return { status: 400, error: 'Invalid FormData' };
+
   try {
     await connectDB();
 
@@ -33,8 +50,8 @@ export default async function loginUser(formData) {
       return { status: 403 };
     }
   } catch (error) {
-    console.log(error);
     const errorMessage = handleServerErrorMessage(error);
+    console.error(errorMessage);
     return { status: 500, error: errorMessage };
   }
 }

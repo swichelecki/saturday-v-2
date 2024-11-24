@@ -97,6 +97,7 @@ const MainControls = ({
           disabled={checkbox}
         />
       </div>
+      <input type='hidden' name='_id' value='' />
       <input type='hidden' name='userId' value={userId} />
       <input type='hidden' name='column' value={column} />
       <input type='hidden' name='priority' value={priority} />
@@ -104,6 +105,8 @@ const MainControls = ({
       <input type='hidden' name='description' value='' />
       <input type='hidden' name='date' value='' />
       <input type='hidden' name='dateAndTime' value='' />
+      <input type='hidden' name='mandatoryDate' value='false' />
+      <input type='hidden' name='confirmDeletion' value='false' />
     </form>
   );
 };

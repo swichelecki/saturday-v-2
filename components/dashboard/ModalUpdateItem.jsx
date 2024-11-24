@@ -77,41 +77,41 @@ const ModalUpdateItem = ({
 
     if (!success) {
       const { title } = error.flatten().fieldErrors;
-      setErrorMessage(title?.[0]);
-    } else {
-      setIsAwaitingSubmitResponse(true);
-      updateItem(formData).then((res) => {
-        if (res.status === 200) {
-          setItems(
-            items.map((item) => {
-              if (Object.keys(item)[0] === res.item.type) {
-                return {
-                  [Object.keys(item)[0]]: Object.values(item)[0].map((item) => {
-                    if (item._id === itemToEditId) {
-                      return {
-                        ...item,
-                        title: res.item.title,
-                      };
-                    } else {
-                      return item;
-                    }
-                  }),
-                };
-              } else {
-                return item;
-              }
-            })
-          );
-        }
-
-        if (res.status !== 200) {
-          setShowToast(<Toast serverError={res} />);
-        }
-
-        setIsAwaitingSubmitResponse(false);
-        handleCloseModal();
-      });
+      return setErrorMessage(title?.[0]);
     }
+
+    setIsAwaitingSubmitResponse(true);
+    updateItem(formData).then((res) => {
+      if (res.status === 200) {
+        setItems(
+          items.map((item) => {
+            if (Object.keys(item)[0] === res.item.type) {
+              return {
+                [Object.keys(item)[0]]: Object.values(item)[0].map((item) => {
+                  if (item._id === itemToEditId) {
+                    return {
+                      ...item,
+                      title: res.item.title,
+                    };
+                  } else {
+                    return item;
+                  }
+                }),
+              };
+            } else {
+              return item;
+            }
+          })
+        );
+      }
+
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
+
+      setIsAwaitingSubmitResponse(false);
+      handleCloseModal();
+    });
   };
 
   const handleCloseModal = () => {
@@ -163,6 +163,9 @@ const ModalUpdateItem = ({
       <input type='hidden' name='column' value={itemToUpdate?.column} />
       <input type='hidden' name='priority' value={itemToUpdate?.priority} />
       <input type='hidden' name='type' value={itemToUpdate?.type} />
+      <input type='hidden' name='description' value='' />
+      <input type='hidden' name='date' value='' />
+      <input type='hidden' name='dateAndTime' value='' />
       <input type='hidden' name='confirmDeletion' value='false' />
       <input type='hidden' name='mandatoryDate' value='false' />
     </form>

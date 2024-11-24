@@ -9,7 +9,10 @@ import {
 } from '../../components';
 import { createReminder, updateReminder } from '../../actions';
 import { useAppContext } from '../../context';
-import { handleSortItemsAscending } from '../../utilities';
+import {
+  handleSortItemsAscending,
+  handleModalResetPageScrolling,
+} from '../../utilities';
 import { reminderSchema } from '../../schemas/schemas';
 import {
   FORM_REMINDER_INTERVAL_OPTIONS,
@@ -245,6 +248,7 @@ const ModalReminder = ({
       recurrenceInterval: '',
       recurrenceBuffer: '',
     });
+    handleModalResetPageScrolling();
   };
 
   return (
@@ -328,7 +332,10 @@ const ModalReminder = ({
       <input type='hidden' name='displayReminder' value={false} />
       <div className='modal__modal-button-wrapper'>
         <button
-          onClick={handleCloseModal}
+          onClick={() => {
+            handleCloseModal();
+            handleModalResetPageScrolling();
+          }}
           type='button'
           className='modal__cancel-button'
         >
