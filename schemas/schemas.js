@@ -14,7 +14,6 @@ import {
   FORM_ERROR_MISSING_REMINDER_DATE,
   FORM_ERROR_MISSING_NEW_PASSWORD,
   FORM_ERROR_MISSING_NEW_CONFIRM_PASSWORD,
-  FORM_ERROR_MISSING_UPDATE_TITLE,
   FORM_ERROR_MISSING_DELETE_CONFIRMATION,
   FORM_ERROR_MISSING_DELETE_MISMATCH,
   FORM_ERROR_INVALID_EMAIL,
@@ -24,10 +23,13 @@ import {
   FORM_CHARACTER_LIMIT_16,
   FORM_CHARACTER_LIMIT_30,
   FORM_CHARACTER_LIMIT_50,
-  FORM_CHARACTER_LIMIT_1000,
+  FORM_CHARACTER_LIMIT_5000,
   LIST_ITEM_LIMIT,
-  ITEM_ERROR_MISSING_ITEM,
   ITEM_ERROR_AT_ITEM_LIMIT,
+  CATEGORY_ITEM_LIMIT,
+  CATEGORY_ERROR_AT_ITEM_LIMIT,
+  REMINDERS_ITEM_LIMIT,
+  REMINDERS_ERROR_AT_ITEM_LIMIT,
   SETTINGS_MISSING_CATEGORY,
   DELETE_MY_ACCOUNT,
   TWENTYFOUR_HOURS,
@@ -66,48 +68,51 @@ export const loginSchema = z.object({
     .max(50, FORM_CHARACTER_LIMIT_50),
 });
 
-export const itemSchema = z
+export const categorySchema = z
   .object({
-    title: z
+    userId: z.string(),
+    priority: z.number().or(z.string()),
+    type: z
       .string()
-      .min(1, ITEM_ERROR_MISSING_ITEM)
-      .max(30, FORM_CHARACTER_LIMIT_30),
+      .min(1, SETTINGS_MISSING_CATEGORY)
+      .max(16, FORM_CHARACTER_LIMIT_16),
+    mandatoryDate: z.boolean().or(z.string()),
     itemLimit: z.number(),
   })
-  .refine((data) => Number(data.itemLimit) < LIST_ITEM_LIMIT, {
-    message: ITEM_ERROR_AT_ITEM_LIMIT,
+  .refine((data) => Number(data.itemLimit) < CATEGORY_ITEM_LIMIT, {
+    message: CATEGORY_ERROR_AT_ITEM_LIMIT,
     path: ['itemLimit'],
   });
 
-export const updateItemSchema = z.object({
-  title: z
-    .string()
-    .min(1, FORM_ERROR_MISSING_UPDATE_TITLE)
-    .max(30, FORM_CHARACTER_LIMIT_30),
-});
-
-export const categorySchema = z.object({
-  type: z
-    .string()
-    .min(1, SETTINGS_MISSING_CATEGORY)
-    .max(16, FORM_CHARACTER_LIMIT_16),
-});
-
-export const detailsFormSchema = z
+export const itemSchema = z
   .object({
+    _id: z.string().optional(),
+    userId: z.string(),
     title: z
       .string()
       .min(1, FORM_ERROR_MISSING_TITLE)
       .max(30, FORM_CHARACTER_LIMIT_30),
-    description: z.string().max(1000, FORM_CHARACTER_LIMIT_1000),
-    date: z.string(),
-    dateAndTime: z.string(),
-    mandatoryDate: z.boolean(),
+    column: z.number().or(z.string()),
+    priority: z.number().or(z.string()),
+    type: z
+      .string()
+      .min(1, SETTINGS_MISSING_CATEGORY)
+      .max(16, FORM_CHARACTER_LIMIT_16),
+    description: z.string().max(5000, FORM_CHARACTER_LIMIT_5000),
+    date: z.string().date().or(z.string()),
+    dateAndTime: z.string().datetime().or(z.string()),
+    mandatoryDate: z.boolean().or(z.string()),
+    confirmDeletion: z.boolean().or(z.string()),
+    isDetailsForm: z.boolean().or(z.string()),
+    itemLimit: z.number(),
   })
   .refine(
     (data) =>
-      data.mandatoryDate ||
-      (!data.mandatoryDate && data.description?.length > 0),
+      data.mandatoryDate === 'true' ||
+      data.isDetailsForm === 'false' ||
+      (data.mandatoryDate === 'false' &&
+        data.isDetailsForm === 'true' &&
+        data.description?.length > 0),
     {
       message: FORM_ERROR_MISSING_DESCRIPTION,
       path: ['description'],
@@ -115,9 +120,9 @@ export const detailsFormSchema = z
   )
   .refine(
     (data) =>
-      (data.mandatoryDate && data.date?.length > 0) ||
-      (data.mandatoryDate && data.dateAndTime?.length > 0) ||
-      !data.mandatoryDate,
+      data.date?.length > 0 ||
+      data.dateAndTime?.length > 0 ||
+      data.mandatoryDate === 'false',
     {
       message: FORM_ERROR_MISSING_DATE,
       path: ['date'],
@@ -125,47 +130,36 @@ export const detailsFormSchema = z
   )
   .refine(
     (data) =>
-      (data.mandatoryDate &&
-        data.date?.length > 0 &&
+      (data.date?.length > 0 &&
         new Date(data.date).getTime() >= Date.now() - TWENTYFOUR_HOURS) ||
-      (data.mandatoryDate &&
-        data.dateAndTime?.length > 0 &&
+      (data.dateAndTime?.length > 0 &&
         new Date(data.dateAndTime).getTime() >=
           Date.now() - TWENTYFOUR_HOURS) ||
-      !data.mandatoryDate,
+      data.mandatoryDate === 'false',
     {
       message: FORM_ERROR_DATE_NOT_TODAY_OR_GREATER,
       path: ['date'],
     }
-  );
-
-export const itemFormDataSchema = z.object({
-  _id: z.string(),
-  userId: z.string(),
-  title: z
-    .string()
-    .min(1, FORM_ERROR_MISSING_TITLE)
-    .max(30, FORM_CHARACTER_LIMIT_30),
-  column: z.string(),
-  priority: z.string(),
-  type: z.string(),
-  description: z.string().max(1000, FORM_CHARACTER_LIMIT_1000),
-  date: z.string(),
-  dateAndTime: z.string(),
-  mandatoryDate: z.string(),
-  confirmDeletion: z.string(),
-});
+  )
+  .refine((data) => Number(data.itemLimit) < LIST_ITEM_LIMIT, {
+    message: ITEM_ERROR_AT_ITEM_LIMIT,
+    path: ['itemLimit'],
+  });
 
 export const reminderSchema = z
   .object({
+    _id: z.string().optional(),
+    userId: z.string(),
     reminder: z
       .string()
       .min(1, FORM_ERROR_MISSING_REMINDER_TITLE)
       .max(30, FORM_CHARACTER_LIMIT_30),
     reminderDate: z.string().date(FORM_ERROR_MISSING_REMINDER_DATE),
-    recurrenceInterval: z.string(),
-    exactRecurringDate: z.string(),
-    recurrenceBuffer: z.string(),
+    recurrenceBuffer: z.number().or(z.string()),
+    recurrenceInterval: z.number().or(z.string()),
+    exactRecurringDate: z.boolean().or(z.string()),
+    displayReminder: z.boolean().or(z.string()),
+    itemLimit: z.number(),
   })
   .refine((data) => new Date(data.reminderDate).getTime() > Date.now(), {
     message: FORM_ERROR_REMINDER_DATE_IN_PAST,
@@ -183,7 +177,11 @@ export const reminderSchema = z
       message: FORM_ERROR_MISSING_REMINDER_BUFFER,
       path: ['recurrenceBuffer'],
     }
-  );
+  )
+  .refine((data) => Number(data.itemLimit) < REMINDERS_ITEM_LIMIT, {
+    message: REMINDERS_ERROR_AT_ITEM_LIMIT,
+    path: ['itemLimit'],
+  });
 
 export const contactFormSchema = z
   .object({
@@ -200,7 +198,7 @@ export const contactFormSchema = z
     message: z
       .string()
       .min(1, FORM_ERROR_MISSING_MESSAGE)
-      .max(1000, FORM_CHARACTER_LIMIT_1000),
+      .max(5000, FORM_CHARACTER_LIMIT_5000),
   })
   .refine(
     (data) => data.message?.length > 0 && data.message !== '<p><br></p>',

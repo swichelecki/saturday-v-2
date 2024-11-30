@@ -28,6 +28,7 @@ const ModalReminder = ({
   itemToUpdate,
   itemToEditId,
   modalOperation,
+  numberOfReminders,
 }) => {
   const { setShowModal, setShowToast } = useAppContext();
 
@@ -126,18 +127,35 @@ const ModalReminder = ({
     const formData = new FormData(e.currentTarget);
 
     const reminderSchemaValidated = reminderSchema.safeParse({
+      userId: formData.get('userId'),
       reminder: formData.get('reminder'),
       reminderDate: formData.get('reminderDate'),
       recurrenceInterval: formData.get('recurrenceInterval'),
       exactRecurringDate: formData.get('exactRecurringDate'),
       recurrenceBuffer: formData.get('recurrenceBuffer'),
+      displayReminder: formData.get('displayReminder'),
+      itemLimit: numberOfReminders,
     });
 
     const { success, error } = reminderSchemaValidated;
-
     if (!success) {
       const { reminder, reminderDate, recurrenceInterval, recurrenceBuffer } =
         error.flatten().fieldErrors;
+
+      if (
+        !reminder &&
+        !reminderDate &&
+        !recurrenceInterval &&
+        !recurrenceBuffer
+      ) {
+        const serverError = {
+          status: 400,
+          error: 'Invalid FormData. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
 
       setErrorMessage({
         reminder: reminder?.[0],
@@ -146,36 +164,37 @@ const ModalReminder = ({
         recurrenceBuffer: recurrenceBuffer?.[0],
       });
       setScrollToErrorMessage(true);
-    } else {
-      setIsAwaitingSubmitResponse(true);
-      createReminder(formData).then((res) => {
-        if (res.status === 200) {
-          const copyOfRemindersItems = [...items];
-          setItems(
-            handleSortItemsAscending(
-              [...copyOfRemindersItems, res.item],
-              'reminderDate'
-            )
-          );
-          setForm({
-            userId,
-            reminder: '',
-            reminderDate: '',
-            recurrenceInterval: 0,
-            recurrenceBuffer: 0,
-            exactRecurringDate: false,
-            displayReminder: false,
-          });
-        }
-
-        if (res.status !== 200) {
-          setShowToast(<Toast serverError={res} />);
-        }
-
-        setIsAwaitingSubmitResponse(false);
-        handleCloseModal();
-      });
+      return;
     }
+
+    setIsAwaitingSubmitResponse(true);
+    createReminder(formData).then((res) => {
+      if (res.status === 200) {
+        const copyOfRemindersItems = [...items];
+        setItems(
+          handleSortItemsAscending(
+            [...copyOfRemindersItems, res.item],
+            'reminderDate'
+          )
+        );
+        setForm({
+          userId,
+          reminder: '',
+          reminderDate: '',
+          recurrenceInterval: 0,
+          recurrenceBuffer: 0,
+          exactRecurringDate: false,
+          displayReminder: false,
+        });
+      }
+
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
+
+      setIsAwaitingSubmitResponse(false);
+      handleCloseModal();
+    });
   };
 
   // update reminder
@@ -184,18 +203,37 @@ const ModalReminder = ({
     const formData = new FormData(e.currentTarget);
 
     const reminderSchemaValidated = reminderSchema.safeParse({
+      _id: formData.get('_id'),
+      userId: formData.get('userId'),
       reminder: formData.get('reminder'),
       reminderDate: formData.get('reminderDate'),
       recurrenceInterval: formData.get('recurrenceInterval'),
       exactRecurringDate: formData.get('exactRecurringDate'),
       recurrenceBuffer: formData.get('recurrenceBuffer'),
+      displayReminder: formData.get('displayReminder'),
+      itemLimit: numberOfReminders - 1,
     });
 
     const { success, error } = reminderSchemaValidated;
-
     if (!success) {
       const { reminder, reminderDate, recurrenceInterval, recurrenceBuffer } =
         error.flatten().fieldErrors;
+
+      if (
+        !reminder &&
+        !reminderDate &&
+        !recurrenceInterval &&
+        !recurrenceBuffer
+      ) {
+        const serverError = {
+          status: 400,
+          error: 'Invalid FormData. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
+
       setErrorMessage({
         reminder: reminder?.[0],
         reminderDate: reminderDate?.[0],
@@ -203,32 +241,33 @@ const ModalReminder = ({
         recurrenceBuffer: recurrenceBuffer?.[0],
       });
       setScrollToErrorMessage(true);
-    } else {
-      setIsAwaitingSubmitResponse(true);
-      updateReminder(formData).then((res) => {
-        if (res.status === 200) {
-          setItems(
-            handleSortItemsAscending(
-              items?.map((item) => {
-                if (item?._id === itemToEditId) {
-                  return res?.item;
-                } else {
-                  return item;
-                }
-              }),
-              'reminderDate'
-            )
-          );
-        }
-
-        if (res.status !== 200) {
-          setShowToast(<Toast serverError={res} />);
-        }
-
-        setIsAwaitingSubmitResponse(false);
-        handleCloseModal();
-      });
+      return;
     }
+
+    setIsAwaitingSubmitResponse(true);
+    updateReminder(formData).then((res) => {
+      if (res.status === 200) {
+        setItems(
+          handleSortItemsAscending(
+            items?.map((item) => {
+              if (item?._id === itemToEditId) {
+                return res?.item;
+              } else {
+                return item;
+              }
+            }),
+            'reminderDate'
+          )
+        );
+      }
+
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
+
+      setIsAwaitingSubmitResponse(false);
+      handleCloseModal();
+    });
   };
 
   const handleCloseModal = () => {
@@ -325,11 +364,13 @@ const ModalReminder = ({
         errorMessage={errorMessage.recurrenceBuffer}
         disabled={!form?.exactRecurringDate}
       />
-      {modalOperation === MODAL_OPERATION_UPDATE && (
-        <input type='hidden' name='_id' value={itemToEditId} />
-      )}
+      <input type='hidden' name='_id' value={itemToEditId ?? ''} />
       <input type='hidden' name='userId' value={userId} />
-      <input type='hidden' name='displayReminder' value={false} />
+      <input
+        type='hidden'
+        name='displayReminder'
+        value={form?.displayReminder}
+      />
       <div className='modal__modal-button-wrapper'>
         <button
           onClick={() => {

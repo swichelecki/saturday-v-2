@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { FormTextField, Toast } from '../../components';
 import { updateItem } from '../../actions';
 import { useAppContext } from '../../context';
-import { updateItemSchema } from '../../schemas/schemas';
+import { itemSchema } from '../../schemas/schemas';
 
 const ModalUpdateItem = ({
   userId,
@@ -14,6 +14,7 @@ const ModalUpdateItem = ({
   setItems,
   setTaskToEditId,
   handleCloseMobileItem,
+  totalNumberOfItems,
 }) => {
   const { setShowModal, setShowToast } = useAppContext();
 
@@ -69,15 +70,38 @@ const ModalUpdateItem = ({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    const updateItemSchemaValidated = updateItemSchema.safeParse({
+    const itemSchemaValidated = itemSchema.safeParse({
+      _id: formData.get('_id'),
+      userId: formData.get('userId'),
       title: formData.get('title'),
+      column: formData.get('column'),
+      priority: formData.get('priority'),
+      type: formData.get('type'),
+      description: formData.get('description'),
+      date: formData.get('date'),
+      dateAndTime: formData.get('dateAndTime'),
+      mandatoryDate: formData.get('mandatoryDate'),
+      confirmDeletion: formData.get('confirmDeletion'),
+      isDetailsForm: formData.get('isDetailsForm'),
+      itemLimit: totalNumberOfItems - 1,
     });
 
-    const { success, error } = updateItemSchemaValidated;
-
+    const { success, error } = itemSchemaValidated;
     if (!success) {
       const { title } = error.flatten().fieldErrors;
-      return setErrorMessage(title?.[0]);
+
+      if (!title) {
+        const serverError = {
+          status: 400,
+          error: 'Invalid FormData. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
+
+      setErrorMessage(title?.[0]);
+      return;
     }
 
     setIsAwaitingSubmitResponse(true);
@@ -168,6 +192,7 @@ const ModalUpdateItem = ({
       <input type='hidden' name='dateAndTime' value='' />
       <input type='hidden' name='confirmDeletion' value='false' />
       <input type='hidden' name='mandatoryDate' value='false' />
+      <input type='hidden' name='isDetailsForm' value='false' />
     </form>
   );
 };

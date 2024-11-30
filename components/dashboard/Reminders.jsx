@@ -10,7 +10,7 @@ import { MOBILE_BREAKPOINT, BY_WEEK_INTERVALS } from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
 const Reminders = ({ reminders }) => {
-  const { setShowToast } = useAppContext();
+  const { setShowToast, userId } = useAppContext();
 
   const width = useInnerWidth();
 
@@ -77,6 +77,7 @@ const Reminders = ({ reminders }) => {
 
       copyOfReminderToUpdate = {
         ...copyOfReminderToUpdate,
+        userId,
         displayReminder: false,
         reminderDate: nextDate,
       };
@@ -105,7 +106,7 @@ const Reminders = ({ reminders }) => {
   // get reminder to update
   const handleResetReminder = (id) => {
     setIsAwaitingResetResponse(true);
-    getReminder(id).then((res) => {
+    getReminder(userId, id).then((res) => {
       if (res.status === 200) {
         setReminderToUpdate(res.item);
       }

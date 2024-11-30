@@ -4,7 +4,7 @@ import Task from '../../models/Task';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import { handleServerErrorMessage } from '../../utilities';
-import { itemFormDataSchema } from '../../schemas/schemas';
+import { itemSchema } from '../../schemas/schemas';
 const jwtSecret = process.env.JWT_SECRET;
 
 export default async function createItem(formData) {
@@ -43,8 +43,8 @@ export default async function createItem(formData) {
   }
 
   // check that data shape is correct
-  const itemFormDataSchemaValidated = itemFormDataSchema.safeParse({
-    _id: formData.get('_id'),
+  const numberOfItems = await Task.find({ userId: cookieUserId }).count();
+  const itemSchemaValidated = itemSchema.safeParse({
     userId: formData.get('userId'),
     title: formData.get('title'),
     column: formData.get('column'),
@@ -55,25 +55,30 @@ export default async function createItem(formData) {
     dateAndTime: formData.get('dateAndTime'),
     mandatoryDate: formData.get('mandatoryDate'),
     confirmDeletion: formData.get('confirmDeletion'),
+    isDetailsForm: formData.get('isDetailsForm'),
+    itemLimit: numberOfItems,
   });
 
-  const { success } = itemFormDataSchemaValidated;
-  if (!success) return { status: 400, error: 'Invalid FormData' };
-
-  const {
-    title,
-    description,
-    date,
-    dateAndTime,
-    userId,
-    priority,
-    type,
-    column,
-    confirmDeletion,
-    mandatoryDate,
-  } = Object.fromEntries(formData);
+  const { success, error: zodValidationError } = itemSchemaValidated;
+  if (!success) {
+    console.error(zodValidationError);
+    return { status: 400, error: 'Invalid FormData. Check server console.' };
+  }
 
   try {
+    const {
+      title,
+      description,
+      date,
+      dateAndTime,
+      userId,
+      priority,
+      type,
+      column,
+      confirmDeletion,
+      mandatoryDate,
+    } = Object.fromEntries(formData);
+
     const result = await Task.create({
       userId,
       title,

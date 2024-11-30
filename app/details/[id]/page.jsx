@@ -36,10 +36,11 @@ async function getFormData(id) {
     }
 
     const task = await Task.find({ _id: id, userId });
+    const numberOfItems = await Task.find({ userId }).count();
 
     return {
       task: JSON.parse(JSON.stringify(task[0])),
-      user: { userId, timezone, admin },
+      user: { userId, timezone, admin, numberOfItems },
     };
   } catch (error) {
     console.log(error);

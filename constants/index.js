@@ -12,7 +12,7 @@ export const FORM_CHARACTER_LIMIT_16 = 'Limit 16 Characters';
 export const FORM_CHARACTER_LIMIT_30 = 'Limit 30 Characters';
 export const FORM_CHARACTER_LIMIT_50 = 'Limit 50 Characters';
 export const FORM_CHARACTER_LIMIT_500 = 'Limit 500 Characters';
-export const FORM_CHARACTER_LIMIT_1000 = 'Limit 1000 Characters';
+export const FORM_CHARACTER_LIMIT_5000 = 'Limit 5000 Characters';
 export const FORM_ERROR_MISSING_TITLE = 'Title Required';
 export const FORM_ERROR_MISSING_DESCRIPTION = 'Description Required';
 export const FORM_ERROR_MISSING_DATE = 'Date or Date & Time Required';
@@ -45,7 +45,6 @@ export const FORM_ERROR_REMINDER_DATE_IN_PAST =
 export const FORM_ERROR_MISSING_REMINDER_INTERVAL =
   'Reminder Interval Required';
 export const FORM_ERROR_MISSING_REMINDER_BUFFER = 'Reminder Buffer Required';
-export const FORM_ERROR_MISSING_UPDATE_TITLE = 'Title Required';
 export const FORM_ERROR_MISSING_SUBJECT = 'Subject Required';
 export const FORM_ERROR_MISSING_MESSAGE = 'Message Required';
 export const BY_WEEK_INTERVALS = [
@@ -81,9 +80,10 @@ export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
 export const MODAL_UPDATE_ITEM_HEADLINE = 'Update Item';
 export const MODAL_OPERATION_CREATE = 'CREATE';
 export const MODAL_OPERATION_UPDATE = 'UPDATE';
-export const ITEM_ERROR_MISSING_ITEM = 'Item field is empty!';
 export const ITEM_ERROR_AT_ITEM_LIMIT =
   "Limit 50 items! Looks like it's time to get to work.";
+export const CATEGORY_ERROR_AT_ITEM_LIMIT = 'Limit 12 Categories';
+export const REMINDERS_ERROR_AT_ITEM_LIMIT = 'Limit 25 Reminders';
 export const FORM_TIMEZONES = [
   { title: 'America/Adak', name: 'timezone', value: 'America/Adak' },
   { title: 'America/Anchorage', name: 'timezone', value: 'America/Anchorage' },

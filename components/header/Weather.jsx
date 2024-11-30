@@ -20,7 +20,7 @@ import {
 const ICON_MAP = new Map();
 
 const Weather = () => {
-  const { setShowToast } = useAppContext();
+  const { setShowToast, userId } = useAppContext();
 
   const [temperature, setTemperature] = useState(0);
   const [weatherCode, setWeatherCode] = useState(0);
@@ -30,7 +30,7 @@ const Weather = () => {
   const [city, setCity] = useState('');
 
   const getWeatherData = async () => {
-    const res = await getWeather();
+    const res = await getWeather(userId);
     if (res.status === 200) {
       const { data } = res;
       const { weatherData, city } = data;

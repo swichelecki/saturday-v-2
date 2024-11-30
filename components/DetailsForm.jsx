@@ -10,20 +10,26 @@ import {
   FormTextField,
   FormWYSIWYGField,
   FormCheckboxField,
+  FormErrorMessage,
   Toast,
 } from '../components';
-import { detailsFormSchema } from '../schemas/schemas';
+import { itemSchema } from '../schemas/schemas';
+
+// TODO: switching from date to date and time works but not the other way around
+// TODO: see why state data is needed for zod for date and time -
+// if formData is used after clearing date and date and time it will save with no error
 
 const DetailsForm = ({ task, user }) => {
   const formRef = useRef(null);
   const router = useRouter();
   const params = useSearchParams();
   const [priority, type, column, hasMandatoryDate] = params.values();
-  const { userId, timezone, admin } = user;
+  const isUdpate = params.size <= 0;
+  const { userId, timezone, admin, numberOfItems } = user;
   const { setShowToast, setUserId, setTimezone, setIsAdmin } = useAppContext();
 
   const [form, setForm] = useState({
-    _id: task?._id,
+    _id: task?._id ?? '',
     userId: task?.userId ?? userId,
     title: task?.title ?? '',
     description: task?.description ?? '',
@@ -40,6 +46,7 @@ const DetailsForm = ({ task, user }) => {
     description: '',
     dateState: '',
     dateAndTimeState: '',
+    itemLimit: '',
   });
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
@@ -101,140 +108,177 @@ const DetailsForm = ({ task, user }) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    const detailsFormSchemaValidated = detailsFormSchema.safeParse({
+    const itemSchemaValidated = itemSchema.safeParse({
+      _id: formData.get('_id') ?? '',
+      userId: formData.get('userId'),
       title: formData.get('title'),
       description: formData.get('description'),
       date: form.dateState || '',
       dateAndTime: form.dateAndTimeState || '',
-      mandatoryDate: form.mandatoryDate,
+      //date: formData.get('date'),
+      //dateAndTime: formData.get('dateAndTime'),
+      mandatoryDate: formData.get('mandatoryDate'),
+      column: formData.get('column'),
+      priority: formData.get('priority'),
+      type: formData.get('type'),
+      confirmDeletion: formData.get('confirmDeletion'),
+      isDetailsForm: formData.get('isDetailsForm'),
+      itemLimit: isUdpate ? numberOfItems - 1 : numberOfItems,
     });
 
-    const { success, error } = detailsFormSchemaValidated;
-
+    const { success, error } = itemSchemaValidated;
     if (!success) {
-      const { title, description, date } = error.flatten().fieldErrors;
+      const { title, description, date, itemLimit } =
+        error.flatten().fieldErrors;
+
+      if (!title && !description && !date && !itemLimit) {
+        const serverError = {
+          status: 400,
+          error: 'Invalid FormData. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
+
       setErrorMessage({
         title: title?.[0],
         description: description?.[0],
         dateState: date?.[0],
         dateAndTimeState: date?.[0],
+        itemLimit: itemLimit?.[0],
       });
       setScrollToErrorMessage(true);
-    } else {
-      setIsAwaitingSaveResponse(true);
-
-      priority == undefined
-        ? updateItem(formData).then((res) => {
-            if (res.status === 200) {
-              router.push('/');
-            }
-
-            if (res.status !== 200) {
-              setShowToast(<Toast serverError={res} />);
-            }
-          })
-        : createItem(formData).then((res) => {
-            if (res.status === 200) {
-              router.push('/');
-            }
-
-            if (res.status !== 200) {
-              setShowToast(<Toast serverError={res} />);
-            }
-          });
+      return;
     }
+
+    setIsAwaitingSaveResponse(true);
+    isUdpate
+      ? updateItem(formData).then((res) => {
+          if (res.status === 200) {
+            router.push('/');
+          }
+
+          if (res.status !== 200) {
+            setShowToast(<Toast serverError={res} />);
+          }
+        })
+      : createItem(formData).then((res) => {
+          if (res.status === 200) {
+            router.push('/');
+          }
+
+          if (res.status !== 200) {
+            setShowToast(<Toast serverError={res} />);
+          }
+        });
   };
 
   return (
-    <form onSubmit={onSubmit} ref={formRef} className='form-page'>
-      <FormTextField
-        label='Title'
-        type='text'
-        id='title'
-        name='title'
-        value={form?.title}
-        onChangeHandler={handleSetForm}
-        errorMessage={errorMessage.title}
-      />
-      <FormWYSIWYGField
-        label='Description'
-        value={form?.description}
-        onChangeHandler={handleSetQuill}
-        errorMessage={errorMessage.description}
-      />
-      <FormCheckboxField
-        label='Confirm Deletion'
-        name='confirmDeletion'
-        checked={form?.confirmDeletion}
-        onChangeHandler={handleConfirmDeletion}
-      />
-      {form?.mandatoryDate && (
-        <>
-          <FormTextField
-            label='Date'
-            type='date'
-            id='date'
-            name='dateState'
-            value={
-              form?.dateState && !form?.dateAndTimeState ? form?.dateState : ''
-            }
-            onChangeHandler={handleSetForm}
-            errorMessage={errorMessage.dateState}
-            disabled={form?.dateAndTimeState}
-          />
-          <FormTextField
-            label='Date & Time'
-            type='datetime-local'
-            id='dateAndTime'
-            name='dateAndTimeState'
-            value={form?.dateAndTimeState}
-            onChangeHandler={handleSetForm}
-            errorMessage={errorMessage.dateState}
-            disabled={form?.dateState && !form?.dateAndTimeState}
-          />
-        </>
+    <div ref={formRef} className='content-container'>
+      {errorMessage.itemLimit && (
+        <FormErrorMessage
+          errorMessage={errorMessage.itemLimit}
+          className='form-error-message form-error-message--position-static form-field--error'
+        />
       )}
-      <input type='hidden' name='_id' value={task?._id} />
-      <input type='hidden' name='userId' value={task?.userId ?? userId} />
-      <input type='hidden' name='priority' value={task?.priority ?? priority} />
-      <input type='hidden' name='type' value={task?.type ?? type} />
-      <input type='hidden' name='column' value={task?.column ?? column} />
-      <input
-        type='hidden'
-        name='mandatoryDate'
-        value={task?.mandatoryDate ?? Boolean(hasMandatoryDate)}
-      />
-      <input type='hidden' name='description' value={form?.description} />
-      <input
-        type='hidden'
-        name='dateAndTime'
-        value={
-          form?.dateAndTimeState
-            ? handleDateAndTimeToUTC(form?.dateAndTimeState)
-            : task?.dateAndTime
-        }
-      />
-      <input
-        type='hidden'
-        name='date'
-        value={
-          form?.dateState
-            ? form?.dateState.split('T')[0]
-            : form?.dateAndTimeState
-            ? form?.dateAndTimeState.split('T')[0]
-            : task?.date
-        }
-      />
-      <div className='form-page__buttons-wrapper'>
-        <Link href='/'>
-          <span className='form-page__cancel-button'>Cancel</span>
-        </Link>
-        <button type='submit' className='form-page__save-button'>
-          {isAwaitingSaveResponse && <div className='loader'></div>}
-          Save
-        </button>
-      </div>
-    </form>
+      <form onSubmit={onSubmit} className='form-page'>
+        <FormTextField
+          label='Title'
+          type='text'
+          id='title'
+          name='title'
+          value={form?.title}
+          onChangeHandler={handleSetForm}
+          errorMessage={errorMessage.title}
+        />
+        <FormWYSIWYGField
+          label='Description'
+          value={form?.description}
+          onChangeHandler={handleSetQuill}
+          errorMessage={errorMessage.description}
+        />
+        <FormCheckboxField
+          label='Confirm Deletion'
+          name='confirmDeletion'
+          checked={form?.confirmDeletion}
+          onChangeHandler={handleConfirmDeletion}
+        />
+        {form?.mandatoryDate && (
+          <>
+            <FormTextField
+              label='Date'
+              type='date'
+              id='date'
+              name='dateState'
+              value={
+                form?.dateState && !form?.dateAndTimeState
+                  ? form?.dateState
+                  : ''
+              }
+              onChangeHandler={handleSetForm}
+              errorMessage={errorMessage.dateState}
+              disabled={form?.dateAndTimeState}
+            />
+            <FormTextField
+              label='Date & Time'
+              type='datetime-local'
+              id='dateAndTime'
+              name='dateAndTimeState'
+              value={form?.dateAndTimeState}
+              onChangeHandler={handleSetForm}
+              errorMessage={errorMessage.dateState}
+              disabled={form?.dateState && !form?.dateAndTimeState}
+            />
+          </>
+        )}
+        <input type='hidden' name='_id' value={task?._id ?? ''} />
+        <input type='hidden' name='userId' value={task?.userId ?? userId} />
+        <input
+          type='hidden'
+          name='priority'
+          value={task?.priority ?? priority}
+        />
+        <input type='hidden' name='type' value={task?.type ?? type} />
+        <input type='hidden' name='column' value={task?.column ?? column} />
+        <input
+          type='hidden'
+          name='mandatoryDate'
+          value={task?.mandatoryDate ?? Boolean(hasMandatoryDate)}
+        />
+        <input type='hidden' name='description' value={form?.description} />
+        <input type='hidden' name='isDetailsForm' value='true' />
+        <input
+          type='hidden'
+          name='dateAndTime'
+          value={
+            form?.dateAndTimeState
+              ? handleDateAndTimeToUTC(form?.dateAndTimeState)
+              : task?.dateAndTime
+          }
+        />
+        <input
+          type='hidden'
+          name='date'
+          value={
+            form?.dateState
+              ? form?.dateState.split('T')[0]
+              : form?.dateAndTimeState
+              ? form?.dateAndTimeState.split('T')[0]
+              : task?.date
+          }
+        />
+        <div className='form-page__buttons-wrapper'>
+          <Link href='/'>
+            <span className='form-page__cancel-button'>Cancel</span>
+          </Link>
+          <button type='submit' className='form-page__save-button'>
+            {isAwaitingSaveResponse && <div className='loader'></div>}
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

@@ -126,6 +126,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
                       items={categoryItems}
                       setItems={setCategoryItems}
                       newUser={newUser}
+                      numberOfCategories={categoryItems?.length}
                     />
                   </Modal>
                 );

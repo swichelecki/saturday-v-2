@@ -7,7 +7,13 @@ import { useAppContext } from '../../context';
 import { categorySchema } from '../../schemas/schemas';
 import { handleModalResetPageScrolling } from '../../utilities';
 
-const ModalReminder = ({ userId, items, setItems, newUser }) => {
+const ModalReminder = ({
+  userId,
+  items,
+  setItems,
+  newUser,
+  numberOfCategories,
+}) => {
   const { setShowModal, setShowToast, setIsDashboardPrompt } = useAppContext();
 
   const [form, setForm] = useState({
@@ -60,32 +66,45 @@ const ModalReminder = ({ userId, items, setItems, newUser }) => {
     const formData = new FormData(e.currentTarget);
 
     const categorySchemaValidated = categorySchema.safeParse({
+      userId: formData.get('userId'),
+      priority: formData.get('priority'),
       type: formData.get('type'),
+      mandatoryDate: formData.get('mandatoryDate'),
+      itemLimit: numberOfCategories,
     });
 
     const { success, error } = categorySchemaValidated;
-
     if (!success) {
       const { type } = error.flatten().fieldErrors;
-      setErrorMessage({ type: type?.[0] });
-    } else {
-      setIsAwaitingSubmitResponse(true);
 
-      createCategory(formData).then((res) => {
-        if (res.status === 200) {
-          setItems((current) => [...current, res.item]);
-          setForm({ userId, priority: '', type: '', mandatoryDate: false });
-          if (newUser) setIsDashboardPrompt(true);
-        }
+      if (!type) {
+        const serverError = {
+          status: 400,
+          error: 'Invalid FormData. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
 
-        if (res.status !== 200) {
-          setShowToast(<Toast serverError={res} />);
-        }
-
-        setIsAwaitingSubmitResponse(false);
-        handleCloseModal();
-      });
+      return setErrorMessage({ type: type?.[0] });
     }
+
+    setIsAwaitingSubmitResponse(true);
+    createCategory(formData).then((res) => {
+      if (res.status === 200) {
+        setItems((current) => [...current, res.item]);
+        setForm({ userId, priority: '', type: '', mandatoryDate: false });
+        if (newUser) setIsDashboardPrompt(true);
+      }
+
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
+
+      setIsAwaitingSubmitResponse(false);
+      handleCloseModal();
+    });
   };
 
   const handleCloseModal = () => {

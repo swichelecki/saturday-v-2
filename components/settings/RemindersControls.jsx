@@ -44,7 +44,7 @@ const RemindersControls = ({ reminders, userId }) => {
   const handleReminderToUpdate = (id) => {
     setListItemIsAwaitingUpdateResponse(true);
     setReminderToEditId(id);
-    getReminder(id).then((res) => {
+    getReminder(userId, id).then((res) => {
       if (res.status === 200) {
         setReminderToUpdate(res.item);
         setShowModal(
@@ -57,6 +57,7 @@ const RemindersControls = ({ reminders, userId }) => {
               itemToUpdate={res.item}
               itemToEditId={id}
               modalOperation={MODAL_OPERATION_UPDATE}
+              numberOfReminders={remindersItems?.length}
             />
           </Modal>
         );
@@ -73,7 +74,7 @@ const RemindersControls = ({ reminders, userId }) => {
   const handleDeleteReminder = (id) => {
     setIsAwaitingDeleteResponse(true);
 
-    deleteReminder(id).then((res) => {
+    deleteReminder(userId, id).then((res) => {
       if (res.status === 200) {
         setRemindersItems(remindersItems.filter((item) => item._id !== id));
       }
@@ -106,6 +107,7 @@ const RemindersControls = ({ reminders, userId }) => {
                       itemToUpdate={reminderToUpdate}
                       itemToEditId={reminderToEditId}
                       modalOperation={MODAL_OPERATION_CREATE}
+                      numberOfReminders={remindersItems?.length}
                     />
                   </Modal>
                 );

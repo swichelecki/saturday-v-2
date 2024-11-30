@@ -1,6 +1,7 @@
 import connectDB from '../../config/db';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
+import Task from '../../models/Task';
 import { DetailsForm } from '../../components';
 
 export const metadata = {
@@ -34,7 +35,9 @@ async function getUserId() {
       }
     }
 
-    return { userId, timezone, admin };
+    const numberOfItems = await Task.find({ userId }).count();
+
+    return { userId, timezone, admin, numberOfItems };
   } catch (error) {
     console.log(error);
   }

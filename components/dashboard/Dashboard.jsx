@@ -171,15 +171,36 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     const formData = new FormData(e.currentTarget);
 
     const itemSchemaValidated = itemSchema.safeParse({
+      userId: formData.get('userId'),
       title: formData.get('title'),
+      column: formData.get('column'),
+      priority: formData.get('priority'),
+      type: formData.get('type'),
+      description: formData.get('description'),
+      date: formData.get('date'),
+      dateAndTime: formData.get('dateAndTime'),
+      mandatoryDate: formData.get('mandatoryDate'),
+      confirmDeletion: formData.get('confirmDeletion'),
+      isDetailsForm: formData.get('isDetailsForm'),
       itemLimit: totalNumberOfItems,
     });
 
     const { success, error } = itemSchemaValidated;
-
     if (!success) {
       const { title, itemLimit } = error.flatten().fieldErrors;
-      return setErrorMessages(title?.[0] ? title?.[0] : itemLimit?.[0]);
+
+      if (!title && !itemLimit) {
+        const serverError = {
+          status: 400,
+          error: 'Invalid FormData. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
+
+      setErrorMessages(title?.[0] ? title?.[0] : itemLimit?.[0]);
+      return;
     }
 
     setIsAwaitingAddResponse(true);
@@ -225,6 +246,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
               setItems={setListItems}
               setTaskToEditId={setTaskToEditId}
               handleCloseMobileItem={handleItemsTouchReset}
+              totalNumberOfItems={totalNumberOfItems}
             />
           </Modal>
         );
