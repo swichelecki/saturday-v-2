@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ListItem } from '../../components';
+import { ListItem, Toast } from '../../components';
 import { useAppContext } from '../../context';
 import { updateItem } from '../../actions';
 
@@ -22,7 +22,7 @@ const ItemsColumn = ({
   const dragOverItemRef = useRef(null);
   const listItemWrapperRef = useRef(null);
 
-  const { setShowToast, setServerError } = useAppContext();
+  const { setShowToast } = useAppContext();
 
   const [draggableItems, setDraggableItems] = useState([]);
 
@@ -73,8 +73,7 @@ const ItemsColumn = ({
 
       updateItem(formData).then((res) => {
         if (res.status !== 200) {
-          setServerError(res.status);
-          setShowToast(true);
+          setShowToast(<Toast serverError={res} />);
         }
       });
     });
