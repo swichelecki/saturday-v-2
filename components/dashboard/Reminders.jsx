@@ -73,7 +73,8 @@ const Reminders = ({ reminders }) => {
         );
       }
 
-      const nextDate = reminderStartingDate.toISOString();
+      let nextDate = reminderStartingDate.toISOString();
+      nextDate = nextDate.split('T')[0];
 
       copyOfReminderToUpdate = {
         ...copyOfReminderToUpdate,

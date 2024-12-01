@@ -211,6 +211,8 @@ const SettingsItem = ({
 
   // y-axis end
   const handleDragYEnd = (e) => {
+    if (!isDraggingYRef.current) return;
+
     isDraggingYRef.current = false;
     categoryItemWrapperRef.current.removeAttribute('style');
     handleDragEnd();
