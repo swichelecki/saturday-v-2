@@ -20,6 +20,8 @@ import {
   FORM_ERROR_PASSWORD_MISMATCH,
   FORM_ERROR_DATE_NOT_TODAY_OR_GREATER,
   FORM_ERROR_REMINDER_DATE_IN_PAST,
+  FORM_ERROR_MISSING_TIMEZONE,
+  FORM_ERROR_TIMEZONE_NOT_CHANGED,
   FORM_CHARACTER_LIMIT_16,
   FORM_CHARACTER_LIMIT_30,
   FORM_CHARACTER_LIMIT_50,
@@ -235,10 +237,16 @@ export const changePasswordSchema = z
     path: ['confirmNewPassword'],
   });
 
-export const changeTimezoneSchema = z.object({
-  userId: z.string(),
-  timezone: z.string(),
-});
+export const changeTimezoneSchema = z
+  .object({
+    userId: z.string(),
+    timezone: z.string().min(1, FORM_ERROR_MISSING_TIMEZONE),
+    currentTimezone: z.string(),
+  })
+  .refine((data) => data.timezone !== data.currentTimezone, {
+    message: FORM_ERROR_TIMEZONE_NOT_CHANGED,
+    path: ['timezone'],
+  });
 
 export const deleteAccountSchema = z
   .object({

@@ -52,12 +52,15 @@ export default async function createContactMessage(formData) {
     message: formData.get('message'),
   });
 
-  const { success } = contactFormValidated;
-  if (!success) return { status: 400, error: 'Invalid FormData' };
-
-  const { email, subject, message } = Object.fromEntries(formData);
+  const { success, error: zodValidationError } = contactFormValidated;
+  if (!success) {
+    console.error(zodValidationError);
+    return { status: 400, error: 'Invalid FormData. Check server console.' };
+  }
 
   try {
+    const { email, subject, message } = Object.fromEntries(formData);
+
     const resend = new Resend(resendApiKey);
 
     await resend.emails.send({

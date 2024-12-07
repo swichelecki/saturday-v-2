@@ -8,7 +8,7 @@ export default async function logoutUser() {
     (await cookies()).delete('saturday');
     return { status: 200 };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     const errorMessage = handleServerErrorMessage(error);
     return { status: 500, error: errorMessage };
   }

@@ -176,3 +176,4 @@ export const FORM_TIMEZONES = [
   { title: 'Pacific/Honolulu', name: 'timezone', value: 'Pacific/Honolulu' },
 ];
 export const FORM_ERROR_MISSING_TIMEZONE = 'Timezone Required';
+export const FORM_ERROR_TIMEZONE_NOT_CHANGED = 'Select New Timezone';

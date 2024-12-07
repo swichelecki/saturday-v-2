@@ -16,7 +16,6 @@ import {
 } from '../../schemas/schemas';
 import {
   FORM_TIMEZONES,
-  FORM_ERROR_MISSING_TIMEZONE,
   FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
 } from '../../constants';
 
@@ -105,13 +104,26 @@ const Account = ({ user }) => {
     const changeTimezoneSchemaValidated = changeTimezoneSchema.safeParse({
       userId: formData.get('userId'),
       timezone: formData.get('timezone'),
+      currentTimezone: formData.get('currentTimezone'),
     });
 
-    const { success } = changeTimezoneSchemaValidated;
+    const { success, error } = changeTimezoneSchemaValidated;
     if (!success) {
+      const { timezone } = error.flatten().fieldErrors;
+
+      if (!timezone) {
+        const serverError = {
+          status: 400,
+          error: 'Invalid FormData. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
+
       return setErrorMessage({
         ...errorMessage,
-        timezone: FORM_ERROR_MISSING_TIMEZONE,
+        timezone: timezone?.[0],
       });
     }
 
@@ -122,7 +134,7 @@ const Account = ({ user }) => {
       setShowToast(<Toast isSuccess message='Timezone updated!' />);
     } else {
       setShowToast(<Toast serverError={response} />);
-      setIsAwaitingChangePasswordResponse(false);
+      setIsAwaitingChangeTimezoneResponse(false);
     }
   };
 
@@ -143,6 +155,17 @@ const Account = ({ user }) => {
     if (!success) {
       const { email, password, newPassword, confirmNewPassword } =
         error.flatten().fieldErrors;
+
+      if (!email && !password && !newPassword && !confirmNewPassword) {
+        const serverError = {
+          status: 400,
+          error: 'Invalid FormData. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
+
       setErrorMessage({
         email: email?.[0],
         password: password?.[0],
@@ -185,6 +208,17 @@ const Account = ({ user }) => {
     if (!success) {
       const { deleteEmail, deletePassword, deleteConfirmation } =
         error.flatten().fieldErrors;
+
+      if (!deleteEmail && !deletePassword && !deleteConfirmation) {
+        const serverError = {
+          status: 400,
+          error: 'Invalid FormData. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
+
       setErrorMessage({
         deleteEmail: deleteEmail?.[0],
         deletePassword: deletePassword?.[0],
@@ -226,6 +260,7 @@ const Account = ({ user }) => {
           errorMessage={errorMessage.timezone}
         />
         <input type='hidden' name='userId' value={userId} />
+        <input type='hidden' name='currentTimezone' value={timezone} />
         <div className='form-page__buttons-wrapper'>
           <button
             type='submit'

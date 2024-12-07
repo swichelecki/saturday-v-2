@@ -46,10 +46,14 @@ export default async function changeUserTimezone(formData) {
   const changeTimezoneSchemaValidated = changeTimezoneSchema.safeParse({
     userId: formData.get('userId'),
     timezone: formData.get('timezone'),
+    currentTimezone: formData.get('currentTimezone'),
   });
 
-  const { success } = changeTimezoneSchemaValidated;
-  if (!success) return { status: 400, error: 'Invalid FormData' };
+  const { success, error: zodValidationError } = changeTimezoneSchemaValidated;
+  if (!success) {
+    console.error(zodValidationError);
+    return { status: 400, error: 'Invalid FormData. Check server console.' };
+  }
 
   try {
     const timezone = formData.get('timezone');

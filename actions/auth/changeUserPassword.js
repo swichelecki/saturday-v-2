@@ -52,8 +52,11 @@ export default async function changeUserPassword(formData) {
     confirmNewPassword: formData.get('confirmNewPassword'),
   });
 
-  const { success } = changePasswordSchemaValidated;
-  if (!success) return { status: 400, error: 'Invalid FormData' };
+  const { success, error: zodValidationError } = changePasswordSchemaValidated;
+  if (!success) {
+    console.error(zodValidationError);
+    return { status: 400, error: 'Invalid FormData. Check server console.' };
+  }
 
   try {
     const userId = formData.get('userId');

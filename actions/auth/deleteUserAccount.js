@@ -54,8 +54,11 @@ export default async function deleteUserAccount(formData) {
     deleteConfirmation: formData.get('deleteConfirmation'),
   });
 
-  const { success } = deleteAccountSchemaValidated;
-  if (!success) return { status: 400, error: 'Invalid FormData' };
+  const { success, error: zodValidationError } = deleteAccountSchemaValidated;
+  if (!success) {
+    console.error(zodValidationError);
+    return { status: 400, error: 'Invalid FormData. Check server console.' };
+  }
 
   try {
     const userId = formData.get('userId');

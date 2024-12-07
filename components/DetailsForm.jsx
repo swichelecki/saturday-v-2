@@ -24,7 +24,7 @@ const DetailsForm = ({ task, user }) => {
   const router = useRouter();
   const params = useSearchParams();
   const [priority, type, column, hasMandatoryDate] = params.values();
-  const isUdpate = params.size <= 0;
+  const isUdpate = Object.keys(task ?? {}).length;
   const { userId, timezone, admin, numberOfItems } = user;
   const { setShowToast, setUserId, setTimezone, setIsAdmin } = useAppContext();
 

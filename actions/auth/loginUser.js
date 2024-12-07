@@ -23,8 +23,11 @@ export default async function loginUser(formData) {
     password: formData.get('password'),
   });
 
-  const { success } = loginDataValidated;
-  if (!success) return { status: 400, error: 'Invalid FormData' };
+  const { success, error: zodValidationError } = loginDataValidated;
+  if (!success) {
+    console.error(zodValidationError);
+    return { status: 400, error: 'Invalid FormData. Check server console.' };
+  }
 
   try {
     await connectDB();

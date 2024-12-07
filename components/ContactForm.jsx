@@ -76,6 +76,17 @@ const ContactForm = ({ user }) => {
 
     if (!success) {
       const { subject, message } = error.flatten().fieldErrors;
+
+      if (!subject && !message) {
+        const serverError = {
+          status: 400,
+          error: 'Invalid FormData. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
+
       setErrorMessage({
         subject: subject?.[0],
         message: message?.[0],

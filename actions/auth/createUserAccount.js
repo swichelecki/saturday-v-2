@@ -27,8 +27,11 @@ export default async function createUserAccount(formData) {
     confirmPassword: formData.get('confirmPassword'),
   });
 
-  const { success } = createUserSchemaValidated;
-  if (!success) return { status: 400, error: 'Invalid FormData' };
+  const { success, error: zodValidationError } = createUserSchemaValidated;
+  if (!success) {
+    console.error(zodValidationError);
+    return { status: 400, error: 'Invalid FormData. Check server console.' };
+  }
 
   try {
     // create new user object
