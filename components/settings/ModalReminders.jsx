@@ -114,7 +114,7 @@ const ModalReminder = ({
   };
 
   const handleFormSelectField = (optionName, optionValue) => {
-    setForm({ ...form, [optionName]: optionValue });
+    setForm({ ...form, [optionName]: parseInt(optionValue) });
 
     if (errorMessage[optionName]) {
       setErrorMessage({ ...errorMessage, [optionName]: '' });

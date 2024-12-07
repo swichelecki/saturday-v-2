@@ -101,8 +101,8 @@ export const itemSchema = z
       .min(1, SETTINGS_MISSING_CATEGORY)
       .max(16, FORM_CHARACTER_LIMIT_16),
     description: z.string().max(5000, FORM_CHARACTER_LIMIT_5000),
-    date: z.string().date().or(z.string()).nullable(),
-    dateAndTime: z.string().datetime().or(z.string()).nullable(),
+    date: z.string().date().or(z.string()),
+    dateAndTime: z.string().datetime().or(z.string()),
     mandatoryDate: z.boolean().or(z.string()),
     confirmDeletion: z.boolean().or(z.string()),
     isDetailsForm: z.boolean().or(z.string().nullable()),

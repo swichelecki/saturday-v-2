@@ -20,7 +20,7 @@ const FormSelectField = ({
       <div className='form-field__select-wrapper'>
         <select
           onChange={(e) => {
-            onChangeHandler(name, parseInt(e.target.value));
+            onChangeHandler(name, e.target.value);
           }}
           disabled={disabled}
           value={value}

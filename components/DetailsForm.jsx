@@ -15,10 +15,6 @@ import {
 } from '../components';
 import { itemSchema } from '../schemas/schemas';
 
-// TODO: switching from date to date and time works but not the other way around
-// TODO: see why state data is needed for zod for date and time -
-// if formData is used after clearing date and date and time it will save with no error
-
 const DetailsForm = ({ task, user }) => {
   const formRef = useRef(null);
   const router = useRouter();
@@ -113,10 +109,8 @@ const DetailsForm = ({ task, user }) => {
       userId: formData.get('userId'),
       title: formData.get('title'),
       description: formData.get('description'),
-      date: form.dateState || '',
-      dateAndTime: form.dateAndTimeState || '',
-      //date: formData.get('date'),
-      //dateAndTime: formData.get('dateAndTime'),
+      date: formData.get('date'),
+      dateAndTime: formData.get('dateAndTime'),
       mandatoryDate: formData.get('mandatoryDate'),
       column: formData.get('column'),
       priority: formData.get('priority'),
@@ -252,20 +246,20 @@ const DetailsForm = ({ task, user }) => {
           type='hidden'
           name='dateAndTime'
           value={
-            form?.dateAndTimeState
+            form?.dateAndTimeState?.length > 0
               ? handleDateAndTimeToUTC(form?.dateAndTimeState)
-              : task?.dateAndTime
+              : ''
           }
         />
         <input
           type='hidden'
           name='date'
           value={
-            form?.dateState
+            form?.dateState?.length > 0
               ? form?.dateState.split('T')[0]
-              : form?.dateAndTimeState
+              : form?.dateAndTimeState?.length > 0
               ? form?.dateAndTimeState.split('T')[0]
-              : task?.date
+              : ''
           }
         />
         <div className='form-page__buttons-wrapper'>
