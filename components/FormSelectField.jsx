@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { FormErrorMessage } from './';
 
 const FormSelectField = ({
@@ -14,12 +13,6 @@ const FormSelectField = ({
   errorMessage,
   disabled = false,
 }) => {
-  const [optionValue, setOptionValue] = useState('');
-
-  useEffect(() => {
-    setOptionValue(value);
-  }, [value]);
-
   return (
     <div className={`form-field${errorMessage ? ' form-field--error' : ''}`}>
       <label htmlFor={id}>{label}</label>
@@ -27,39 +20,25 @@ const FormSelectField = ({
       <div className='form-field__select-wrapper'>
         <select
           onChange={(e) => {
-            const option = JSON.parse(e.currentTarget.value);
-            onChangeHandler(option?.name, option?.value);
-            setOptionValue(option?.value);
+            onChangeHandler(name, parseInt(e.target.value));
           }}
           disabled={disabled}
-          defaultValue={value}
+          value={value}
           id={id}
         >
-          {!optionValue && <option hidden>Select</option>}
+          {!value && <option hidden>Select</option>}
           {options?.map((item, index) => (
-            <>
-              {optionValue && optionValue === item?.value ? (
-                <option
-                  key={`form-select-option_${id}_${index}`}
-                  value={JSON.stringify(item)}
-                  selected
-                >
-                  {item?.title}
-                </option>
-              ) : (
-                <option
-                  key={`form-select-option_${id}_${index}`}
-                  value={JSON.stringify(item)}
-                >
-                  {item?.title}
-                </option>
-              )}
-            </>
+            <option
+              key={`form-select-option_${id}_${index}`}
+              value={item?.value}
+            >
+              {item?.title}
+            </option>
           ))}
         </select>
       </div>
       {errorMessage && <FormErrorMessage errorMessage={errorMessage} />}
-      <input type='hidden' name={name} value={optionValue} />
+      <input type='hidden' name={name} value={value} />
     </div>
   );
 };
