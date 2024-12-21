@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppContext } from '../context';
 import { createItem, updateItem } from '../actions';
+import { useScrollToError } from '../hooks';
 import { handleDateAndTimeToUTC } from '../utilities';
 import {
   FormTextField,
@@ -20,7 +21,7 @@ const DetailsForm = ({ task, user }) => {
   const router = useRouter();
   const params = useSearchParams();
   const [priority, type, column, hasMandatoryDate] = params.values();
-  const isUdpate = Object.keys(task ?? {}).length;
+  const isUpdate = !!Object.keys(task ?? {}).length;
   const { userId, timezone, admin, numberOfItems } = user;
   const { setShowToast, setUserId, setTimezone, setIsAdmin } = useAppContext();
 
@@ -47,26 +48,14 @@ const DetailsForm = ({ task, user }) => {
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
+  useScrollToError(formRef, scrollToErrorMessage, setScrollToErrorMessage);
+
   useEffect(() => {
     // set global context user id and timezone
     setUserId(userId);
     setTimezone(timezone);
     setIsAdmin(admin);
   }, []);
-
-  // scroll up to topmost error message
-  useEffect(() => {
-    if (!scrollToErrorMessage) return;
-    const errorArray = Array.from(
-      formRef.current.querySelectorAll('.form-field--error')
-    );
-    const firstErrorNode = errorArray[0];
-    window.scrollTo({
-      top: firstErrorNode.offsetTop - 24,
-      behavior: 'smooth',
-    });
-    setScrollToErrorMessage(false);
-  }, [scrollToErrorMessage]);
 
   const handleSetForm = (e) => {
     setForm({
@@ -117,7 +106,7 @@ const DetailsForm = ({ task, user }) => {
       type: formData.get('type'),
       confirmDeletion: formData.get('confirmDeletion'),
       isDetailsForm: formData.get('isDetailsForm'),
-      itemLimit: isUdpate ? numberOfItems - 1 : numberOfItems,
+      itemLimit: isUpdate ? numberOfItems - 1 : numberOfItems,
     });
 
     const { success, error } = itemSchemaValidated;
@@ -147,7 +136,7 @@ const DetailsForm = ({ task, user }) => {
     }
 
     setIsAwaitingSaveResponse(true);
-    isUdpate
+    isUpdate
       ? updateItem(formData).then((res) => {
           if (res.status === 200) {
             router.push('/');

@@ -35,6 +35,8 @@ import {
   SETTINGS_MISSING_CATEGORY,
   DELETE_MY_ACCOUNT,
   TWENTYFOUR_HOURS,
+  NOTES_ITEM_LIMIT,
+  NOTES_ERROR_AT_ITEM_LIMIT,
 } from '../constants';
 
 export const createUserSchema = z
@@ -272,3 +274,25 @@ export const deleteAccountSchema = z
       path: ['deleteConfirmation'],
     }
   );
+
+export const noteSchema = z
+  .object({
+    _id: z.string().optional(),
+    userId: z.string(),
+    title: z
+      .string()
+      .min(1, FORM_ERROR_MISSING_TITLE)
+      .max(50, FORM_CHARACTER_LIMIT_50),
+    description: z
+      .string()
+      .min(1, FORM_ERROR_MISSING_DESCRIPTION)
+      .max(5000, FORM_CHARACTER_LIMIT_5000),
+    date: z.string().date().or(z.string()),
+    pinned: z.boolean().or(z.string()),
+    pinnedDate: z.string().date().or(z.string()),
+    itemLimit: z.number(),
+  })
+  .refine((data) => Number(data.itemLimit) < NOTES_ITEM_LIMIT, {
+    message: NOTES_ERROR_AT_ITEM_LIMIT,
+    path: ['itemLimit'],
+  });

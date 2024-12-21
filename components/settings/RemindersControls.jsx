@@ -115,6 +115,7 @@ const RemindersControls = ({ reminders, userId }) => {
                 setAtRemindersLimit(true);
               }
             }}
+            type='button'
             className='form-page__save-button'
           >
             Create

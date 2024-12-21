@@ -1,13 +1,11 @@
 'use server';
 
-import { Resend } from 'resend';
-import { ContactFormEmail } from '../../components';
+import Note from '../../models/Note';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
-import { contactFormSchema } from '../../schemas/schemas';
-const resendApiKey = process.env.RESEND_API_KEY;
+import { noteSchema } from '../../schemas/schemas';
 
-export default async function createContactMessage(formData) {
+export default async function createNote(formData) {
   if (!(formData instanceof FormData)) {
     return {
       status: 400,
@@ -27,35 +25,38 @@ export default async function createContactMessage(formData) {
   }
 
   // check that data shape is correct
-  const contactFormValidated = contactFormSchema.safeParse({
+  const numberOfItems = await Note.find({ userId: cookieUserId }).count();
+  const noteSchemaValidated = noteSchema.safeParse({
+    _id: formData.get('_id'),
     userId: formData.get('userId'),
-    email: formData.get('email'),
-    subject: formData.get('subject'),
-    message: formData.get('message'),
+    title: formData.get('title'),
+    description: formData.get('description'),
+    date: formData.get('date'),
+    pinned: formData.get('pinned'),
+    pinnedDate: formData.get('pinnedDate'),
+    itemLimit: numberOfItems,
   });
 
-  const { success, error: zodValidationError } = contactFormValidated;
+  const { success, error: zodValidationError } = noteSchemaValidated;
   if (!success) {
     console.error(zodValidationError);
     return { status: 400, error: 'Invalid FormData. Check server console.' };
   }
 
   try {
-    const { email, subject, message } = Object.fromEntries(formData);
+    const { userId, title, description, date, pinned, pinnedDate } =
+      Object.fromEntries(formData);
 
-    const resend = new Resend(resendApiKey);
-
-    await resend.emails.send({
-      from: 'Saturday <contact@saturdaysimplelife.com>',
-      to: 'swichelecki@gmail.com',
-      subject,
-      react: ContactFormEmail({
-        email,
-        message,
-      }),
+    const result = await Note.create({
+      userId,
+      title,
+      description,
+      date,
+      pinned,
+      pinnedDate,
     });
 
-    return { status: 200 };
+    return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);

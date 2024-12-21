@@ -134,6 +134,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
                 setAtCategoryLimit(true);
               }
             }}
+            type='button'
             className='form-page__save-button'
             id='createCategoryButton'
           >
@@ -141,7 +142,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
           </button>
           {atCategoryLimit && (
             <FormErrorMessage
-              errorMessage={`Limit ${CATEGORY_ITEM_LIMIT} categories!`}
+              errorMessage={`Limit ${CATEGORY_ITEM_LIMIT} Categories!`}
               className='form-error-message form-error-message--position-static'
             />
           )}

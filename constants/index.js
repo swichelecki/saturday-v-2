@@ -7,12 +7,14 @@ export const MIN_TRANSITION_SPEED = 500;
 export const LIST_ITEM_LIMIT = 50;
 export const CATEGORY_ITEM_LIMIT = 12;
 export const REMINDERS_ITEM_LIMIT = 25;
+export const NOTES_ITEM_LIMIT = 50;
 export const TWENTYFOUR_HOURS = 86400000;
 export const FORM_CHARACTER_LIMIT_16 = 'Limit 16 Characters';
 export const FORM_CHARACTER_LIMIT_30 = 'Limit 30 Characters';
 export const FORM_CHARACTER_LIMIT_50 = 'Limit 50 Characters';
 export const FORM_CHARACTER_LIMIT_500 = 'Limit 500 Characters';
 export const FORM_CHARACTER_LIMIT_5000 = 'Limit 5000 Characters';
+export const FORM_CHARACTER_LIMIT_10000 = 'Limit 10,000 Characters';
 export const FORM_ERROR_MISSING_TITLE = 'Title Required';
 export const FORM_ERROR_MISSING_DESCRIPTION = 'Description Required';
 export const FORM_ERROR_MISSING_DATE = 'Date or Date & Time Required';
@@ -78,12 +80,14 @@ export const MODAL_CREATE_CATEGORY_HEADLINE = 'Create Category';
 export const MODAL_CREATE_REMINDER_HEADLINE = 'Create Reminder';
 export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
 export const MODAL_UPDATE_ITEM_HEADLINE = 'Update Item';
+export const MODAL_CREATE_NOTE_HEADLINE = 'Create Note';
 export const MODAL_OPERATION_CREATE = 'CREATE';
 export const MODAL_OPERATION_UPDATE = 'UPDATE';
 export const ITEM_ERROR_AT_ITEM_LIMIT =
   "Limit 50 items! Looks like it's time to get to work.";
 export const CATEGORY_ERROR_AT_ITEM_LIMIT = 'Limit 12 Categories';
 export const REMINDERS_ERROR_AT_ITEM_LIMIT = 'Limit 25 Reminders';
+export const NOTES_ERROR_AT_ITEM_LIMIT = 'Limit 50 Notes';
 export const FORM_TIMEZONES = [
   { title: 'America/Adak', name: 'timezone', value: 'America/Adak' },
   { title: 'America/Anchorage', name: 'timezone', value: 'America/Anchorage' },

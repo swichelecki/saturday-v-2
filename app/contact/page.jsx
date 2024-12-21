@@ -1,7 +1,6 @@
 import connectDB from '../../config/db';
 import User from '../../models/User';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
+import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { ContactForm } from '../../components';
 
 export const metadata = {
@@ -13,27 +12,8 @@ export const dynamic = 'force-dynamic';
 async function getUser() {
   try {
     await connectDB();
-    const jwtSecret = process.env.JWT_SECRET;
-    const token = (await cookies()).get('saturday');
-    let userId;
-    let timezone;
-    let admin;
 
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(
-          token.value,
-          new TextEncoder().encode(jwtSecret)
-        );
-        if (payload?.id) {
-          userId = payload?.id;
-          timezone = payload?.timezone;
-          admin = payload?.admin;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    const { userId, timezone, admin } = await getUserFromCookie();
 
     const userData = await User.findOne({ _id: userId });
     const { email } = userData;

@@ -6,6 +6,8 @@ import { useIsMounted } from '../hooks';
 import 'react-quill-new/dist/quill.snow.css';
 
 // NOTE: react-quill-new is a temporary fix. The version below was breaking.
+// react-quill-new is not compatable with React 19
+// need to us .npmrc file to force deployments until it is
 // "react-quill": "^2.0.0",
 // check for official quill update here:
 // https://github.com/zenoamaro/react-quill/pull/973

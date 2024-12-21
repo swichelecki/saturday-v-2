@@ -9,6 +9,7 @@ import {
 } from '../../components';
 import { createReminder, updateReminder } from '../../actions';
 import { useAppContext } from '../../context';
+import { useScrollToError } from '../../hooks';
 import {
   handleSortItemsAscending,
   handleModalResetPageScrolling,
@@ -53,19 +54,7 @@ const ModalReminder = ({
   const [isAwaitingSubmitResponse, setIsAwaitingSubmitResponse] =
     useState(false);
 
-  // scroll up to topmost error message
-  useEffect(() => {
-    if (!scrollToErrorMessage) return;
-    const errorArray = Array.from(
-      pageRef.current.querySelectorAll('.form-field--error')
-    );
-    const firstErrorNode = errorArray[0];
-    window.scrollTo({
-      top: firstErrorNode.offsetTop - 24,
-      behavior: 'smooth',
-    });
-    setScrollToErrorMessage(false);
-  }, [scrollToErrorMessage]);
+  useScrollToError(pageRef, scrollToErrorMessage, setScrollToErrorMessage);
 
   // handle keyboard events
   useEffect(() => {
@@ -80,7 +69,7 @@ const ModalReminder = ({
         document.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [form]);
+  }, []);
 
   // when edit button clicked, set state to item to update
   useEffect(() => {

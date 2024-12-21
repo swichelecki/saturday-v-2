@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FormTextField, FormWYSIWYGField, Toast } from './';
 import { useAppContext } from '../context';
 import { createContactMessage } from '../actions';
+import { useScrollToError } from '../hooks';
 import { contactFormSchema } from '../schemas/schemas';
 
 const ContactForm = ({ user }) => {
@@ -31,8 +32,9 @@ const ContactForm = ({ user }) => {
     useState(false);
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
 
+  useScrollToError(formRef, scrollToErrorMessage, setScrollToErrorMessage);
   // scroll up to topmost error message
-  useEffect(() => {
+  /*   useEffect(() => {
     if (!scrollToErrorMessage) return;
     const errorArray = Array.from(
       formRef.current.querySelectorAll('.form-field--error')
@@ -43,7 +45,7 @@ const ContactForm = ({ user }) => {
       behavior: 'smooth',
     });
     setScrollToErrorMessage(false);
-  }, [scrollToErrorMessage]);
+  }, [scrollToErrorMessage]); */
 
   const handleForm = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

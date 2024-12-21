@@ -8,6 +8,7 @@ import {
   changeUserTimezone,
 } from '../../actions';
 import { useAppContext } from '../../context';
+import { useScrollToError } from '../../hooks';
 import { FormTextField, FormSelectField, Toast } from '../../components';
 import {
   changePasswordSchema,
@@ -66,19 +67,7 @@ const Account = ({ user }) => {
     setIsAwaitingChangeTimezoneResponse,
   ] = useState(false);
 
-  // scroll up to topmost error message
-  useEffect(() => {
-    if (!scrollToErrorMessage) return;
-    const errorArray = Array.from(
-      pageRef.current.querySelectorAll('.form-field--error')
-    );
-    const firstErrorNode = errorArray[0];
-    window.scrollTo({
-      top: firstErrorNode.offsetTop - 24,
-      behavior: 'smooth',
-    });
-    setScrollToErrorMessage(false);
-  }, [scrollToErrorMessage]);
+  useScrollToError(pageRef, scrollToErrorMessage, setScrollToErrorMessage);
 
   const handleForm = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -121,10 +110,12 @@ const Account = ({ user }) => {
         return;
       }
 
-      return setErrorMessage({
+      setErrorMessage({
         ...errorMessage,
         timezone: timezone?.[0],
       });
+      setScrollToErrorMessage(true);
+      return;
     }
 
     setIsAwaitingChangeTimezoneResponse(true);

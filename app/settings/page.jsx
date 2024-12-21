@@ -1,7 +1,6 @@
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
 import Category from '../../models/Category';
 import Reminder from '../../models/Reminder';
+import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { Settings } from '../../components';
 
 export const metadata = {
@@ -12,29 +11,7 @@ export const dynamic = 'force-dynamic';
 
 async function getSettingsData() {
   try {
-    const jwtSecret = process.env.JWT_SECRET;
-    const token = (await cookies()).get('saturday');
-    let userId;
-    let newUser;
-    let timezone;
-    let admin;
-
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(
-          token.value,
-          new TextEncoder().encode(jwtSecret)
-        );
-        if (payload?.id) {
-          userId = payload?.id;
-          timezone = payload?.timezone;
-          admin = payload?.admin;
-          newUser = payload?.newUser;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    const { userId, newUser, timezone, admin } = await getUserFromCookie();
 
     const categories = await Category.find({ userId }).sort({
       priority: 1,

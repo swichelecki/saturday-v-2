@@ -33,3 +33,5 @@ export { default as Toast } from './Toast';
 export { default as UserCreatedEmail } from './emails/UserCreatedEmail';
 export { default as ContactFormEmail } from './emails/ContactFormEmail';
 export { default as ContactForm } from './ContactForm';
+export { default as Notes } from './notes/Notes';
+export { default as ModalNotes } from './notes/ModalNotes';

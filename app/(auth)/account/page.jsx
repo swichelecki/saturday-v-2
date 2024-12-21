@@ -1,5 +1,4 @@
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
+import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { Account } from '../../../components';
 
 export const metadata = {
@@ -9,33 +8,9 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 async function getUserId() {
-  try {
-    const jwtSecret = process.env.JWT_SECRET;
-    const token = (await cookies()).get('saturday');
-    let userId;
-    let timezone;
-    let admin;
+  const { userId, timezone, admin } = await getUserFromCookie();
 
-    if (token) {
-      try {
-        const { payload } = await jwtVerify(
-          token.value,
-          new TextEncoder().encode(jwtSecret)
-        );
-        if (payload?.id) {
-          userId = payload?.id;
-          timezone = payload?.timezone;
-          admin = payload?.admin;
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    return { userId, timezone, admin };
-  } catch (error) {
-    console.log(error);
-  }
+  return { userId, timezone, admin };
 }
 
 export default async function AccountPage() {

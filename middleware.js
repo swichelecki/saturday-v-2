@@ -1,27 +1,8 @@
 import { NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
-const jwtSecret = process.env.JWT_SECRET;
+import { getUserFromCookie } from './utilities/getUserFromCookie';
 
 export async function middleware(req) {
-  const token = (await cookies()).get('saturday');
-  let user;
-  let newUser;
-
-  if (token) {
-    try {
-      const { payload } = await jwtVerify(
-        token?.value,
-        new TextEncoder().encode(jwtSecret)
-      );
-      if (payload?.hasToken) {
-        user = true;
-        newUser = payload?.newUser;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const { user, newUser } = await getUserFromCookie();
 
   if (
     (!user && req.nextUrl.pathname === '/login') ||
@@ -64,6 +45,7 @@ export const config = {
     '/settings',
     '/account',
     '/contact',
+    '/notes',
     '/details/:path*',
     '/',
   ],

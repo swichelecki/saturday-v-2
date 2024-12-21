@@ -3,30 +3,15 @@
 import connectDB from '../../config/db';
 import User from '../../models/User';
 import { cookies } from 'next/headers';
-import { SignJWT, jwtVerify } from 'jose';
+import { SignJWT } from 'jose';
 import { handleServerErrorMessage } from '../../utilities';
+import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 const jwtSecret = process.env.JWT_SECRET;
 
 export default async function updateUserNoLongerNew(userId) {
   // check that cookie user id matches param userId
-  const token = (await cookies()).get('saturday');
-  let cookieUserId;
-
-  if (token) {
-    try {
-      const { payload } = await jwtVerify(
-        token?.value,
-        new TextEncoder().encode(jwtSecret)
-      );
-      if (payload?.id) {
-        cookieUserId = payload?.id;
-      }
-    } catch (error) {
-      const errorMessage = handleServerErrorMessage(error);
-      console.error(errorMessage);
-      return { status: 500, error: errorMessage };
-    }
-  }
+  const { userId: cookieUserId, cookieError } = await getUserFromCookie();
+  if (cookieError) return cookieError;
 
   if (!userId || userId !== cookieUserId) {
     return {

@@ -60,15 +60,15 @@ const ItemsColumn = ({
       (item, index) => ({
         ...item,
         priority: index + 1,
+        date: '',
+        dateAndTime: '',
       })
     );
 
     draggableItemsWithNewPriorities?.forEach((item) => {
       const formData = new FormData();
       for (let key in item) {
-        if (key !== 'date' && key !== 'dateAndTime') {
-          formData.append(key, item[key]);
-        }
+        formData.append(key, item[key]);
       }
 
       updateItem(formData).then((res) => {

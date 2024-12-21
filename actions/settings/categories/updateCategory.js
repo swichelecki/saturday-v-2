@@ -2,32 +2,14 @@
 
 import Task from '../../../models/Task';
 import Category from '../../../models/Category';
-import { cookies } from 'next/headers';
-import { jwtVerify } from 'jose';
 import { handleServerErrorMessage } from '../../../utilities';
+import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { categorySchema } from '../../../schemas/schemas';
-const jwtSecret = process.env.JWT_SECRET;
 
 export default async function updateCategory(item) {
   // check that cookie user id matches FormData user id
-  const token = (await cookies()).get('saturday');
-  let cookieUserId;
-
-  if (token) {
-    try {
-      const { payload } = await jwtVerify(
-        token?.value,
-        new TextEncoder().encode(jwtSecret)
-      );
-      if (payload?.id) {
-        cookieUserId = payload?.id;
-      }
-    } catch (error) {
-      const errorMessage = handleServerErrorMessage(error);
-      console.error(errorMessage);
-      return { status: 500, error: errorMessage };
-    }
-  }
+  const { userId: cookieUserId, cookieError } = await getUserFromCookie();
+  if (cookieError) return cookieError;
 
   if (!item?.userId || item?.userId !== cookieUserId) {
     return {
