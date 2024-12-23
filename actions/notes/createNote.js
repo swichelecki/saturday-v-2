@@ -34,6 +34,8 @@ export default async function createNote(formData) {
     date: formData.get('date'),
     pinned: formData.get('pinned'),
     pinnedDate: formData.get('pinnedDate'),
+    type: formData.get('type'),
+    confirmDeletion: formData.get('confirmDeletion'),
     itemLimit: numberOfItems,
   });
 
@@ -44,8 +46,16 @@ export default async function createNote(formData) {
   }
 
   try {
-    const { userId, title, description, date, pinned, pinnedDate } =
-      Object.fromEntries(formData);
+    const {
+      userId,
+      title,
+      description,
+      date,
+      pinned,
+      pinnedDate,
+      type,
+      confirmDeletion,
+    } = Object.fromEntries(formData);
 
     const result = await Note.create({
       userId,
@@ -54,6 +64,8 @@ export default async function createNote(formData) {
       date,
       pinned,
       pinnedDate,
+      type,
+      confirmDeletion,
     });
 
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };

@@ -8,20 +8,30 @@ import { FormTextField, FormWYSIWYGField, Toast } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 import { noteSchema } from '../../schemas/schemas';
 
-const ModalNotes = ({ note, userId, numberOfItems }) => {
+const ModalNotes = ({
+  userId,
+  items,
+  setItems,
+  itemToUpdate,
+  itemToEditId,
+  numberOfItems,
+}) => {
   const formRef = useRef(null);
 
   const { setShowModal, setShowToast } = useAppContext();
 
-  const isUpdate = !!Object.keys(note ?? {}).length;
+  const isUpdate = !!Object.keys(itemToUpdate ?? {}).length;
 
   const [form, setForm] = useState({
-    userId: note?.userId ?? userId,
-    title: note?.title ?? '',
-    description: note?.description ?? '',
-    date: note?.date ?? '',
-    pinned: note?.pinned ?? '',
-    pinnedDate: note?.pinnedDate ?? '',
+    _id: itemToUpdate?._id ?? '',
+    userId: itemToUpdate?.userId ?? userId,
+    title: itemToUpdate?.title ?? '',
+    description: itemToUpdate?.description ?? '',
+    date: itemToUpdate?.date ?? '',
+    pinned: itemToUpdate?.pinned ?? false,
+    pinnedDate: itemToUpdate?.pinnedDate ?? '',
+    confirmDeletion: itemToUpdate?.confirmDeletion ?? true,
+    type: itemToUpdate?.type ?? '',
   });
   const [errorMessage, setErrorMessage] = useState({
     title: '',
@@ -84,6 +94,8 @@ const ModalNotes = ({ note, userId, numberOfItems }) => {
       date: formData.get('date'),
       pinned: formData.get('pinned'),
       pinnedDate: formData.get('pinnedDate'),
+      type: formData.get('type'),
+      confirmDeletion: formData.get('confirmDeletion'),
       itemLimit: isUpdate ? numberOfItems - 1 : numberOfItems,
     });
 
@@ -93,7 +105,7 @@ const ModalNotes = ({ note, userId, numberOfItems }) => {
 
       if (!title && !description) {
         const serverError = {
-          statu: 400,
+          status: 400,
           error: 'Invalid FormData. Check console',
         };
         setShowToast(<Toast serverError={serverError} />);
@@ -110,41 +122,82 @@ const ModalNotes = ({ note, userId, numberOfItems }) => {
     isUpdate
       ? updateNote(formData).then((res) => {
           if (res.status === 200) {
-            console.log('updated note: ', res);
-            // TODO: update state and close modal
+            setItems(
+              items.map((item) => {
+                if (Object.keys(item)[0] === res.item.type) {
+                  return {
+                    [Object.keys(item)[0]]: Object.values(item)[0].map(
+                      (item) => {
+                        if (item._id === itemToEditId) {
+                          return {
+                            ...item,
+                            title: res.item.title,
+                            description: res.item.description,
+                          };
+                        } else {
+                          return item;
+                        }
+                      }
+                    ),
+                  };
+                } else {
+                  return item;
+                }
+              })
+            );
+            // TODO: put function into utility
+            //if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
           }
 
           if (res.status !== 200) {
             setShowToast(<Toast serverError={res} />);
           }
 
-          setIsAwaitingSubmitResponse(false);
           handleCloseModal();
         })
       : createNote(formData).then((res) => {
           if (res.status === 200) {
-            console.log('new note: ', res);
-            // TODO: update state and close modal
+            setItems(
+              items.map((item) => {
+                if (Object.keys(item)[0] === res.item.type) {
+                  return {
+                    [Object.keys(item)[0]]: [
+                      res.item,
+                      ...Object.values(item)[0],
+                    ],
+                  };
+                } else {
+                  return {
+                    [Object.keys(item)[0].type]: Object.values(item)[0],
+                  };
+                }
+              })
+            );
+            // TODO: put function into utility
+            //if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
           }
 
           if (res.status !== 200) {
             setShowToast(<Toast serverError={res} />);
           }
 
-          setIsAwaitingSubmitResponse(false);
           handleCloseModal();
         });
   };
 
   const handleCloseModal = () => {
+    setIsAwaitingSubmitResponse(false);
     setShowModal(null);
     setForm({
+      _id: '',
       userId,
       title: '',
       description: '',
       date: '',
       pinned: false,
       pinnedDate: '',
+      confirmDeletion: true,
+      type: '',
     });
     setErrorMessage({ title: '', description: '' });
     handleModalResetPageScrolling();
@@ -168,21 +221,26 @@ const ModalNotes = ({ note, userId, numberOfItems }) => {
         onChangeHandler={handleQuill}
         errorMessage={errorMessage.description}
       />
-      {/* TODO: will need value={itemToEditId ?? ''} */}
-      <input type='hidden' name='_id' value={''} />
-      <input type='hidden' name='userId' value={note?.userId ?? userId} />
+      <input type='hidden' name='_id' value={itemToEditId || ''} />
+      <input type='hidden' name='userId' value={form?.userId || userId} />
       <input type='hidden' name='description' value={form?.description} />
       <input
         type='hidden'
         name='date'
-        value={note?.date ?? new Date().toISOString()}
+        value={form?.date || new Date().toISOString()}
       />
-      <input type='hidden' name='pinned' value={note?.pinned ?? 'false'} />
+      <input type='hidden' name='pinned' value={form.pinned || 'false'} />
       <input
         type='hidden'
         name='pinnedDate'
-        value={note?.pinnedDate ?? new Date().toISOString()}
+        value={form?.pinnedDate || new Date().toISOString()}
       />
+      <input
+        type='hidden'
+        name='type'
+        value={form?.type || new Date().getFullYear()}
+      />
+      <input type='hidden' name='confirmDeletion' value='true' />
       <div className='modal__modal-button-wrapper'>
         <button
           onClick={handleCloseModal}

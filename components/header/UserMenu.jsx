@@ -13,6 +13,7 @@ import {
   MdManageAccounts,
   MdSettings,
   MdMessage,
+  MdNoteAlt,
 } from 'react-icons/md';
 
 const UserMenu = () => {
@@ -82,15 +83,21 @@ const UserMenu = () => {
             </Link>
           </li>
           <li>
-            <Link href='/account'>
-              <MdManageAccounts />
-              Account
-            </Link>
-          </li>
-          <li>
             <Link href='/dashboard'>
               <MdHome />
               Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link href='/notes'>
+              <MdNoteAlt />
+              Notes
+            </Link>
+          </li>
+          <li>
+            <Link href='/account'>
+              <MdManageAccounts />
+              Account
             </Link>
           </li>
           <li>

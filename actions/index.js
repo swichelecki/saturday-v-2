@@ -19,4 +19,6 @@ export { default as updateReminder } from './settings/reminders/updateReminder';
 export { default as getWeather } from './utilities/getWeather';
 export { default as createContactMessage } from './contact/createContactMessage';
 export { default as createNote } from './notes/createNote';
+export { default as deleteNote } from './notes/deleteNote';
 export { default as updateNote } from './notes/updateNote';
+export { default as getNote } from './notes/getNote';

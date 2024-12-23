@@ -81,13 +81,14 @@ export const MODAL_CREATE_REMINDER_HEADLINE = 'Create Reminder';
 export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
 export const MODAL_UPDATE_ITEM_HEADLINE = 'Update Item';
 export const MODAL_CREATE_NOTE_HEADLINE = 'Create Note';
-export const MODAL_OPERATION_CREATE = 'CREATE';
-export const MODAL_OPERATION_UPDATE = 'UPDATE';
+export const MODAL_UPDATE_NOTE_HEADLINE = 'Update Note';
 export const ITEM_ERROR_AT_ITEM_LIMIT =
   "Limit 50 items! Looks like it's time to get to work.";
 export const CATEGORY_ERROR_AT_ITEM_LIMIT = 'Limit 12 Categories';
 export const REMINDERS_ERROR_AT_ITEM_LIMIT = 'Limit 25 Reminders';
 export const NOTES_ERROR_AT_ITEM_LIMIT = 'Limit 50 Notes';
+export const ITEM_TYPE_NOTE = 'note';
+export const ITEM_TYPE_DASHBOARD = 'dashboard';
 export const FORM_TIMEZONES = [
   { title: 'America/Adak', name: 'timezone', value: 'America/Adak' },
   { title: 'America/Anchorage', name: 'timezone', value: 'America/Anchorage' },

@@ -27,6 +27,15 @@ const NoteSchema = new Schema({
     type: Date,
     required: true,
   },
+  confirmDeletion: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+  type: {
+    type: String,
+    required: true,
+  },
 });
 
 const Note = models.Note ?? model('Note', NoteSchema);

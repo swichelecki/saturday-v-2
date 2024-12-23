@@ -2,17 +2,32 @@
 
 import { useState, useEffect } from 'react';
 import { useAppContext } from '../../context';
-import { Modal, ModalNotes, FormErrorMessage } from '../../components';
-import { MODAL_CREATE_NOTE_HEADLINE, NOTES_ITEM_LIMIT } from '../../constants';
+import { deleteNote, getNote } from '../../actions';
+import {
+  NoteGroup,
+  Modal,
+  ModalNotes,
+  ModalDelete,
+  FormErrorMessage,
+  Toast,
+} from '../../components';
+import {
+  MODAL_CREATE_NOTE_HEADLINE,
+  MODAL_UPDATE_NOTE_HEADLINE,
+  NOTES_ITEM_LIMIT,
+  MODAL_CONFIRM_DELETION_HEADLINE,
+  MOBILE_BREAKPOINT,
+} from '../../constants';
 
 const Notes = ({ notes, user }) => {
-  console.log('NOTES ', notes);
   const { userId, admin } = user;
-  const { setUserId, setIsAdmin, setShowModal } = useAppContext();
+  const { setUserId, setIsAdmin, setShowModal, setShowToast } = useAppContext();
 
-  const [notesItems, setNotesItems] = useState(notes);
-  const [noteToUpdate, setNoteToUpdate] = useState({});
+  const [noteItemsGrouped, setNoteItemsGrouped] = useState(notes);
   const [atNotesLimit, setAtNotesLimit] = useState(false);
+  const [itemToUpdateId, setItemToUpdateId] = useState('');
+  const [isAwaitingUpdateResponse, setIsAwaitingUpdateResponse] =
+    useState(false);
 
   useEffect(() => {
     // set global context user id and admin status
@@ -20,8 +35,9 @@ const Notes = ({ notes, user }) => {
     setIsAdmin(admin);
   }, []);
 
+  // open modal for create
   const handleOpenNoteModal = () => {
-    if (notesItems?.length >= NOTES_ITEM_LIMIT) {
+    if (noteItemsGrouped?.length >= NOTES_ITEM_LIMIT) {
       setAtNotesLimit(true);
       return;
     }
@@ -31,11 +47,84 @@ const Notes = ({ notes, user }) => {
         <h2>{MODAL_CREATE_NOTE_HEADLINE}</h2>
         <ModalNotes
           userId={userId}
-          note={noteToUpdate}
-          numberOfItems={notesItems?.length}
+          items={noteItemsGrouped}
+          setItems={setNoteItemsGrouped}
+          numberOfItems={noteItemsGrouped?.length}
         />
       </Modal>
     );
+  };
+
+  // open modal for update
+  const getItemToUpdate = (id) => {
+    setIsAwaitingUpdateResponse(true);
+    setItemToUpdateId(id);
+    getNote(id, userId).then((res) => {
+      if (res.status === 200) {
+        setShowModal(
+          <Modal className='modal modal__form-modal--small'>
+            <h2>{MODAL_UPDATE_NOTE_HEADLINE}</h2>
+            <ModalNotes
+              userId={userId}
+              items={noteItemsGrouped}
+              setItems={setNoteItemsGrouped}
+              itemToUpdate={res.item}
+              itemToEditId={res.item._id}
+              numberOfItems={noteItemsGrouped?.length}
+            />
+          </Modal>
+        );
+      }
+
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
+
+      setIsAwaitingUpdateResponse(false);
+    });
+  };
+
+  // handle delete note
+  const handleDeleteNote = (id, confirmDeletion) => {
+    if (confirmDeletion) {
+      setShowModal(
+        <Modal showCloseButton={false}>
+          <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
+          <ModalDelete
+            handleDeleteItem={handleDeleteNote}
+            modalIdToDelete={id}
+          />
+        </Modal>
+      );
+      return;
+    }
+
+    deleteNote(id, userId).then((res) => {
+      if (res.status === 200) {
+        setNoteItemsGrouped(
+          noteItemsGrouped.map((item) => {
+            if (Object.keys(item)[0] === res.item.type) {
+              return {
+                [Object.keys(item)[0]]: Object.values(item)[0].filter(
+                  (item) => item._id !== res.item._id
+                ),
+              };
+            } else {
+              return item;
+            }
+          })
+        );
+      }
+
+      // TODO: put function into utility
+      //if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
+
+      setShowModal(null);
+    });
   };
 
   return (
@@ -54,6 +143,17 @@ const Notes = ({ notes, user }) => {
           className='form-error-message form-error-message--position-static'
         />
       )}
+      {noteItemsGrouped?.map((item, index) => (
+        <NoteGroup
+          key={`note-group_${index}`}
+          heading={Object.keys(item)[0]}
+          items={Object.values(item)[0]}
+          handleDeleteItem={handleDeleteNote}
+          getItemToUpdate={getItemToUpdate}
+          itemToUpdateId={itemToUpdateId}
+          isAwaitingEditResponse={isAwaitingUpdateResponse}
+        />
+      ))}
     </div>
   );
 };

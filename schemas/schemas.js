@@ -291,6 +291,8 @@ export const noteSchema = z
     pinned: z.boolean().or(z.string()),
     pinnedDate: z.string().date().or(z.string()),
     itemLimit: z.number(),
+    confirmDeletion: z.boolean().or(z.string()),
+    type: z.string(),
   })
   .refine((data) => Number(data.itemLimit) < NOTES_ITEM_LIMIT, {
     message: NOTES_ERROR_AT_ITEM_LIMIT,

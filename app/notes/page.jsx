@@ -15,7 +15,7 @@ async function getNotesData() {
 
     const { userId, admin } = await getUserFromCookie();
 
-    const notesRaw = (await Note.find({ userId }).sort({ date: -1 })) ?? [];
+    const notesRaw = await Note.find({ userId }).sort({ date: -1 });
     const notes = JSON.parse(JSON.stringify(notesRaw));
     const pinnedNoteKey = 'pinned';
 
@@ -61,7 +61,7 @@ async function getNotesData() {
     }
 
     return {
-      notes: notesData,
+      notes: notesData ?? [],
       user: { userId, admin },
     };
   } catch (error) {

@@ -13,12 +13,12 @@ async function getUser() {
   try {
     await connectDB();
 
-    const { userId, timezone, admin } = await getUserFromCookie();
+    const { userId, admin } = await getUserFromCookie();
 
     const userData = await User.findOne({ _id: userId });
     const { email } = userData;
 
-    return { userId, timezone, admin, email };
+    return { userId, admin, email };
   } catch (error) {
     console.log(error);
   }

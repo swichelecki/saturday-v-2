@@ -16,11 +16,11 @@ const ItemButtons = ({
   confirmDeletion,
   handleShowDetails,
   isOpen,
-  taskToEditId,
-  handleEditTask,
+  itemToUpdateId,
+  getItemToUpdate,
   itemId,
   isAwaitingEditResponse,
-  handleDeleteTask,
+  handleDeleteItem,
   setIsOpen,
   isAwaitingDeleteResponse,
 }) => {
@@ -75,14 +75,14 @@ const ItemButtons = ({
         >
           <MdEdit />
         </Link>
-      ) : taskToEditId !== itemId || isAwaitingEditResponse ? (
+      ) : itemToUpdateId !== itemId || isAwaitingEditResponse ? (
         <button
           onClick={() => {
-            handleEditTask(itemId);
+            getItemToUpdate(itemId);
           }}
           className={`list-item__edit-button ${handleEditButtonClass()}`}
         >
-          {isAwaitingEditResponse && taskToEditId === itemId ? (
+          {isAwaitingEditResponse && itemToUpdateId === itemId ? (
             <div className='loader'></div>
           ) : (
             <MdEdit />
@@ -98,7 +98,7 @@ const ItemButtons = ({
 
       <button
         onClick={() => {
-          handleDeleteTask(itemId, confirmDeletion);
+          handleDeleteItem(itemId, confirmDeletion);
           setIdToDelete(itemId);
           setIsOpen(false);
         }}

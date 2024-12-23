@@ -4,19 +4,21 @@ import { useState, useEffect, useRef } from 'react';
 import { ListItem, Toast } from '../../components';
 import { useAppContext } from '../../context';
 import { updateItem } from '../../actions';
+import { ITEM_TYPE_DASHBOARD } from '../../constants';
 
 const ItemsColumn = ({
   heading,
   items,
   setListItems,
-  handleEditTask,
-  handleDeleteTask,
-  taskToEditId,
+  getItemToUpdate,
+  handleDeleteItem,
+  itemToUpdateId,
   isAwaitingEditResponse,
   isAwaitingDeleteResponse,
   closeOpenItem,
   setAllItemsTouchReset,
   allItemsTouchReset,
+  timezone,
 }) => {
   const dragItemRef = useRef(null);
   const dragOverItemRef = useRef(null);
@@ -89,9 +91,7 @@ const ItemsColumn = ({
     });
   };
 
-  if (!items?.length) {
-    return <></>;
-  }
+  if (!items?.length) return <></>;
 
   return (
     <div className='items-column'>
@@ -100,11 +100,11 @@ const ItemsColumn = ({
         {items?.map((item, index) => (
           <ListItem
             item={item}
-            handleEditTask={handleEditTask}
-            handleDeleteTask={handleDeleteTask}
+            getItemToUpdate={getItemToUpdate}
+            handleDeleteItem={handleDeleteItem}
             isAwaitingEditResponse={isAwaitingEditResponse}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-            taskToEditId={taskToEditId}
+            itemToUpdateId={itemToUpdateId}
             key={`list-item__${index}`}
             index={index}
             handleDragStart={handleDragStart}
@@ -115,6 +115,8 @@ const ItemsColumn = ({
             allItemsTouchReset={allItemsTouchReset}
             listItemWrapperRef={listItemWrapperRef}
             numberOfItemsInColumn={items?.length}
+            itemType={ITEM_TYPE_DASHBOARD}
+            timezone={timezone}
           />
         ))}
       </div>

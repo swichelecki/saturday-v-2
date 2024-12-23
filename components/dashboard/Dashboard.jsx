@@ -28,8 +28,7 @@ const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
 const Dashboard = ({ tasks, categories, reminders, user }) => {
   const width = useInnerWidth();
   const { userId, timezone, admin } = user;
-  const { setUserId, setShowToast, setShowModal, setTimezone, setIsAdmin } =
-    useAppContext();
+  const { setUserId, setShowToast, setShowModal, setIsAdmin } = useAppContext();
 
   const [listItems, setListItems] = useState(tasks);
   const [listItem, setListItem] = useState({
@@ -86,7 +85,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
   useEffect(() => {
     // set global context user id and timezone
     setUserId(userId);
-    setTimezone(timezone);
     setIsAdmin(admin);
     setListItem({
       ...listItem,
@@ -229,8 +227,8 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     });
   };
 
-  // get item to edit
-  const handleEditTask = (id) => {
+  // open modal for update
+  const getItemToUpdate = (id) => {
     setIsAwaitingEditResponse(true);
     setTaskToEditId(id);
     getItem(id, userId).then((res) => {
@@ -241,7 +239,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
             <ModalUpdateItem
               userId={userId}
               itemToUpdate={res.item}
-              itemToEditId={id}
+              itemToEditId={res.item._id}
               items={listItems}
               setItems={setListItems}
               setTaskToEditId={setTaskToEditId}
@@ -283,7 +281,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
             if (Object.keys(item)[0] === res.item.type) {
               return {
                 [Object.keys(item)[0]]: Object.values(item)[0].filter(
-                  (item) => item._id !== id
+                  (item) => item._id !== res.item._id
                 ),
               };
             } else {
@@ -351,15 +349,16 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
                 heading={Object.keys(item)[0]}
                 items={Object.values(item)[0]}
                 setListItems={setListItems}
-                handleEditTask={handleEditTask}
-                handleDeleteTask={handleDeleteTask}
-                taskToEditId={taskToEditId}
+                getItemToUpdate={getItemToUpdate}
+                handleDeleteItem={handleDeleteTask}
+                itemToUpdateId={taskToEditId}
                 isAwaitingEditResponse={isAwaitingEditResponse}
                 isAwaitingDeleteResponse={isAwaitingDeleteResponse}
                 closeOpenItem={closeOpenItem}
                 allItems={allItems}
                 setAllItemsTouchReset={setAllItemsTouchReset}
                 allItemsTouchReset={allItemsTouchReset}
+                timezone={timezone}
               />
             ))}
           </div>

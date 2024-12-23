@@ -35,3 +35,4 @@ export { default as ContactFormEmail } from './emails/ContactFormEmail';
 export { default as ContactForm } from './ContactForm';
 export { default as Notes } from './notes/Notes';
 export { default as ModalNotes } from './notes/ModalNotes';
+export { default as NoteGroup } from './notes/NoteGroup';

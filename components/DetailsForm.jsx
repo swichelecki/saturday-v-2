@@ -23,7 +23,7 @@ const DetailsForm = ({ task, user }) => {
   const [priority, type, column, hasMandatoryDate] = params.values();
   const isUpdate = !!Object.keys(task ?? {}).length;
   const { userId, timezone, admin, numberOfItems } = user;
-  const { setShowToast, setUserId, setTimezone, setIsAdmin } = useAppContext();
+  const { setShowToast, setUserId, setIsAdmin } = useAppContext();
 
   const [form, setForm] = useState({
     _id: task?._id ?? '',
@@ -53,7 +53,6 @@ const DetailsForm = ({ task, user }) => {
   useEffect(() => {
     // set global context user id and timezone
     setUserId(userId);
-    setTimezone(timezone);
     setIsAdmin(admin);
   }, []);
 
@@ -202,6 +201,7 @@ const DetailsForm = ({ task, user }) => {
               onChangeHandler={handleSetForm}
               errorMessage={errorMessage.dateState}
               disabled={form?.dateAndTimeState}
+              timezone={timezone}
             />
             <FormTextField
               label='Date & Time'
@@ -212,6 +212,7 @@ const DetailsForm = ({ task, user }) => {
               onChangeHandler={handleSetForm}
               errorMessage={errorMessage.dateState}
               disabled={form?.dateState && !form?.dateAndTimeState}
+              timezone={timezone}
             />
           </>
         )}

@@ -13,8 +13,6 @@ import { deleteReminder, getReminder } from '../../actions';
 import {
   MODAL_CREATE_REMINDER_HEADLINE,
   MODAL_UPDATE_REMINDER_HEADLINE,
-  MODAL_OPERATION_CREATE,
-  MODAL_OPERATION_UPDATE,
   REMINDERS_ITEM_LIMIT,
 } from '../../constants';
 
@@ -26,7 +24,6 @@ const RemindersControls = ({ reminders, userId }) => {
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [reminderToEditId, setReminderToEditId] = useState('');
-  const [reminderToUpdate, setReminderToUpdate] = useState({});
   const [
     listItemIsAwaitingUpdateResponse,
     setListItemIsAwaitingUpdateResponse,
@@ -46,7 +43,6 @@ const RemindersControls = ({ reminders, userId }) => {
     setReminderToEditId(id);
     getReminder(userId, id).then((res) => {
       if (res.status === 200) {
-        setReminderToUpdate(res.item);
         setShowModal(
           <Modal className='modal modal__form-modal--large'>
             <h2>{MODAL_UPDATE_REMINDER_HEADLINE}</h2>
@@ -56,7 +52,6 @@ const RemindersControls = ({ reminders, userId }) => {
               setItems={setRemindersItems}
               itemToUpdate={res.item}
               itemToEditId={id}
-              modalOperation={MODAL_OPERATION_UPDATE}
               numberOfReminders={remindersItems?.length}
             />
           </Modal>
@@ -104,9 +99,7 @@ const RemindersControls = ({ reminders, userId }) => {
                       userId={userId}
                       items={remindersItems}
                       setItems={setRemindersItems}
-                      itemToUpdate={reminderToUpdate}
                       itemToEditId={reminderToEditId}
-                      modalOperation={MODAL_OPERATION_CREATE}
                       numberOfReminders={remindersItems?.length}
                     />
                   </Modal>

@@ -12,6 +12,7 @@ span.list-item__details-edit-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
 button.list-item__details-button,
+button.list-item__pin-button,
 a.list-item__edit-button,
 button.list-item__cancel-button,
 button.form-page__save-button,
@@ -186,6 +187,7 @@ span.form-page__cancel-button {
 button.list-item__details-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
+button.list-item__pin-button,
 a.list-item__edit-button,
 button.list-item__cancel-button {
   position: relative;
@@ -213,6 +215,18 @@ button.list-item__cancel-button {
       width: 1.4rem;
       height: 1.4rem;
     }
+  }
+}
+
+// TODO: need to decide actual treatment for pin button
+button.list-item__pin-button {
+  min-width: unset;
+  width: 28px;
+  height: 28px;
+  svg {
+    fill: $button-orange;
+    width: 1.4rem;
+    height: 1.4rem;
   }
 }
 

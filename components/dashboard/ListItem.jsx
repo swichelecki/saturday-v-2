@@ -14,24 +14,26 @@ import {
 import moment from 'moment-timezone';
 import DOMPurify from 'isomorphic-dompurify';
 import { GrDrag } from 'react-icons/gr';
-import { MdEdit } from 'react-icons/md';
+import { MdEdit, MdPushPin } from 'react-icons/md';
 import { TbChevronRight } from 'react-icons/tb';
 import {
   OPEN_CLOSE_THRESHOLD,
   TOUCH_DURATION_THRESHOLD,
   MAX_MOVE_DISTANCE,
   MOBILE_BREAKPOINT,
+  ITEM_TYPE_NOTE,
+  ITEM_TYPE_DASHBOARD,
 } from '../../constants';
 
 let previousItemId = '';
 
 const ItemList = ({
   item,
-  handleEditTask,
-  handleDeleteTask,
+  getItemToUpdate,
+  handleDeleteItem,
   isAwaitingEditResponse,
   isAwaitingDeleteResponse,
-  taskToEditId,
+  itemToUpdateId,
   index,
   handleDragStart,
   handleDragEnter,
@@ -41,8 +43,10 @@ const ItemList = ({
   allItemsTouchReset,
   listItemWrapperRef,
   numberOfItemsInColumn,
+  itemType = '',
+  timezone,
 }) => {
-  const { timezone } = useAppContext();
+  //const { timezone } = useAppContext();
 
   const width = useInnerWidth();
   const isMounted = useIsMounted();
@@ -73,6 +77,7 @@ const ItemList = ({
 
   // get array of column list items for touch y-axis dom manipulation
   useEffect(() => {
+    if (!listItemWrapperRef) return;
     const listItemWrapper = listItemWrapperRef.current;
     arrayOfListItemsRef.current = [
       ...listItemWrapper.querySelectorAll('.list-item__outer-wrapper'),
@@ -445,45 +450,46 @@ const ItemList = ({
     >
       <div
         className={`list-item__inner-wrapper${
-          item?.dateAndTime || item?.date
+          (item?.dateAndTime || item?.date) && itemType === ITEM_TYPE_DASHBOARD
             ? ' list-item__inner-wrapper--upcoming'
             : ''
         }`}
       >
-        {(item?.dateAndTime || item?.date) && (
-          <div
-            className={`list-item__upcoming-date-time${
-              isToday
-                ? ' list-item__upcoming-date-time--is-today'
-                : isPastDue
-                ? ' list-item__upcoming-date-time--pastDue'
-                : ''
-            }`}
-          >
-            {item?.dateAndTime ? (
-              <p>
-                {isToday && 'Today, '}
-                {isPastDue && 'Past Due! '}
-                {moment(item?.dateAndTime)
-                  .tz(timezone)
-                  .format('dddd, MMMM D,')}{' '}
-                {moment(item?.dateAndTime).tz(timezone).format('h:mm A')}{' '}
-              </p>
-            ) : (
-              <p>
-                {isToday && 'Today, '}
-                {isPastDue && 'Past Due! '}
-                {moment(item?.date).format('dddd, MMMM D')}
-              </p>
-            )}
-          </div>
-        )}
+        {(item?.dateAndTime || item?.date) &&
+          itemType === ITEM_TYPE_DASHBOARD && (
+            <div
+              className={`list-item__upcoming-date-time${
+                isToday
+                  ? ' list-item__upcoming-date-time--is-today'
+                  : isPastDue
+                  ? ' list-item__upcoming-date-time--pastDue'
+                  : ''
+              }`}
+            >
+              {item?.dateAndTime ? (
+                <p>
+                  {isToday && 'Today, '}
+                  {isPastDue && 'Past Due! '}
+                  {moment(item?.dateAndTime)
+                    .tz(timezone)
+                    .format('dddd, MMMM D,')}{' '}
+                  {moment(item?.dateAndTime).tz(timezone).format('h:mm A')}{' '}
+                </p>
+              ) : (
+                <p>
+                  {isToday && 'Today, '}
+                  {isPastDue && 'Past Due! '}
+                  {moment(item?.date).format('dddd, MMMM D')}
+                </p>
+              )}
+            </div>
+          )}
         <div
           ref={listItemInnerRef}
           className='list-item__item'
           id={`${item?.type}_list-item-inner_${index}`}
         >
-          {!item?.mandatoryDate && (
+          {!item?.mandatoryDate && itemType === ITEM_TYPE_DASHBOARD && (
             <div
               className='list-item__item-drag-zone'
               onTouchStart={handleDragYStart}
@@ -497,6 +503,19 @@ const ItemList = ({
               onMouseLeave={handleDragYEnd}
             >
               <GrDrag />
+            </div>
+          )}
+          {!item?.mandatoryDate && itemType === ITEM_TYPE_NOTE && (
+            <div
+              className='list-item__item-pin-zone'
+              style={{ opacity: item?.pinned ? '0.9' : '0.5' }}
+            >
+              <button
+                type='button'
+                className='list-item__pin-button list-item__pin-button--desktop'
+              >
+                <MdPushPin />
+              </button>
             </div>
           )}
           <div
@@ -519,11 +538,11 @@ const ItemList = ({
                 confirmDeletion={item?.confirmDeletion}
                 handleShowDetails={handleShowDetails}
                 isOpen={isOpen}
-                taskToEditId={taskToEditId}
-                handleEditTask={handleEditTask}
+                itemToUpdateId={itemToUpdateId}
+                getItemToUpdate={getItemToUpdate}
                 itemId={item?._id}
                 isAwaitingEditResponse={isAwaitingEditResponse}
-                handleDeleteTask={handleDeleteTask}
+                handleDeleteItem={handleDeleteItem}
                 setIsOpen={setIsOpen}
                 isAwaitingDeleteResponse={isAwaitingDeleteResponse}
               />
@@ -542,6 +561,11 @@ const ItemList = ({
           }
         >
           <div className='list-item__details-padding'>
+            {itemType === ITEM_TYPE_NOTE && (
+              <p>
+                Date posted: {moment(item?.date).format('dddd, MMMM D, YYYY')}
+              </p>
+            )}
             {item?.description && (
               <div
                 className='list-item__details-quill-wrapper'
@@ -551,12 +575,29 @@ const ItemList = ({
               />
             )}
             <div className='list-item__details-controls-left'>
-              <Link
-                href={`/details/${item?._id}`}
-                className='list-item__edit-button list-item__edit-button--desktop'
-              >
-                <MdEdit />
-              </Link>
+              {itemType !== ITEM_TYPE_NOTE && (
+                <Link
+                  href={`/details/${item?._id}`}
+                  className='list-item__edit-button list-item__edit-button--desktop'
+                >
+                  <MdEdit />
+                </Link>
+              )}
+              {itemType === ITEM_TYPE_NOTE && (
+                <button
+                  onClick={() => {
+                    getItemToUpdate(item?._id);
+                  }}
+                  type='button'
+                  className='list-item__edit-button list-item__edit-button--desktop'
+                >
+                  {isAwaitingEditResponse && itemToUpdateId === item?._id ? (
+                    <div className='loader'></div>
+                  ) : (
+                    <MdEdit />
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -576,11 +617,11 @@ const ItemList = ({
             confirmDeletion={item?.confirmDeletion}
             handleShowDetails={handleShowDetails}
             isOpen={isOpen}
-            taskToEditId={taskToEditId}
-            handleEditTask={handleEditTask}
+            itemToUpdateId={itemToUpdateId}
+            getItemToUpdate={getItemToUpdate}
             itemId={item?._id}
             isAwaitingEditResponse={isAwaitingEditResponse}
-            handleDeleteTask={handleDeleteTask}
+            handleDeleteItem={handleDeleteItem}
             setIsOpen={setIsOpen}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}
           />

@@ -24,12 +24,11 @@ const Account = ({ user }) => {
   const pageRef = useRef(null);
   const router = useRouter();
   const { userId, timezone, admin } = user;
-  const { setUserId, setShowToast, setTimezone, setIsAdmin } = useAppContext();
+  const { setUserId, setShowToast, setIsAdmin } = useAppContext();
 
   // set global context user id and timezone and state timezone
   useEffect(() => {
     setUserId(userId);
-    setTimezone(timezone);
     setIsAdmin(admin);
     setForm({ ...form, timezone });
   }, []);

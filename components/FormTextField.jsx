@@ -1,6 +1,5 @@
 'use client';
 
-import { useAppContext } from '../context';
 import { FormErrorMessage } from './';
 import moment from 'moment-timezone';
 
@@ -14,9 +13,8 @@ const FormTextField = ({
   onChangeHandler,
   errorMessage,
   disabled = false,
+  timezone = '',
 }) => {
-  const { timezone } = useAppContext();
-
   return (
     <div className={`form-field${errorMessage ? ' form-field--error' : ''}`}>
       {label && <label htmlFor={id}>{label}</label>}

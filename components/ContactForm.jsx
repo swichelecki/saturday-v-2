@@ -10,13 +10,12 @@ import { contactFormSchema } from '../schemas/schemas';
 
 const ContactForm = ({ user }) => {
   const formRef = useRef(null);
-  const { userId, timezone, admin, email } = user;
-  const { setUserId, setShowToast, setTimezone, setIsAdmin } = useAppContext();
+  const { userId, admin, email } = user;
+  const { setUserId, setShowToast, setIsAdmin } = useAppContext();
 
   // set global context user id and timezone and state timezone
   useEffect(() => {
     setUserId(userId);
-    setTimezone(timezone);
     setIsAdmin(admin);
   }, []);
 
@@ -33,19 +32,6 @@ const ContactForm = ({ user }) => {
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
 
   useScrollToError(formRef, scrollToErrorMessage, setScrollToErrorMessage);
-  // scroll up to topmost error message
-  /*   useEffect(() => {
-    if (!scrollToErrorMessage) return;
-    const errorArray = Array.from(
-      formRef.current.querySelectorAll('.form-field--error')
-    );
-    const firstErrorNode = errorArray[0];
-    window.scrollTo({
-      top: firstErrorNode.offsetTop - 24,
-      behavior: 'smooth',
-    });
-    setScrollToErrorMessage(false);
-  }, [scrollToErrorMessage]); */
 
   const handleForm = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
