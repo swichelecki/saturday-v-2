@@ -62,6 +62,14 @@
       border-top: 6px solid $color-list-item-svg;
     }
   }
+  &__quill-wrapper {
+    &--toolbar {
+      min-height: 241px;
+    }
+    &--no-toolbar {
+      min-height: 198px;
+    }
+  }
 }
 
 .quill {

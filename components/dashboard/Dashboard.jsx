@@ -302,18 +302,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     });
   };
 
-  // close currently open item when a new item is opened
-  const closeOpenItem = (currentItemId) => {
-    allItems = Array.from(document.querySelectorAll('.list-item__item'));
-    allItems.forEach((item) => {
-      if (item?.id !== currentItemId) {
-        item.style.transition = 'transform 150ms';
-        item.style.transform = 'translateX(0)';
-      }
-    });
-    return currentItemId;
-  };
-
   return (
     <div className='content-container'>
       {errorMessages && (
@@ -354,7 +342,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
                 itemToUpdateId={taskToEditId}
                 isAwaitingEditResponse={isAwaitingEditResponse}
                 isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-                closeOpenItem={closeOpenItem}
                 allItems={allItems}
                 setAllItemsTouchReset={setAllItemsTouchReset}
                 allItemsTouchReset={allItemsTouchReset}

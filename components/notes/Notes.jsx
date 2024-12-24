@@ -128,15 +128,17 @@ const Notes = ({ notes, user }) => {
   };
 
   return (
-    <div className='form-page'>
-      <h2 className='form-page__h2'>Notes</h2>
-      <button
-        onClick={handleOpenNoteModal}
-        type='button'
-        className='form-page__save-button'
-      >
-        Create
-      </button>
+    <div className='form-page form-page__list-items'>
+      <div className='form-page__list-items-controls-wrapper'>
+        <h2 className='form-page__h2'>Notes</h2>
+        <button
+          onClick={handleOpenNoteModal}
+          type='button'
+          className='form-page__save-button'
+        >
+          Create
+        </button>
+      </div>
       {atNotesLimit && (
         <FormErrorMessage
           errorMessage={`Limit ${NOTES_ITEM_LIMIT} Notes!`}

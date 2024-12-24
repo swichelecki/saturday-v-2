@@ -46,4 +46,12 @@
     padding: 24px;
     border: none;
   }
+
+  .form-page.form-page__list-items {
+    padding: 24px 0;
+    .form-page__list-items-controls-wrapper,
+    h3 {
+      padding: 0 24px;
+    }
+  }
 }

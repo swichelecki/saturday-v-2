@@ -103,6 +103,7 @@ const ModalReminder = ({
     }
   };
 
+  // create or update
   const onSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);

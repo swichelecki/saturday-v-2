@@ -58,6 +58,7 @@ const ModalNotes = ({
     }
   }, []);
 
+  // state handlers
   const handleForm = (e) => {
     setForm({
       ...form,
@@ -82,6 +83,7 @@ const ModalNotes = ({
     }
   };
 
+  // create or update
   const onSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -167,12 +169,11 @@ const ModalNotes = ({
                     ],
                   };
                 } else {
-                  return {
-                    [Object.keys(item)[0].type]: Object.values(item)[0],
-                  };
+                  return item;
                 }
               })
             );
+
             // TODO: put function into utility
             //if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
           }
@@ -220,6 +221,7 @@ const ModalNotes = ({
         value={form?.description}
         onChangeHandler={handleQuill}
         errorMessage={errorMessage.description}
+        hasToobar={false}
       />
       <input type='hidden' name='_id' value={itemToEditId || ''} />
       <input type='hidden' name='userId' value={form?.userId || userId} />

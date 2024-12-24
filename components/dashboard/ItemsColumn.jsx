@@ -15,7 +15,6 @@ const ItemsColumn = ({
   itemToUpdateId,
   isAwaitingEditResponse,
   isAwaitingDeleteResponse,
-  closeOpenItem,
   setAllItemsTouchReset,
   allItemsTouchReset,
   timezone,
@@ -110,7 +109,6 @@ const ItemsColumn = ({
             handleDragStart={handleDragStart}
             handleDragEnter={handleDragEnter}
             handleDragEnd={handleDragEnd}
-            closeOpenItem={closeOpenItem}
             setAllItemsTouchReset={setAllItemsTouchReset}
             allItemsTouchReset={allItemsTouchReset}
             listItemWrapperRef={listItemWrapperRef}

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useAppContext } from '../../context';
 import ItemButtons from './ItemButtons';
 import { useInnerWidth, useIsMounted } from '../../hooks';
 import {
@@ -10,6 +9,7 @@ import {
   handleTransitionSpeed,
   handleHiddenHeight,
   handleItemPastDueCheck,
+  handleCloseOpenItem,
 } from '../../utilities';
 import moment from 'moment-timezone';
 import DOMPurify from 'isomorphic-dompurify';
@@ -38,7 +38,6 @@ const ItemList = ({
   handleDragStart,
   handleDragEnter,
   handleDragEnd,
-  closeOpenItem,
   setAllItemsTouchReset,
   allItemsTouchReset,
   listItemWrapperRef,
@@ -46,8 +45,6 @@ const ItemList = ({
   itemType = '',
   timezone,
 }) => {
-  //const { timezone } = useAppContext();
-
   const width = useInnerWidth();
   const isMounted = useIsMounted();
 
@@ -198,7 +195,7 @@ const ItemList = ({
       setCurrentTranslateX(0);
       setPreviousTranslateX(0);
     }
-    previousItemId = closeOpenItem(listItemInnerRef.current.id);
+    previousItemId = handleCloseOpenItem(listItemInnerRef.current.id);
     setStartXPosition(e.touches[0].clientX);
     setStartYPosition(e.touches[0].clientY);
     listItemInnerRef.current.style.transition = 'none';
@@ -604,7 +601,7 @@ const ItemList = ({
       </div>
       <div
         className={`list-item__controls${
-          item?.dateAndTime || item?.date
+          itemType === ITEM_TYPE_DASHBOARD && (item?.dateAndTime || item?.date)
             ? ' list-item__controls--upcoming'
             : ''
         }`}

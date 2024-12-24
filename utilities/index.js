@@ -9,3 +9,4 @@ export { handleServerErrorMessage } from './handleServerErrorMessage';
 export { handleDateAndTimeToUTC } from './handleDateAndTimeToUTC';
 export { handleItemPastDueCheck } from './handleItemPastDueCheck';
 export { handleModalResetPageScrolling } from './handleModalResetPageScrolling';
+export { handleCloseOpenItem } from './handleCloseOpenItem';

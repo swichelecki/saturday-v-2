@@ -28,28 +28,36 @@ const FormWYSIWYGField = ({
   return (
     <div className={`form-field${errorMessage ? ' form-field--error' : ''}`}>
       <label htmlFor='description'>{label}</label>
-      {isMounted ? (
-        <ReactQuill
-          theme='snow'
-          modules={
-            hasToolbar
-              ? {
-                  toolbar: [
-                    ['bold', 'italic', 'underline'],
-                    ['link'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                  ],
-                }
-              : {
-                  toolbar: [],
-                }
-          }
-          value={value}
-          onChange={onChangeHandler}
-        />
-      ) : (
-        ''
-      )}
+      <div
+        className={`${
+          hasToolbar
+            ? 'form-field__quill-wrapper--toolbar'
+            : 'form-field__quill-wrapper--no-toolbar'
+        }`}
+      >
+        {isMounted ? (
+          <ReactQuill
+            theme='snow'
+            modules={
+              hasToolbar
+                ? {
+                    toolbar: [
+                      ['bold', 'italic', 'underline'],
+                      ['link'],
+                      [{ list: 'ordered' }, { list: 'bullet' }],
+                    ],
+                  }
+                : {
+                    toolbar: [],
+                  }
+            }
+            value={value}
+            onChange={onChangeHandler}
+          />
+        ) : (
+          ''
+        )}
+      </div>
       {errorMessage && <FormErrorMessage errorMessage={errorMessage} />}
     </div>
   );

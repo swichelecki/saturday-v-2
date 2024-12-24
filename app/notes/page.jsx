@@ -18,17 +18,18 @@ async function getNotesData() {
     const notesRaw = await Note.find({ userId }).sort({ date: -1 });
     const notes = JSON.parse(JSON.stringify(notesRaw));
     const pinnedNoteKey = 'pinned';
+    const thisYear = new Date().getFullYear();
 
-    // create array of years in which notes were created
-    const notesYears = notes.reduce((acc, note) => {
+    // create array of years in which notes were created before current year
+    const notePastYears = notes.reduce((acc, note) => {
       const year = note?.date?.split('T')[0].split('-')[0];
-      if (!acc.includes(year)) acc.push(year);
+      if (!acc.includes(year) && year !== String(thisYear)) acc.push(year);
       return acc;
     }, []);
 
     // create notes data structure
-    let notesData = [{ pinned: [] }];
-    for (const year of notesYears) {
+    let notesData = [{ pinned: [] }, { [thisYear]: [] }];
+    for (const year of notePastYears) {
       notesData = [...notesData, { [year]: [] }];
     }
 
@@ -53,7 +54,10 @@ async function getNotesData() {
 
     // sort pinned items in descending order
     for (const note of notesData) {
-      if (Object.keys(note)[0] === pinnedNoteKey) {
+      if (
+        Object.keys(note)[0] === pinnedNoteKey &&
+        Object.values(note)[0].length > 0
+      ) {
         Object.values(note)[0] = Object.values(note)[0].sort(
           (a, b) => a?.pinnedDate + b?.pinnedDate
         );
