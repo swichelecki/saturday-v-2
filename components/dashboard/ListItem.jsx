@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import ItemButtons from './ItemButtons';
+import { useAppContext } from '../../context';
 import { useInnerWidth, useIsMounted } from '../../hooks';
+import ItemButtons from './ItemButtons';
 import {
   handleTodaysDateCheck,
   handleTransitionSpeed,
@@ -38,13 +39,13 @@ const ItemList = ({
   handleDragStart,
   handleDragEnter,
   handleDragEnd,
-  setAllItemsTouchReset,
-  allItemsTouchReset,
   listItemWrapperRef,
   numberOfItemsInColumn,
   itemType = '',
   timezone,
 }) => {
+  const { listItemsMobileReset, setListItemsMobileReset } = useAppContext();
+
   const width = useInnerWidth();
   const isMounted = useIsMounted();
 
@@ -83,12 +84,12 @@ const ItemList = ({
 
   // when all items are closed automatically make sure state is reset for next item touch
   useEffect(() => {
-    if (allItemsTouchReset) {
+    if (listItemsMobileReset) {
       setCurrentTranslateX(0);
       setPreviousTranslateX(0);
-      setAllItemsTouchReset(false);
+      setListItemsMobileReset(false);
     }
-  }, [allItemsTouchReset]);
+  }, [listItemsMobileReset]);
 
   // disable scrolling when opening and closing items on touch
   useEffect(() => {

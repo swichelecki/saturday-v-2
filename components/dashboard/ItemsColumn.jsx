@@ -15,8 +15,6 @@ const ItemsColumn = ({
   itemToUpdateId,
   isAwaitingEditResponse,
   isAwaitingDeleteResponse,
-  setAllItemsTouchReset,
-  allItemsTouchReset,
   timezone,
 }) => {
   const dragItemRef = useRef(null);
@@ -109,8 +107,6 @@ const ItemsColumn = ({
             handleDragStart={handleDragStart}
             handleDragEnter={handleDragEnter}
             handleDragEnd={handleDragEnd}
-            setAllItemsTouchReset={setAllItemsTouchReset}
-            allItemsTouchReset={allItemsTouchReset}
             listItemWrapperRef={listItemWrapperRef}
             numberOfItemsInColumn={items?.length}
             itemType={ITEM_TYPE_DASHBOARD}

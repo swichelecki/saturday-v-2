@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAppContext } from '../../context';
+import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
 import { deleteNote, getNote } from '../../actions';
 import {
   NoteGroup,
@@ -22,6 +23,9 @@ import {
 const Notes = ({ notes, user }) => {
   const { userId, admin } = user;
   const { setUserId, setIsAdmin, setShowModal, setShowToast } = useAppContext();
+
+  const width = useInnerWidth();
+  const handleListItemsMobileReset = useListItemsMobileReset();
 
   const [noteItemsGrouped, setNoteItemsGrouped] = useState(notes);
   const [atNotesLimit, setAtNotesLimit] = useState(false);
@@ -116,8 +120,7 @@ const Notes = ({ notes, user }) => {
         );
       }
 
-      // TODO: put function into utility
-      //if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+      if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
 
       if (res.status !== 200) {
         setShowToast(<Toast serverError={res} />);

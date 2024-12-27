@@ -11,7 +11,7 @@ import {
   FormErrorMessage,
   Toast,
 } from '../../components';
-import { useInnerWidth } from '../../hooks';
+import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
 import { createItem, getItem, deleteItem } from '../../actions';
 import { itemSchema } from '../../schemas/schemas';
 import {
@@ -26,9 +26,12 @@ const ItemsColumn = dynamic(() =>
 const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
 
 const Dashboard = ({ tasks, categories, reminders, user }) => {
-  const width = useInnerWidth();
   const { userId, timezone, admin } = user;
+
   const { setUserId, setShowToast, setShowModal, setIsAdmin } = useAppContext();
+
+  const width = useInnerWidth();
+  const handleListItemsMobileReset = useListItemsMobileReset();
 
   const [listItems, setListItems] = useState(tasks);
   const [listItem, setListItem] = useState({
@@ -50,7 +53,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
   const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
-  const [allItemsTouchReset, setAllItemsTouchReset] = useState(false);
   const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
   const [errorMessages, setErrorMessages] = useState('');
 
@@ -141,16 +143,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     }
   }, [totalNumberOfItems]);
 
-  // ensure all items are closed on mobile after new item is created or item is deleted
-  const handleItemsTouchReset = () => {
-    allItems = Array.from(document.querySelectorAll('.list-item__item'));
-    allItems.forEach((item) => {
-      item.style.transition = 'unset';
-      item.style.transform = 'translateX(0)';
-    });
-    setAllItemsTouchReset(true);
-  };
-
   // set item title and priority
   const handleSetListItem = (e) => {
     setListItem({
@@ -215,7 +207,8 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
             }
           })
         );
-        if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+
+        if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
         setListItem({ ...listItem, title: '' });
       }
 
@@ -243,7 +236,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
               items={listItems}
               setItems={setListItems}
               setTaskToEditId={setTaskToEditId}
-              handleCloseMobileItem={handleItemsTouchReset}
               totalNumberOfItems={totalNumberOfItems}
             />
           </Modal>
@@ -290,7 +282,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
           })
         );
 
-        if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+        if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
       }
 
       if (res.status !== 200) {
@@ -343,8 +335,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
                 isAwaitingEditResponse={isAwaitingEditResponse}
                 isAwaitingDeleteResponse={isAwaitingDeleteResponse}
                 allItems={allItems}
-                setAllItemsTouchReset={setAllItemsTouchReset}
-                allItemsTouchReset={allItemsTouchReset}
                 timezone={timezone}
               />
             ))}

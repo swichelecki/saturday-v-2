@@ -81,6 +81,15 @@ dialog {
   }
 }
 
+@media screen and (max-height: 668px) {
+  dialog.modal.modal__form-modal--small {
+    display: flex;
+    flex-direction: column;
+    margin: 16px auto;
+    max-height: unset;
+  }
+}
+
 @media screen and (max-width: 600px) {
   dialog.modal.modal__form-modal--large,
   dialog.modal.modal__form-modal--small {

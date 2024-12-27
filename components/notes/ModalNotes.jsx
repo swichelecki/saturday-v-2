@@ -3,10 +3,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
 import { createNote, updateNote } from '../../actions';
-import { useScrollToError } from '../../hooks';
+import {
+  useInnerWidth,
+  useListItemsMobileReset,
+  useScrollToError,
+} from '../../hooks';
 import { FormTextField, FormWYSIWYGField, Toast } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 import { noteSchema } from '../../schemas/schemas';
+import { MOBILE_BREAKPOINT } from '../../constants';
 
 const ModalNotes = ({
   userId,
@@ -16,9 +21,12 @@ const ModalNotes = ({
   itemToEditId,
   numberOfItems,
 }) => {
-  const formRef = useRef(null);
-
   const { setShowModal, setShowToast } = useAppContext();
+
+  const width = useInnerWidth();
+  const handleListItemsMobileReset = useListItemsMobileReset();
+
+  const formRef = useRef(null);
 
   const isUpdate = !!Object.keys(itemToUpdate ?? {}).length;
 
@@ -147,8 +155,8 @@ const ModalNotes = ({
                 }
               })
             );
-            // TODO: put function into utility
-            //if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+
+            if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
           }
 
           if (res.status !== 200) {
@@ -174,8 +182,7 @@ const ModalNotes = ({
               })
             );
 
-            // TODO: put function into utility
-            //if (width <= MOBILE_BREAKPOINT) handleItemsTouchReset();
+            if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
           }
 
           if (res.status !== 200) {
@@ -215,7 +222,6 @@ const ModalNotes = ({
         onChangeHandler={handleForm}
         errorMessage={errorMessage.title}
       />
-
       <FormWYSIWYGField
         label='Description'
         value={form?.description}

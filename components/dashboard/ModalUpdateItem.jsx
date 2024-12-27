@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FormTextField, Toast } from '../../components';
 import { updateItem } from '../../actions';
 import { useAppContext } from '../../context';
+import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
+import { FormTextField, Toast } from '../../components';
 import { itemSchema } from '../../schemas/schemas';
+import { MOBILE_BREAKPOINT } from '../../constants';
 
 const ModalUpdateItem = ({
   userId,
@@ -13,10 +15,12 @@ const ModalUpdateItem = ({
   items,
   setItems,
   setTaskToEditId,
-  handleCloseMobileItem,
   totalNumberOfItems,
 }) => {
   const { setShowModal, setShowToast } = useAppContext();
+
+  const width = useInnerWidth();
+  const handleListItemsMobileReset = useListItemsMobileReset();
 
   const [form, setForm] = useState({
     userId,
@@ -127,6 +131,8 @@ const ModalUpdateItem = ({
             }
           })
         );
+
+        if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
       }
 
       if (res.status !== 200) {
@@ -155,7 +161,6 @@ const ModalUpdateItem = ({
     setErrorMessage({
       item: '',
     });
-    handleCloseMobileItem();
   };
 
   return (
