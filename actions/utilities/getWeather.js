@@ -18,16 +18,15 @@ export default async function getWeather(userId) {
 
   try {
     const headerList = await headers();
-    let ipv6Address =
-      headerList.get('x-forwarded-for')?.split(',')[0] || 'unknown';
+    let ipAddress = headerList.get('x-forwarded-for').split(',')[0];
 
     // if localhost use America/Chicago ip address
-    if (ipv6Address === '::1')
-      ipv6Address = '2601:241:8e81:44f0:e455:242:81a7:b7f0';
+    if (ipAddress === '::1')
+      ipAddress = '2601:241:8e81:44f0:e455:242:81a7:b7f0';
 
     // get user location
     const locationDataRes = await fetch(
-      `http://ip-api.com/json/${ipv6Address}?fields=lat,lon,city`
+      `http://ip-api.com/json/${ipAddress}?fields=lat,lon,city`
     );
     const locationData = await locationDataRes.json();
     const { lat, lon, city } = locationData;
@@ -35,9 +34,9 @@ export default async function getWeather(userId) {
     // get user weather
     const openMeteoApiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&forecast_days=1`;
     const weatherRes = await fetch(openMeteoApiUrl);
-    const weatherData = await weatherRes?.json();
+    const weatherData = await weatherRes.json();
 
-    return { status: 200, data: { weatherData, city, ipv6Address } };
+    return { status: 200, data: { weatherData, city, ipAddress } };
   } catch (error) {
     console.log(error);
     const errorMessage = handleServerErrorMessage(error);
