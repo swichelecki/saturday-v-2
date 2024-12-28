@@ -18,20 +18,8 @@ export default async function getWeather(userId) {
 
   try {
     const headerList = await headers();
-    const forwardedFor = headerList.get('x-forwarded-for');
-    let ipv6Address = null;
-
-    if (forwardedFor) {
-      const ips = forwardedFor.split(',');
-      for (const ip of ips) {
-        if (ip.includes(':')) {
-          ipv6Address = ip;
-          break;
-        }
-      }
-    }
-
-    if (!ipv6Address) ipv6Address = headerList.get('x-real-ip') || 'unknown';
+    let ipv6Address =
+      headerList.get('x-forwarded-for')?.split(',')[0] || 'unknown';
 
     // if localhost use America/Chicago ip address
     if (ipv6Address === '::1')
@@ -49,7 +37,7 @@ export default async function getWeather(userId) {
     const weatherRes = await fetch(openMeteoApiUrl);
     const weatherData = await weatherRes?.json();
 
-    return { status: 200, data: { weatherData, city } };
+    return { status: 200, data: { weatherData, city, ipv6Address } };
   } catch (error) {
     console.log(error);
     const errorMessage = handleServerErrorMessage(error);

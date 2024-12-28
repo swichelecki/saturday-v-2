@@ -28,12 +28,13 @@ const Weather = () => {
   const [todaysLow, setTodaysLow] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [city, setCity] = useState('');
+  const [ip, setIp] = useState('');
 
   const getWeatherData = async () => {
     const res = await getWeather(userId);
     if (res.status === 200) {
       const { data } = res;
-      const { weatherData, city } = data;
+      const { weatherData, city, ipv6Address } = data;
       const { current, daily } = weatherData;
       const { temperature_2m, weather_code } = current;
       const { temperature_2m_max, temperature_2m_min } = daily;
@@ -44,6 +45,7 @@ const Weather = () => {
       setTodaysLow(Math.round(temperature_2m_min));
       setCity(city);
       setIsLoading(false);
+      setIp(ipv6Address);
     } else {
       setShowToast(<Toast serverError={res} />);
     }
@@ -80,6 +82,7 @@ const Weather = () => {
 
   return (
     <div className='weather'>
+      {ip}
       <div className='weather__icon-temp-location-wrapper'>
         <div className='weather__icon-temp'>
           {ICON_MAP.get(weatherCode)}
