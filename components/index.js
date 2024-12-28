@@ -26,7 +26,7 @@ export { default as Modal } from './Modal';
 export { default as ModalReminders } from './settings/ModalReminders';
 export { default as ModalCategory } from './settings/ModalCategory';
 export { default as ModalUpdateItem } from './dashboard/ModalUpdateItem';
-export { default as ModalDelete } from './ModalDelete';
+export { default as ModalConfirm } from './ModalConfirm';
 export { default as FormErrorMessage } from './FormErrorMessage';
 export { default as Tooltip } from './Tooltip';
 export { default as Toast } from './Toast';

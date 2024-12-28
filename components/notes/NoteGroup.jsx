@@ -8,6 +8,7 @@ const NoteGroup = ({
   getItemToUpdate,
   itemToUpdateId,
   isAwaitingEditResponse,
+  handlePinNote,
 }) => {
   if (!items?.length) return <></>;
 
@@ -26,6 +27,7 @@ const NoteGroup = ({
             itemToUpdateId={itemToUpdateId}
             isAwaitingEditResponse={isAwaitingEditResponse}
             numberOfItemsInColumn={items?.length}
+            handlePinNote={handlePinNote}
           />
         ))}
       </div>

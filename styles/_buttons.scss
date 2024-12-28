@@ -21,7 +21,8 @@ button.form-page__delete-button,
 button.modal__cancel-button,
 button.modal__delete-button,
 button.modal__update-button,
-button.modal__save-button {
+button.modal__save-button,
+button.modal__reminder-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -184,6 +185,16 @@ span.form-page__cancel-button {
   }
 }
 
+button.modal__reminder-button {
+  background-color: $button-yellow-dark;
+  border: 1px solid $button-yellow;
+  color: $button-yellow;
+  .loader {
+    border: 2px solid $button-yellow;
+    border-top: 2px solid transparent;
+  }
+}
+
 button.list-item__details-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
@@ -274,7 +285,8 @@ button.entry-form__button {
 button.modal__cancel-button,
 button.modal__delete-button,
 button.modal__update-button,
-button.modal__save-button {
+button.modal__save-button,
+button.modal__reminder-button {
   width: 100%;
   font-size: 1.125rem; // 18px
   gap: 6px;

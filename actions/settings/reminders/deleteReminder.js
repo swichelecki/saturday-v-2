@@ -1,6 +1,7 @@
 'use server';
 
 import Reminder from '../../../models/Reminder';
+import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../../utilities';
 import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 
@@ -18,6 +19,7 @@ export default async function deleteReminder(userId, id) {
 
   try {
     await Reminder.deleteOne({ _id: id });
+    revalidatePath('/settings');
     return { status: 200 };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

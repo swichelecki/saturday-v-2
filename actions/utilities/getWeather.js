@@ -18,17 +18,28 @@ export default async function getWeather(userId) {
 
   try {
     const headerList = await headers();
+    const forwardedFor = headerList.get('x-forwarded-for');
+    let ipv6Address = null;
 
-    let ipAddress = headerList.get('x-forwarded-for')?.split(',')[0];
+    if (forwardedFor) {
+      const ips = forwardedFor.split(', ');
+      for (const ip of ips) {
+        if (ip.includes(':')) {
+          ipv6Address = ip;
+          break;
+        }
+      }
+    }
 
-    if (!ipAddress) ipAddress = headerList.get('x-real-ip') || 'unknown';
+    if (!ipv6Address) ipv6Address = headerList.get('x-real-ip') || 'unknown';
 
     // if localhost use America/Chicago ip address
-    if (ipAddress === '::1') ipAddress = '73.111.204.162';
+    if (ipv6Address === '::1')
+      ipv6Address = '2601:241:8e81:44f0:e455:242:81a7:b7f0';
 
     // get user location
     const locationDataRes = await fetch(
-      `http://ip-api.com/json/${ipAddress}?fields=lat,lon,city`
+      `http://ip-api.com/json/${ipv6Address}?fields=lat,lon,city`
     );
     const locationData = await locationDataRes.json();
     const { lat, lon, city } = locationData;

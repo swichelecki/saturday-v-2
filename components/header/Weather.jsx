@@ -45,7 +45,7 @@ const Weather = () => {
       setCity(city);
       setIsLoading(false);
     } else {
-      setShowToast(<Toast serverError={response} />);
+      setShowToast(<Toast serverError={res} />);
     }
   };
 

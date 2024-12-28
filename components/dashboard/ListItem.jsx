@@ -41,8 +41,9 @@ const ItemList = ({
   handleDragEnd,
   listItemWrapperRef,
   numberOfItemsInColumn,
-  itemType = '',
+  itemType,
   timezone,
+  handlePinNote,
 }) => {
   const { listItemsMobileReset, setListItemsMobileReset } = useAppContext();
 
@@ -509,6 +510,14 @@ const ItemList = ({
               style={{ opacity: item?.pinned ? '0.9' : '0.5' }}
             >
               <button
+                onClick={() => {
+                  handlePinNote(
+                    item?._id,
+                    item?.userId,
+                    !item?.pinned,
+                    item?.date
+                  );
+                }}
                 type='button'
                 className='list-item__pin-button list-item__pin-button--desktop'
               >

@@ -13,8 +13,7 @@ dialog {
 }
 
 .modal {
-  max-width: 295px;
-  width: 100%;
+  min-width: 295px;
   position: relative;
   & > button {
     display: flex;
@@ -36,6 +35,7 @@ dialog {
   }
   h2 {
     margin-bottom: 24px;
+    text-align: center;
   }
   &__modal-button-wrapper {
     display: flex;
@@ -47,6 +47,9 @@ dialog {
   &__form-modal--small {
     max-width: 500px;
     width: 100%;
+    h2 {
+      text-align: left;
+    }
   }
   &__image-modal {
     max-width: 1000px;

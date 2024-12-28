@@ -1,6 +1,7 @@
 'use server';
 
 import Note from '../../models/Note';
+import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { noteSchema } from '../../schemas/schemas';
@@ -73,7 +74,7 @@ export default async function updateNote(formData) {
     );
 
     const result = await Note.find({ _id: _id });
-
+    revalidatePath('/notes');
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

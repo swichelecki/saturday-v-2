@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useAppContext } from '../../context';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
-import { deleteNote, getNote } from '../../actions';
+import { deleteNote, getNote, pinNote } from '../../actions';
 import {
   NoteGroup,
   Modal,
   ModalNotes,
-  ModalDelete,
+  ModalConfirm,
   FormErrorMessage,
   Toast,
 } from '../../components';
@@ -18,6 +18,7 @@ import {
   NOTES_ITEM_LIMIT,
   MODAL_CONFIRM_DELETION_HEADLINE,
   MOBILE_BREAKPOINT,
+  MODAL_CONFIRM_COMPLETE_BUTTON,
 } from '../../constants';
 
 const Notes = ({ notes, user }) => {
@@ -94,9 +95,10 @@ const Notes = ({ notes, user }) => {
       setShowModal(
         <Modal showCloseButton={false}>
           <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
-          <ModalDelete
-            handleDeleteItem={handleDeleteNote}
-            modalIdToDelete={id}
+          <ModalConfirm
+            handleConfirm={handleDeleteNote}
+            confirmId={id}
+            confirmBtnText={MODAL_CONFIRM_COMPLETE_BUTTON}
           />
         </Modal>
       );
@@ -130,6 +132,37 @@ const Notes = ({ notes, user }) => {
     });
   };
 
+  // handle pin note
+  const handlePinNote = (id, userId, pinnedStatus, date) => {
+    const year = date?.split('T')[0].split('-')[0];
+    pinNote(id, userId, pinnedStatus, year).then((res) => {
+      if (res.status === 200) {
+        setNoteItemsGrouped(
+          noteItemsGrouped.map((item) => {
+            if (Object.keys(item)[0] === res.item.type) {
+              return {
+                [Object.keys(item)[0]]: [
+                  res.item,
+                  ...Object.values(item)[0],
+                ].sort((a, b) => a?.date + b?.date),
+              };
+            } else {
+              return {
+                [Object.keys(item)[0]]: Object.values(item)[0].filter(
+                  (item) => item._id !== res.item._id
+                ),
+              };
+            }
+          })
+        );
+      }
+
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
+    });
+  };
+
   return (
     <div className='form-page form-page__list-items'>
       <div className='form-page__list-items-controls-wrapper'>
@@ -157,6 +190,7 @@ const Notes = ({ notes, user }) => {
           getItemToUpdate={getItemToUpdate}
           itemToUpdateId={itemToUpdateId}
           isAwaitingEditResponse={isAwaitingUpdateResponse}
+          handlePinNote={handlePinNote}
         />
       ))}
     </div>

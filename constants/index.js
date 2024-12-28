@@ -75,13 +75,16 @@ export const FORM_REMINDER_BUFFER_OPTIONS = [
   { title: 'Two Weeks', name: 'recurrenceBuffer', value: 14 },
   { title: 'Three Weeks', name: 'recurrenceBuffer', value: 21 },
 ];
-export const MODAL_CONFIRM_DELETION_HEADLINE = 'Confirm Deletion';
+export const MODAL_CONFIRM_DELETION_HEADLINE = 'Confirm Delete';
 export const MODAL_CREATE_CATEGORY_HEADLINE = 'Create Category';
 export const MODAL_CREATE_REMINDER_HEADLINE = 'Create Reminder';
 export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
 export const MODAL_UPDATE_ITEM_HEADLINE = 'Update Item';
 export const MODAL_CREATE_NOTE_HEADLINE = 'Create Note';
 export const MODAL_UPDATE_NOTE_HEADLINE = 'Update Note';
+export const MODAL_CONFIRM_RESET_REMINDER = 'Confirm Complete';
+export const MODAL_CONFIRM_DELETE_BUTTON = 'Delete';
+export const MODAL_CONFIRM_COMPLETE_BUTTON = 'Done';
 export const ITEM_ERROR_AT_ITEM_LIMIT =
   "Limit 50 items! Looks like it's time to get to work.";
 export const CATEGORY_ERROR_AT_ITEM_LIMIT = 'Limit 12 Categories';

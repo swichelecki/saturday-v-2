@@ -2,15 +2,20 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
-import { RemindersItem, Toast } from '../../components';
+import { RemindersItem, Modal, ModalConfirm, Toast } from '../../components';
 import { getReminder, updateReminder } from '../../actions';
 import { useInnerWidth } from '../../hooks';
 import { handleHiddenHeight } from '../../utilities';
-import { MOBILE_BREAKPOINT, BY_WEEK_INTERVALS } from '../../constants';
+import {
+  MOBILE_BREAKPOINT,
+  BY_WEEK_INTERVALS,
+  MODAL_CONFIRM_RESET_REMINDER,
+  MODAL_CONFIRM_COMPLETE_BUTTON,
+} from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
 const Reminders = ({ reminders }) => {
-  const { setShowToast, userId } = useAppContext();
+  const { setShowToast, userId, setShowModal } = useAppContext();
 
   const width = useInnerWidth();
 
@@ -21,7 +26,6 @@ const Reminders = ({ reminders }) => {
   const [remindersItems, setReminders] = useState(reminders ?? []);
   const [reminderToUpdate, setReminderToUpdate] = useState({});
   const [showReminders, setShowReminders] = useState(true);
-  const [isAwaitingResetResponse, setIsAwaitingResetResponse] = useState(false);
   const [showScrollButtons, setShowScrollButtons] = useState(false);
   const [remindersWrapperClientRectRight, setRemindersWrapperClientRectRight] =
     useState(0);
@@ -57,7 +61,7 @@ const Reminders = ({ reminders }) => {
 
   // set next reminder date
   useEffect(() => {
-    if (isAwaitingResetResponse) {
+    if (Object.keys(reminderToUpdate).length > 0) {
       let copyOfReminderToUpdate = { ...reminderToUpdate };
       const startingDate = copyOfReminderToUpdate?.reminderDate;
       const interval = copyOfReminderToUpdate?.recurrenceInterval;
@@ -99,14 +103,28 @@ const Reminders = ({ reminders }) => {
           setShowToast(<Toast serverError={res} />);
         }
 
-        setIsAwaitingResetResponse(false);
+        setShowModal(null);
       });
     }
   }, [reminderToUpdate]);
 
   // get reminder to update
-  const handleResetReminder = (id) => {
-    setIsAwaitingResetResponse(true);
+  const handleResetReminder = (id, confirmUpdate) => {
+    if (confirmUpdate) {
+      setShowModal(
+        <Modal showCloseButton={false}>
+          <h2>{MODAL_CONFIRM_RESET_REMINDER}</h2>
+          <ModalConfirm
+            handleConfirm={handleResetReminder}
+            confirmId={id}
+            confirmBtnText={MODAL_CONFIRM_COMPLETE_BUTTON}
+            className='modal__reminder-button'
+          />
+        </Modal>
+      );
+      return;
+    }
+
     getReminder(userId, id).then((res) => {
       if (res.status === 200) {
         setReminderToUpdate(res.item);
@@ -208,7 +226,6 @@ const Reminders = ({ reminders }) => {
                 id={item?._id}
                 title={item?.reminder}
                 date={item?.exactRecurringDate && item?.reminderDate}
-                isAwaitingResetResponse={isAwaitingResetResponse}
                 handleResetReminder={handleResetReminder}
               />
             ))}

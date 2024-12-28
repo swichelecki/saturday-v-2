@@ -1,6 +1,7 @@
 'use server';
 
 import Category from '../../../models/Category';
+import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../../utilities';
 import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { categorySchema } from '../../../schemas/schemas';
@@ -43,7 +44,7 @@ export default async function createCategory(formData) {
   try {
     const category = Object.fromEntries(formData);
     const result = await Category.create(category);
-
+    revalidatePath('/settings');
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

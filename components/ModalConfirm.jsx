@@ -3,10 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useAppContext } from '../context';
 
-const ModalDelete = ({ handleDeleteItem, modalIdToDelete }) => {
+const ModalConfirm = ({
+  handleConfirm,
+  confirmId,
+  confirmBtnText,
+  className,
+}) => {
   const { setShowModal } = useAppContext();
 
-  const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
+  const [isAwaitingConfirmResponse, setIsAwaitingConfirmResponse] =
     useState(false);
 
   // handle keyboard events
@@ -35,16 +40,16 @@ const ModalDelete = ({ handleDeleteItem, modalIdToDelete }) => {
       </button>
       <button
         onClick={() => {
-          setIsAwaitingDeleteResponse(true);
-          handleDeleteItem(modalIdToDelete);
+          setIsAwaitingConfirmResponse(true);
+          handleConfirm(confirmId);
         }}
-        className='modal__delete-button'
+        className={className ? className : 'modal__delete-button'}
       >
-        {isAwaitingDeleteResponse && <div className='loader'></div>}
-        Delete
+        {isAwaitingConfirmResponse && <div className='loader'></div>}
+        {confirmBtnText}
       </button>
     </div>
   );
 };
 
-export default ModalDelete;
+export default ModalConfirm;

@@ -6,7 +6,7 @@ import { useAppContext } from '../../context';
 import {
   MainControls,
   Modal,
-  ModalDelete,
+  ModalConfirm,
   ModalUpdateItem,
   FormErrorMessage,
   Toast,
@@ -18,6 +18,7 @@ import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
   MODAL_UPDATE_ITEM_HEADLINE,
+  MODAL_CONFIRM_DELETE_BUTTON,
 } from '../../constants';
 
 const ItemsColumn = dynamic(() =>
@@ -256,9 +257,10 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
       setShowModal(
         <Modal showCloseButton={false}>
           <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
-          <ModalDelete
-            handleDeleteItem={handleDeleteTask}
-            modalIdToDelete={id}
+          <ModalConfirm
+            handleConfirm={handleDeleteTask}
+            confirmId={id}
+            confirmBtnText={MODAL_CONFIRM_DELETE_BUTTON}
           />
         </Modal>
       );

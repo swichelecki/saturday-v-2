@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
-import { Modal, ModalDelete, Tooltip } from '../../components';
+import { Modal, ModalConfirm, Tooltip } from '../../components';
 import {
   handleReminderBufferFormat,
   handleIntervalFormat,
@@ -11,7 +11,10 @@ import moment from 'moment-timezone';
 import { GrDrag, GrMore } from 'react-icons/gr';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import { MdEdit } from 'react-icons/md';
-import { MODAL_CONFIRM_DELETION_HEADLINE } from '../../constants';
+import {
+  MODAL_CONFIRM_DELETION_HEADLINE,
+  MODAL_CONFIRM_COMPLETE_BUTTON,
+} from '../../constants';
 
 const SettingsItem = ({
   item,
@@ -329,9 +332,10 @@ const SettingsItem = ({
               setShowModal(
                 <Modal showCloseButton={false}>
                   <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
-                  <ModalDelete
-                    handleDeleteItem={handleDeleteItem}
-                    modalIdToDelete={item?._id}
+                  <ModalConfirm
+                    handleConfirm={handleDeleteItem}
+                    confirmId={item?._id}
+                    confirmBtnText={MODAL_CONFIRM_COMPLETE_BUTTON}
                   />
                 </Modal>
               );

@@ -21,4 +21,5 @@ export { default as createContactMessage } from './contact/createContactMessage'
 export { default as createNote } from './notes/createNote';
 export { default as deleteNote } from './notes/deleteNote';
 export { default as updateNote } from './notes/updateNote';
+export { default as pinNote } from './notes/pinNote';
 export { default as getNote } from './notes/getNote';

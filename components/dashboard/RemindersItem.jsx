@@ -1,18 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import moment from 'moment-timezone';
 import { handleTodaysDateCheck } from '../../utilities';
 
-const RemindersItem = ({
-  id,
-  title,
-  date,
-  isAwaitingResetResponse,
-  handleResetReminder,
-}) => {
-  const [idToReset, setIdToReset] = useState('');
-
+const RemindersItem = ({ id, title, date, handleResetReminder }) => {
   const isToday = date ? handleTodaysDateCheck(date.split('T')[0]) : false;
 
   return (
@@ -28,20 +19,11 @@ const RemindersItem = ({
       )}
       {!date && (
         <button
-          className={`reminders__reminders-button${
-            isAwaitingResetResponse && id === idToReset
-              ? ' reminders__reminders-button--resetting'
-              : ''
-          }`}
+          className='reminders__reminders-button'
           onClick={() => {
-            setIdToReset(id);
-            handleResetReminder(id);
+            handleResetReminder(id, true);
           }}
-        >
-          {isAwaitingResetResponse && id === idToReset && (
-            <div className='loader'></div>
-          )}
-        </button>
+        ></button>
       )}
     </div>
   );
