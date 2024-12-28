@@ -22,7 +22,7 @@ export default async function getWeather(userId) {
     let ipv6Address = null;
 
     if (forwardedFor) {
-      const ips = forwardedFor.split(', ');
+      const ips = forwardedFor.split(',');
       for (const ip of ips) {
         if (ip.includes(':')) {
           ipv6Address = ip;
