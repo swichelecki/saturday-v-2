@@ -10,6 +10,10 @@
     align-items: flex-start;
     flex: 0 1 40%;
     gap: 24px;
+    p {
+      font-weight: 300;
+      line-height: 1.6;
+    }
   }
   &__list-wrapper {
     flex: 0 1 60%;

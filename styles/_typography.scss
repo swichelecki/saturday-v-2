@@ -1,37 +1,27 @@
 h1,
 .h1 {
-  font-family: var(--montserrat), sans-serif;
-  letter-spacing: 1px;
   margin: 0;
-  font-weight: 400;
+  font-weight: 600;
   font-size: 2.25rem; // 36px
 }
 
 h2,
 .h2 {
-  font-family: var(--montserrat), sans-serif;
-  letter-spacing: 1px;
   margin: 0;
-  font-weight: 400;
-  font-size: 1.5rem; // 24px;
+  font-size: 1.125rem; // 18px
 }
 
 p {
   margin: 0;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 600px) {
   h1,
   .h1 {
     font-size: 1.875rem; // 30px
   }
-}
-
-@media screen and (max-width: 600px) {
-  h1,
-  .h1,
   h2,
   .h2 {
-    font-weight: 300;
+    font-size: 1.25rem; // 20px;
   }
 }

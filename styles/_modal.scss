@@ -4,7 +4,7 @@ dialog::backdrop {
 
 dialog {
   border: 0;
-  padding: 32px 32px 48px;
+  padding: 0;
   border-radius: 12px;
   overflow: visible;
   background-color: $color-background;
@@ -15,27 +15,35 @@ dialog {
 .modal {
   min-width: 295px;
   position: relative;
-  & > button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    border-radius: 50%;
-    box-shadow: 0 0 0 1px $color-font;
-    background-color: $color-background-dark;
-    color: $color-font;
-    svg {
-      width: 1.5rem;
-      height: 1.5rem;
+  &__inner-wrapper {
+    padding: 32px 32px 48px;
+    & > button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 32px;
+      height: 32px;
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      border-radius: 50%;
+      color: $color-font;
+      background-color: transparent;
+      transition: all 0.3s;
+      svg {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+      &:hover {
+        box-shadow: 0 0 0 1px $color-font;
+        background-color: $color-background-dark;
+      }
     }
   }
   h2 {
     margin-bottom: 24px;
     text-align: center;
+    font-size: 1.5rem; // 24px;
   }
   &__modal-button-wrapper {
     display: flex;
@@ -54,14 +62,18 @@ dialog {
   &__image-modal {
     max-width: 1000px;
     width: 100%;
-    padding: unset;
     border: unset;
+    .modal__inner-wrapper {
+      padding: 0;
+    }
     & > button {
       top: -12px;
       right: -12px;
     }
     img {
       border-radius: 12px;
+      pointer-events: none;
+      user-select: none;
     }
   }
 }
@@ -75,7 +87,7 @@ dialog {
   }
 }
 
-@media screen and (max-height: 910px) {
+@media screen and (max-height: 966px) {
   dialog.modal.modal__form-modal--large {
     display: flex;
     flex-direction: column;
@@ -84,7 +96,7 @@ dialog {
   }
 }
 
-@media screen and (max-height: 668px) {
+@media screen and (max-height: 666px) {
   dialog.modal.modal__form-modal--small {
     display: flex;
     flex-direction: column;

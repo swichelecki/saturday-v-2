@@ -22,21 +22,19 @@ button.modal__cancel-button,
 button.modal__delete-button,
 button.modal__update-button,
 button.modal__save-button,
-button.modal__reminder-button {
+button.modal__reminder-button,
+button.reminders__reminders-button {
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: 73px;
   border-radius: 20px;
-  padding: 8px 12px;
+  padding: 8px 18px;
   border: 0;
   font: inherit;
   cursor: pointer;
   color: $color-background;
   background-color: transparent;
-  font-size: 1rem; // 16px
-  letter-spacing: 0.5px;
-  font-weight: 400;
   text-align: center;
 }
 
@@ -44,14 +42,13 @@ a.homepage__signup {
   padding: 12px 16px;
   font-size: 1.125rem; // 18px
   border-radius: 26px;
-  box-shadow: 0 0 0 1px $button-purple;
   background-color: $button-purple-dark;
   color: $button-purple;
+  box-shadow: 0 0 0 1px $color-border;
 }
 
 button.modal__update-button {
   background-color: $button-blue-dark;
-  border: 1px solid $button-blue;
   color: $button-blue;
   .loader {
     border: 2px solid $button-blue;
@@ -59,10 +56,14 @@ button.modal__update-button {
   }
 }
 
+span.main-controls__create-button,
+button.main-controls__add-button {
+  border: 1px solid $color-border;
+}
+
 button.list-item__details-button,
 button.main-controls__add-button,
 span.main-controls__create-button {
-  border: 1px solid $color-border;
   background-color: $button-purple-dark;
   color: $button-purple;
   svg {
@@ -75,36 +76,28 @@ span.main-controls__create-button {
 }
 
 button.reminders__reminders-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background-color: $button-yellow-dark;
-  border: 1px solid $color-border;
-  color: $button-yellow;
+  min-width: unset;
+  padding: 0;
   width: 34px;
   height: 28px;
   border-radius: 10px;
+  background-color: $button-yellow-dark;
+  svg {
+    fill: $button-yellow;
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+}
+
+button.list-item__pin-button {
+  min-width: unset;
   padding: 0;
-  .loader {
-    border: 2px solid $button-yellow;
-    border-top: 2px solid transparent;
-  }
-  &:after {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 12px;
-    width: 5px;
-    height: 10px;
-    border: solid $button-yellow;
-    border-width: 0 3px 3px 0;
-    transform: rotate(45deg);
-  }
-  &--resetting {
-    &:after {
-      display: none;
-    }
+  width: 34px;
+  height: 28px;
+  svg {
+    fill: $button-orange;
+    width: 1.3rem;
+    height: 1.3rem;
   }
 }
 
@@ -133,7 +126,6 @@ button.list-item__delete-button,
 button.modal__delete-button,
 button.form-page__delete-button {
   background-color: $button-red-dark;
-  border: 1px solid $color-border;
   color: $button-red;
   svg {
     fill: $button-red;
@@ -148,7 +140,6 @@ a.list-item__edit-button,
 button.form-page__save-button,
 button.modal__save-button {
   background-color: $button-green-dark;
-  border: 1px solid $color-border;
   color: $button-green;
   svg {
     fill: $button-green;
@@ -160,10 +151,6 @@ button.modal__save-button {
 }
 
 button.list-item__edit-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid $color-border;
   background-color: $button-blue-dark;
   svg {
     fill: $button-blue;
@@ -178,7 +165,6 @@ button.list-item__cancel-button,
 button.modal__cancel-button,
 span.form-page__cancel-button {
   background-color: $button-orange-dark;
-  border: 1px solid $color-border;
   color: $button-orange;
   svg {
     fill: $button-orange;
@@ -187,7 +173,6 @@ span.form-page__cancel-button {
 
 button.modal__reminder-button {
   background-color: $button-yellow-dark;
-  border: 1px solid $button-yellow;
   color: $button-yellow;
   .loader {
     border: 2px solid $button-yellow;
@@ -198,7 +183,6 @@ button.modal__reminder-button {
 button.list-item__details-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
-button.list-item__pin-button,
 a.list-item__edit-button,
 button.list-item__cancel-button {
   position: relative;
@@ -226,18 +210,6 @@ button.list-item__cancel-button {
       width: 1.4rem;
       height: 1.4rem;
     }
-  }
-}
-
-// TODO: need to decide actual treatment for pin button
-button.list-item__pin-button {
-  min-width: unset;
-  width: 28px;
-  height: 28px;
-  svg {
-    fill: $button-orange;
-    width: 1.4rem;
-    height: 1.4rem;
   }
 }
 
@@ -270,8 +242,6 @@ button.entry-form__button {
   padding: 14px;
   font-size: 1.125rem; // 18px
   border-radius: 26px;
-  font-weight: 400;
-  letter-spacing: 0.5px;
   gap: 6px;
   border: 1px solid $color-border;
   background-color: $button-purple-dark;
@@ -290,26 +260,6 @@ button.modal__reminder-button {
   width: 100%;
   font-size: 1.125rem; // 18px
   gap: 6px;
-}
-
-button.modal__cancel-button,
-span.form-page__cancel-button {
-  border: 1px solid $button-orange;
-}
-
-button.modal__delete-button,
-button.form-page__delete-button {
-  border: 1px solid $button-red;
-}
-
-button.main-controls__add-button,
-span.main-controls__create-button {
-  border: 1px solid $button-purple;
-}
-
-button.form-page__save-button,
-button.modal__save-button {
-  border: 1px solid $button-green;
 }
 
 button.user-menu__button {

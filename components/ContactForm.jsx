@@ -101,7 +101,7 @@ const ContactForm = ({ user }) => {
 
   return (
     <form onSubmit={onSubmit} ref={formRef} className='form-page contact-form'>
-      <h2 className='form-page__h2'>Contact</h2>
+      <h1 className='form-page__h2'>Contact</h1>
       <FormTextField
         label='Email'
         type='email novalidate'

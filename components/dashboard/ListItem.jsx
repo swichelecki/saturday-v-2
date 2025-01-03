@@ -519,7 +519,7 @@ const ItemList = ({
                   );
                 }}
                 type='button'
-                className='list-item__pin-button list-item__pin-button--desktop'
+                className='list-item__pin-button'
               >
                 <MdPushPin />
               </button>
@@ -569,8 +569,8 @@ const ItemList = ({
         >
           <div className='list-item__details-padding'>
             {itemType === ITEM_TYPE_NOTE && (
-              <p>
-                Date posted: {moment(item?.date).format('dddd, MMMM D, YYYY')}
+              <p className='list-item__notes-posted-date'>
+                {moment(item?.date).format('dddd, MMMM D, YYYY')}
               </p>
             )}
             {item?.description && (

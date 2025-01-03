@@ -18,7 +18,7 @@ export default async function pinNote(id, userId, pinnedStatus, year) {
   }
 
   try {
-    const pinnedNoteKey = 'pinned';
+    const pinnedNoteKey = 'Pinned';
     const type = pinnedStatus ? pinnedNoteKey : year;
     const pinnedDate = new Date().toISOString();
     await Note.updateOne(

@@ -6,11 +6,8 @@
   label {
     display: flex;
     align-self: flex-start;
-    margin-bottom: 6px;
-    font-family: var(--montserrat), sans-serif;
-    font-weight: 400;
-    font-size: 1rem; // 16px
-    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+    font-size: 1.125rem; // 18px
   }
   input {
     border: none;
@@ -30,8 +27,9 @@
     padding-bottom: 16px;
   }
   &__sublabel {
-    margin-bottom: 10px;
-    font-size: 1rem; // 16px
+    margin-bottom: 8px;
+    font-weight: 300;
+    line-height: 1.6;
     color: $color-list-item-svg;
   }
   &__select-wrapper {
@@ -88,22 +86,20 @@
     }
   }
   .ql-container.ql-snow {
-    font-size: 1.125rem; // 18px
     min-height: 200px;
     font-family: inherit;
-    line-height: 1.56;
     background-color: $color-input;
+    font-size: 1rem; // 16px
+    font-weight: 300;
     .ql-editor.ql-blank {
       min-height: 198px;
     }
     p,
     ul,
     ol {
-      margin: 0;
       padding: 0;
-    }
-    li {
-      margin-bottom: 8px;
+      margin: 0;
+      line-height: 1.6;
     }
     a {
       color: $button-blue;
@@ -115,5 +111,13 @@
   .ql-container.ql-snow {
     border-bottom-right-radius: 9px;
     border-bottom-left-radius: 9px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .form-field {
+    &__sublabel {
+      font-size: 1rem; // 16px
+    }
   }
 }

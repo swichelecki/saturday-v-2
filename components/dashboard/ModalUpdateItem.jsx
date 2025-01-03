@@ -37,21 +37,6 @@ const ModalUpdateItem = ({
   const [isAwaitingSubmitResponse, setIsAwaitingSubmitResponse] =
     useState(false);
 
-  // handle keyboard events
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') handleCloseModal();
-    };
-
-    if (document && typeof document !== 'undefined') {
-      document.addEventListener('keydown', handleKeyDown);
-
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-      };
-    }
-  }, [form]);
-
   // set state to item to update
   useEffect(() => {
     setForm(itemToUpdate);

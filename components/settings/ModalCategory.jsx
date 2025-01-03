@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FormTextField, FormCheckboxField, Toast } from '../../components';
 import { createCategory } from '../../actions';
 import { useAppContext } from '../../context';
@@ -27,21 +27,6 @@ const ModalReminder = ({
   });
   const [isAwaitingSubmitResponse, setIsAwaitingSubmitResponse] =
     useState(false);
-
-  // handle keyboard events
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') handleCloseModal();
-    };
-
-    if (document && typeof document !== 'undefined') {
-      document.addEventListener('keydown', handleKeyDown);
-
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-      };
-    }
-  }, [form]);
 
   // state handlers
   const handleForm = (e) => {

@@ -13,8 +13,8 @@ const NoteGroup = ({
   if (!items?.length) return <></>;
 
   return (
-    <div>
-      <h3>{heading}</h3>
+    <div className='notes notes__notes-group'>
+      <h2>{heading}</h2>
       <div>
         {items?.map((item, index) => (
           <ListItem

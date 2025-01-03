@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import {
   FormTextField,
   FormCheckboxField,
@@ -55,21 +55,6 @@ const ModalReminder = ({
     useState(false);
 
   useScrollToError(pageRef, scrollToErrorMessage, setScrollToErrorMessage);
-
-  // handle keyboard events
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') handleCloseModal();
-    };
-
-    if (document && typeof document !== 'undefined') {
-      document.addEventListener('keydown', handleKeyDown);
-
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-      };
-    }
-  }, []);
 
   // state handlers
   const handleForm = (e) => {

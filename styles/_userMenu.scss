@@ -4,7 +4,7 @@
     position: absolute;
     top: 55px;
     right: 48px;
-    background-color: $color-background-dark;
+    background-color: $color-background;
     border-radius: 12px;
     z-index: 1;
     &--show-menu {
@@ -26,11 +26,15 @@
           gap: 10px;
           padding: 4px 0 4px 24px;
           color: $color-font;
-          font-size: 1rem; // 16px
           cursor: pointer;
+          opacity: 0.8;
+          transition: all 0.3s;
           svg {
             width: 1.1rem;
             height: 1.1rem;
+          }
+          &:hover {
+            opacity: 1;
           }
         }
         &:hover {

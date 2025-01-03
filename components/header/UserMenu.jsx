@@ -32,14 +32,10 @@ const UserMenu = () => {
     };
 
     if (document && typeof document !== 'undefined') {
-      document.addEventListener('click', (e) =>
-        handleCloseMenuWhenClickingOff(e)
-      );
+      document.addEventListener('click', handleCloseMenuWhenClickingOff);
 
       return () => {
-        document.removeEventListener('click', (e) =>
-          handleCloseMenuWhenClickingOff(e)
-        );
+        document.removeEventListener('click', handleCloseMenuWhenClickingOff);
       };
     }
   }, []);
@@ -74,7 +70,7 @@ const UserMenu = () => {
       >
         <FaUser />
       </button>
-      <nav ref={menuRef} className={'user-menu__nav'}>
+      <nav ref={menuRef} className='user-menu__nav'>
         <ul>
           <li>
             <Link href='/settings'>

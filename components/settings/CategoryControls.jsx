@@ -110,7 +110,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
 
   return (
     <>
-      <h2 className='form-page__h2'>Categories</h2>
+      <h1 className='form-page__h2'>Categories</h1>
       <div className='settings-controls'>
         {isCategoriesPrompt && prompt}
         {isDashboardPrompt && prompt}

@@ -21,8 +21,7 @@ export default async function getWeather(userId) {
     let ipAddress = headerList.get('x-forwarded-for').split(',')[0];
 
     // if localhost use America/Chicago ip address
-    if (ipAddress === '::1')
-      ipAddress = '2601:241:8e81:44f0:e455:242:81a7:b7f0';
+    if (ipAddress === '::1') ipAddress = '73.111.204.162';
 
     // get user location
     const locationDataRes = await fetch(
@@ -36,7 +35,7 @@ export default async function getWeather(userId) {
     const weatherRes = await fetch(openMeteoApiUrl);
     const weatherData = await weatherRes.json();
 
-    return { status: 200, data: { weatherData, city, ipAddress } };
+    return { status: 200, data: { weatherData, city } };
   } catch (error) {
     console.log(error);
     const errorMessage = handleServerErrorMessage(error);

@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Modal } from '../components';
@@ -14,27 +13,12 @@ export default function Home() {
 
   const width = useInnerWidth();
 
-  // reset image modal
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setShowModal(null);
-    };
-
-    if (document && typeof document !== 'undefined') {
-      document.addEventListener('keydown', handleKeyDown);
-
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-      };
-    }
-  }, []);
-
   // show image modal
   const handleShowModal = () => {
     if (width <= 1000) return;
 
     setShowModal(
-      <Modal className='modal modal__image-modal'>
+      <Modal className='modal modal__image-modal' showCloseButton={false}>
         <Image
           src={homepageImage}
           width={1000}

@@ -16,36 +16,67 @@ const Modal = ({ className, children, showCloseButton = true }) => {
   useEffect(() => {
     modalRef.current.showModal();
     window.scrollTo(0, 0);
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setShowModal(null);
+    };
+
+    const handleCloseModalWhenClickingOff = (e) => {
+      if (e.target === modalRef.current) {
+        setShowModal(null);
+        handleModalResetPageScrolling();
+      }
+    };
+
+    if (document && typeof document !== 'undefined') {
+      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('click', handleCloseModalWhenClickingOff);
+
+      return () => {
+        document.removeEventListener('click', handleCloseModalWhenClickingOff);
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
   }, []);
 
-  // when modal is taller than viewport limit scrolling to height of modal
   useEffect(() => {
     const modalHeight = modalRef?.current?.offsetHeight;
+    const appWrapper = document.querySelector('.app-wrapper');
 
-    if (innerHeight && modalHeight > innerHeight) {
-      const appWrapper = document.querySelector('.app-wrapper');
+    // when modal is taller than viewport limit scrolling to height of modal
+    if (innerHeight && modalHeight >= innerHeight) {
       const pageScrollingRestrictedHeight = modalHeight + 32;
       appWrapper.setAttribute(
         'style',
         `height: ${pageScrollingRestrictedHeight}px; overflow: hidden;`
       );
     }
+
+    // when modal is shorter than viewport prevent scrolling
+    if (innerHeight && modalHeight < innerHeight) {
+      appWrapper.setAttribute(
+        'style',
+        `height: ${innerHeight}px; overflow: hidden;`
+      );
+    }
   }, [innerHeight]);
 
   return (
     <dialog ref={modalRef} className={`${className ? className : 'modal'}`}>
-      {showCloseButton && (
-        <button
-          onClick={() => {
-            setShowModal(null);
-            handleModalResetPageScrolling();
-          }}
-          type='button'
-        >
-          <IoClose />
-        </button>
-      )}
-      {children}
+      <div className='modal__inner-wrapper'>
+        {showCloseButton && (
+          <button
+            onClick={() => {
+              setShowModal(null);
+              handleModalResetPageScrolling();
+            }}
+            type='button'
+          >
+            <IoClose />
+          </button>
+        )}
+        {children}
+      </div>
     </dialog>
   );
 };

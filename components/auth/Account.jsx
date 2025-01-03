@@ -239,7 +239,7 @@ const Account = ({ user }) => {
   return (
     <div className='form-page' ref={pageRef}>
       <form onSubmit={changeTimezone}>
-        <h2 className='form-page__h2'>Change Timezone</h2>
+        <h1 className='form-page__h2'>Change Timezone</h1>
         <FormSelectField
           label='Timezone'
           id='timezone'
@@ -262,7 +262,7 @@ const Account = ({ user }) => {
         </div>
       </form>
       <form onSubmit={changePassword}>
-        <h2 className='form-page__h2'>Change Password</h2>
+        <h1 className='form-page__h2'>Change Password</h1>
         <FormTextField
           label='Email'
           type='email novalidate'
@@ -311,7 +311,7 @@ const Account = ({ user }) => {
         </div>
       </form>
       <form onSubmit={deleteAccount}>
-        <h2 className='form-page__h2'>Delete Account</h2>
+        <h1 className='form-page__h2'>Delete Account</h1>
         <FormTextField
           label='Email'
           type='email novalidate'

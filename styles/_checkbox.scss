@@ -4,7 +4,6 @@
     padding: 3px 0 0 37px;
     cursor: pointer;
     user-select: none;
-    font-size: 1rem; // 16px
     & input {
       position: absolute;
       opacity: 0;
@@ -59,10 +58,17 @@
     }
   }
   &__sublabel {
-    font-family: var(--sourceSans3), sans-serif;
     font-weight: 300;
+    line-height: 1.6;
     color: $color-list-item-svg;
     margin-top: 6px;
-    font-size: 1rem; // 16px
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .checkbox {
+    &__sublabel {
+      font-size: 1rem; // 16px
+    }
   }
 }

@@ -4,6 +4,7 @@ import User from '../../models/User';
 import Task from '../../models/Task';
 import Reminder from '../../models/Reminder';
 import Category from '../../models/Category';
+import Note from '../../models/Note';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { handleServerErrorMessage } from '../../utilities';
@@ -54,6 +55,7 @@ export default async function deleteUserAccount(formData) {
       await Task.deleteMany({ userId });
       await Reminder.deleteMany({ userId });
       await Category.deleteMany({ userId });
+      await Note.deleteMany({ userId });
       await User.deleteOne({ _id: userId });
       (await cookies()).delete('saturday');
 

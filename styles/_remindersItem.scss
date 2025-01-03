@@ -3,20 +3,26 @@
   justify-content: flex-start;
   align-items: center;
   flex: 0 0 auto;
-  gap: 8px;
-  min-height: 52px;
-  padding: 12px;
-  font-weight: 400;
+  gap: 10px;
+  padding: 10px 16px;
   border-radius: 8px;
-  background-color: $button-yellow-dark;
+  background-color: $color-yellow-extra-dark;
   color: $button-yellow;
   &__date {
     color: $color-font;
-    font-size: 1rem; // 16px
     font-weight: 300;
+    font-size: 0.875rem; // 14px
   }
   &--today {
     background-color: $button-orange-dark;
     color: $button-orange;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .reminders-item {
+    &__date {
+      font-size: 1rem; // 16px
+    }
   }
 }

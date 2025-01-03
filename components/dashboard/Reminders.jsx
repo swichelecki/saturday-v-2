@@ -196,7 +196,7 @@ const Reminders = ({ reminders }) => {
     <div className='reminders__outer-wrapper'>
       <div className='reminders__wrapper'>
         <button
-          className={`${!showReminders ? 'button-closed' : 'button-open'}`}
+          className={`h2 ${!showReminders ? 'button-closed' : 'button-open'}`}
           onClick={() => {
             setShowReminders((current) => !current);
           }}
