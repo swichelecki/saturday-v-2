@@ -6,7 +6,8 @@ export async function middleware(req) {
 
   if (
     (!user && req.nextUrl.pathname === '/login') ||
-    (!user && req.nextUrl.pathname === '/signup')
+    (!user && req.nextUrl.pathname === '/signup') ||
+    (!user && req.nextUrl.pathname === '/')
   ) {
     return NextResponse.next();
   }

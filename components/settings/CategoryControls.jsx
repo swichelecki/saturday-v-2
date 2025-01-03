@@ -10,6 +10,7 @@ import {
   Toast,
 } from '../../components';
 import { deleteCategory, updateCategory } from '../../actions';
+import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MODAL_CREATE_CATEGORY_HEADLINE,
   CATEGORY_ITEM_LIMIT,
@@ -55,6 +56,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
       }
 
       setShowModal(null);
+      handleModalResetPageScrolling();
       setIsAwaitingDeleteResponse(false);
     });
   };

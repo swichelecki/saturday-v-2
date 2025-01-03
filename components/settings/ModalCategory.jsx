@@ -128,10 +128,7 @@ const ModalReminder = ({
       <input type='hidden' name='priority' value={form?.priority} />
       <div className='modal__modal-button-wrapper'>
         <button
-          onClick={() => {
-            handleCloseModal();
-            handleModalResetPageScrolling();
-          }}
+          onClick={handleCloseModal}
           type='button'
           className='modal__cancel-button'
         >

@@ -5,7 +5,10 @@ import { useAppContext } from '../../context';
 import { RemindersItem, Modal, ModalConfirm, Toast } from '../../components';
 import { getReminder, updateReminder } from '../../actions';
 import { useInnerWidth } from '../../hooks';
-import { handleHiddenHeight } from '../../utilities';
+import {
+  handleHiddenHeight,
+  handleModalResetPageScrolling,
+} from '../../utilities';
 import {
   MOBILE_BREAKPOINT,
   BY_WEEK_INTERVALS,
@@ -104,6 +107,7 @@ const Reminders = ({ reminders }) => {
         }
 
         setShowModal(null);
+        handleModalResetPageScrolling();
       });
     }
   }, [reminderToUpdate]);

@@ -18,14 +18,11 @@ const Modal = ({ className, children, showCloseButton = true }) => {
     window.scrollTo(0, 0);
 
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setShowModal(null);
+      if (e.key === 'Escape') handleCloseModal();
     };
 
     const handleCloseModalWhenClickingOff = (e) => {
-      if (e.target === modalRef.current) {
-        setShowModal(null);
-        handleModalResetPageScrolling();
-      }
+      if (e.target === modalRef.current) handleCloseModal();
     };
 
     if (document && typeof document !== 'undefined') {
@@ -61,17 +58,16 @@ const Modal = ({ className, children, showCloseButton = true }) => {
     }
   }, [innerHeight]);
 
+  const handleCloseModal = () => {
+    setShowModal(null);
+    handleModalResetPageScrolling();
+  };
+
   return (
     <dialog ref={modalRef} className={`${className ? className : 'modal'}`}>
       <div className='modal__inner-wrapper'>
         {showCloseButton && (
-          <button
-            onClick={() => {
-              setShowModal(null);
-              handleModalResetPageScrolling();
-            }}
-            type='button'
-          >
+          <button onClick={handleCloseModal} type='button'>
             <IoClose />
           </button>
         )}

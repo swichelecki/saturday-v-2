@@ -270,10 +270,7 @@ const ModalReminder = ({
       />
       <div className='modal__modal-button-wrapper'>
         <button
-          onClick={() => {
-            handleCloseModal();
-            handleModalResetPageScrolling();
-          }}
+          onClick={handleCloseModal}
           type='button'
           className='modal__cancel-button'
         >

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useInnerWidth } from '../../hooks';
 import { MdEdit } from 'react-icons/md';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
-import { TiCancel } from 'react-icons/ti';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { MOBILE_BREAKPOINT } from '../../constants';
 
@@ -40,12 +39,6 @@ const ItemButtons = ({
       : 'list-item__edit-button--desktop';
   };
 
-  const handleCancelButtonClass = () => {
-    return width <= MOBILE_BREAKPOINT
-      ? 'list-item__cancel-button--mobile'
-      : 'list-item__cancel-button--desktop';
-  };
-
   const handleDeleteButtonClass = () => {
     return width <= MOBILE_BREAKPOINT
       ? 'list-item__delete-button--mobile'
@@ -54,14 +47,7 @@ const ItemButtons = ({
 
   return (
     <>
-      {(date || dateAndTime) && description ? (
-        <button
-          onClick={handleShowDetails}
-          className={`list-item__details-button ${handleDetailsButtonClass()}`}
-        >
-          {isOpen ? <FaArrowUp /> : <FaArrowDown />}
-        </button>
-      ) : !date && !dateAndTime && description ? (
+      {description ? (
         <button
           onClick={handleShowDetails}
           className={`list-item__details-button ${handleDetailsButtonClass()}`}
@@ -75,7 +61,7 @@ const ItemButtons = ({
         >
           <MdEdit />
         </Link>
-      ) : itemToUpdateId !== itemId || isAwaitingEditResponse ? (
+      ) : (
         <button
           onClick={() => {
             getItemToUpdate(itemId);
@@ -88,14 +74,7 @@ const ItemButtons = ({
             <MdEdit />
           )}
         </button>
-      ) : (
-        <button
-          className={`list-item__cancel-button ${handleCancelButtonClass()}`}
-        >
-          <TiCancel />
-        </button>
       )}
-
       <button
         onClick={() => {
           handleDeleteItem(itemId, confirmDeletion);

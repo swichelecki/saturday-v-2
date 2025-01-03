@@ -14,6 +14,7 @@ import {
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
 import { createItem, getItem, deleteItem } from '../../actions';
 import { itemSchema } from '../../schemas/schemas';
+import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
@@ -292,6 +293,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
       }
 
       setShowModal(null);
+      handleModalResetPageScrolling();
       setIsAwaitingDeleteResponse(false);
     });
   };

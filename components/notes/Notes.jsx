@@ -12,6 +12,7 @@ import {
   FormErrorMessage,
   Toast,
 } from '../../components';
+import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MODAL_CREATE_NOTE_HEADLINE,
   MODAL_UPDATE_NOTE_HEADLINE,
@@ -129,6 +130,7 @@ const Notes = ({ notes, user }) => {
       }
 
       setShowModal(null);
+      handleModalResetPageScrolling();
     });
   };
 

@@ -10,6 +10,7 @@ import {
   Toast,
 } from '../../components';
 import { deleteReminder, getReminder } from '../../actions';
+import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MODAL_CREATE_REMINDER_HEADLINE,
   MODAL_UPDATE_REMINDER_HEADLINE,
@@ -79,6 +80,7 @@ const RemindersControls = ({ reminders, userId }) => {
       }
 
       setShowModal(null);
+      handleModalResetPageScrolling();
       setIsAwaitingDeleteResponse(false);
     });
   };

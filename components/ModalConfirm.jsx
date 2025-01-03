@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAppContext } from '../context';
+import { handleModalResetPageScrolling } from '../utilities';
 
 const ModalConfirm = ({
   handleConfirm,
@@ -16,6 +17,7 @@ const ModalConfirm = ({
 
   const handleCloseModal = () => {
     setShowModal(null);
+    handleModalResetPageScrolling();
   };
 
   return (

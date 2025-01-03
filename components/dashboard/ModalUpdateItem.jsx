@@ -6,6 +6,7 @@ import { useAppContext } from '../../context';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
 import { FormTextField, Toast } from '../../components';
 import { itemSchema } from '../../schemas/schemas';
+import { handleModalResetPageScrolling } from '../../utilities';
 import { MOBILE_BREAKPOINT } from '../../constants';
 
 const ModalUpdateItem = ({
@@ -131,6 +132,7 @@ const ModalUpdateItem = ({
 
   const handleCloseModal = () => {
     setShowModal(null);
+    handleModalResetPageScrolling();
     setTaskToEditId('');
     setForm({
       userId,

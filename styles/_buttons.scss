@@ -14,7 +14,6 @@ button.list-item__edit-button,
 button.list-item__details-button,
 button.list-item__pin-button,
 a.list-item__edit-button,
-button.list-item__cancel-button,
 button.form-page__save-button,
 span.form-page__cancel-button,
 button.form-page__delete-button,
@@ -161,7 +160,6 @@ button.list-item__edit-button {
   }
 }
 
-button.list-item__cancel-button,
 button.modal__cancel-button,
 span.form-page__cancel-button {
   background-color: $button-orange-dark;
@@ -183,8 +181,7 @@ button.modal__reminder-button {
 button.list-item__details-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
-a.list-item__edit-button,
-button.list-item__cancel-button {
+a.list-item__edit-button {
   position: relative;
   padding: 0;
   svg {
@@ -217,21 +214,6 @@ button.main-controls__add-button,
 button.form-page__save-button,
 button.form-page__delete-button {
   gap: 6px;
-}
-
-button.list-item__cancel-button {
-  &--desktop {
-    svg {
-      width: 1.4rem;
-      height: 1.4rem;
-    }
-  }
-  &--mobile {
-    svg {
-      width: 1.8rem;
-      height: 1.8rem;
-    }
-  }
 }
 
 button.entry-form__button {
