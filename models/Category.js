@@ -10,13 +10,18 @@ const CategorySchema = new Schema({
     type: Number,
     required: true,
   },
-  type: {
+  title: {
     type: String,
     required: true,
   },
   mandatoryDate: {
     type: Boolean,
     required: true,
+  },
+  confirmDeletion: {
+    type: Boolean,
+    required: true,
+    default: true,
   },
 });
 

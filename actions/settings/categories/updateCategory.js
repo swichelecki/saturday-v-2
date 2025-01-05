@@ -24,8 +24,9 @@ export default async function updateCategory(item) {
   const categorySchemaValidated = categorySchema.safeParse({
     userId: item?.userId,
     priority: item?.priority,
-    type: item?.type,
+    title: item?.title,
     mandatoryDate: item?.mandatoryDate,
+    confirmDeletion: item?.confirmDeletion,
     itemLimit: numberOfItems,
   });
 
@@ -36,7 +37,8 @@ export default async function updateCategory(item) {
   }
 
   try {
-    const { _id, userId, priority, type, mandatoryDate } = item;
+    const { _id, userId, priority, title, mandatoryDate, confirmDeletion } =
+      item;
     const newItemColumn = priority;
 
     await Category.updateOne(
@@ -44,12 +46,13 @@ export default async function updateCategory(item) {
       {
         userId,
         priority,
-        type,
+        title,
         mandatoryDate,
+        confirmDeletion,
       }
     );
 
-    const itemsOfCategoryType = await Task.find({ type, userId });
+    const itemsOfCategoryType = await Task.find({ type: title, userId });
 
     itemsOfCategoryType.forEach(async (item) => {
       const {

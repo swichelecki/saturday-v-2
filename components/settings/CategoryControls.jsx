@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
+import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
 import {
-  SettingsItem,
+  ListItem,
   Modal,
+  ModalConfirm,
   ModalCategory,
   FormErrorMessage,
   Toast,
@@ -14,6 +16,10 @@ import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MODAL_CREATE_CATEGORY_HEADLINE,
   CATEGORY_ITEM_LIMIT,
+  ITEM_TYPE_CATEGORY,
+  MODAL_CONFIRM_DELETION_HEADLINE,
+  MODAL_CONFIRM_DELETE_BUTTON,
+  MOBILE_BREAKPOINT,
 } from '../../constants';
 
 const CategoryControls = ({ categories, userId, newUser }) => {
@@ -29,9 +35,10 @@ const CategoryControls = ({ categories, userId, newUser }) => {
     prompt,
   } = useAppContext();
 
+  const width = useInnerWidth();
+  const handleListItemsMobileReset = useListItemsMobileReset();
+
   const [categoryItems, setCategoryItems] = useState(categories ?? []);
-  const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
-    useState(false);
   const [draggableCategories, setDraggableCategories] = useState([]);
   const [atCategoryLimit, setAtCategoryLimit] = useState(false);
 
@@ -42,13 +49,47 @@ const CategoryControls = ({ categories, userId, newUser }) => {
     }
   }, [categoryItems]);
 
-  // delete category
-  const handleDeleteCategory = (_id) => {
-    setIsAwaitingDeleteResponse(true);
+  // open modal for create
+  const handleOpenCategoryModal = () => {
+    if (categoryItems?.length >= CATEGORY_ITEM_LIMIT) {
+      setAtCategoryLimit(true);
+      return;
+    }
 
-    deleteCategory(userId, _id).then((res) => {
+    setShowModal(
+      <Modal className='modal modal__form-modal--small'>
+        <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>
+        <ModalCategory
+          userId={userId}
+          items={categoryItems}
+          setItems={setCategoryItems}
+          newUser={newUser}
+          numberOfCategories={categoryItems?.length}
+        />
+      </Modal>
+    );
+  };
+
+  // delete category
+  const handleDeleteCategory = (id, confirmDeletion) => {
+    if (confirmDeletion) {
+      setShowModal(
+        <Modal showCloseButton={false}>
+          <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
+          <ModalConfirm
+            handleConfirm={handleDeleteCategory}
+            confirmId={id}
+            confirmBtnText={MODAL_CONFIRM_DELETE_BUTTON}
+          />
+        </Modal>
+      );
+      return;
+    }
+
+    deleteCategory(userId, id).then((res) => {
       if (res.status === 200) {
-        setCategoryItems(categoryItems.filter((item) => item._id !== _id));
+        setCategoryItems(categoryItems.filter((item) => item._id !== id));
+        if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
       }
 
       if (res.status !== 200) {
@@ -57,7 +98,6 @@ const CategoryControls = ({ categories, userId, newUser }) => {
 
       setShowModal(null);
       handleModalResetPageScrolling();
-      setIsAwaitingDeleteResponse(false);
     });
   };
 
@@ -99,43 +139,28 @@ const CategoryControls = ({ categories, userId, newUser }) => {
       })
     );
 
-    draggableCategoriesWithNewPriorities?.forEach((item) =>
+    draggableCategoriesWithNewPriorities?.forEach((item) => {
       updateCategory(item).then((res) => {
         if (res.status !== 200) {
           setShowToast(<Toast serverError={res} />);
         }
-      })
-    );
+      });
+    });
 
     setCategoryItems([...draggableCategoriesWithNewPriorities]);
   };
 
   return (
     <>
-      <h1 className='form-page__h2'>Categories</h1>
+      <div className='form-page__list-items-heading-wrapper'>
+        <h1 className='form-page__h2'>Categories</h1>
+      </div>
       <div className='settings-controls'>
         {isCategoriesPrompt && prompt}
         {isDashboardPrompt && prompt}
         <div className='settings-controls__button-wrapper'>
           <button
-            onClick={() => {
-              if (categoryItems?.length < CATEGORY_ITEM_LIMIT) {
-                setShowModal(
-                  <Modal className='modal modal__form-modal--small'>
-                    <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>
-                    <ModalCategory
-                      userId={userId}
-                      items={categoryItems}
-                      setItems={setCategoryItems}
-                      newUser={newUser}
-                      numberOfCategories={categoryItems?.length}
-                    />
-                  </Modal>
-                );
-              } else {
-                setAtCategoryLimit(true);
-              }
-            }}
+            onClick={handleOpenCategoryModal}
             type='button'
             className='form-page__save-button'
             id='createCategoryButton'
@@ -159,17 +184,17 @@ const CategoryControls = ({ categories, userId, newUser }) => {
           ref={categoryItemWrapperRef}
         >
           {categoryItems?.map((item, index) => (
-            <SettingsItem
+            <ListItem
               key={`category-item_${index}`}
               item={item}
               index={index}
               handleDeleteItem={handleDeleteCategory}
-              isAwaitingDeleteResponse={isAwaitingDeleteResponse}
               handleDragStart={handleDragStart}
               handleDragEnter={handleDragEnter}
               handleDragEnd={handleDragEnd}
-              categoryItemWrapperRef={categoryItemWrapperRef}
+              listItemWrapperRef={categoryItemWrapperRef}
               numberOfItemsInColumn={categoryItems?.length}
+              itemType={ITEM_TYPE_CATEGORY}
             />
           ))}
         </div>

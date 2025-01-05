@@ -25,8 +25,16 @@
   .settings-controls {
     flex-direction: column;
     gap: 24px;
-    &__categories-wrapper {
+    &__list-wrapper {
       flex: auto;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .settings-controls {
+    &__button-wrapper {
+      padding: 0 16px;
     }
   }
 }

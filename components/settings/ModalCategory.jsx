@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { FormTextField, FormCheckboxField, Toast } from '../../components';
 import { createCategory } from '../../actions';
 import { useAppContext } from '../../context';
+import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
 import { categorySchema } from '../../schemas/schemas';
 import { handleModalResetPageScrolling } from '../../utilities';
+import { MOBILE_BREAKPOINT } from '../../constants';
 
 const ModalReminder = ({
   userId,
@@ -16,14 +18,18 @@ const ModalReminder = ({
 }) => {
   const { setShowModal, setShowToast, setIsDashboardPrompt } = useAppContext();
 
+  const width = useInnerWidth();
+  const handleListItemsMobileReset = useListItemsMobileReset();
+
   const [form, setForm] = useState({
     userId,
     priority: '',
-    type: '',
+    title: '',
     mandatoryDate: false,
+    confirmDeletion: true,
   });
   const [errorMessage, setErrorMessage] = useState({
-    type: '',
+    title: '',
   });
   const [isAwaitingSubmitResponse, setIsAwaitingSubmitResponse] =
     useState(false);
@@ -53,16 +59,17 @@ const ModalReminder = ({
     const categorySchemaValidated = categorySchema.safeParse({
       userId: formData.get('userId'),
       priority: formData.get('priority'),
-      type: formData.get('type'),
+      title: formData.get('title'),
       mandatoryDate: formData.get('mandatoryDate'),
+      confirmDeletion: formData.get('confirmDeletion'),
       itemLimit: numberOfCategories,
     });
 
     const { success, error } = categorySchemaValidated;
     if (!success) {
-      const { type } = error.flatten().fieldErrors;
+      const { title } = error.flatten().fieldErrors;
 
-      if (!type) {
+      if (!title) {
         const serverError = {
           status: 400,
           error: 'Invalid FormData. Check console.',
@@ -72,15 +79,16 @@ const ModalReminder = ({
         return;
       }
 
-      return setErrorMessage({ type: type?.[0] });
+      return setErrorMessage({ title: title?.[0] });
     }
 
     setIsAwaitingSubmitResponse(true);
     createCategory(formData).then((res) => {
       if (res.status === 200) {
         setItems((current) => [...current, res.item]);
-        setForm({ userId, priority: '', type: '', mandatoryDate: false });
+        setForm({ userId, priority: '', title: '', mandatoryDate: false });
         if (newUser) setIsDashboardPrompt(true);
+        if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
       }
 
       if (res.status !== 200) {
@@ -97,10 +105,11 @@ const ModalReminder = ({
     setForm({
       userId,
       priority: '',
-      type: '',
+      title: '',
       mandatoryDate: false,
+      confirmDeletion: true,
     });
-    setErrorMessage({ type: '' });
+    setErrorMessage({ title: '' });
     handleModalResetPageScrolling();
   };
 
@@ -111,10 +120,10 @@ const ModalReminder = ({
         subLabel='Sum it up in one or two words (e.g., Schoolwork, Grocery List, Work, Appointments, Events, etc.)'
         type='text'
         id='category'
-        name='type'
-        value={form?.type}
+        name='title'
+        value={form?.title}
         onChangeHandler={handleForm}
-        errorMessage={errorMessage.type}
+        errorMessage={errorMessage.title}
       />
       <FormCheckboxField
         label='Date or Date & Time'
@@ -126,6 +135,7 @@ const ModalReminder = ({
       />
       <input type='hidden' name='userId' value={form?.userId} />
       <input type='hidden' name='priority' value={form?.priority} />
+      <input type='hidden' name='confirmDeletion' value='true' />
       <div className='modal__modal-button-wrapper'>
         <button
           onClick={handleCloseModal}

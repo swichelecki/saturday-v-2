@@ -331,11 +331,7 @@ const Account = ({ user }) => {
           errorMessage={errorMessage.deletePassword}
         />
         <FormTextField
-          label={
-            <>
-              Type "<i>Delete My Account</i>" into the Field Below
-            </>
-          }
+          label='Type "Delete My Account" into the Field Below'
           type='text'
           id='deleteConfirmation'
           name='deleteConfirmation'

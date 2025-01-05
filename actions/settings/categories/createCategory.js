@@ -30,8 +30,9 @@ export default async function createCategory(formData) {
   const categorySchemaValidated = categorySchema.safeParse({
     userId: formData.get('userId'),
     priority: formData.get('priority'),
-    type: formData.get('type'),
+    title: formData.get('title'),
     mandatoryDate: formData.get('mandatoryDate'),
+    confirmDeletion: formData.get('confirmDeletion'),
     itemLimit: numberOfItems,
   });
 

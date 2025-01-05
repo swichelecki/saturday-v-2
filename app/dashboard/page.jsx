@@ -41,7 +41,7 @@ async function getDashboardData() {
     // return type and column order
     const columnTypes = [
       ...categories.reduce(
-        (map, item) => map.set(item?.priority, item?.type),
+        (map, item) => map.set(item?.priority, item?.title),
         new Map()
       ),
     ];

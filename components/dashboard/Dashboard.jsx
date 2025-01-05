@@ -92,7 +92,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     setIsAdmin(admin);
     setListItem({
       ...listItem,
-      type: categories?.length ? categories[0]['type'] : '',
+      type: categories?.length ? categories[0]['title'] : '',
     });
   }, []);
 

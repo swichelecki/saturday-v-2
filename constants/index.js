@@ -38,7 +38,7 @@ export const FORM_ERROR_MISSING_DELETE_MISMATCH =
 export const DELETE_MY_ACCOUNT = 'delete my account';
 export const INVALID_USER_DATA = 'Invalid User Data';
 export const USER_ALREADY_EXISTS = 'User Already Exists';
-export const SERVER_ERROR_MESSAGE = 'A Server Error has Occurred';
+export const SERVER_ERROR_MESSAGE = 'A Server Error Has Occurred';
 export const SETTINGS_MISSING_CATEGORY = 'Category Required';
 export const FORM_ERROR_MISSING_REMINDER_TITLE = 'Reminder Required';
 export const FORM_ERROR_MISSING_REMINDER_DATE = 'Reminder Date Required';
@@ -92,6 +92,7 @@ export const REMINDERS_ERROR_AT_ITEM_LIMIT = 'Limit 25 Reminders';
 export const NOTES_ERROR_AT_ITEM_LIMIT = 'Limit 50 Notes';
 export const ITEM_TYPE_NOTE = 'note';
 export const ITEM_TYPE_DASHBOARD = 'dashboard';
+export const ITEM_TYPE_CATEGORY = 'category';
 export const FORM_TIMEZONES = [
   { title: 'America/Adak', name: 'timezone', value: 'America/Adak' },
   { title: 'America/Anchorage', name: 'timezone', value: 'America/Anchorage' },

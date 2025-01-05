@@ -24,6 +24,14 @@
       margin: 0 0 44px 0;
     }
   }
+  &__list-items-heading-wrapper {
+    margin: 44px 0 44px 0;
+  }
+  &__list-items-heading-wrapper {
+    &:first-of-type {
+      margin: 0 0 44px 0;
+    }
+  }
   &__buttons-wrapper {
     display: flex;
     gap: 12px;
@@ -52,6 +60,9 @@
 
   .form-page.form-page__list-items {
     padding: 24px 0;
+    .form-page__list-items-heading-wrapper {
+      padding: 0 16px;
+    }
     .form-page__list-items-controls-wrapper {
       padding: 0 16px 32px;
     }

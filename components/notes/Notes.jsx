@@ -19,10 +19,10 @@ import {
   NOTES_ITEM_LIMIT,
   MODAL_CONFIRM_DELETION_HEADLINE,
   MOBILE_BREAKPOINT,
-  MODAL_CONFIRM_COMPLETE_BUTTON,
+  MODAL_CONFIRM_DELETE_BUTTON,
 } from '../../constants';
 
-const Notes = ({ notes, user }) => {
+const Notes = ({ notes, user, notesCount }) => {
   const { userId, admin } = user;
   const { setUserId, setIsAdmin, setShowModal, setShowToast } = useAppContext();
 
@@ -30,10 +30,18 @@ const Notes = ({ notes, user }) => {
   const handleListItemsMobileReset = useListItemsMobileReset();
 
   const [noteItemsGrouped, setNoteItemsGrouped] = useState(notes);
+  const [currentNoteCount, setCurrentNoteCount] = useState(notesCount);
   const [atNotesLimit, setAtNotesLimit] = useState(false);
   const [itemToUpdateId, setItemToUpdateId] = useState('');
   const [isAwaitingUpdateResponse, setIsAwaitingUpdateResponse] =
     useState(false);
+
+  // remove at-notes-limit message after note deletion
+  useEffect(() => {
+    if (currentNoteCount < NOTES_ITEM_LIMIT && atNotesLimit) {
+      setAtNotesLimit(false);
+    }
+  }, [atNotesLimit, currentNoteCount]);
 
   useEffect(() => {
     // set global context user id and admin status
@@ -43,7 +51,7 @@ const Notes = ({ notes, user }) => {
 
   // open modal for create
   const handleOpenNoteModal = () => {
-    if (noteItemsGrouped?.length >= NOTES_ITEM_LIMIT) {
+    if (currentNoteCount >= NOTES_ITEM_LIMIT) {
       setAtNotesLimit(true);
       return;
     }
@@ -55,7 +63,8 @@ const Notes = ({ notes, user }) => {
           userId={userId}
           items={noteItemsGrouped}
           setItems={setNoteItemsGrouped}
-          numberOfItems={noteItemsGrouped?.length}
+          numberOfItems={currentNoteCount}
+          setCurrentNoteCount={setCurrentNoteCount}
         />
       </Modal>
     );
@@ -99,7 +108,7 @@ const Notes = ({ notes, user }) => {
           <ModalConfirm
             handleConfirm={handleDeleteNote}
             confirmId={id}
-            confirmBtnText={MODAL_CONFIRM_COMPLETE_BUTTON}
+            confirmBtnText={MODAL_CONFIRM_DELETE_BUTTON}
           />
         </Modal>
       );
@@ -121,9 +130,10 @@ const Notes = ({ notes, user }) => {
             }
           })
         );
-      }
 
-      if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
+        if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
+        setCurrentNoteCount((curr) => curr - 1);
+      }
 
       if (res.status !== 200) {
         setShowToast(<Toast serverError={res} />);
@@ -167,8 +177,10 @@ const Notes = ({ notes, user }) => {
 
   return (
     <div className='form-page form-page__list-items'>
-      <div className='form-page__list-items-controls-wrapper'>
+      <div className='form-page__list-items-heading-wrapper'>
         <h1 className='form-page__h2'>Notes</h1>
+      </div>
+      <div className='form-page__list-items-controls-wrapper'>
         <button
           onClick={handleOpenNoteModal}
           type='button'

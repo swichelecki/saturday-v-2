@@ -21,17 +21,17 @@ const Modal = ({ className, children, showCloseButton = true }) => {
       if (e.key === 'Escape') handleCloseModal();
     };
 
-    const handleCloseModalWhenClickingOff = (e) => {
+    /* const handleCloseModalWhenClickingOff = (e) => {
       if (e.target === modalRef.current) handleCloseModal();
-    };
+    }; */
 
     if (document && typeof document !== 'undefined') {
       document.addEventListener('keydown', handleKeyDown);
-      document.addEventListener('click', handleCloseModalWhenClickingOff);
+      //document.addEventListener('click', handleCloseModalWhenClickingOff);
 
       return () => {
-        document.removeEventListener('click', handleCloseModalWhenClickingOff);
         document.removeEventListener('keydown', handleKeyDown);
+        //document.removeEventListener('click', handleCloseModalWhenClickingOff);
       };
     }
   }, []);

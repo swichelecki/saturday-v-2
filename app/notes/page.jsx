@@ -17,6 +17,7 @@ async function getNotesData() {
 
     const notesRaw = await Note.find({ userId }).sort({ date: -1 });
     const notes = JSON.parse(JSON.stringify(notesRaw));
+    const notesCount = notes?.length;
     const pinnedNoteKey = 'Pinned';
     const thisYear = new Date().getFullYear();
 
@@ -67,6 +68,7 @@ async function getNotesData() {
     return {
       notes: notesData ?? [],
       user: { userId, admin },
+      notesCount: notesCount ?? 0,
     };
   } catch (error) {
     console.log(error);
@@ -75,7 +77,7 @@ async function getNotesData() {
 
 export default async function NotesPage() {
   const notesData = await getNotesData();
-  const { notes, user } = notesData;
+  const { notes, user, notesCount } = notesData;
 
-  return <Notes notes={notes} user={user} />;
+  return <Notes notes={notes} user={user} notesCount={notesCount} />;
 }

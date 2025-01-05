@@ -20,6 +20,7 @@ const ModalNotes = ({
   itemToUpdate,
   itemToEditId,
   numberOfItems,
+  setCurrentNoteCount,
 }) => {
   const { setShowModal, setShowToast } = useAppContext();
 
@@ -168,6 +169,7 @@ const ModalNotes = ({
             );
 
             if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
+            setCurrentNoteCount((curr) => curr + 1);
           }
 
           if (res.status !== 200) {

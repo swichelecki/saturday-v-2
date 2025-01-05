@@ -1,7 +1,7 @@
 .list-item {
   &__outer-wrapper {
     position: relative;
-    padding-bottom: 6px;
+    height: 56px;
   }
   &__inner-wrapper {
     overflow: hidden;
@@ -130,6 +130,7 @@
     &__outer-wrapper {
       position: relative;
       padding-bottom: 0;
+      height: unset;
     }
     &__inner-wrapper {
       border: 0;

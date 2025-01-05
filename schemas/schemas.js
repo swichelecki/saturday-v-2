@@ -76,11 +76,12 @@ export const categorySchema = z
   .object({
     userId: z.string(),
     priority: z.number().or(z.string()),
-    type: z
+    title: z
       .string()
       .min(1, SETTINGS_MISSING_CATEGORY)
       .max(16, FORM_CHARACTER_LIMIT_16),
     mandatoryDate: z.boolean().or(z.string()),
+    confirmDeletion: z.boolean().or(z.string()),
     itemLimit: z.number(),
   })
   .refine((data) => Number(data.itemLimit) < CATEGORY_ITEM_LIMIT, {

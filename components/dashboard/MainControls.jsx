@@ -42,7 +42,7 @@ const MainControls = ({
               const category = JSON.parse(e.currentTarget.value);
               setListItem((curr) => ({
                 ...curr,
-                type: category?.type,
+                type: category?.title,
                 column: category?.priority,
               }));
               setCheckbox((current) =>
@@ -58,7 +58,7 @@ const MainControls = ({
                 key={`category-option_${index}`}
                 value={JSON.stringify(item)}
               >
-                {item?.type}
+                {item?.title}
               </option>
             ))}
           </select>

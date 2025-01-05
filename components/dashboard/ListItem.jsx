@@ -24,6 +24,7 @@ import {
   MOBILE_BREAKPOINT,
   ITEM_TYPE_NOTE,
   ITEM_TYPE_DASHBOARD,
+  ITEM_TYPE_CATEGORY,
 } from '../../constants';
 
 let previousItemId = '';
@@ -443,7 +444,7 @@ const ItemList = ({
   return (
     <div
       className='list-item__outer-wrapper'
-      id={`${item?.type}_list-item_${index}`}
+      id={`list-item_${index}`}
       ref={listItemRef}
       data-list-item-index={index}
     >
@@ -486,9 +487,10 @@ const ItemList = ({
         <div
           ref={listItemInnerRef}
           className='list-item__item'
-          id={`${item?.type}_list-item-inner_${index}`}
+          id={`list-item-inner_${index}`}
         >
-          {!item?.mandatoryDate && itemType === ITEM_TYPE_DASHBOARD && (
+          {((!item?.mandatoryDate && itemType === ITEM_TYPE_DASHBOARD) ||
+            itemType === ITEM_TYPE_CATEGORY) && (
             <div
               className='list-item__item-drag-zone'
               onTouchStart={handleDragYStart}
@@ -527,7 +529,9 @@ const ItemList = ({
           )}
           <div
             className={`list-item__item-swipe-zone ${
-              item?.mandatoryDate ? 'list-item__item-swipe-zone--upcoming' : ''
+              item?.mandatoryDate && itemType === ITEM_TYPE_DASHBOARD
+                ? 'list-item__item-swipe-zone--upcoming'
+                : ''
             }`}
             onTouchStart={handleSwipeXStart}
             onTouchMove={handleSwipeXMove}
