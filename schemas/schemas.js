@@ -74,6 +74,7 @@ export const loginSchema = z.object({
 
 export const categorySchema = z
   .object({
+    _id: z.string().optional(),
     userId: z.string(),
     priority: z.number().or(z.string()),
     title: z
@@ -93,6 +94,7 @@ export const itemSchema = z
   .object({
     _id: z.string().optional(),
     userId: z.string(),
+    categoryId: z.string(),
     title: z
       .string()
       .min(1, FORM_ERROR_MISSING_TITLE)

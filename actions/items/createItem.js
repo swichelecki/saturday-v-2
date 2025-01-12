@@ -29,6 +29,7 @@ export default async function createItem(formData) {
   const numberOfItems = await Task.find({ userId: cookieUserId }).count();
   const itemSchemaValidated = itemSchema.safeParse({
     userId: formData.get('userId'),
+    categoryId: formData.get('categoryId'),
     title: formData.get('title'),
     column: formData.get('column'),
     priority: formData.get('priority'),
@@ -50,6 +51,7 @@ export default async function createItem(formData) {
 
   try {
     const {
+      categoryId,
       title,
       description,
       date,
@@ -63,6 +65,7 @@ export default async function createItem(formData) {
     } = Object.fromEntries(formData);
 
     const result = await Task.create({
+      categoryId,
       userId,
       title,
       description,

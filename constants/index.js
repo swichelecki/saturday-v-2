@@ -77,6 +77,7 @@ export const FORM_REMINDER_BUFFER_OPTIONS = [
 ];
 export const MODAL_CONFIRM_DELETION_HEADLINE = 'Confirm Delete';
 export const MODAL_CREATE_CATEGORY_HEADLINE = 'Create Category';
+export const MODAL_UPDATE_CATEGORY_HEADLINE = 'Update Category';
 export const MODAL_CREATE_REMINDER_HEADLINE = 'Create Reminder';
 export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
 export const MODAL_UPDATE_ITEM_HEADLINE = 'Update Item';

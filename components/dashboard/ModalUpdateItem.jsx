@@ -25,6 +25,7 @@ const ModalUpdateItem = ({
 
   const [form, setForm] = useState({
     userId,
+    categoryId: '',
     title: '',
     column: 1,
     priority: 1,
@@ -63,6 +64,7 @@ const ModalUpdateItem = ({
     const itemSchemaValidated = itemSchema.safeParse({
       _id: formData.get('_id'),
       userId: formData.get('userId'),
+      categoryId: formData.get('categoryId'),
       title: formData.get('title'),
       column: formData.get('column'),
       priority: formData.get('priority'),
@@ -136,6 +138,7 @@ const ModalUpdateItem = ({
     setTaskToEditId('');
     setForm({
       userId,
+      categoryId: '',
       title: '',
       column: 1,
       priority: 1,
@@ -174,8 +177,9 @@ const ModalUpdateItem = ({
           Update
         </button>
       </div>
-      <input type='hidden' name='userId' value={userId} />
       <input type='hidden' name='_id' value={itemToUpdate?._id} />
+      <input type='hidden' name='userId' value={userId} />
+      <input type='hidden' name='categoryId' value={itemToUpdate?.categoryId} />
       <input type='hidden' name='column' value={itemToUpdate?.column} />
       <input type='hidden' name='priority' value={itemToUpdate?.priority} />
       <input type='hidden' name='type' value={itemToUpdate?.type} />

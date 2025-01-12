@@ -6,6 +6,11 @@ const TaskSchema = new Schema({
     ref: 'User',
     required: true,
   },
+  categoryId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true,
+  },
   column: {
     type: Number,
     required: true,

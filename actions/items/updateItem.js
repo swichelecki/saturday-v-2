@@ -30,6 +30,7 @@ export default async function itemUpdate(formData) {
   const itemSchemaValidated = itemSchema.safeParse({
     _id: formData.get('_id'),
     userId: formData.get('userId'),
+    categoryId: formData.get('categoryId'),
     title: formData.get('title'),
     column: formData.get('column'),
     priority: formData.get('priority'),
@@ -52,6 +53,7 @@ export default async function itemUpdate(formData) {
   try {
     const {
       _id,
+      categoryId,
       title,
       description,
       userId,
@@ -76,6 +78,7 @@ export default async function itemUpdate(formData) {
       { _id: _id },
       {
         userId,
+        categoryId,
         title,
         description,
         date,

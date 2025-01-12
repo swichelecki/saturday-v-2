@@ -12,6 +12,7 @@ const MainControls = ({
   setListItem,
   type,
   column,
+  categoryId,
   isAwaitingAddResponse,
   priority,
   userId,
@@ -44,6 +45,7 @@ const MainControls = ({
                 ...curr,
                 type: category?.title,
                 column: category?.priority,
+                categoryId: category?._id,
               }));
               setCheckbox((current) =>
                 (isCheckedByUser && current === true) || category?.mandatoryDate
@@ -78,7 +80,7 @@ const MainControls = ({
           <Link
             href={{
               pathname: '/details',
-              query: { priority, type, column, hasMandatoryDate },
+              query: { priority, type, column, hasMandatoryDate, categoryId },
             }}
           >
             <span className='main-controls__create-button'>Create</span>
@@ -98,6 +100,7 @@ const MainControls = ({
         />
       </div>
       <input type='hidden' name='userId' value={userId} />
+      <input type='hidden' name='categoryId' value={categoryId} />
       <input type='hidden' name='column' value={column} />
       <input type='hidden' name='priority' value={priority} />
       <input type='hidden' name='type' value={type} />

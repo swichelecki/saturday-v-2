@@ -13,7 +13,9 @@ export const handleSortItemsAscending = (filteredUpcomingTasks, keyName) => {
   const upcomingTasksSortedByDateAsc = TasksSortedDateAsc.map((item) => {
     return {
       ...item,
-      [keyName]: new Date(item[keyName]).toISOString().split('T')[0],
+      [keyName]: item[keyName]
+        ? new Date(item[keyName]).toISOString().split('T')[0]
+        : null,
     };
   });
 

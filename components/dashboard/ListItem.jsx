@@ -444,7 +444,7 @@ const ItemList = ({
   return (
     <div
       className='list-item__outer-wrapper'
-      id={`list-item_${index}`}
+      id={`list-item_${item?._id}`}
       ref={listItemRef}
       data-list-item-index={index}
     >
@@ -487,7 +487,7 @@ const ItemList = ({
         <div
           ref={listItemInnerRef}
           className='list-item__item'
-          id={`list-item-inner_${index}`}
+          id={`list-item-inner_${item?._id}`}
         >
           {((!item?.mandatoryDate && itemType === ITEM_TYPE_DASHBOARD) ||
             itemType === ITEM_TYPE_CATEGORY) && (

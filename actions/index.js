@@ -12,6 +12,7 @@ export { default as deleteItem } from './items/deleteItem';
 export { default as createCategory } from './settings/categories/createCategory';
 export { default as deleteCategory } from './settings/categories/deleteCategory';
 export { default as updateCategory } from './settings/categories/updateCategory';
+export { default as getCategory } from './settings/categories/getCategory';
 export { default as createReminder } from './settings/reminders/createReminder';
 export { default as deleteReminder } from './settings/reminders/deleteReminder';
 export { default as getReminder } from './settings/reminders/getReminder';

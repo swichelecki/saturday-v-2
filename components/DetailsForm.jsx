@@ -20,7 +20,8 @@ const DetailsForm = ({ task, user }) => {
   const formRef = useRef(null);
   const router = useRouter();
   const params = useSearchParams();
-  const [priority, type, column, hasMandatoryDate] = params.values();
+  const [priority, type, column, hasMandatoryDate, categoryId] =
+    params.values();
   const isUpdate = !!Object.keys(task ?? {}).length;
   const { userId, timezone, admin, numberOfItems } = user;
   const { setShowToast, setUserId, setIsAdmin } = useAppContext();
@@ -28,6 +29,7 @@ const DetailsForm = ({ task, user }) => {
   const [form, setForm] = useState({
     _id: task?._id ?? '',
     userId: task?.userId ?? userId,
+    categoryId: task?.categoryId ?? categoryId,
     title: task?.title ?? '',
     description: task?.description ?? '',
     confirmDeletion: task?.confirmDeletion ?? false,
@@ -95,6 +97,7 @@ const DetailsForm = ({ task, user }) => {
     const itemSchemaValidated = itemSchema.safeParse({
       _id: formData.get('_id') ?? '',
       userId: formData.get('userId'),
+      categoryId: formData.get('categoryId'),
       title: formData.get('title'),
       description: formData.get('description'),
       date: formData.get('date'),
@@ -218,6 +221,11 @@ const DetailsForm = ({ task, user }) => {
         )}
         <input type='hidden' name='_id' value={task?._id ?? ''} />
         <input type='hidden' name='userId' value={task?.userId ?? userId} />
+        <input
+          type='hidden'
+          name='categoryId'
+          value={task?.categoryId ?? categoryId}
+        />
         <input
           type='hidden'
           name='priority'

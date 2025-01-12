@@ -12,7 +12,7 @@
       width: 0;
     }
     &:hover input ~ .checkbox__checkbox {
-      background-color: $color-border;
+      background-color: $color-background-secondary;
     }
     & input:checked ~ .checkbox__checkbox {
       background-color: $button-purple-dark;
@@ -42,7 +42,7 @@
     left: 0;
     height: 25px;
     width: 25px;
-    background-color: $color-input;
+    background-color: $color-background;
     border: 1px solid $color-border;
     &:after {
       content: '';

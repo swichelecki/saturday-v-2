@@ -11,7 +11,7 @@ import {
   FormErrorMessage,
   Toast,
 } from '../../components';
-import { deleteCategory, updateCategory } from '../../actions';
+import { deleteCategory, updateCategory, getCategory } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MODAL_CREATE_CATEGORY_HEADLINE,
@@ -20,6 +20,7 @@ import {
   MODAL_CONFIRM_DELETION_HEADLINE,
   MODAL_CONFIRM_DELETE_BUTTON,
   MOBILE_BREAKPOINT,
+  MODAL_UPDATE_CATEGORY_HEADLINE,
 } from '../../constants';
 
 const CategoryControls = ({ categories, userId, newUser }) => {
@@ -41,6 +42,8 @@ const CategoryControls = ({ categories, userId, newUser }) => {
   const [categoryItems, setCategoryItems] = useState(categories ?? []);
   const [draggableCategories, setDraggableCategories] = useState([]);
   const [atCategoryLimit, setAtCategoryLimit] = useState(false);
+  const [isAwatingGetItem, setIsAwaitingGetItem] = useState(false);
+  const [itemToUpdateId, setItemToUpdateId] = useState('');
 
   // remove at-category-limit message after category deletion
   useEffect(() => {
@@ -61,13 +64,39 @@ const CategoryControls = ({ categories, userId, newUser }) => {
         <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>
         <ModalCategory
           userId={userId}
-          items={categoryItems}
           setItems={setCategoryItems}
           newUser={newUser}
-          numberOfCategories={categoryItems?.length}
+          numberOfItems={categoryItems?.length}
         />
       </Modal>
     );
+  };
+
+  // open modal for update
+  const getItemToUpdate = (id) => {
+    setIsAwaitingGetItem(true);
+    setItemToUpdateId(id);
+    getCategory(id, userId).then((res) => {
+      if (res.status === 200) {
+        setShowModal(
+          <Modal className='modal modal__form-modal--small'>
+            <h2>{MODAL_UPDATE_CATEGORY_HEADLINE}</h2>
+            <ModalCategory
+              userId={userId}
+              setItems={setCategoryItems}
+              itemToUpdate={res.item}
+              numberOfItems={categoryItems?.length}
+            />
+          </Modal>
+        );
+      }
+
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
+
+      setIsAwaitingGetItem(false);
+    });
   };
 
   // delete category
@@ -189,6 +218,9 @@ const CategoryControls = ({ categories, userId, newUser }) => {
               item={item}
               index={index}
               handleDeleteItem={handleDeleteCategory}
+              getItemToUpdate={getItemToUpdate}
+              isAwaitingEditResponse={isAwatingGetItem}
+              itemToUpdateId={itemToUpdateId}
               handleDragStart={handleDragStart}
               handleDragEnter={handleDragEnter}
               handleDragEnd={handleDragEnd}

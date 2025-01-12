@@ -38,6 +38,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
   const [listItems, setListItems] = useState(tasks);
   const [listItem, setListItem] = useState({
     userId,
+    categoryId: '',
     title: '',
     column: 1,
     priority: 1,
@@ -93,6 +94,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     setListItem({
       ...listItem,
       type: categories?.length ? categories[0]['title'] : '',
+      categoryId: categories?.length ? categories[0]['_id'] : '',
     });
   }, []);
 
@@ -164,6 +166,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
 
     const itemSchemaValidated = itemSchema.safeParse({
       userId: formData.get('userId'),
+      categoryId: formData.get('categoryId'),
       title: formData.get('title'),
       column: formData.get('column'),
       priority: formData.get('priority'),
@@ -314,6 +317,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
         setListItem={setListItem}
         type={listItem?.type}
         column={listItem?.column}
+        categoryId={listItem?.categoryId}
         isAwaitingAddResponse={isAwaitingAddResponse}
         priority={priority}
         userId={userId}

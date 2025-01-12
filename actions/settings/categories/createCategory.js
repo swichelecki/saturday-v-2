@@ -43,8 +43,15 @@ export default async function createCategory(formData) {
   }
 
   try {
-    const category = Object.fromEntries(formData);
-    const result = await Category.create(category);
+    const { userId, priority, mandatoryDate, title, confirmDeletion } =
+      Object.fromEntries(formData);
+    const result = await Category.create({
+      userId,
+      priority,
+      mandatoryDate,
+      title,
+      confirmDeletion,
+    });
     revalidatePath('/settings');
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {

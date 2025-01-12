@@ -12,7 +12,12 @@ export default async function updateCategory(item) {
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  if (!item?.userId || item?.userId !== cookieUserId) {
+  // item is formData when submitted from modal
+  // item is an object when reordered in list
+  const itemIsFormData = item instanceof FormData;
+  const itemUserId = itemIsFormData ? item.get('userId') : item?.userId;
+
+  if (!itemUserId || itemUserId !== cookieUserId) {
     return {
       status: 400,
       error: 'Unauthorized',
@@ -22,11 +27,16 @@ export default async function updateCategory(item) {
   // check that data shape is correct
   const numberOfItems = await Category.find({ userId: cookieUserId }).count();
   const categorySchemaValidated = categorySchema.safeParse({
-    userId: item?.userId,
-    priority: item?.priority,
-    title: item?.title,
-    mandatoryDate: item?.mandatoryDate,
-    confirmDeletion: item?.confirmDeletion,
+    _id: itemIsFormData ? item.get('_id') : item?._id,
+    userId: itemIsFormData ? item.get('userId') : item?.userId,
+    priority: itemIsFormData ? item.get('priority') : item?.priority,
+    title: itemIsFormData ? item.get('title') : item?.title,
+    mandatoryDate: itemIsFormData
+      ? item.get('mandatoryDate')
+      : item?.mandatoryDate,
+    confirmDeletion: itemIsFormData
+      ? item.get('confirmDeletion')
+      : item?.confirmDeletion,
     itemLimit: numberOfItems,
   });
 
@@ -37,50 +47,88 @@ export default async function updateCategory(item) {
   }
 
   try {
-    const { _id, userId, priority, title, mandatoryDate, confirmDeletion } =
-      item;
-    const newItemColumn = priority;
+    // update category - either by draggig to change order in list or using update modal
+    const {
+      _id: categoryId,
+      userId: categoryUserId,
+      priority: categoryPriority,
+      title: categoryTitle,
+      mandatoryDate: categoryMandatoryDate,
+      confirmDeletion: categoryConfirmDeletion,
+    } = itemIsFormData ? Object.fromEntries(item) : item;
 
     await Category.updateOne(
-      { _id: _id },
+      { _id: categoryId },
       {
-        userId,
-        priority,
-        title,
-        mandatoryDate,
-        confirmDeletion,
+        userId: categoryUserId,
+        priority: categoryPriority,
+        title: categoryTitle,
+        mandatoryDate: categoryMandatoryDate,
+        confirmDeletion: categoryConfirmDeletion,
       }
     );
 
-    const itemsOfCategoryType = await Task.find({ type: title, userId });
+    let updatedCategory;
+    if (itemIsFormData)
+      updatedCategory = await Category.find({ _id: categoryId });
+
+    // update all tasks associated with category
+    const itemsOfCategoryType = await Task.find({
+      categoryId,
+      userId: categoryUserId,
+    });
 
     itemsOfCategoryType.forEach(async (item) => {
       const {
         _id,
+        userId,
+        categoryId,
         priority,
         title,
         description,
         confirmDeletion,
         date,
         dateAndTime,
+        mandatoryDate,
       } = item;
 
       await Task.updateOne(
         { _id: _id },
         {
+          userId,
+          categoryId,
           priority,
-          column: newItemColumn,
+          column: categoryPriority,
+          type: categoryTitle,
           title,
           description,
           confirmDeletion,
-          date,
-          dateAndTime,
+          date: itemIsFormData
+            ? categoryMandatoryDate === 'true'
+              ? date
+              : ''
+            : date,
+          dateAndTime: itemIsFormData
+            ? categoryMandatoryDate === 'true'
+              ? dateAndTime
+              : ''
+            : dateAndTime,
+          mandatoryDate: itemIsFormData
+            ? categoryMandatoryDate === 'true'
+              ? true
+              : false
+            : mandatoryDate,
         }
       );
     });
 
     revalidatePath('/settings');
-    return { status: 200 };
+    return {
+      status: 200,
+      item: itemIsFormData
+        ? JSON.parse(JSON.stringify(updatedCategory[0]))
+        : '',
+    };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);
