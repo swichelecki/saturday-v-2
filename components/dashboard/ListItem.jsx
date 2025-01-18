@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import { useInnerWidth, useIsMounted } from '../../hooks';
-import ItemButtons from './ItemButtons';
+import { ItemButtons } from '../../components';
 import {
   handleTodaysDateCheck,
   handleTransitionSpeed,
@@ -14,7 +15,7 @@ import {
 } from '../../utilities';
 import moment from 'moment-timezone';
 import DOMPurify from 'isomorphic-dompurify';
-import { GrDrag } from 'react-icons/gr';
+import { GrDrag, GrMore } from 'react-icons/gr';
 import { MdEdit, MdPushPin } from 'react-icons/md';
 import { TbChevronRight } from 'react-icons/tb';
 import {
@@ -25,7 +26,13 @@ import {
   ITEM_TYPE_NOTE,
   ITEM_TYPE_DASHBOARD,
   ITEM_TYPE_CATEGORY,
+  ITEM_TYPE_REMINDER,
 } from '../../constants';
+
+const Tooltip = dynamic(() => import('../../components/Tooltip'));
+const TooltipReminderMessage = dynamic(() =>
+  import('../../components/settings/TooltipReminderMessage')
+);
 
 let previousItemId = '';
 
@@ -525,6 +532,18 @@ const ItemList = ({
               >
                 <MdPushPin />
               </button>
+            </div>
+          )}
+          {itemType === ITEM_TYPE_REMINDER && (
+            <div className='list-item__item-tooltip-zone'>
+              <Tooltip icon={<GrMore />}>
+                <TooltipReminderMessage
+                  reminderDate={item?.reminderDate}
+                  recurrenceInterval={item?.recurrenceInterval}
+                  exactRecurringDate={item?.exactRecurringDate}
+                  recurrenceBuffer={item?.recurrenceBuffer}
+                />
+              </Tooltip>
             </div>
           )}
           <div

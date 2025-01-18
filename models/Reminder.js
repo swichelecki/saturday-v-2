@@ -6,7 +6,7 @@ const ReminderSchema = new Schema({
     ref: 'User',
     required: true,
   },
-  reminder: {
+  title: {
     type: String,
     required: true,
   },
@@ -29,6 +29,11 @@ const ReminderSchema = new Schema({
   displayReminder: {
     type: Boolean,
     required: true,
+  },
+  confirmDeletion: {
+    type: Boolean,
+    required: true,
+    default: true,
   },
 });
 

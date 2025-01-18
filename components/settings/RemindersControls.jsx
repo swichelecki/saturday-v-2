@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useAppContext } from '../../context';
 import {
-  SettingsItem,
+  ListItem,
   Modal,
   ModalReminders,
+  ModalConfirm,
   FormErrorMessage,
   Toast,
 } from '../../components';
@@ -14,7 +15,10 @@ import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MODAL_CREATE_REMINDER_HEADLINE,
   MODAL_UPDATE_REMINDER_HEADLINE,
+  MODAL_CONFIRM_DELETION_HEADLINE,
+  MODAL_CONFIRM_COMPLETE_BUTTON,
   REMINDERS_ITEM_LIMIT,
+  ITEM_TYPE_REMINDER,
 } from '../../constants';
 
 const RemindersControls = ({ reminders, userId }) => {
@@ -22,8 +26,6 @@ const RemindersControls = ({ reminders, userId }) => {
     useAppContext();
 
   const [remindersItems, setRemindersItems] = useState(reminders ?? []);
-  const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
-    useState(false);
   const [reminderToEditId, setReminderToEditId] = useState('');
   const [
     listItemIsAwaitingUpdateResponse,
@@ -38,8 +40,28 @@ const RemindersControls = ({ reminders, userId }) => {
     }
   }, [remindersItems]);
 
+  // open modal for create
+  const handleOpenReminderModal = () => {
+    if (remindersItems?.length >= REMINDERS_ITEM_LIMIT) {
+      setAtRemindersLimit(true);
+    }
+
+    setShowModal(
+      <Modal className='modal modal__form-modal--large'>
+        <h2>{MODAL_CREATE_REMINDER_HEADLINE}</h2>
+        <ModalReminders
+          userId={userId}
+          items={remindersItems}
+          setItems={setRemindersItems}
+          itemToEditId={reminderToEditId}
+          numberOfReminders={remindersItems?.length}
+        />
+      </Modal>
+    );
+  };
+
   // get reminder to update
-  const handleReminderToUpdate = (id) => {
+  const getItemToUpdate = (id) => {
     setListItemIsAwaitingUpdateResponse(true);
     setReminderToEditId(id);
     getReminder(userId, id).then((res) => {
@@ -52,7 +74,6 @@ const RemindersControls = ({ reminders, userId }) => {
               items={remindersItems}
               setItems={setRemindersItems}
               itemToUpdate={res.item}
-              itemToEditId={id}
               numberOfReminders={remindersItems?.length}
             />
           </Modal>
@@ -67,8 +88,20 @@ const RemindersControls = ({ reminders, userId }) => {
   };
 
   // delete reminder
-  const handleDeleteReminder = (id) => {
-    setIsAwaitingDeleteResponse(true);
+  const handleDeleteReminder = (id, confirmDeletion) => {
+    if (confirmDeletion) {
+      setShowModal(
+        <Modal showCloseButton={false}>
+          <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
+          <ModalConfirm
+            handleConfirm={handleDeleteReminder}
+            confirmId={id}
+            confirmBtnText={MODAL_CONFIRM_COMPLETE_BUTTON}
+          />
+        </Modal>
+      );
+      return;
+    }
 
     deleteReminder(userId, id).then((res) => {
       if (res.status === 200) {
@@ -81,7 +114,6 @@ const RemindersControls = ({ reminders, userId }) => {
 
       setShowModal(null);
       handleModalResetPageScrolling();
-      setIsAwaitingDeleteResponse(false);
     });
   };
 
@@ -94,24 +126,7 @@ const RemindersControls = ({ reminders, userId }) => {
         {isRemindersPrompt && prompt}
         <div className='settings-controls__button-wrapper'>
           <button
-            onClick={() => {
-              if (remindersItems?.length < REMINDERS_ITEM_LIMIT) {
-                setShowModal(
-                  <Modal className='modal modal__form-modal--large'>
-                    <h2>{MODAL_CREATE_REMINDER_HEADLINE}</h2>
-                    <ModalReminders
-                      userId={userId}
-                      items={remindersItems}
-                      setItems={setRemindersItems}
-                      itemToEditId={reminderToEditId}
-                      numberOfReminders={remindersItems?.length}
-                    />
-                  </Modal>
-                );
-              } else {
-                setAtRemindersLimit(true);
-              }
-            }}
+            onClick={handleOpenReminderModal}
             type='button'
             className='form-page__save-button'
           >
@@ -131,15 +146,15 @@ const RemindersControls = ({ reminders, userId }) => {
         </div>
         <div className='settings-controls__list-wrapper'>
           {remindersItems?.map((item, index) => (
-            <SettingsItem
+            <ListItem
               key={`reminder-item_${index}`}
               item={item}
               index={index}
               handleDeleteItem={handleDeleteReminder}
-              isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-              handleUpdateItem={handleReminderToUpdate}
+              getItemToUpdate={getItemToUpdate}
               isAwaitingEditResponse={listItemIsAwaitingUpdateResponse}
-              reminderToEditId={reminderToEditId}
+              itemToUpdateId={reminderToEditId}
+              itemType={ITEM_TYPE_REMINDER}
             />
           ))}
         </div>

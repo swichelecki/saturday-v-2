@@ -158,7 +158,7 @@ export const reminderSchema = z
   .object({
     _id: z.string().optional(),
     userId: z.string(),
-    reminder: z
+    title: z
       .string()
       .min(1, FORM_ERROR_MISSING_REMINDER_TITLE)
       .max(30, FORM_CHARACTER_LIMIT_30),
@@ -167,6 +167,7 @@ export const reminderSchema = z
     recurrenceInterval: z.number().or(z.string()),
     exactRecurringDate: z.boolean().or(z.string()),
     displayReminder: z.boolean().or(z.string()),
+    confirmDeletion: z.boolean().or(z.string()),
     itemLimit: z.number(),
   })
   .refine((data) => new Date(data.reminderDate).getTime() > Date.now(), {

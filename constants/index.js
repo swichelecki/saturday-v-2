@@ -94,6 +94,7 @@ export const NOTES_ERROR_AT_ITEM_LIMIT = 'Limit 50 Notes';
 export const ITEM_TYPE_NOTE = 'note';
 export const ITEM_TYPE_DASHBOARD = 'dashboard';
 export const ITEM_TYPE_CATEGORY = 'category';
+export const ITEM_TYPE_REMINDER = 'reminder';
 export const FORM_TIMEZONES = [
   { title: 'America/Adak', name: 'timezone', value: 'America/Adak' },
   { title: 'America/Anchorage', name: 'timezone', value: 'America/Anchorage' },

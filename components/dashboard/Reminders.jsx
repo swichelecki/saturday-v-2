@@ -228,8 +228,9 @@ const Reminders = ({ reminders }) => {
               <RemindersItem
                 key={`reminder-item__${index}`}
                 id={item?._id}
-                title={item?.reminder}
+                title={item?.title}
                 date={item?.exactRecurringDate && item?.reminderDate}
+                confirmDeletion={item?.confirmDeletion}
                 handleResetReminder={handleResetReminder}
               />
             ))}

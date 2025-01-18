@@ -4,7 +4,13 @@ import moment from 'moment-timezone';
 import { handleTodaysDateCheck } from '../../utilities';
 import { ImCheckmark } from 'react-icons/im';
 
-const RemindersItem = ({ id, title, date, handleResetReminder }) => {
+const RemindersItem = ({
+  id,
+  title,
+  date,
+  confirmDeletion,
+  handleResetReminder,
+}) => {
   const isToday = date ? handleTodaysDateCheck(date.split('T')[0]) : false;
 
   return (
@@ -22,7 +28,7 @@ const RemindersItem = ({ id, title, date, handleResetReminder }) => {
         <button
           className='reminders__reminders-button'
           onClick={() => {
-            handleResetReminder(id, true);
+            handleResetReminder(id, confirmDeletion);
           }}
         >
           <ImCheckmark />

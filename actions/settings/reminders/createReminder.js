@@ -29,12 +29,13 @@ export default async function createReminder(formData) {
   const numberOfItems = await Reminder.find({ userId: cookieUserId }).count();
   const reminderSchemaValidated = reminderSchema.safeParse({
     userId: formData.get('userId'),
-    reminder: formData.get('reminder'),
+    title: formData.get('title'),
     reminderDate: formData.get('reminderDate'),
     recurrenceInterval: formData.get('recurrenceInterval'),
     exactRecurringDate: formData.get('exactRecurringDate'),
     recurrenceBuffer: formData.get('recurrenceBuffer'),
     displayReminder: formData.get('displayReminder'),
+    confirmDeletion: formData.get('confirmDeletion'),
     itemLimit: numberOfItems,
   });
 
@@ -47,22 +48,24 @@ export default async function createReminder(formData) {
   try {
     const {
       userId,
-      reminder,
+      title,
       reminderDate,
       recurrenceInterval,
       recurrenceBuffer,
       exactRecurringDate,
       displayReminder,
+      confirmDeletion,
     } = Object.fromEntries(formData);
 
     const result = await Reminder.create({
       userId,
-      reminder,
+      title,
       reminderDate,
       recurrenceInterval,
       recurrenceBuffer,
       exactRecurringDate,
       displayReminder,
+      confirmDeletion,
     });
     revalidatePath('/settings');
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };

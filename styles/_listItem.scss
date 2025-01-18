@@ -1,12 +1,12 @@
 .list-item {
   &__outer-wrapper {
     position: relative;
-    padding-bottom: 6px;
+    padding-bottom: 8px;
   }
   &__inner-wrapper {
-    overflow: hidden;
     border-radius: 8px;
-    border: 1px solid $color-border;
+    box-shadow: 0 0 0 1px $color-border;
+    background-color: $color-background-secondary;
     &--upcoming {
       border-radius: 0 0 8px 8px;
     }
@@ -14,6 +14,7 @@
   &__upcoming-date-time {
     background-color: $button-purple-dark;
     color: $button-purple;
+    box-shadow: 0 0 0 1px $button-purple-dark;
     padding: 6px 16px;
     &--is-today {
       background-color: $button-orange-dark;
@@ -27,7 +28,6 @@
   &__item {
     display: flex;
     position: relative;
-    background-color: $color-background-secondary;
     z-index: 2;
   }
   &__item-drag-zone {
@@ -45,6 +45,12 @@
   }
   &__item-pin-zone {
     padding: 12px 8px;
+  }
+  &__item-tooltip-zone {
+    padding: 16px 11px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
   }
   &__item-swipe-zone {
     display: flex;
@@ -86,6 +92,8 @@
     transition: height 0.3s;
     font-weight: 300;
     background-color: $color-background;
+    overflow: hidden;
+    border-radius: 0 0 8px 8px;
   }
   &__details-edit-button {
     z-index: 2;
@@ -133,7 +141,6 @@
       height: unset;
     }
     &__inner-wrapper {
-      border: 0;
       border-radius: unset;
     }
     &__upcoming-date-time {
@@ -164,6 +171,9 @@
     }
     &__controls {
       visibility: visible;
+    }
+    &__details {
+      border-radius: 0;
     }
     &__details-padding {
       box-shadow: inset 0 -1px 0 0 $color-background-secondary;

@@ -30,12 +30,13 @@ export default async function updateReminder(formData) {
   const reminderSchemaValidated = reminderSchema.safeParse({
     _id: formData.get('_id'),
     userId: formData.get('userId'),
-    reminder: formData.get('reminder'),
+    title: formData.get('title'),
     reminderDate: formData.get('reminderDate'),
     recurrenceInterval: formData.get('recurrenceInterval'),
     exactRecurringDate: formData.get('exactRecurringDate'),
     recurrenceBuffer: formData.get('recurrenceBuffer'),
     displayReminder: formData.get('displayReminder'),
+    confirmDeletion: formData.get('confirmDeletion'),
     itemLimit: numberOfItems - 1,
   });
 
@@ -49,24 +50,26 @@ export default async function updateReminder(formData) {
     const {
       _id,
       userId,
-      reminder,
+      title,
       reminderDate,
       recurrenceInterval,
       recurrenceBuffer,
       exactRecurringDate,
       displayReminder,
+      confirmDeletion,
     } = Object.fromEntries(formData);
 
     await Reminder.updateOne(
       { _id: _id },
       {
         userId,
-        reminder,
+        title,
         reminderDate,
         recurrenceInterval,
         recurrenceBuffer,
         exactRecurringDate,
         displayReminder,
+        confirmDeletion,
       }
     );
 

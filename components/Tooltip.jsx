@@ -1,13 +1,8 @@
-import DOMPurify from 'isomorphic-dompurify';
-
-const Tooltip = ({ icon, message }) => {
+const Tooltip = ({ icon, children }) => {
   return (
     <div className='tooltip'>
       {icon}
-      <span
-        className='tooltip__tooltip-message'
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message) ?? '' }}
-      ></span>
+      <span className='tooltip__tooltip-message'>{children}</span>
     </div>
   );
 };

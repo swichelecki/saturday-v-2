@@ -25,7 +25,6 @@ const ModalReminder = ({
   items,
   setItems,
   itemToUpdate,
-  itemToEditId,
   numberOfReminders,
 }) => {
   const { setShowModal, setShowToast } = useAppContext();
@@ -37,15 +36,16 @@ const ModalReminder = ({
   const [form, setForm] = useState({
     _id: itemToUpdate?._id ?? '',
     userId: itemToUpdate?.userId ?? '',
-    reminder: itemToUpdate?.reminder ?? '',
+    title: itemToUpdate?.title ?? '',
     reminderDate: itemToUpdate?.reminderDate ?? '',
     recurrenceInterval: itemToUpdate?.recurrenceInterval ?? 0,
     recurrenceBuffer: itemToUpdate?.recurrenceBuffer ?? 0,
     exactRecurringDate: itemToUpdate?.exactRecurringDate ?? false,
     displayReminder: itemToUpdate?.displayReminder ?? false,
+    confirmDeletion: itemToUpdate?.confirmDeletion ?? true,
   });
   const [errorMessage, setErrorMessage] = useState({
-    reminder: '',
+    title: '',
     reminderDate: '',
     recurrenceInterval: '',
     recurrenceBuffer: '',
@@ -96,25 +96,32 @@ const ModalReminder = ({
     const reminderSchemaValidated = reminderSchema.safeParse({
       _id: formData.get('_id'),
       userId: formData.get('userId'),
-      reminder: formData.get('reminder'),
+      title: formData.get('title'),
       reminderDate: formData.get('reminderDate'),
       recurrenceInterval: formData.get('recurrenceInterval'),
       exactRecurringDate: formData.get('exactRecurringDate'),
       recurrenceBuffer: formData.get('recurrenceBuffer'),
       displayReminder: formData.get('displayReminder'),
+      confirmDeletion: formData.get('confirmDeletion'),
       itemLimit: isUpdate ? numberOfReminders - 1 : numberOfReminders,
     });
 
     const { success, error } = reminderSchemaValidated;
     if (!success) {
-      const { reminder, reminderDate, recurrenceInterval, recurrenceBuffer } =
-        error.flatten().fieldErrors;
+      const {
+        title,
+        reminderDate,
+        recurrenceInterval,
+        recurrenceBuffer,
+        confirmDeletion,
+      } = error.flatten().fieldErrors;
 
       if (
-        !reminder &&
+        !title &&
         !reminderDate &&
         !recurrenceInterval &&
-        !recurrenceBuffer
+        !recurrenceBuffer &&
+        !confirmDeletion
       ) {
         const serverError = {
           status: 400,
@@ -126,7 +133,7 @@ const ModalReminder = ({
       }
 
       setErrorMessage({
-        reminder: reminder?.[0],
+        title: title?.[0],
         reminderDate: reminderDate?.[0],
         recurrenceInterval: recurrenceInterval?.[0],
         recurrenceBuffer: recurrenceBuffer?.[0],
@@ -142,7 +149,7 @@ const ModalReminder = ({
             setItems(
               handleSortItemsAscending(
                 items?.map((item) => {
-                  if (item?._id === itemToEditId) {
+                  if (item?._id === itemToUpdate?._id) {
                     return res?.item;
                   } else {
                     return item;
@@ -184,15 +191,16 @@ const ModalReminder = ({
     setForm({
       _id: '',
       userId,
-      reminder: '',
+      title: '',
       reminderDate: '',
       recurrenceInterval: 0,
       recurrenceBuffer: 0,
       exactRecurringDate: false,
       displayReminder: false,
+      confirmDeletion: true,
     });
     setErrorMessage({
-      reminder: '',
+      title: '',
       reminderDate: '',
       recurrenceInterval: '',
       recurrenceBuffer: '',
@@ -210,11 +218,11 @@ const ModalReminder = ({
             : ''
         }`}
         type='text'
-        id='reminder'
-        name='reminder'
-        value={form?.reminder}
+        id='title'
+        name='title'
+        value={form?.title}
         onChangeHandler={handleForm}
-        errorMessage={errorMessage.reminder}
+        errorMessage={errorMessage.title}
       />
       <FormTextField
         label={`${
@@ -261,13 +269,14 @@ const ModalReminder = ({
         errorMessage={errorMessage.recurrenceBuffer}
         disabled={!form?.exactRecurringDate}
       />
-      <input type='hidden' name='_id' value={itemToEditId ?? ''} />
+      <input type='hidden' name='_id' value={itemToUpdate?._id ?? ''} />
       <input type='hidden' name='userId' value={userId} />
       <input
         type='hidden'
         name='displayReminder'
         value={form?.displayReminder}
       />
+      <input type='hidden' name='confirmDeletion' value='true' />
       <div className='modal__modal-button-wrapper'>
         <button
           onClick={handleCloseModal}
