@@ -9,10 +9,10 @@ import { changeTimezoneSchema } from '../../schemas/schemas';
 const jwtSecret = process.env.JWT_SECRET;
 
 export default async function changeUserTimezone(formData) {
-  if (!(formData instanceof FormData)) {
+  if (!(formData instanceof Object)) {
     return {
       status: 400,
-      error: 'Not FormData',
+      error: 'Bad Request',
     };
   }
 
@@ -20,7 +20,8 @@ export default async function changeUserTimezone(formData) {
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  if (!formData.get('userId') || formData.get('userId') !== cookieUserId) {
+  const { userId } = formData;
+  if (!userId || userId !== cookieUserId) {
     return {
       status: 400,
       error: 'Unauthorized',
@@ -28,21 +29,23 @@ export default async function changeUserTimezone(formData) {
   }
 
   // check that data shape is correct
-  const changeTimezoneSchemaValidated = changeTimezoneSchema.safeParse({
-    userId: formData.get('userId'),
-    timezone: formData.get('timezone'),
-    currentTimezone: formData.get('currentTimezone'),
-  });
+  const zodValidationResults = changeTimezoneSchema.safeParse(formData);
 
-  const { success, error: zodValidationError } = changeTimezoneSchemaValidated;
+  const {
+    data: zodData,
+    success,
+    error: zodValidationError,
+  } = zodValidationResults;
   if (!success) {
     console.error(zodValidationError);
-    return { status: 400, error: 'Invalid FormData. Check server console.' };
+    return {
+      status: 400,
+      error: 'Zod validation failed. Check server console.',
+    };
   }
 
   try {
-    const timezone = formData.get('timezone');
-    const userId = formData.get('userId');
+    const { userId, timezone } = zodData;
 
     await User.updateOne(
       { _id: userId },

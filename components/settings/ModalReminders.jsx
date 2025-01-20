@@ -35,14 +35,15 @@ const ModalReminder = ({
 
   const [form, setForm] = useState({
     _id: itemToUpdate?._id ?? '',
-    userId: itemToUpdate?.userId ?? '',
+    userId: itemToUpdate?.userId ?? userId,
     title: itemToUpdate?.title ?? '',
-    reminderDate: itemToUpdate?.reminderDate ?? '',
+    reminderDate: itemToUpdate?.reminderDate?.split('T')[0] ?? '',
     recurrenceInterval: itemToUpdate?.recurrenceInterval ?? 0,
     recurrenceBuffer: itemToUpdate?.recurrenceBuffer ?? 0,
     exactRecurringDate: itemToUpdate?.exactRecurringDate ?? false,
     displayReminder: itemToUpdate?.displayReminder ?? false,
     confirmDeletion: itemToUpdate?.confirmDeletion ?? true,
+    itemLimit: isUpdate ? numberOfReminders - 1 : numberOfReminders,
   });
   const [errorMessage, setErrorMessage] = useState({
     title: '',
@@ -91,22 +92,9 @@ const ModalReminder = ({
   // create or update
   const onSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const reminderSchemaValidated = reminderSchema.safeParse({
-      _id: formData.get('_id'),
-      userId: formData.get('userId'),
-      title: formData.get('title'),
-      reminderDate: formData.get('reminderDate'),
-      recurrenceInterval: formData.get('recurrenceInterval'),
-      exactRecurringDate: formData.get('exactRecurringDate'),
-      recurrenceBuffer: formData.get('recurrenceBuffer'),
-      displayReminder: formData.get('displayReminder'),
-      confirmDeletion: formData.get('confirmDeletion'),
-      itemLimit: isUpdate ? numberOfReminders - 1 : numberOfReminders,
-    });
-
-    const { success, error } = reminderSchemaValidated;
+    const zodValidationResults = reminderSchema.safeParse(form);
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const {
         title,
@@ -125,7 +113,7 @@ const ModalReminder = ({
       ) {
         const serverError = {
           status: 400,
-          error: 'Invalid FormData. Check console.',
+          error: 'Zod validation failed. Check console.',
         };
         setShowToast(<Toast serverError={serverError} />);
         console.error(error);
@@ -144,7 +132,7 @@ const ModalReminder = ({
 
     setIsAwaitingSubmitResponse(true);
     isUpdate
-      ? updateReminder(formData).then((res) => {
+      ? updateReminder(zodFormData).then((res) => {
           if (res.status === 200) {
             setItems(
               handleSortItemsAscending(
@@ -166,7 +154,7 @@ const ModalReminder = ({
 
           handleCloseModal();
         })
-      : createReminder(formData).then((res) => {
+      : createReminder(zodFormData).then((res) => {
           if (res.status === 200) {
             const copyOfRemindersItems = [...items];
             setItems(
@@ -269,14 +257,6 @@ const ModalReminder = ({
         errorMessage={errorMessage.recurrenceBuffer}
         disabled={!form?.exactRecurringDate}
       />
-      <input type='hidden' name='_id' value={itemToUpdate?._id ?? ''} />
-      <input type='hidden' name='userId' value={userId} />
-      <input
-        type='hidden'
-        name='displayReminder'
-        value={form?.displayReminder}
-      />
-      <input type='hidden' name='confirmDeletion' value='true' />
       <div className='modal__modal-button-wrapper'>
         <button
           onClick={handleCloseModal}

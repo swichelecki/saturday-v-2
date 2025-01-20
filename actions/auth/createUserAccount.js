@@ -13,34 +13,35 @@ const jwtSecret = process.env.JWT_SECRET;
 const resendApiKey = process.env.RESEND_API_KEY;
 
 export default async function createUserAccount(formData) {
-  if (!(formData instanceof FormData)) {
+  if (!(formData instanceof Object)) {
     return {
       status: 400,
-      error: 'Not FormData',
+      error: 'Bad Request',
     };
   }
 
   // check that data shape is correct
-  const createUserSchemaValidated = createUserSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-    confirmPassword: formData.get('confirmPassword'),
-  });
+  const zodValidationResults = createUserSchema.safeParse(formData);
 
-  const { success, error: zodValidationError } = createUserSchemaValidated;
+  const {
+    data: zodData,
+    success,
+    error: zodValidationError,
+  } = zodValidationResults;
   if (!success) {
     console.error(zodValidationError);
-    return { status: 400, error: 'Invalid FormData. Check server console.' };
+    return {
+      status: 400,
+      error: 'Zod validation failed. Check server console.',
+    };
   }
 
   try {
-    // create new user object
     await connectDB();
 
     const headerList = await headers();
 
-    const email = formData.get('email');
-    const password = formData.get('password');
+    const { email, password } = zodData;
 
     const userExists = await User.findOne({ email });
 

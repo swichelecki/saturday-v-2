@@ -65,12 +65,7 @@ const ItemsColumn = ({
     );
 
     draggableItemsWithNewPriorities?.forEach((item) => {
-      const formData = new FormData();
-      for (let key in item) {
-        formData.append(key, item[key]);
-      }
-
-      updateItem(formData).then((res) => {
+      updateItem({ ...item, isDetailsForm: false }).then((res) => {
         if (res.status !== 200) {
           setShowToast(<Toast serverError={res} />);
         }

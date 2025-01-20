@@ -37,22 +37,16 @@ const Login = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const loginDataValidated = loginSchema.safeParse({
-      email: formData.get('email'),
-      password: formData.get('password'),
-    });
-
-    const { success, error } = loginDataValidated;
-
+    const zodValidationResults = loginSchema.safeParse(form);
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { email, password } = error.flatten().fieldErrors;
       return setErrorMessage({ email: email?.[0], password: password?.[0] });
     }
 
     setisAwaitingLogInResponse(true);
-    const response = await loginUser(formData);
+    const response = await loginUser(zodFormData);
     if (response.status === 200) {
       router.push('/dashboard');
     } else if (response.status === 403) {

@@ -28,7 +28,7 @@
   &__item {
     display: flex;
     position: relative;
-    z-index: 2;
+    z-index: 1;
   }
   &__item-drag-zone {
     padding: 12px 12px 12px 16px;
@@ -95,9 +95,6 @@
     overflow: hidden;
     border-radius: 0 0 8px 8px;
   }
-  &__details-edit-button {
-    z-index: 2;
-  }
   &__details-padding {
     padding: 16px;
     position: relative;
@@ -142,6 +139,7 @@
     }
     &__inner-wrapper {
       border-radius: unset;
+      box-shadow: unset;
     }
     &__upcoming-date-time {
       height: 37px;

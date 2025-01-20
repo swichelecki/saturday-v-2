@@ -8,10 +8,10 @@ import { contactFormSchema } from '../../schemas/schemas';
 const resendApiKey = process.env.RESEND_API_KEY;
 
 export default async function createContactMessage(formData) {
-  if (!(formData instanceof FormData)) {
+  if (!(formData instanceof Object)) {
     return {
       status: 400,
-      error: 'Not FormData',
+      error: 'Bad Request',
     };
   }
 
@@ -19,7 +19,8 @@ export default async function createContactMessage(formData) {
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  if (!formData.get('userId') || formData.get('userId') !== cookieUserId) {
+  const { userId } = formData;
+  if (!userId || userId !== cookieUserId) {
     return {
       status: 400,
       error: 'Unauthorized',
@@ -27,21 +28,23 @@ export default async function createContactMessage(formData) {
   }
 
   // check that data shape is correct
-  const contactFormValidated = contactFormSchema.safeParse({
-    userId: formData.get('userId'),
-    email: formData.get('email'),
-    subject: formData.get('subject'),
-    message: formData.get('message'),
-  });
+  const zodValidationResults = contactFormSchema.safeParse(formData);
 
-  const { success, error: zodValidationError } = contactFormValidated;
+  const {
+    data: zodData,
+    success,
+    error: zodValidationError,
+  } = zodValidationResults;
   if (!success) {
     console.error(zodValidationError);
-    return { status: 400, error: 'Invalid FormData. Check server console.' };
+    return {
+      status: 400,
+      error: 'Zod validation failed. Check server console.',
+    };
   }
 
   try {
-    const { email, subject, message } = Object.fromEntries(formData);
+    const { email, subject, message } = zodData;
 
     const resend = new Resend(resendApiKey);
 

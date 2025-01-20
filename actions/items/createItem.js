@@ -6,11 +6,11 @@ import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { itemSchema } from '../../schemas/schemas';
 
-export default async function createItem(formData) {
-  if (!(formData instanceof FormData)) {
+export default async function createItem(item) {
+  if (!(item instanceof Object)) {
     return {
       status: 400,
-      error: 'Not FormData',
+      error: 'Bad Request',
     };
   }
 
@@ -18,7 +18,8 @@ export default async function createItem(formData) {
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  if (!formData.get('userId') || formData.get('userId') !== cookieUserId) {
+  const { userId } = item;
+  if (!userId || userId !== cookieUserId) {
     return {
       status: 400,
       error: 'Unauthorized',
@@ -27,26 +28,22 @@ export default async function createItem(formData) {
 
   // check that data shape is correct
   const numberOfItems = await Task.find({ userId: cookieUserId }).count();
-  const itemSchemaValidated = itemSchema.safeParse({
-    userId: formData.get('userId'),
-    categoryId: formData.get('categoryId'),
-    title: formData.get('title'),
-    column: formData.get('column'),
-    priority: formData.get('priority'),
-    type: formData.get('type'),
-    description: formData.get('description'),
-    date: formData.get('date'),
-    dateAndTime: formData.get('dateAndTime'),
-    mandatoryDate: formData.get('mandatoryDate'),
-    confirmDeletion: formData.get('confirmDeletion'),
-    isDetailsForm: formData.get('isDetailsForm'),
+  const zodValidationResults = itemSchema.safeParse({
+    ...item,
     itemLimit: numberOfItems,
   });
 
-  const { success, error: zodValidationError } = itemSchemaValidated;
+  const {
+    data: zodData,
+    success,
+    error: zodValidationError,
+  } = zodValidationResults;
   if (!success) {
     console.error(zodValidationError);
-    return { status: 400, error: 'Invalid FormData. Check server console.' };
+    return {
+      status: 400,
+      error: 'Zod validation failed. Check server console.',
+    };
   }
 
   try {
@@ -62,7 +59,7 @@ export default async function createItem(formData) {
       column,
       confirmDeletion,
       mandatoryDate,
-    } = Object.fromEntries(formData);
+    } = zodData;
 
     const result = await Task.create({
       categoryId,

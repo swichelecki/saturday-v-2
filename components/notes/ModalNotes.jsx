@@ -18,7 +18,6 @@ const ModalNotes = ({
   items,
   setItems,
   itemToUpdate,
-  itemToEditId,
   numberOfItems,
   setCurrentNoteCount,
 }) => {
@@ -36,11 +35,17 @@ const ModalNotes = ({
     userId: itemToUpdate?.userId ?? userId,
     title: itemToUpdate?.title ?? '',
     description: itemToUpdate?.description ?? '',
-    date: itemToUpdate?.date ?? '',
+    date:
+      itemToUpdate?.date?.split('T')[0] ??
+      new Date().toISOString().split('T')[0],
     pinned: itemToUpdate?.pinned ?? false,
-    pinnedDate: itemToUpdate?.pinnedDate ?? '',
+    pinnedDate:
+      itemToUpdate?.pinnedDate.split('T')[0] ??
+      new Date().toISOString().split('T')[0],
     confirmDeletion: itemToUpdate?.confirmDeletion ?? true,
-    type: itemToUpdate?.type ?? '',
+    type: itemToUpdate?.type ?? new Date().getFullYear().toString(),
+    confirmDeletion: itemToUpdate?.confirmDeletion ?? true,
+    itemLimit: isUpdate ? numberOfItems - 1 : numberOfItems,
   });
   const [errorMessage, setErrorMessage] = useState({
     title: '',
@@ -80,29 +85,16 @@ const ModalNotes = ({
   // create or update
   const onSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const noteSchemaValidated = noteSchema.safeParse({
-      _id: formData.get('_id'),
-      userId: formData.get('userId'),
-      title: formData.get('title'),
-      description: formData.get('description'),
-      date: formData.get('date'),
-      pinned: formData.get('pinned'),
-      pinnedDate: formData.get('pinnedDate'),
-      type: formData.get('type'),
-      confirmDeletion: formData.get('confirmDeletion'),
-      itemLimit: isUpdate ? numberOfItems - 1 : numberOfItems,
-    });
-
-    const { success, error } = noteSchemaValidated;
+    const zodValidationResults = noteSchema.safeParse(form);
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { title, description } = error.flatten().fieldErrors;
 
       if (!title && !description) {
         const serverError = {
           status: 400,
-          error: 'Invalid FormData. Check console',
+          error: 'Zod validation failed. Check console',
         };
         setShowToast(<Toast serverError={serverError} />);
         console.error(error);
@@ -116,7 +108,7 @@ const ModalNotes = ({
 
     setIsAwaitingSubmitResponse(true);
     isUpdate
-      ? updateNote(formData).then((res) => {
+      ? updateNote(zodFormData).then((res) => {
           if (res.status === 200) {
             setItems(
               items.map((item) => {
@@ -124,7 +116,7 @@ const ModalNotes = ({
                   return {
                     [Object.keys(item)[0]]: Object.values(item)[0].map(
                       (item) => {
-                        if (item._id === itemToEditId) {
+                        if (item._id === itemToUpdate?._id) {
                           return {
                             ...item,
                             title: res.item.title,
@@ -151,7 +143,7 @@ const ModalNotes = ({
 
           handleCloseModal();
         })
-      : createNote(formData).then((res) => {
+      : createNote(zodFormData).then((res) => {
           if (res.status === 200) {
             setItems(
               items.map((item) => {
@@ -216,26 +208,6 @@ const ModalNotes = ({
         errorMessage={errorMessage.description}
         hasToobar={false}
       />
-      <input type='hidden' name='_id' value={itemToEditId || ''} />
-      <input type='hidden' name='userId' value={form?.userId || userId} />
-      <input type='hidden' name='description' value={form?.description} />
-      <input
-        type='hidden'
-        name='date'
-        value={form?.date || new Date().toISOString()}
-      />
-      <input type='hidden' name='pinned' value={form.pinned || 'false'} />
-      <input
-        type='hidden'
-        name='pinnedDate'
-        value={form?.pinnedDate || new Date().toISOString()}
-      />
-      <input
-        type='hidden'
-        name='type'
-        value={form?.type || new Date().getFullYear()}
-      />
-      <input type='hidden' name='confirmDeletion' value='true' />
       <div className='modal__modal-button-wrapper'>
         <button
           onClick={handleCloseModal}

@@ -169,7 +169,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
     );
 
     draggableCategoriesWithNewPriorities?.forEach((item) => {
-      updateCategory(item).then((res) => {
+      updateCategory(item, false).then((res) => {
         if (res.status !== 200) {
           setShowToast(<Toast serverError={res} />);
         }

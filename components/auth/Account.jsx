@@ -43,6 +43,7 @@ const Account = ({ user }) => {
     deletePassword: '',
     deleteConfirmation: '',
     timezone: '',
+    currentTimezone: timezone,
   });
   const [errorMessage, setErrorMessage] = useState({
     email: '',
@@ -87,22 +88,16 @@ const Account = ({ user }) => {
   // change timezone
   const changeTimezone = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const changeTimezoneSchemaValidated = changeTimezoneSchema.safeParse({
-      userId: formData.get('userId'),
-      timezone: formData.get('timezone'),
-      currentTimezone: formData.get('currentTimezone'),
-    });
-
-    const { success, error } = changeTimezoneSchemaValidated;
+    const zodValidationResults = changeTimezoneSchema.safeParse(form);
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { timezone } = error.flatten().fieldErrors;
 
       if (!timezone) {
         const serverError = {
           status: 400,
-          error: 'Invalid FormData. Check console.',
+          error: 'Zod validation failed. Check console.',
         };
         setShowToast(<Toast serverError={serverError} />);
         console.error(error);
@@ -118,7 +113,7 @@ const Account = ({ user }) => {
     }
 
     setIsAwaitingChangeTimezoneResponse(true);
-    const response = await changeUserTimezone(formData);
+    const response = await changeUserTimezone(zodFormData);
     if (response.status === 200) {
       setIsAwaitingChangeTimezoneResponse(false);
       setShowToast(<Toast isSuccess message='Timezone updated!' />);
@@ -131,17 +126,9 @@ const Account = ({ user }) => {
   // change password
   const changePassword = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const changePasswordSchemaValidated = changePasswordSchema.safeParse({
-      userId: formData.get('userId'),
-      email: formData.get('email'),
-      password: formData.get('password'),
-      newPassword: formData.get('newPassword'),
-      confirmNewPassword: formData.get('confirmNewPassword'),
-    });
-
-    const { success, error } = changePasswordSchemaValidated;
+    const zodValidationResults = changePasswordSchema.safeParse(form);
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { email, password, newPassword, confirmNewPassword } =
         error.flatten().fieldErrors;
@@ -149,7 +136,7 @@ const Account = ({ user }) => {
       if (!email && !password && !newPassword && !confirmNewPassword) {
         const serverError = {
           status: 400,
-          error: 'Invalid FormData. Check console.',
+          error: 'Zod validation failed. Check console.',
         };
         setShowToast(<Toast serverError={serverError} />);
         console.error(error);
@@ -167,7 +154,7 @@ const Account = ({ user }) => {
     }
 
     setIsAwaitingChangePasswordResponse(true);
-    const response = await changeUserPassword(formData);
+    const response = await changeUserPassword(zodFormData);
     if (response.status === 200) {
       router.push('/login');
     } else if (response.status === 403) {
@@ -185,16 +172,9 @@ const Account = ({ user }) => {
   // delete account
   const deleteAccount = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const deleteAccountSchemaValidated = deleteAccountSchema.safeParse({
-      userId: formData.get('userId'),
-      deleteEmail: formData.get('deleteEmail'),
-      deletePassword: formData.get('deletePassword'),
-      deleteConfirmation: formData.get('deleteConfirmation'),
-    });
-
-    const { success, error } = deleteAccountSchemaValidated;
+    const zodValidationResults = deleteAccountSchema.safeParse(form);
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { deleteEmail, deletePassword, deleteConfirmation } =
         error.flatten().fieldErrors;
@@ -202,7 +182,7 @@ const Account = ({ user }) => {
       if (!deleteEmail && !deletePassword && !deleteConfirmation) {
         const serverError = {
           status: 400,
-          error: 'Invalid FormData. Check console.',
+          error: 'Zod validation failed. Check console.',
         };
         setShowToast(<Toast serverError={serverError} />);
         console.error(error);
@@ -219,7 +199,7 @@ const Account = ({ user }) => {
     }
 
     setIsAwaitingDeleteAccoungResponse(true);
-    const response = await deleteUserAccount(formData);
+    const response = await deleteUserAccount(zodFormData);
     if (response.status === 200) {
       setUserId('');
       setIsAdmin(false);
@@ -249,8 +229,6 @@ const Account = ({ user }) => {
           options={FORM_TIMEZONES}
           errorMessage={errorMessage.timezone}
         />
-        <input type='hidden' name='userId' value={userId} />
-        <input type='hidden' name='currentTimezone' value={timezone} />
         <div className='form-page__buttons-wrapper'>
           <button
             type='submit'
@@ -299,7 +277,6 @@ const Account = ({ user }) => {
           onChangeHandler={handleForm}
           errorMessage={errorMessage.confirmNewPassword}
         />
-        <input type='hidden' name='userId' value={userId} />
         <div className='form-page__buttons-wrapper'>
           <button
             type='submit'
@@ -339,7 +316,6 @@ const Account = ({ user }) => {
           onChangeHandler={handleForm}
           errorMessage={errorMessage.deleteConfirmation}
         />
-        <input type='hidden' name='userId' value={userId} />
         <div className='form-page__buttons-wrapper'>
           <button type='submit' className='form-page__delete-button'>
             {isAwaitingDeleteAccoungResponse && <div className='loader'></div>}

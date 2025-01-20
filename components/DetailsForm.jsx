@@ -33,18 +33,19 @@ const DetailsForm = ({ task, user }) => {
     title: task?.title ?? '',
     description: task?.description ?? '',
     confirmDeletion: task?.confirmDeletion ?? false,
-    dateState: task?.date ?? '',
-    dateAndTimeState: task?.dateAndTime ?? '',
-    priority: task?.priority ?? priority,
+    date: task?.date ?? '',
+    dateAndTime: task?.dateAndTime ?? '',
+    priority: task?.priority ?? parseInt(priority),
     type: task?.type ?? type,
-    column: task?.column ?? column,
+    column: task?.column ?? parseInt(column),
     mandatoryDate: task?.mandatoryDate ?? Boolean(hasMandatoryDate),
+    itemLimit: isUpdate ? numberOfItems - 1 : numberOfItems,
   });
   const [errorMessage, setErrorMessage] = useState({
     title: '',
     description: '',
-    dateState: '',
-    dateAndTimeState: '',
+    date: '',
+    dateAndTime: '',
     itemLimit: '',
   });
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
@@ -68,8 +69,8 @@ const DetailsForm = ({ task, user }) => {
       setErrorMessage({ ...errorMessage, [e.target.name]: '' });
     }
 
-    if (e.target.name === 'dateAndTimeState') {
-      setErrorMessage({ ...errorMessage, dateState: '' });
+    if (e.target.name === 'dateAndTime') {
+      setErrorMessage({ ...errorMessage, date: '' });
     }
   };
 
@@ -92,26 +93,19 @@ const DetailsForm = ({ task, user }) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const itemSchemaValidated = itemSchema.safeParse({
-      _id: formData.get('_id') ?? '',
-      userId: formData.get('userId'),
-      categoryId: formData.get('categoryId'),
-      title: formData.get('title'),
-      description: formData.get('description'),
-      date: formData.get('date'),
-      dateAndTime: formData.get('dateAndTime'),
-      mandatoryDate: formData.get('mandatoryDate'),
-      column: formData.get('column'),
-      priority: formData.get('priority'),
-      type: formData.get('type'),
-      confirmDeletion: formData.get('confirmDeletion'),
-      isDetailsForm: formData.get('isDetailsForm'),
-      itemLimit: isUpdate ? numberOfItems - 1 : numberOfItems,
+    const zodValidationResults = itemSchema.safeParse({
+      ...form,
+      dateAndTime: form?.dateAndTime
+        ? handleDateAndTimeToUTC(form?.dateAndTime)
+        : '',
+      date:
+        form?.date && !form?.dateAndTime
+          ? form?.date
+          : form?.dateAndTime?.split('T')[0],
+      isDetailsForm: true,
     });
-
-    const { success, error } = itemSchemaValidated;
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { title, description, date, itemLimit } =
         error.flatten().fieldErrors;
@@ -119,7 +113,7 @@ const DetailsForm = ({ task, user }) => {
       if (!title && !description && !date && !itemLimit) {
         const serverError = {
           status: 400,
-          error: 'Invalid FormData. Check console.',
+          error: 'Zod validation failed. Check console.',
         };
         setShowToast(<Toast serverError={serverError} />);
         console.error(error);
@@ -129,8 +123,8 @@ const DetailsForm = ({ task, user }) => {
       setErrorMessage({
         title: title?.[0],
         description: description?.[0],
-        dateState: date?.[0],
-        dateAndTimeState: date?.[0],
+        date: date?.[0],
+        dateAndTime: date?.[0],
         itemLimit: itemLimit?.[0],
       });
       setScrollToErrorMessage(true);
@@ -139,7 +133,7 @@ const DetailsForm = ({ task, user }) => {
 
     setIsAwaitingSaveResponse(true);
     isUpdate
-      ? updateItem(formData).then((res) => {
+      ? updateItem(zodFormData).then((res) => {
           if (res.status === 200) {
             router.push('/');
           }
@@ -148,7 +142,7 @@ const DetailsForm = ({ task, user }) => {
             setShowToast(<Toast serverError={res} />);
           }
         })
-      : createItem(formData).then((res) => {
+      : createItem(zodFormData).then((res) => {
           if (res.status === 200) {
             router.push('/');
           }
@@ -195,71 +189,26 @@ const DetailsForm = ({ task, user }) => {
               label='Date'
               type='date'
               id='date'
-              name='dateState'
-              value={
-                form?.dateState && !form?.dateAndTimeState
-                  ? form?.dateState
-                  : ''
-              }
+              name='date'
+              value={form?.date && !form?.dateAndTime ? form?.date : ''}
               onChangeHandler={handleSetForm}
-              errorMessage={errorMessage.dateState}
-              disabled={form?.dateAndTimeState}
+              errorMessage={errorMessage.date}
+              disabled={form?.dateAndTime}
               timezone={timezone}
             />
             <FormTextField
               label='Date & Time'
               type='datetime-local'
               id='dateAndTime'
-              name='dateAndTimeState'
-              value={form?.dateAndTimeState}
+              name='dateAndTime'
+              value={form?.dateAndTime}
               onChangeHandler={handleSetForm}
-              errorMessage={errorMessage.dateState}
-              disabled={form?.dateState && !form?.dateAndTimeState}
+              errorMessage={errorMessage.date}
+              disabled={form?.date && !form?.dateAndTime}
               timezone={timezone}
             />
           </>
         )}
-        <input type='hidden' name='_id' value={task?._id ?? ''} />
-        <input type='hidden' name='userId' value={task?.userId ?? userId} />
-        <input
-          type='hidden'
-          name='categoryId'
-          value={task?.categoryId ?? categoryId}
-        />
-        <input
-          type='hidden'
-          name='priority'
-          value={task?.priority ?? priority}
-        />
-        <input type='hidden' name='type' value={task?.type ?? type} />
-        <input type='hidden' name='column' value={task?.column ?? column} />
-        <input
-          type='hidden'
-          name='mandatoryDate'
-          value={task?.mandatoryDate ?? Boolean(hasMandatoryDate)}
-        />
-        <input type='hidden' name='description' value={form?.description} />
-        <input type='hidden' name='isDetailsForm' value='true' />
-        <input
-          type='hidden'
-          name='dateAndTime'
-          value={
-            form?.dateAndTimeState?.length > 0
-              ? handleDateAndTimeToUTC(form?.dateAndTimeState)
-              : ''
-          }
-        />
-        <input
-          type='hidden'
-          name='date'
-          value={
-            form?.dateState?.length > 0
-              ? form?.dateState.split('T')[0]
-              : form?.dateAndTimeState?.length > 0
-              ? form?.dateAndTimeState.split('T')[0]
-              : ''
-          }
-        />
         <div className='form-page__buttons-wrapper'>
           <Link href='/'>
             <span className='form-page__cancel-button'>Cancel</span>

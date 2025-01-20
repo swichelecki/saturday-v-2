@@ -6,11 +6,11 @@ import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { noteSchema } from '../../schemas/schemas';
 
-export default async function createNote(formData) {
-  if (!(formData instanceof FormData)) {
+export default async function createNote(item) {
+  if (!(item instanceof Object)) {
     return {
       status: 400,
-      error: 'Not FormData',
+      error: 'Bad Request',
     };
   }
 
@@ -18,7 +18,8 @@ export default async function createNote(formData) {
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  if (!formData.get('userId') || formData.get('userId') !== cookieUserId) {
+  const { userId } = item;
+  if (!userId || userId !== cookieUserId) {
     return {
       status: 400,
       error: 'Unauthorized',
@@ -27,23 +28,22 @@ export default async function createNote(formData) {
 
   // check that data shape is correct
   const numberOfItems = await Note.find({ userId: cookieUserId }).count();
-  const noteSchemaValidated = noteSchema.safeParse({
-    _id: formData.get('_id'),
-    userId: formData.get('userId'),
-    title: formData.get('title'),
-    description: formData.get('description'),
-    date: formData.get('date'),
-    pinned: formData.get('pinned'),
-    pinnedDate: formData.get('pinnedDate'),
-    type: formData.get('type'),
-    confirmDeletion: formData.get('confirmDeletion'),
+  const zodValidationResults = noteSchema.safeParse({
+    ...item,
     itemLimit: numberOfItems,
   });
 
-  const { success, error: zodValidationError } = noteSchemaValidated;
+  const {
+    data: zodData,
+    success,
+    error: zodValidationError,
+  } = zodValidationResults;
   if (!success) {
     console.error(zodValidationError);
-    return { status: 400, error: 'Invalid FormData. Check server console.' };
+    return {
+      status: 400,
+      error: 'Zod validation failed. Check server console.',
+    };
   }
 
   try {
@@ -56,7 +56,7 @@ export default async function createNote(formData) {
       pinnedDate,
       type,
       confirmDeletion,
-    } = Object.fromEntries(formData);
+    } = zodData;
 
     const result = await Note.create({
       userId,

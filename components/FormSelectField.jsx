@@ -38,7 +38,6 @@ const FormSelectField = ({
         </select>
       </div>
       {errorMessage && <FormErrorMessage errorMessage={errorMessage} />}
-      <input type='hidden' name={name} value={value} />
     </div>
   );
 };

@@ -42,16 +42,9 @@ const Signup = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const createUserSchemaValidated = createUserSchema.safeParse({
-      email: formData.get('email'),
-      password: formData.get('password'),
-      confirmPassword: formData.get('confirmPassword'),
-    });
-
-    const { success, error } = createUserSchemaValidated;
-
+    const zodValidationResults = createUserSchema.safeParse(form);
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { email, password, confirmPassword } = error.flatten().fieldErrors;
       return setErrorMessage({
@@ -62,7 +55,7 @@ const Signup = () => {
     }
 
     setisAwaitingLogInResponse(true);
-    const response = await createUserAccount(formData);
+    const response = await createUserAccount(zodFormData);
     if (response.status === 200) {
       router.push('/settings');
     } else if (response.status === 409) {

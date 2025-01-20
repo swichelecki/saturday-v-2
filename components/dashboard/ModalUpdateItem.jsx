@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { updateItem } from '../../actions';
 import { useAppContext } from '../../context';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
@@ -10,12 +10,9 @@ import { handleModalResetPageScrolling } from '../../utilities';
 import { MOBILE_BREAKPOINT } from '../../constants';
 
 const ModalUpdateItem = ({
-  userId,
   itemToUpdate,
-  itemToEditId,
   items,
   setItems,
-  setTaskToEditId,
   totalNumberOfItems,
 }) => {
   const { setShowModal, setShowToast } = useAppContext();
@@ -24,25 +21,23 @@ const ModalUpdateItem = ({
   const handleListItemsMobileReset = useListItemsMobileReset();
 
   const [form, setForm] = useState({
-    userId,
-    categoryId: '',
-    title: '',
-    column: 1,
-    priority: 1,
-    type: '',
-    description: '',
+    _id: itemToUpdate?._id,
+    userId: itemToUpdate?.userId,
+    categoryId: itemToUpdate?.categoryId,
+    title: itemToUpdate?.title,
+    column: itemToUpdate?.column,
+    priority: itemToUpdate?.priority,
+    type: itemToUpdate?.type,
+    description: itemToUpdate?.description,
     date: '',
     dateAndTime: '',
-    mandatoryDate: false,
+    mandatoryDate: itemToUpdate?.mandatoryDate,
+    confirmDeletion: itemToUpdate?.confirmDeletion,
+    itemLimit: totalNumberOfItems - 1,
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [isAwaitingSubmitResponse, setIsAwaitingSubmitResponse] =
     useState(false);
-
-  // set state to item to update
-  useEffect(() => {
-    setForm(itemToUpdate);
-  }, [itemToUpdate]);
 
   // state handlers
   const handleForm = (e) => {
@@ -59,33 +54,19 @@ const ModalUpdateItem = ({
   // edit item
   const handleEditSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const itemSchemaValidated = itemSchema.safeParse({
-      _id: formData.get('_id'),
-      userId: formData.get('userId'),
-      categoryId: formData.get('categoryId'),
-      title: formData.get('title'),
-      column: formData.get('column'),
-      priority: formData.get('priority'),
-      type: formData.get('type'),
-      description: formData.get('description'),
-      date: formData.get('date'),
-      dateAndTime: formData.get('dateAndTime'),
-      mandatoryDate: formData.get('mandatoryDate'),
-      confirmDeletion: formData.get('confirmDeletion'),
-      isDetailsForm: formData.get('isDetailsForm'),
-      itemLimit: totalNumberOfItems - 1,
+    const zodValidationResults = itemSchema.safeParse({
+      ...form,
+      isDetailsForm: false,
     });
-
-    const { success, error } = itemSchemaValidated;
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { title } = error.flatten().fieldErrors;
 
       if (!title) {
         const serverError = {
           status: 400,
-          error: 'Invalid FormData. Check console.',
+          error: 'Zod validation failed. Check console.',
         };
         setShowToast(<Toast serverError={serverError} />);
         console.error(error);
@@ -97,14 +78,14 @@ const ModalUpdateItem = ({
     }
 
     setIsAwaitingSubmitResponse(true);
-    updateItem(formData).then((res) => {
+    updateItem(zodFormData).then((res) => {
       if (res.status === 200) {
         setItems(
           items.map((item) => {
             if (Object.keys(item)[0] === res.item.type) {
               return {
                 [Object.keys(item)[0]]: Object.values(item)[0].map((item) => {
-                  if (item._id === itemToEditId) {
+                  if (item._id === itemToUpdate?._id) {
                     return {
                       ...item,
                       title: res.item.title,
@@ -135,9 +116,9 @@ const ModalUpdateItem = ({
   const handleCloseModal = () => {
     setShowModal(null);
     handleModalResetPageScrolling();
-    setTaskToEditId('');
     setForm({
-      userId,
+      _id: '',
+      userId: itemToUpdate?.userId,
       categoryId: '',
       title: '',
       column: 1,
@@ -177,18 +158,6 @@ const ModalUpdateItem = ({
           Update
         </button>
       </div>
-      <input type='hidden' name='_id' value={itemToUpdate?._id} />
-      <input type='hidden' name='userId' value={userId} />
-      <input type='hidden' name='categoryId' value={itemToUpdate?.categoryId} />
-      <input type='hidden' name='column' value={itemToUpdate?.column} />
-      <input type='hidden' name='priority' value={itemToUpdate?.priority} />
-      <input type='hidden' name='type' value={itemToUpdate?.type} />
-      <input type='hidden' name='description' value='' />
-      <input type='hidden' name='date' value='' />
-      <input type='hidden' name='dateAndTime' value='' />
-      <input type='hidden' name='confirmDeletion' value='false' />
-      <input type='hidden' name='mandatoryDate' value='false' />
-      <input type='hidden' name='isDetailsForm' value='false' />
     </form>
   );
 };

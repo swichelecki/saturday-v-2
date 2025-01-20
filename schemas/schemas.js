@@ -74,15 +74,15 @@ export const loginSchema = z.object({
 
 export const categorySchema = z
   .object({
-    _id: z.string().optional(),
+    _id: z.string(),
     userId: z.string(),
-    priority: z.number().or(z.string()),
+    priority: z.number(),
     title: z
       .string()
       .min(1, SETTINGS_MISSING_CATEGORY)
       .max(16, FORM_CHARACTER_LIMIT_16),
-    mandatoryDate: z.boolean().or(z.string()),
-    confirmDeletion: z.boolean().or(z.string()),
+    mandatoryDate: z.boolean(),
+    confirmDeletion: z.boolean(),
     itemLimit: z.number(),
   })
   .refine((data) => Number(data.itemLimit) < CATEGORY_ITEM_LIMIT, {
@@ -92,15 +92,15 @@ export const categorySchema = z
 
 export const itemSchema = z
   .object({
-    _id: z.string().optional(),
+    _id: z.string(),
     userId: z.string(),
     categoryId: z.string(),
     title: z
       .string()
       .min(1, FORM_ERROR_MISSING_TITLE)
       .max(30, FORM_CHARACTER_LIMIT_30),
-    column: z.number().or(z.string()),
-    priority: z.number().or(z.string()),
+    column: z.number(),
+    priority: z.number(),
     type: z
       .string()
       .min(1, SETTINGS_MISSING_CATEGORY)
@@ -108,18 +108,18 @@ export const itemSchema = z
     description: z.string().max(5000, FORM_CHARACTER_LIMIT_5000),
     date: z.string().date().or(z.string()),
     dateAndTime: z.string().datetime().or(z.string()),
-    mandatoryDate: z.boolean().or(z.string()),
-    confirmDeletion: z.boolean().or(z.string()),
+    mandatoryDate: z.boolean(),
+    confirmDeletion: z.boolean(),
     isDetailsForm: z.boolean().or(z.string().nullable()),
     itemLimit: z.number(),
   })
   .refine(
     (data) =>
-      data.mandatoryDate === 'true' ||
-      data.isDetailsForm === 'false' ||
+      data.mandatoryDate ||
       !data.isDetailsForm ||
-      (data.mandatoryDate === 'false' &&
-        data.isDetailsForm === 'true' &&
+      !data.isDetailsForm ||
+      (!data.mandatoryDate &&
+        data.isDetailsForm &&
         data.description?.length > 0),
     {
       message: FORM_ERROR_MISSING_DESCRIPTION,
@@ -130,7 +130,7 @@ export const itemSchema = z
     (data) =>
       data.date?.length > 0 ||
       data.dateAndTime?.length > 0 ||
-      data.mandatoryDate === 'false',
+      !data.mandatoryDate,
     {
       message: FORM_ERROR_MISSING_DATE,
       path: ['date'],
@@ -143,7 +143,7 @@ export const itemSchema = z
       (data.dateAndTime?.length > 0 &&
         new Date(data.dateAndTime).getTime() >=
           Date.now() - TWENTYFOUR_HOURS) ||
-      data.mandatoryDate === 'false',
+      !data.mandatoryDate,
     {
       message: FORM_ERROR_DATE_NOT_TODAY_OR_GREATER,
       path: ['date'],
@@ -156,32 +156,32 @@ export const itemSchema = z
 
 export const reminderSchema = z
   .object({
-    _id: z.string().optional(),
+    _id: z.string(),
     userId: z.string(),
     title: z
       .string()
       .min(1, FORM_ERROR_MISSING_REMINDER_TITLE)
       .max(30, FORM_CHARACTER_LIMIT_30),
     reminderDate: z.string().date(FORM_ERROR_MISSING_REMINDER_DATE),
-    recurrenceBuffer: z.number().or(z.string()),
-    recurrenceInterval: z.number().or(z.string()),
-    exactRecurringDate: z.boolean().or(z.string()),
-    displayReminder: z.boolean().or(z.string()),
-    confirmDeletion: z.boolean().or(z.string()),
+    recurrenceBuffer: z.number(),
+    recurrenceInterval: z.number(),
+    exactRecurringDate: z.boolean(),
+    displayReminder: z.boolean(),
+    confirmDeletion: z.boolean(),
     itemLimit: z.number(),
   })
   .refine((data) => new Date(data.reminderDate).getTime() > Date.now(), {
     message: FORM_ERROR_REMINDER_DATE_IN_PAST,
     path: ['reminderDate'],
   })
-  .refine((data) => data.recurrenceInterval !== '0', {
+  .refine((data) => data.recurrenceInterval !== 0, {
     message: FORM_ERROR_MISSING_REMINDER_INTERVAL,
     path: ['recurrenceInterval'],
   })
   .refine(
     (data) =>
-      (data.exactRecurringDate === 'true' && data.recurrenceBuffer !== '0') ||
-      (data.exactRecurringDate === 'false' && data.recurrenceBuffer === '0'),
+      (data.exactRecurringDate && data.recurrenceBuffer !== 0) ||
+      (!data.exactRecurringDate && data.recurrenceBuffer === 0),
     {
       message: FORM_ERROR_MISSING_REMINDER_BUFFER,
       path: ['recurrenceBuffer'],
@@ -281,7 +281,7 @@ export const deleteAccountSchema = z
 
 export const noteSchema = z
   .object({
-    _id: z.string().optional(),
+    _id: z.string(),
     userId: z.string(),
     title: z
       .string()
@@ -291,11 +291,11 @@ export const noteSchema = z
       .string()
       .min(1, FORM_ERROR_MISSING_DESCRIPTION)
       .max(5000, FORM_CHARACTER_LIMIT_5000),
-    date: z.string().date().or(z.string()),
-    pinned: z.boolean().or(z.string()),
-    pinnedDate: z.string().date().or(z.string()),
+    date: z.string().date(),
+    pinned: z.boolean(),
+    pinnedDate: z.string().date(),
     itemLimit: z.number(),
-    confirmDeletion: z.boolean().or(z.string()),
+    confirmDeletion: z.boolean(),
     type: z.string(),
   })
   .refine((data) => Number(data.itemLimit) < NOTES_ITEM_LIMIT, {

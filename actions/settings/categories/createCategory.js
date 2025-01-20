@@ -6,19 +6,20 @@ import { handleServerErrorMessage } from '../../../utilities';
 import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { categorySchema } from '../../../schemas/schemas';
 
-export default async function createCategory(formData) {
-  if (!(formData instanceof FormData)) {
+export default async function createCategory(item) {
+  if (!(item instanceof Object)) {
     return {
       status: 400,
-      error: 'Not FormData',
+      error: 'Bad Request',
     };
   }
 
-  // check that cookie user id matches FormData user id
+  // check that cookie user id matches item user id
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  if (!formData.get('userId') || formData.get('userId') !== cookieUserId) {
+  const { userId } = item;
+  if (!userId || userId !== cookieUserId) {
     return {
       status: 400,
       error: 'Unauthorized',
@@ -27,24 +28,26 @@ export default async function createCategory(formData) {
 
   // check that data shape is correct
   const numberOfItems = await Category.find({ userId: cookieUserId }).count();
-  const categorySchemaValidated = categorySchema.safeParse({
-    userId: formData.get('userId'),
-    priority: formData.get('priority'),
-    title: formData.get('title'),
-    mandatoryDate: formData.get('mandatoryDate'),
-    confirmDeletion: formData.get('confirmDeletion'),
+  const zodValidationResults = categorySchema.safeParse({
+    ...item,
     itemLimit: numberOfItems,
   });
 
-  const { success, error: zodValidationError } = categorySchemaValidated;
+  const {
+    data: zodData,
+    success,
+    error: zodValidationError,
+  } = zodValidationResults;
   if (!success) {
     console.error(zodValidationError);
-    return { status: 400, error: 'Invalid FormData. Check server console.' };
+    return {
+      status: 400,
+      error: 'Zod validation failed. Check server console.',
+    };
   }
 
   try {
-    const { userId, priority, mandatoryDate, title, confirmDeletion } =
-      Object.fromEntries(formData);
+    const { userId, priority, mandatoryDate, title, confirmDeletion } = zodData;
     const result = await Category.create({
       userId,
       priority,

@@ -35,8 +35,10 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
 
+  const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
   const [listItems, setListItems] = useState(tasks);
   const [listItem, setListItem] = useState({
+    _id: '',
     userId,
     categoryId: '',
     title: '',
@@ -48,6 +50,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     dateAndTime: '',
     mandatoryDate: false,
     confirmDeletion: false,
+    itemLimit: totalNumberOfItems,
   });
   const [masonryItems, setMasonryItems] = useState([]);
   const [priority, setPriority] = useState(0);
@@ -56,7 +59,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
   const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
-  const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
   const [errorMessages, setErrorMessages] = useState('');
 
   let allItems = [];
@@ -162,25 +164,12 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
   // create new item
   const handleOnSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const itemSchemaValidated = itemSchema.safeParse({
-      userId: formData.get('userId'),
-      categoryId: formData.get('categoryId'),
-      title: formData.get('title'),
-      column: formData.get('column'),
-      priority: formData.get('priority'),
-      type: formData.get('type'),
-      description: formData.get('description'),
-      date: formData.get('date'),
-      dateAndTime: formData.get('dateAndTime'),
-      mandatoryDate: formData.get('mandatoryDate'),
-      confirmDeletion: formData.get('confirmDeletion'),
-      isDetailsForm: formData.get('isDetailsForm'),
-      itemLimit: totalNumberOfItems,
+    const zodValidationResults = itemSchema.safeParse({
+      ...listItem,
+      isDetailsForm: false,
     });
-
-    const { success, error } = itemSchemaValidated;
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { title, itemLimit } = error.flatten().fieldErrors;
 
@@ -199,7 +188,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     }
 
     setIsAwaitingAddResponse(true);
-    createItem(formData).then((res) => {
+    createItem(zodFormData, false).then((res) => {
       if (res.status === 200) {
         setListItems(
           listItems.map((item) => {
@@ -235,12 +224,9 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
           <Modal showCloseButton={false}>
             <h2>{MODAL_UPDATE_ITEM_HEADLINE}</h2>
             <ModalUpdateItem
-              userId={userId}
               itemToUpdate={res.item}
-              itemToEditId={res.item._id}
               items={listItems}
               setItems={setListItems}
-              setTaskToEditId={setTaskToEditId}
               totalNumberOfItems={totalNumberOfItems}
             />
           </Modal>
@@ -320,7 +306,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
         categoryId={listItem?.categoryId}
         isAwaitingAddResponse={isAwaitingAddResponse}
         priority={priority}
-        userId={userId}
       />
       {reminders && reminders?.length > 0 && (
         <Reminders reminders={reminders} />

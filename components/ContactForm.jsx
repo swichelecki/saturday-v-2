@@ -20,6 +20,8 @@ const ContactForm = ({ user }) => {
   }, []);
 
   const [form, setForm] = useState({
+    userId,
+    email,
     subject: '',
     message: '',
   });
@@ -51,24 +53,17 @@ const ContactForm = ({ user }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const contactFormValidated = contactFormSchema.safeParse({
-      userId: formData.get('userId'),
-      email: formData.get('email'),
-      subject: formData.get('subject'),
-      message: formData.get('message'),
-    });
+    const zodValidationResults = contactFormSchema.safeParse(form);
 
-    const { success, error } = contactFormValidated;
-
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { subject, message } = error.flatten().fieldErrors;
 
       if (!subject && !message) {
         const serverError = {
           status: 400,
-          error: 'Invalid FormData. Check console.',
+          error: 'Zod validation failed Check console.',
         };
         setShowToast(<Toast serverError={serverError} />);
         console.error(error);
@@ -84,7 +79,7 @@ const ContactForm = ({ user }) => {
     }
 
     setIsAwaitingContactFormResponse(true);
-    const response = await createContactMessage(formData);
+    const response = await createContactMessage(zodFormData);
     if (response.status === 200) {
       setIsAwaitingContactFormResponse(false);
       setForm({ subject: '', message: '<p><br></p>' });
@@ -126,9 +121,6 @@ const ContactForm = ({ user }) => {
         onChangeHandler={handleSetQuill}
         errorMessage={errorMessage.message}
       />
-      <input type='hidden' name='message' value={form?.message} />
-      <input type='hidden' name='email' value={email} />
-      <input type='hidden' name='userId' value={userId} />
       <div className='form-page__buttons-wrapper'>
         <Link href='/'>
           <span className='form-page__cancel-button'>Cancel</span>

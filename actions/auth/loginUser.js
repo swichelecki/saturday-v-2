@@ -10,20 +10,21 @@ import { loginSchema } from '../../schemas/schemas';
 const jwtSecret = process.env.JWT_SECRET;
 
 export default async function loginUser(formData) {
-  if (!(formData instanceof FormData)) {
+  if (!(formData instanceof Object)) {
     return {
       status: 400,
-      error: 'Not FormData',
+      error: 'Bad Request',
     };
   }
 
   // check that data shape is correct
-  const loginDataValidated = loginSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  });
+  const zodValidationResults = loginSchema.safeParse(formData);
 
-  const { success, error: zodValidationError } = loginDataValidated;
+  const {
+    data: zodData,
+    success,
+    error: zodValidationError,
+  } = zodValidationResults;
   if (!success) {
     console.error(zodValidationError);
     return { status: 400, error: 'Invalid FormData. Check server console.' };
@@ -32,8 +33,7 @@ export default async function loginUser(formData) {
   try {
     await connectDB();
 
-    const email = formData.get('email');
-    const password = formData.get('password');
+    const { email, password } = zodData;
 
     const user = await User.findOne({ email });
 

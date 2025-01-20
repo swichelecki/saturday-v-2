@@ -7,17 +7,20 @@ import { handleServerErrorMessage } from '../../../utilities';
 import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { categorySchema } from '../../../schemas/schemas';
 
-export default async function updateCategory(item) {
+export default async function updateCategory(item, isFormUpdate) {
+  if (!(item instanceof Object)) {
+    return {
+      status: 400,
+      error: 'Bad Request',
+    };
+  }
+
   // check that cookie user id matches FormData user id
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  // item is formData when submitted from modal
-  // item is an object when reordered in list
-  const itemIsFormData = item instanceof FormData;
-  const itemUserId = itemIsFormData ? item.get('userId') : item?.userId;
-
-  if (!itemUserId || itemUserId !== cookieUserId) {
+  const { userId } = item;
+  if (!userId || userId !== cookieUserId) {
     return {
       status: 400,
       error: 'Unauthorized',
@@ -26,24 +29,22 @@ export default async function updateCategory(item) {
 
   // check that data shape is correct
   const numberOfItems = await Category.find({ userId: cookieUserId }).count();
-  const categorySchemaValidated = categorySchema.safeParse({
-    _id: itemIsFormData ? item.get('_id') : item?._id,
-    userId: itemIsFormData ? item.get('userId') : item?.userId,
-    priority: itemIsFormData ? item.get('priority') : item?.priority,
-    title: itemIsFormData ? item.get('title') : item?.title,
-    mandatoryDate: itemIsFormData
-      ? item.get('mandatoryDate')
-      : item?.mandatoryDate,
-    confirmDeletion: itemIsFormData
-      ? item.get('confirmDeletion')
-      : item?.confirmDeletion,
+  const zodValidationResults = categorySchema.safeParse({
+    ...item,
     itemLimit: numberOfItems,
   });
 
-  const { success, error: zodValidationError } = categorySchemaValidated;
+  const {
+    data: zodData,
+    success,
+    error: zodValidationError,
+  } = zodValidationResults;
   if (!success) {
     console.error(zodValidationError);
-    return { status: 400, error: 'Invalid FormData. Check server console.' };
+    return {
+      status: 400,
+      error: 'Zod validation failed. Check server console.',
+    };
   }
 
   try {
@@ -55,7 +56,7 @@ export default async function updateCategory(item) {
       title: categoryTitle,
       mandatoryDate: categoryMandatoryDate,
       confirmDeletion: categoryConfirmDeletion,
-    } = itemIsFormData ? Object.fromEntries(item) : item;
+    } = zodData;
 
     await Category.updateOne(
       { _id: categoryId },
@@ -69,7 +70,7 @@ export default async function updateCategory(item) {
     );
 
     let updatedCategory;
-    if (itemIsFormData)
+    if (isFormUpdate)
       updatedCategory = await Category.find({ _id: categoryId });
 
     // update all tasks associated with category
@@ -103,21 +104,13 @@ export default async function updateCategory(item) {
           title,
           description,
           confirmDeletion,
-          date: itemIsFormData
-            ? categoryMandatoryDate === 'true'
-              ? date
-              : ''
-            : date,
-          dateAndTime: itemIsFormData
-            ? categoryMandatoryDate === 'true'
+          date: isFormUpdate ? (categoryMandatoryDate ? date : '') : date,
+          dateAndTime: isFormUpdate
+            ? categoryMandatoryDate
               ? dateAndTime
               : ''
             : dateAndTime,
-          mandatoryDate: itemIsFormData
-            ? categoryMandatoryDate === 'true'
-              ? true
-              : false
-            : mandatoryDate,
+          mandatoryDate: isFormUpdate ? categoryMandatoryDate : mandatoryDate,
         }
       );
     });
@@ -125,9 +118,7 @@ export default async function updateCategory(item) {
     revalidatePath('/settings');
     return {
       status: 200,
-      item: itemIsFormData
-        ? JSON.parse(JSON.stringify(updatedCategory[0]))
-        : '',
+      item: isFormUpdate ? JSON.parse(JSON.stringify(updatedCategory[0])) : '',
     };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

@@ -30,6 +30,7 @@ const ModalCategory = ({
     title: itemToUpdate?.title ?? '',
     mandatoryDate: itemToUpdate?.mandatoryDate ?? false,
     confirmDeletion: itemToUpdate?.confirmDeletion ?? true,
+    itemLimit: isUpdate ? numberOfItems - 1 : numberOfItems,
   });
   const [errorMessage, setErrorMessage] = useState({
     title: '',
@@ -57,26 +58,16 @@ const ModalCategory = ({
   // create or update category
   const onSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
-    const categorySchemaValidated = categorySchema.safeParse({
-      _id: formData.get('_id'),
-      userId: formData.get('userId'),
-      priority: formData.get('priority'),
-      title: formData.get('title'),
-      mandatoryDate: formData.get('mandatoryDate'),
-      confirmDeletion: formData.get('confirmDeletion'),
-      itemLimit: isUpdate ? numberOfItems - 1 : numberOfItems,
-    });
-
-    const { success, error } = categorySchemaValidated;
+    const zodValidationResults = categorySchema.safeParse(form);
+    const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { title } = error.flatten().fieldErrors;
 
       if (!title) {
         const serverError = {
           status: 400,
-          error: 'Invalid FormData. Check console.',
+          error: 'Zod validation failed. Check console.',
         };
         setShowToast(<Toast serverError={serverError} />);
         console.error(error);
@@ -88,7 +79,7 @@ const ModalCategory = ({
 
     setIsAwaitingSubmitResponse(true);
     isUpdate
-      ? updateCategory(formData).then((res) => {
+      ? updateCategory(zodFormData, true).then((res) => {
           if (res.status === 200) {
             setItems((current) => {
               return current.map((item) => {
@@ -113,10 +104,15 @@ const ModalCategory = ({
           setIsAwaitingSubmitResponse(false);
           handleCloseModal();
         })
-      : createCategory(formData).then((res) => {
+      : createCategory(zodFormData).then((res) => {
           if (res.status === 200) {
             setItems((current) => [...current, res.item]);
-            setForm({ userId, priority: '', title: '', mandatoryDate: false });
+            setForm({
+              userId,
+              priority: '',
+              title: '',
+              mandatoryDate: false,
+            });
             if (newUser) setIsDashboardPrompt(true);
             if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
           }
@@ -163,10 +159,6 @@ const ModalCategory = ({
         checked={form?.mandatoryDate}
         onChangeHandler={handleMandatoryDate}
       />
-      <input type='hidden' name='_id' value={itemToUpdate?._id || ''} />
-      <input type='hidden' name='userId' value={form?.userId || userId} />
-      <input type='hidden' name='priority' value={form?.priority} />
-      <input type='hidden' name='confirmDeletion' value='true' />
       <div className='modal__modal-button-wrapper'>
         <button
           onClick={handleCloseModal}

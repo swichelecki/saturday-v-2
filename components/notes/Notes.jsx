@@ -84,7 +84,6 @@ const Notes = ({ notes, user, notesCount }) => {
               items={noteItemsGrouped}
               setItems={setNoteItemsGrouped}
               itemToUpdate={res.item}
-              itemToEditId={res.item._id}
               numberOfItems={noteItemsGrouped?.length}
             />
           </Modal>
