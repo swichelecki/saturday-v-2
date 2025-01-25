@@ -19,6 +19,7 @@ const ModalNotes = ({
   setItems,
   itemToUpdate,
   numberOfItems,
+  handleClearSearch,
   setCurrentNoteCount,
 }) => {
   const { setShowModal, setShowToast } = useAppContext();
@@ -188,6 +189,7 @@ const ModalNotes = ({
     });
     setErrorMessage({ title: '', description: '' });
     handleModalResetPageScrolling();
+    handleClearSearch();
   };
 
   return (

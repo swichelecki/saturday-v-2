@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { FormTextField, FormWYSIWYGField, Toast } from './';
-import { useAppContext } from '../context';
-import { createContactMessage } from '../actions';
-import { useScrollToError } from '../hooks';
-import { contactFormSchema } from '../schemas/schemas';
+import { FormTextField, FormWYSIWYGField, Toast } from '../';
+import { useAppContext } from '../../context';
+import { createContactMessage } from '../../actions';
+import { useScrollToError } from '../../hooks';
+import { contactFormSchema } from '../../schemas/schemas';
 
 const ContactForm = ({ user }) => {
   const formRef = useRef(null);

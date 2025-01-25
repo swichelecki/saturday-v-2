@@ -16,7 +16,7 @@
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.39",
     "mongoose": "^7.0.2",
-    "next": "^15.0.3",
+    "next": "^15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^4.7.1",

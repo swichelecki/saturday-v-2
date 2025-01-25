@@ -21,13 +21,4 @@
       height: 1.3rem;
     }
   }
-  &--homepage {
-    background-color: $button-blue;
-    color: $color-white;
-    button {
-      svg {
-        fill: $color-white;
-      }
-    }
-  }
 }

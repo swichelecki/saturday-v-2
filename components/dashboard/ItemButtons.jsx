@@ -20,7 +20,6 @@ const ItemButtons = ({
   itemId,
   isAwaitingEditResponse,
   handleDeleteItem,
-  setIsOpen,
   isAwaitingDeleteResponse,
 }) => {
   const width = useInnerWidth();
@@ -79,7 +78,6 @@ const ItemButtons = ({
         onClick={() => {
           handleDeleteItem(itemId, confirmDeletion);
           setIdToDelete(itemId);
-          setIsOpen(false);
         }}
         className={`list-item__delete-button ${handleDeleteButtonClass()}`}
       >

@@ -14,7 +14,7 @@ export const metadata = {
   applicationName: 'Saturday Simple Life',
   title: {
     template: '%s | Saturday Simple Life',
-    default: 'Saturday Simple Life | Your Free Daily Organizer',
+    default: 'Saturday Simple Life | Free Daily Organizer',
   },
   description:
     'Saturday is your free, super simple daily organizer. Manage all of your everyday tasks and obligations with Saturday’s customizable interface designed to simplify your life.',

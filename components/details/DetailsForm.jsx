@@ -3,18 +3,18 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAppContext } from '../context';
-import { createItem, updateItem } from '../actions';
-import { useScrollToError } from '../hooks';
-import { handleDateAndTimeToUTC } from '../utilities';
+import { useAppContext } from '../../context';
+import { createItem, updateItem } from '../../actions';
+import { useScrollToError } from '../../hooks';
+import { handleDateAndTimeToUTC } from '../../utilities';
 import {
   FormTextField,
   FormWYSIWYGField,
   FormCheckboxField,
   FormErrorMessage,
   Toast,
-} from '../components';
-import { itemSchema } from '../schemas/schemas';
+} from '..';
+import { itemSchema } from '../../schemas/schemas';
 
 const DetailsForm = ({ task, user }) => {
   const formRef = useRef(null);

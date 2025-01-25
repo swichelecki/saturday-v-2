@@ -15,9 +15,16 @@ const Header = () => {
   const { userId, isAdmin } = useAppContext();
   const pathname = usePathname();
 
+  const showUserAlert =
+    isMounted &&
+    !isAdmin &&
+    pathname !== '/' &&
+    pathname !== '/login' &&
+    pathname !== '/signup';
+
   return (
     <>
-      {isMounted && !isAdmin && <UserAlert />}
+      {showUserAlert && <UserAlert />}
       <header className='header'>
         <div className='header__inner-wrapper'>
           <Link href='/dashboard' className='h1'>

@@ -1,6 +1,6 @@
 'use client';
 
-import { FormErrorMessage } from './';
+import { FormErrorMessage } from '../';
 
 const FormSelectField = ({
   label,

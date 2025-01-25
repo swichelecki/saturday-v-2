@@ -1,8 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { FormErrorMessage } from './';
-import { useIsMounted } from '../hooks';
+import { FormErrorMessage } from '../';
+import { useIsMounted } from '../../hooks';
 import 'react-quill-new/dist/quill.snow.css';
 
 // NOTE: react-quill-new is a temporary fix. The version below was breaking.

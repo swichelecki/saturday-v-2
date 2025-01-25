@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useAppContext } from '../context';
-import { useInnerHeight } from '../hooks';
-import { handleModalResetPageScrolling } from '../utilities';
+import { useAppContext } from '../../context';
+import { useInnerHeight } from '../../hooks';
+import { handleModalResetPageScrolling } from '../../utilities';
 import { IoClose } from 'react-icons/io5';
 
 const Modal = ({ className, children, showCloseButton = true }) => {

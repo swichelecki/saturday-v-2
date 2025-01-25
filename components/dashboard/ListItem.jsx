@@ -29,9 +29,9 @@ import {
   ITEM_TYPE_REMINDER,
 } from '../../constants';
 
-const Tooltip = dynamic(() => import('../../components/Tooltip'));
+const Tooltip = dynamic(() => import('../shared/Tooltip'));
 const TooltipReminderMessage = dynamic(() =>
-  import('../../components/settings/TooltipReminderMessage')
+  import('../settings/TooltipReminderMessage')
 );
 
 let previousItemId = '';
@@ -573,7 +573,6 @@ const ItemList = ({
                 itemId={item?._id}
                 isAwaitingEditResponse={isAwaitingEditResponse}
                 handleDeleteItem={handleDeleteItem}
-                setIsOpen={setIsOpen}
                 isAwaitingDeleteResponse={isAwaitingDeleteResponse}
               />
             )}
@@ -652,7 +651,6 @@ const ItemList = ({
             itemId={item?._id}
             isAwaitingEditResponse={isAwaitingEditResponse}
             handleDeleteItem={handleDeleteItem}
-            setIsOpen={setIsOpen}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}
           />
         )}

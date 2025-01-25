@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppContext } from '../context';
-import { handleModalResetPageScrolling } from '../utilities';
+import { useAppContext } from '../../context';
+import { handleModalResetPageScrolling } from '../../utilities';
 
 const ModalConfirm = ({
   handleConfirm,

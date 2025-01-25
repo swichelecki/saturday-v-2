@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
-import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
+import { useInnerWidth } from '../../hooks';
 import { deleteNote, getNote, pinNote } from '../../actions';
 import {
   NoteGroup,
@@ -11,6 +11,7 @@ import {
   ModalConfirm,
   FormErrorMessage,
   Toast,
+  SearchField,
 } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
@@ -23,14 +24,16 @@ import {
 } from '../../constants';
 
 const Notes = ({ notes, user, notesCount }) => {
+  const closeButtonRef = useRef(null);
+
   const { userId, admin } = user;
   const { setUserId, setIsAdmin, setShowModal, setShowToast } = useAppContext();
 
   const width = useInnerWidth();
-  const handleListItemsMobileReset = useListItemsMobileReset();
 
   const [noteItemsGrouped, setNoteItemsGrouped] = useState(notes);
   const [currentNoteCount, setCurrentNoteCount] = useState(notesCount);
+  const [filteredItems, setFilteredItems] = useState([]);
   const [atNotesLimit, setAtNotesLimit] = useState(false);
   const [itemToUpdateId, setItemToUpdateId] = useState('');
   const [isAwaitingUpdateResponse, setIsAwaitingUpdateResponse] =
@@ -49,6 +52,11 @@ const Notes = ({ notes, user, notesCount }) => {
     setIsAdmin(admin);
   }, []);
 
+  // clear searched items state on create, update or delete
+  const handleClearSearch = () => {
+    closeButtonRef.current.click();
+  };
+
   // open modal for create
   const handleOpenNoteModal = () => {
     if (currentNoteCount >= NOTES_ITEM_LIMIT) {
@@ -64,6 +72,7 @@ const Notes = ({ notes, user, notesCount }) => {
           items={noteItemsGrouped}
           setItems={setNoteItemsGrouped}
           numberOfItems={currentNoteCount}
+          handleClearSearch={handleClearSearch}
           setCurrentNoteCount={setCurrentNoteCount}
         />
       </Modal>
@@ -84,6 +93,7 @@ const Notes = ({ notes, user, notesCount }) => {
               items={noteItemsGrouped}
               setItems={setNoteItemsGrouped}
               itemToUpdate={res.item}
+              handleClearSearch={handleClearSearch}
               numberOfItems={noteItemsGrouped?.length}
             />
           </Modal>
@@ -140,6 +150,7 @@ const Notes = ({ notes, user, notesCount }) => {
 
       setShowModal(null);
       handleModalResetPageScrolling();
+      handleClearSearch();
     });
   };
 
@@ -187,6 +198,11 @@ const Notes = ({ notes, user, notesCount }) => {
         >
           Create
         </button>
+        <SearchField
+          searchItems={noteItemsGrouped}
+          setSearchItems={setFilteredItems}
+          closeButtonRef={closeButtonRef}
+        />
       </div>
       {atNotesLimit && (
         <FormErrorMessage
@@ -194,7 +210,7 @@ const Notes = ({ notes, user, notesCount }) => {
           className='form-error-message form-error-message--position-static'
         />
       )}
-      {noteItemsGrouped?.map((item, index) => (
+      {(filteredItems || noteItemsGrouped)?.map((item, index) => (
         <NoteGroup
           key={`note-group_${index}`}
           heading={Object.keys(item)[0]}

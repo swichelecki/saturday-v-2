@@ -1,6 +1,6 @@
 'use client';
 
-import { FormErrorMessage } from './';
+import { FormErrorMessage } from '../';
 import moment from 'moment-timezone';
 
 const FormTextField = ({
