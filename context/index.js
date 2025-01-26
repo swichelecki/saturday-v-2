@@ -12,6 +12,7 @@ export function AppWrapper({ children }) {
   const [isRemindersPrompt, setIsRemindersPrompt] = useState(false);
   const [isDashboardPrompt, setIsDashboardPrompt] = useState(false);
   const [listItemsMobileReset, setListItemsMobileReset] = useState(false);
+  const [closeListItemsYAxis, setCloseListItemsYAxis] = useState(false);
 
   return (
     <AppContext.Provider
@@ -34,6 +35,8 @@ export function AppWrapper({ children }) {
         setIsDashboardPrompt,
         listItemsMobileReset,
         setListItemsMobileReset,
+        closeListItemsYAxis,
+        setCloseListItemsYAxis,
       }}
     >
       {children}

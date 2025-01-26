@@ -53,8 +53,12 @@ const ItemList = ({
   timezone,
   handlePinNote,
 }) => {
-  const { listItemsMobileReset, setListItemsMobileReset } = useAppContext();
-
+  const {
+    listItemsMobileReset,
+    setListItemsMobileReset,
+    closeListItemsYAxis,
+    setCloseListItemsYAxis,
+  } = useAppContext();
   const width = useInnerWidth();
   const isMounted = useIsMounted();
 
@@ -99,6 +103,14 @@ const ItemList = ({
       setListItemsMobileReset(false);
     }
   }, [listItemsMobileReset]);
+
+  // reset list item y axis open and close functionality after useCloseListItemsYAxis hook is used
+  useEffect(() => {
+    if (!closeListItemsYAxis) return;
+    setIsOpen(false);
+    detailsRef.current.style.transition = 'height 0.3s';
+    setCloseListItemsYAxis(false);
+  }, [closeListItemsYAxis]);
 
   // disable scrolling when opening and closing items on touch
   useEffect(() => {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
-import { useInnerWidth } from '../../hooks';
+import { useInnerWidth, useCloseListItemsYAxis } from '../../hooks';
 import { deleteNote, getNote, pinNote } from '../../actions';
 import {
   NoteGroup,
@@ -30,6 +30,7 @@ const Notes = ({ notes, user, notesCount }) => {
   const { setUserId, setIsAdmin, setShowModal, setShowToast } = useAppContext();
 
   const width = useInnerWidth();
+  const handleCloseListItemsYAxis = useCloseListItemsYAxis();
 
   const [noteItemsGrouped, setNoteItemsGrouped] = useState(notes);
   const [currentNoteCount, setCurrentNoteCount] = useState(notesCount);
@@ -38,6 +39,7 @@ const Notes = ({ notes, user, notesCount }) => {
   const [itemToUpdateId, setItemToUpdateId] = useState('');
   const [isAwaitingUpdateResponse, setIsAwaitingUpdateResponse] =
     useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   // remove at-notes-limit message after note deletion
   useEffect(() => {
@@ -72,6 +74,7 @@ const Notes = ({ notes, user, notesCount }) => {
           items={noteItemsGrouped}
           setItems={setNoteItemsGrouped}
           numberOfItems={currentNoteCount}
+          isSearching={isSearching}
           handleClearSearch={handleClearSearch}
           setCurrentNoteCount={setCurrentNoteCount}
         />
@@ -93,6 +96,7 @@ const Notes = ({ notes, user, notesCount }) => {
               items={noteItemsGrouped}
               setItems={setNoteItemsGrouped}
               itemToUpdate={res.item}
+              isSearching={isSearching}
               handleClearSearch={handleClearSearch}
               numberOfItems={noteItemsGrouped?.length}
             />
@@ -150,7 +154,7 @@ const Notes = ({ notes, user, notesCount }) => {
 
       setShowModal(null);
       handleModalResetPageScrolling();
-      handleClearSearch();
+      isSearching ? handleClearSearch() : handleCloseListItemsYAxis();
     });
   };
 
@@ -201,6 +205,8 @@ const Notes = ({ notes, user, notesCount }) => {
         <SearchField
           searchItems={noteItemsGrouped}
           setSearchItems={setFilteredItems}
+          isSearching={isSearching}
+          setIsSearching={setIsSearching}
           closeButtonRef={closeButtonRef}
         />
       </div>
@@ -210,7 +216,7 @@ const Notes = ({ notes, user, notesCount }) => {
           className='form-error-message form-error-message--position-static'
         />
       )}
-      {(filteredItems || noteItemsGrouped)?.map((item, index) => (
+      {(isSearching ? filteredItems : noteItemsGrouped)?.map((item, index) => (
         <NoteGroup
           key={`note-group_${index}`}
           heading={Object.keys(item)[0]}

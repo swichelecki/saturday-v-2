@@ -1,12 +1,24 @@
 'use client';
 
+import { useCloseListItemsYAxis } from '../../hooks';
 import { useState, useEffect } from 'react';
 import { IoClose } from 'react-icons/io5';
 
-const SearchField = ({ searchItems, setSearchItems, closeButtonRef }) => {
+const SearchField = ({
+  searchItems,
+  setSearchItems,
+  isSearching,
+  setIsSearching,
+  closeButtonRef,
+}) => {
+  const handleCloseListItemsYAxis = useCloseListItemsYAxis();
+
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
+    if (!searchQuery) return setIsSearching(false);
+
+    setIsSearching(true);
     const copyOfSearchQuery = searchQuery;
 
     const handleFormat = (string) =>
@@ -40,7 +52,10 @@ const SearchField = ({ searchItems, setSearchItems, closeButtonRef }) => {
   };
 
   const handleClearSearch = () => {
+    if (!isSearching) return;
     setSearchQuery('');
+    setIsSearching(false);
+    handleCloseListItemsYAxis();
   };
 
   return (

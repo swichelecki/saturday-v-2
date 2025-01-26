@@ -7,6 +7,7 @@ import {
   useInnerWidth,
   useListItemsMobileReset,
   useScrollToError,
+  useCloseListItemsYAxis,
 } from '../../hooks';
 import { FormTextField, FormWYSIWYGField, Toast } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
@@ -19,6 +20,7 @@ const ModalNotes = ({
   setItems,
   itemToUpdate,
   numberOfItems,
+  isSearching,
   handleClearSearch,
   setCurrentNoteCount,
 }) => {
@@ -26,6 +28,7 @@ const ModalNotes = ({
 
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
+  const handleCloseListItemsYAxis = useCloseListItemsYAxis();
 
   const formRef = useRef(null);
 
@@ -189,7 +192,7 @@ const ModalNotes = ({
     });
     setErrorMessage({ title: '', description: '' });
     handleModalResetPageScrolling();
-    handleClearSearch();
+    isSearching ? handleClearSearch() : handleCloseListItemsYAxis();
   };
 
   return (

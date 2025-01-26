@@ -11,7 +11,11 @@ import {
   FormErrorMessage,
   Toast,
 } from '../../components';
-import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
+import {
+  useInnerWidth,
+  useListItemsMobileReset,
+  useCloseListItemsYAxis,
+} from '../../hooks';
 import { createItem, getItem, deleteItem } from '../../actions';
 import { itemSchema } from '../../schemas/schemas';
 import { handleModalResetPageScrolling } from '../../utilities';
@@ -34,6 +38,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
 
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
+  const handleCloseListItemsYAxis = useCloseListItemsYAxis();
 
   const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
   const [listItems, setListItems] = useState(tasks);
@@ -284,6 +289,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
       setShowModal(null);
       handleModalResetPageScrolling();
       setIsAwaitingDeleteResponse(false);
+      handleCloseListItemsYAxis();
     });
   };
 
