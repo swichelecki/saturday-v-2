@@ -1,6 +1,7 @@
 export { default as GloablContext } from './GlobalContext';
 export { default as Login } from './auth/Login';
 export { default as Signup } from './auth/Signup';
+export { default as Reset } from './auth/Reset';
 export { default as Account } from './auth/Account';
 export { default as Header } from './header/Header';
 export { default as Layout } from './Layout';
@@ -31,6 +32,7 @@ export { default as Tooltip } from './shared/Tooltip';
 export { default as TooltipReminderMessage } from './settings/TooltipReminderMessage';
 export { default as Toast } from './shared/Toast';
 export { default as UserCreatedEmail } from './emails/UserCreatedEmail';
+export { default as UserResetPasswordEmail } from './emails/UserResetPasswordEmail';
 export { default as ContactFormEmail } from './emails/ContactFormEmail';
 export { default as ContactForm } from './contact/ContactForm';
 export { default as Notes } from './notes/Notes';

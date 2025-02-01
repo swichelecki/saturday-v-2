@@ -20,7 +20,8 @@ const Header = () => {
     !isAdmin &&
     pathname !== '/' &&
     pathname !== '/login' &&
-    pathname !== '/signup';
+    pathname !== '/signup' &&
+    pathname !== '/reset';
 
   return (
     <>

@@ -7,6 +7,7 @@ export async function middleware(req) {
   if (
     (!user && req.nextUrl.pathname === '/login') ||
     (!user && req.nextUrl.pathname === '/signup') ||
+    (!user && req.nextUrl.pathname === '/reset') ||
     (!user && req.nextUrl.pathname === '/')
   ) {
     return NextResponse.next();
@@ -29,6 +30,7 @@ export async function middleware(req) {
   if (
     (user && req.nextUrl.pathname === '/login') ||
     (user && req.nextUrl.pathname === '/signup') ||
+    (user && req.nextUrl.pathname === '/reset') ||
     (user && req.nextUrl.pathname === '/')
   ) {
     req.nextUrl.pathname = '/dashboard';
@@ -43,6 +45,7 @@ export const config = {
     '/dashboard',
     '/login',
     '/signup',
+    '/reset',
     '/settings',
     '/account',
     '/contact',

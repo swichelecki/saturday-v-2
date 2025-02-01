@@ -4,6 +4,8 @@ export { default as createUserAccount } from './auth/createUserAccount';
 export { default as changeUserPassword } from './auth/changeUserPassword';
 export { default as deleteUserAccount } from './auth/deleteUserAccount';
 export { default as updateUserNoLongerNew } from './auth/updateUserNoLongerNew';
+export { default as requestUserPasswordReset } from './auth/requestUserPasswordReset';
+export { default as resetUserPassword } from './auth/resetUserPassword';
 export { default as changeUserTimezone } from './auth/changeUserTimezone';
 export { default as createItem } from './items/createItem';
 export { default as updateItem } from './items/updateItem';

@@ -60,6 +60,36 @@ export const createUserSchema = z
     path: ['confirmPassword'],
   });
 
+export const requestPasswordResetSchema = z.object({
+  email: z
+    .string()
+    .min(1, FORM_ERROR_MISSING_EMAIL)
+    .email(FORM_ERROR_INVALID_EMAIL)
+    .max(50, FORM_CHARACTER_LIMIT_50),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    email: z
+      .string()
+      .min(1, FORM_ERROR_MISSING_EMAIL)
+      .email(FORM_ERROR_INVALID_EMAIL)
+      .max(50, FORM_CHARACTER_LIMIT_50),
+    password: z
+      .string()
+      .min(1, FORM_ERROR_MISSING_PASSWORD)
+      .max(50, FORM_CHARACTER_LIMIT_50),
+    confirmPassword: z
+      .string()
+      .min(1, FORM_ERROR_MISSING_CONFIRM_PASSWORD)
+      .max(50, FORM_CHARACTER_LIMIT_50),
+    userId: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: FORM_ERROR_PASSWORD_MISMATCH,
+    path: ['confirmPassword'],
+  });
+
 export const loginSchema = z.object({
   email: z
     .string()

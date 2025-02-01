@@ -105,6 +105,7 @@ const Signup = () => {
           Create Account
         </button>
         <Link href='/login'>Log In</Link>
+        <Link href='/reset'>Forgot Password</Link>
       </div>
     </form>
   );

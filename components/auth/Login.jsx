@@ -87,6 +87,7 @@ const Login = () => {
           Log In
         </button>
         <Link href='/signup'>Sign Up</Link>
+        <Link href='/reset'>Forgot Password</Link>
       </div>
     </form>
   );

@@ -22,6 +22,7 @@ export const FORM_ERROR_DATE_NOT_TODAY_OR_GREATER =
   'Date Must Be Today or in the Future';
 export const FORM_ERROR_MISSING_EMAIL = 'Email Address Required';
 export const FORM_ERROR_INVALID_EMAIL = 'Invalid Email Address';
+export const FORM_ERROR_USER_NOT_FOUND = 'User Not Found';
 export const FORM_ERROR_MISSING_PASSWORD = 'Password Required';
 export const FORM_ERROR_MISSING_CONFIRM_PASSWORD = 'Confirm Password Required';
 export const FORM_ERROR_MISSING_NEW_PASSWORD = 'New Password Required';
