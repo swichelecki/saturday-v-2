@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { requestUserPasswordReset, resetUserPassword } from '../../actions';
@@ -12,7 +12,7 @@ import {
 } from '../../schemas/schemas';
 import { FORM_ERROR_USER_NOT_FOUND } from '../../constants';
 
-const Reset = () => {
+const ResetForm = () => {
   const router = useRouter();
   const params = useSearchParams();
   const [userId] = params.values();
@@ -157,7 +157,6 @@ const Reset = () => {
           />
         </>
       )}
-
       <div className='entry-form__form-row'>
         <button type='submit' className='entry-form__button'>
           {isAwaitingResponse && <div className='loader'></div>}
@@ -167,6 +166,15 @@ const Reset = () => {
         <Link href='/signup'>Sign Up</Link>
       </div>
     </form>
+  );
+};
+
+// have to wrap form in suspense boundry because it is a static page using useSearchParams
+const Reset = () => {
+  return (
+    <Suspense>
+      <ResetForm />
+    </Suspense>
   );
 };
 
