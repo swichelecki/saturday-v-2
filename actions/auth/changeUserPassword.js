@@ -61,9 +61,9 @@ export default async function changeUserPassword(formData) {
 
       (await cookies()).delete('saturday');
       return { status: 200 };
-    } else {
-      return { status: 403 };
     }
+
+    return { status: 403 };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);

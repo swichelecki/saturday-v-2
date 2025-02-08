@@ -7,7 +7,10 @@ import { useAppContext } from '../../context';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
 import { categorySchema } from '../../schemas/schemas';
 import { handleModalResetPageScrolling } from '../../utilities';
-import { MOBILE_BREAKPOINT } from '../../constants';
+import {
+  MOBILE_BREAKPOINT,
+  MODAL_CATEGORY_ALREADY_EXISTS,
+} from '../../constants';
 
 const ModalCategory = ({
   userId,
@@ -97,7 +100,13 @@ const ModalCategory = ({
             if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
           }
 
-          if (res.status !== 200) {
+          if (res.status === 409) {
+            setErrorMessage({ title: MODAL_CATEGORY_ALREADY_EXISTS });
+            setIsAwaitingSubmitResponse(false);
+            return;
+          }
+
+          if (res.status === 500) {
             setShowToast(<Toast serverError={res} />);
           }
 
@@ -117,7 +126,13 @@ const ModalCategory = ({
             if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
           }
 
-          if (res.status !== 200) {
+          if (res.status === 409) {
+            setErrorMessage({ title: MODAL_CATEGORY_ALREADY_EXISTS });
+            setIsAwaitingSubmitResponse(false);
+            return;
+          }
+
+          if (res.status === 500) {
             setShowToast(<Toast serverError={res} />);
           }
 

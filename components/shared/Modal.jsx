@@ -6,7 +6,12 @@ import { useInnerHeight } from '../../hooks';
 import { handleModalResetPageScrolling } from '../../utilities';
 import { IoClose } from 'react-icons/io5';
 
-const Modal = ({ className, children, showCloseButton = true }) => {
+const Modal = ({
+  className,
+  children,
+  showCloseButton = true,
+  closeModalWhenClickingOutside = false,
+}) => {
   const modalRef = useRef(null);
 
   const innerHeight = useInnerHeight();
@@ -21,17 +26,21 @@ const Modal = ({ className, children, showCloseButton = true }) => {
       if (e.key === 'Escape') handleCloseModal();
     };
 
-    /* const handleCloseModalWhenClickingOff = (e) => {
-      if (e.target === modalRef.current) handleCloseModal();
-    }; */
+    const handleCloseModalWhenClickingOutside = (e) => {
+      if (e.target === modalRef.current && closeModalWhenClickingOutside)
+        handleCloseModal();
+    };
 
     if (document && typeof document !== 'undefined') {
       document.addEventListener('keydown', handleKeyDown);
-      //document.addEventListener('click', handleCloseModalWhenClickingOff);
+      document.addEventListener('click', handleCloseModalWhenClickingOutside);
 
       return () => {
         document.removeEventListener('keydown', handleKeyDown);
-        //document.removeEventListener('click', handleCloseModalWhenClickingOff);
+        document.removeEventListener(
+          'click',
+          handleCloseModalWhenClickingOutside
+        );
       };
     }
   }, []);

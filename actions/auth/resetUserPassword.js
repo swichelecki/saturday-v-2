@@ -48,7 +48,7 @@ export default async function resetUserPassword(formData) {
     const currentTimeMsc = date.getTime();
     const fiveMinutesMsc = 300000;
     if (currentTimeMsc > updatedAtMsec + fiveMinutesMsc)
-      return { status: 410, error: 'Password reset request expired' };
+      return { status: 410, error: 'Password reset request expired.' };
 
     // update new password
     if (await bcrypt.compare(userIdString, hashedUserId)) {
@@ -62,9 +62,9 @@ export default async function resetUserPassword(formData) {
         }
       );
       return { status: 200 };
-    } else {
-      throw new Error('Password reset error');
     }
+
+    throw new Error('User ids do not match.');
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);

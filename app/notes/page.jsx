@@ -13,7 +13,7 @@ async function getNotesData() {
   try {
     await connectDB();
 
-    const { userId, admin } = await getUserFromCookie();
+    const { userId, admin, newNotesUser } = await getUserFromCookie();
 
     const notesRaw = await Note.find({ userId }).sort({ date: -1 });
     const notes = JSON.parse(JSON.stringify(notesRaw));
@@ -67,7 +67,7 @@ async function getNotesData() {
 
     return {
       notes: notesData ?? [],
-      user: { userId, admin },
+      user: { userId, admin, newNotesUser },
       notesCount: notesCount ?? 0,
     };
   } catch (error) {

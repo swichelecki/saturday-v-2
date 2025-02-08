@@ -11,6 +11,7 @@ export function AppWrapper({ children }) {
   const [isCategoriesPrompt, setIsCategoriesPrompt] = useState(false);
   const [isRemindersPrompt, setIsRemindersPrompt] = useState(false);
   const [isDashboardPrompt, setIsDashboardPrompt] = useState(false);
+  const [isNotesPrompt, setIsNotesPrompt] = useState(false);
   const [listItemsMobileReset, setListItemsMobileReset] = useState(false);
   const [closeListItemsYAxis, setCloseListItemsYAxis] = useState(false);
 
@@ -37,6 +38,8 @@ export function AppWrapper({ children }) {
         setListItemsMobileReset,
         closeListItemsYAxis,
         setCloseListItemsYAxis,
+        isNotesPrompt,
+        setIsNotesPrompt,
       }}
     >
       {children}

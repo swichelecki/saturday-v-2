@@ -8,7 +8,7 @@ import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 const jwtSecret = process.env.JWT_SECRET;
 
-export default async function updateUserNoLongerNew(userId) {
+export default async function updateUserHasSeenNotes(userId) {
   // check that cookie user id matches param userId
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
@@ -26,7 +26,7 @@ export default async function updateUserNoLongerNew(userId) {
     await User.updateOne(
       { _id: userId },
       {
-        newUser: false,
+        newNotesUser: false,
       }
     );
 

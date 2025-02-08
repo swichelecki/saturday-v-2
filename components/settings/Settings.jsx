@@ -21,9 +21,6 @@ const Settings = ({ categories, reminders, user }) => {
 
   return (
     <div className='form-page form-page__list-items'>
-      {newUser && (
-        <div className='settings-prompt__new-user-background-overlay' />
-      )}
       <CategoryControls
         categories={categories}
         userId={userId}

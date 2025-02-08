@@ -11,8 +11,9 @@ export const getUserFromCookie = async () => {
   let userId;
   let timezone;
   let newUser;
+  let newNotesUser;
   let admin;
-  let cookieError;
+  let cookieError = false;
 
   if (!token) return { user };
 
@@ -27,6 +28,7 @@ export const getUserFromCookie = async () => {
       userId = payload?.id;
       timezone = payload?.timezone;
       newUser = payload?.newUser;
+      newNotesUser = payload?.newNotesUser;
       admin = payload?.admin;
     }
   } catch (error) {
@@ -35,5 +37,5 @@ export const getUserFromCookie = async () => {
     cookieError = { status: 500, error: errorMessage };
   }
 
-  return { user, userId, timezone, newUser, admin, cookieError };
+  return { user, userId, timezone, newUser, newNotesUser, admin, cookieError };
 };

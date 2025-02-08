@@ -268,9 +268,17 @@ export const changePasswordSchema = z
       .min(1, FORM_ERROR_MISSING_NEW_CONFIRM_PASSWORD)
       .max(50, FORM_CHARACTER_LIMIT_50),
   })
-  .refine((data) => data.newPassword === data.confirmNewPassword, {
-    message: FORM_ERROR_PASSWORD_MISMATCH,
-    path: ['confirmNewPassword'],
+  .superRefine((data, ctx) => {
+    if (data.newPassword !== data.confirmNewPassword) {
+      ctx.addIssue({
+        message: FORM_ERROR_PASSWORD_MISMATCH,
+        path: ['newPassword'],
+      });
+      ctx.addIssue({
+        message: FORM_ERROR_PASSWORD_MISMATCH,
+        path: ['confirmNewPassword'],
+      });
+    }
   });
 
 export const changeTimezoneSchema = z

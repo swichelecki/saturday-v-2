@@ -7,6 +7,7 @@ export { default as updateUserNoLongerNew } from './auth/updateUserNoLongerNew';
 export { default as requestUserPasswordReset } from './auth/requestUserPasswordReset';
 export { default as resetUserPassword } from './auth/resetUserPassword';
 export { default as changeUserTimezone } from './auth/changeUserTimezone';
+export { default as updateUserHasSeenNotes } from './auth/updateUserHasSeenNotes';
 export { default as createItem } from './items/createItem';
 export { default as updateItem } from './items/updateItem';
 export { default as getItem } from './items/getItem';

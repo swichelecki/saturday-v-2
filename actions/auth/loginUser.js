@@ -44,14 +44,15 @@ export default async function loginUser(formData) {
         timezone: user.timezone,
         admin: user.admin,
         newUser: user.newUser,
+        newNotesUser: user.newNotesUser,
       })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
         .sign(new TextEncoder().encode(jwtSecret));
       (await cookies()).set('saturday', token);
       return { status: 200 };
-    } else {
-      return { status: 403 };
     }
+
+    return { status: 403 };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);

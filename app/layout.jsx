@@ -14,11 +14,17 @@ export const metadata = {
   applicationName: 'Saturday Simple Life',
   title: {
     template: '%s | Saturday Simple Life',
-    default: 'Saturday Simple Life | Free Daily Organizer',
+    default: 'Saturday Simple Life | Free Daily Planner',
   },
   description:
-    'Saturday is your free, super simple daily organizer. Manage all of your everyday tasks and obligations with Saturday’s customizable interface designed to simplify your life.',
-  keywords: ['organizer', 'scheduler', 'task manager', 'todo list', 'notes'],
+    'Saturday is your free, super simple daily planner. Manage all of your everyday tasks and obligations with Saturday’s customizable interface designed to simplify your life.',
+  keywords: [
+    'daily planner',
+    'daily organizer',
+    'task manager',
+    'todo list',
+    'notes',
+  ],
   metadataBase: new URL('https://www.saturdaysimplelife.com'),
   openGraph: {
     url: 'https://www.saturdaysimplelife.com',

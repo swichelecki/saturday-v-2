@@ -1,4 +1,4 @@
-.settings-prompt {
+.prompt {
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -10,8 +10,8 @@
   z-index: 2;
   opacity: 0;
   color: $color-font;
-  border-left: 16px solid $button-green;
-  background-color: $button-green-dark;
+  border-left: 16px solid $button-purple;
+  background-color: $button-purple-dark;
   line-height: 1.6;
   h2 {
     display: flex;
@@ -50,7 +50,7 @@
 }
 
 @media screen and (max-width: 600px) {
-  .settings-prompt {
+  .prompt {
     width: 100%;
     h2 {
       gap: 10px;

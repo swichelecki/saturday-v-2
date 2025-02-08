@@ -18,13 +18,16 @@ export default async function createCategory(item) {
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  const { userId } = item;
+  const { userId, title } = item;
   if (!userId || userId !== cookieUserId) {
     return {
       status: 400,
       error: 'Unauthorized',
     };
   }
+
+  const categoryExists = await Category.findOne({ userId, title });
+  if (categoryExists) return { status: 409 };
 
   // check that data shape is correct
   const numberOfItems = await Category.find({ userId: cookieUserId }).count();

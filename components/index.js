@@ -20,7 +20,7 @@ export { default as FormCheckboxField } from './forms/FormCheckboxField';
 export { default as FormSelectField } from './forms/FormSelectField';
 export { default as Settings } from './settings/Settings';
 export { default as CategoryControls } from './settings/CategoryControls';
-export { default as SettingsNewUserPrompt } from './settings/SettingsNewUserPrompt';
+export { default as Prompt } from './shared/Prompt';
 export { default as RemindersControls } from './settings/RemindersControls';
 export { default as Modal } from './shared/Modal';
 export { default as ModalReminders } from './settings/ModalReminders';

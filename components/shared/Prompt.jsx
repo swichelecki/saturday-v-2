@@ -19,12 +19,15 @@ const SettingsNewUserPrompt = ({ handleGotItButton, children }) => {
   }, [showPrompt]);
 
   return (
-    <div ref={promptRef} className='settings-prompt'>
-      {children}
-      <button onClick={handleGotItButton}>
-        <MdOutlineClear />
-      </button>
-    </div>
+    <>
+      <div className='prompt__new-user-background-overlay' />
+      <div ref={promptRef} className='prompt'>
+        {children}
+        <button onClick={handleGotItButton}>
+          <MdOutlineClear />
+        </button>
+      </div>
+    </>
   );
 };
 

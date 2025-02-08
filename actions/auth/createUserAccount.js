@@ -68,6 +68,7 @@ export default async function createUserAccount(formData) {
       timezone,
       admin: false,
       newUser: true,
+      newNotesUser: true,
     });
 
     // create logged-in-user cookie
@@ -75,8 +76,9 @@ export default async function createUserAccount(formData) {
       hasToken: true,
       id: user._id,
       timezone,
-      admin: false,
-      newUser: true,
+      admin: user.admin,
+      newUser: user.newUser,
+      newNotesUser: user.newNotesUser,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .sign(new TextEncoder().encode(jwtSecret));

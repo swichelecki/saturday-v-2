@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
-import { useInnerWidth, useCloseListItemsYAxis } from '../../hooks';
+import { useInnerWidth, useCloseListItemsYAxis, usePrompt } from '../../hooks';
 import { deleteNote, getNote, pinNote } from '../../actions';
 import {
   NoteGroup,
@@ -26,11 +26,20 @@ import {
 const Notes = ({ notes, user, notesCount }) => {
   const closeButtonRef = useRef(null);
 
-  const { userId, admin } = user;
-  const { setUserId, setIsAdmin, setShowModal, setShowToast } = useAppContext();
+  const { userId, admin, newNotesUser } = user;
+  const {
+    setUserId,
+    setIsAdmin,
+    setShowModal,
+    setShowToast,
+    prompt,
+    isNotesPrompt,
+    setIsNotesPrompt,
+  } = useAppContext();
 
   const width = useInnerWidth();
   const handleCloseListItemsYAxis = useCloseListItemsYAxis();
+  usePrompt(userId, newNotesUser);
 
   const [noteItemsGrouped, setNoteItemsGrouped] = useState(notes);
   const [currentNoteCount, setCurrentNoteCount] = useState(notesCount);
@@ -49,9 +58,10 @@ const Notes = ({ notes, user, notesCount }) => {
   }, [atNotesLimit, currentNoteCount]);
 
   useEffect(() => {
-    // set global context user id and admin status
+    // set global context
     setUserId(userId);
     setIsAdmin(admin);
+    if (newNotesUser) setIsNotesPrompt(true);
   }, []);
 
   // clear searched items state on create, update or delete
@@ -195,6 +205,7 @@ const Notes = ({ notes, user, notesCount }) => {
         <h1 className='form-page__h2'>Notes</h1>
       </div>
       <div className='form-page__list-items-controls-wrapper'>
+        {isNotesPrompt && prompt}
         <button
           onClick={handleOpenNoteModal}
           type='button'

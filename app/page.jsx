@@ -18,7 +18,11 @@ export default function Home() {
     if (width <= 1000) return;
 
     setShowModal(
-      <Modal className='modal modal__image-modal' showCloseButton={false}>
+      <Modal
+        className='modal modal__image-modal'
+        showCloseButton={false}
+        closeModalWhenClickingOutside={true}
+      >
         <Image
           src={homepageImage}
           width={1000}
@@ -35,14 +39,14 @@ export default function Home() {
       <div className='homepage__background-gradiant' />
       <div className='homepage__hero'>
         <div className='homepage__hero-left'>
-          <h1>Organize Your Life, Simply</h1>
+          <h1>Plan Your Life, Simply</h1>
           <p>
-            Saturday is your free, super simple daily organizer. Manage all of
+            Saturday is your free, super simple daily planner. Manage all of
             your everyday tasks and obligations with Saturday’s customizable
             interface designed to simplify your life.
           </p>
           <Link href='/signup' className='homepage__signup'>
-            Get Organized Now
+            Start Planning Now
           </Link>
         </div>
         <div className='homepage__hero-right'>
@@ -94,9 +98,9 @@ export default function Home() {
         </div>
       </div>
       <div className='homepage__direct-cta'>
-        <h2 className='h1'>Ready for Saturday?</h2>
+        <h2 className='h1'>Ready for Super Simple Task Management?</h2>
         <Link href='/signup' className='homepage__signup'>
-          Get Organized Now
+          Start Planning Now
         </Link>
       </div>
     </div>

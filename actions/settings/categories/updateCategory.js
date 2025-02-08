@@ -19,12 +19,17 @@ export default async function updateCategory(item, isFormUpdate) {
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  const { userId } = item;
+  const { userId, title } = item;
   if (!userId || userId !== cookieUserId) {
     return {
       status: 400,
       error: 'Unauthorized',
     };
+  }
+
+  if (isFormUpdate) {
+    const categoryExists = await Category.findOne({ userId, title });
+    if (categoryExists) return { status: 409 };
   }
 
   // check that data shape is correct

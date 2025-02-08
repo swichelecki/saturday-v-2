@@ -64,6 +64,7 @@ export default async function changeUserTimezone(formData) {
       timezone: userUpdated.timezone,
       admin: userUpdated.admin,
       newUser: userUpdated.newUser,
+      newNotesUser: userUpdated.newNotesUser,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .sign(new TextEncoder().encode(jwtSecret));
