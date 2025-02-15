@@ -88,6 +88,7 @@ const Reminders = ({ reminders }) => {
         userId,
         displayReminder: false,
         reminderDate: nextDate,
+        itemLimit: reminders?.length,
       };
 
       updateReminder(copyOfReminderToUpdate).then((res) => {
