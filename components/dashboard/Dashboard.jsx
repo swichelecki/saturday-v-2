@@ -55,7 +55,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
     dateAndTime: '',
     mandatoryDate: false,
     confirmDeletion: false,
-    itemLimit: totalNumberOfItems,
+    itemLimit: 0,
   });
   const [masonryItems, setMasonryItems] = useState([]);
   const [priority, setPriority] = useState(0);
@@ -129,6 +129,10 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
       setMasonryItems(masonryColumns);
       // total number of items for limit handling
       setTotalNumberOfItems(total);
+      setListItem({
+        ...listItem,
+        itemLimit: total,
+      });
     };
 
     const numberOfColumns =
@@ -335,6 +339,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
                 isAwaitingDeleteResponse={isAwaitingDeleteResponse}
                 allItems={allItems}
                 timezone={timezone}
+                totalNumberOfItems={totalNumberOfItems}
               />
             ))}
           </div>

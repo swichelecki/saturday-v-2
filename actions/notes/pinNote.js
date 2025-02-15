@@ -26,7 +26,7 @@ export default async function pinNote(id, userId, pinnedStatus, year) {
       { pinned: pinnedStatus, pinnedDate, type }
     );
     const result = await Note.find({ _id: id });
-    revalidatePath('/notes');
+    //revalidatePath('/notes');
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

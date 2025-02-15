@@ -15,8 +15,10 @@ async function getFormData(id) {
 
     const { userId, timezone, admin } = await getUserFromCookie();
 
-    const task = await Task.find({ _id: id, userId });
-    const numberOfItems = await Task.find({ userId }).count();
+    const [task, numberOfItems] = await Promise.all([
+      Task.find({ _id: id, userId }),
+      Task.find({ userId }).count(),
+    ]);
 
     return {
       task: JSON.parse(JSON.stringify(task[0])),

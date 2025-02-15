@@ -27,12 +27,7 @@ export default async function itemUpdate(item) {
   }
 
   // check that data shape is correct
-  const numberOfItems = await Task.find({ userId: cookieUserId }).count();
-  const zodValidationResults = itemSchema.safeParse({
-    ...item,
-    itemLimit: numberOfItems - 1,
-  });
-
+  const zodValidationResults = itemSchema.safeParse(item);
   const {
     data: zodData,
     success,
@@ -80,7 +75,7 @@ export default async function itemUpdate(item) {
     );
 
     const result = await Task.find({ _id: _id });
-    revalidatePath('/dashboard');
+    //revalidatePath('/dashboard');
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

@@ -27,12 +27,7 @@ export default async function createReminder(item) {
   }
 
   // check that data shape is correct
-  const numberOfItems = await Reminder.find({ userId: cookieUserId }).count();
-  const zodValidationResults = reminderSchema.safeParse({
-    ...item,
-    itemLimit: numberOfItems,
-  });
-
+  const zodValidationResults = reminderSchema.safeParse(item);
   const {
     data: zodData,
     success,
@@ -68,7 +63,7 @@ export default async function createReminder(item) {
       displayReminder,
       confirmDeletion,
     });
-    revalidatePath('/settings');
+    //revalidatePath('/settings');
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

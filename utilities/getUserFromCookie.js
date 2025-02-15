@@ -15,7 +15,7 @@ export const getUserFromCookie = async () => {
   let admin;
   let cookieError = false;
 
-  if (!token) return { user };
+  if (!token?.value) return { user };
 
   try {
     const { payload } = await jwtVerify(

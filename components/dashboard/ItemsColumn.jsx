@@ -16,6 +16,7 @@ const ItemsColumn = ({
   isAwaitingEditResponse,
   isAwaitingDeleteResponse,
   timezone,
+  totalNumberOfItems,
 }) => {
   const dragItemRef = useRef(null);
   const dragOverItemRef = useRef(null);
@@ -65,7 +66,11 @@ const ItemsColumn = ({
     );
 
     draggableItemsWithNewPriorities?.forEach((item) => {
-      updateItem({ ...item, isDetailsForm: false }).then((res) => {
+      updateItem({
+        ...item,
+        itemLimit: totalNumberOfItems,
+        isDetailsForm: false,
+      }).then((res) => {
         if (res.status !== 200) {
           setShowToast(<Toast serverError={res} />);
         }

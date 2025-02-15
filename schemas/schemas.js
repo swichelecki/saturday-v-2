@@ -329,9 +329,9 @@ export const noteSchema = z
       .string()
       .min(1, FORM_ERROR_MISSING_DESCRIPTION)
       .max(5000, FORM_CHARACTER_LIMIT_5000),
-    date: z.string().date(),
+    date: z.string().datetime(),
     pinned: z.boolean(),
-    pinnedDate: z.string().date(),
+    pinnedDate: z.string().datetime(),
     itemLimit: z.number(),
     confirmDeletion: z.boolean(),
     type: z.string(),

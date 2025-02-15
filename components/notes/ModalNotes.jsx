@@ -39,13 +39,9 @@ const ModalNotes = ({
     userId: itemToUpdate?.userId ?? userId,
     title: itemToUpdate?.title ?? '',
     description: itemToUpdate?.description ?? '',
-    date:
-      itemToUpdate?.date?.split('T')[0] ??
-      new Date().toISOString().split('T')[0],
+    date: itemToUpdate?.date ?? new Date().toISOString(),
     pinned: itemToUpdate?.pinned ?? false,
-    pinnedDate:
-      itemToUpdate?.pinnedDate.split('T')[0] ??
-      new Date().toISOString().split('T')[0],
+    pinnedDate: itemToUpdate?.pinnedDate ?? new Date().toISOString(),
     confirmDeletion: itemToUpdate?.confirmDeletion ?? true,
     type: itemToUpdate?.type ?? new Date().getFullYear().toString(),
     confirmDeletion: itemToUpdate?.confirmDeletion ?? true,

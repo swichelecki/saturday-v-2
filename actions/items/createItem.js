@@ -27,12 +27,7 @@ export default async function createItem(item) {
   }
 
   // check that data shape is correct
-  const numberOfItems = await Task.find({ userId: cookieUserId }).count();
-  const zodValidationResults = itemSchema.safeParse({
-    ...item,
-    itemLimit: numberOfItems,
-  });
-
+  const zodValidationResults = itemSchema.safeParse(item);
   const {
     data: zodData,
     success,
@@ -75,7 +70,7 @@ export default async function createItem(item) {
       mandatoryDate,
     });
 
-    revalidatePath('/dashboard');
+    //revalidatePath('/dashboard');
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

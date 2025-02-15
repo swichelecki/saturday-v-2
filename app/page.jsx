@@ -46,7 +46,7 @@ export default function Home() {
             interface designed to simplify your life.
           </p>
           <Link href='/signup' className='homepage__signup'>
-            Start Planning Now
+            Get Started
           </Link>
         </div>
         <div className='homepage__hero-right'>
@@ -72,8 +72,8 @@ export default function Home() {
               Never Miss a Beat
             </h3>
             <p>
-              Whether it’s your weekly grind or reoccurring obligations and
-              dates, never lose track of a thing.
+              Whether it’s your weekly grind or recurring tasks and obligations,
+              never lose track of a thing.
             </p>
           </div>
           <div className='homepage__benefit'>
@@ -100,7 +100,7 @@ export default function Home() {
       <div className='homepage__direct-cta'>
         <h2 className='h1'>Ready for Super Simple Task Management?</h2>
         <Link href='/signup' className='homepage__signup'>
-          Start Planning Now
+          Get Started
         </Link>
       </div>
     </div>

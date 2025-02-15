@@ -19,7 +19,7 @@ export default async function deleteReminder(userId, id) {
 
   try {
     await Reminder.deleteOne({ _id: id });
-    revalidatePath('/settings');
+    //revalidatePath('/settings');
     return { status: 200 };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

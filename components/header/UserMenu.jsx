@@ -73,31 +73,31 @@ const UserMenu = () => {
       <nav ref={menuRef} className='user-menu__nav'>
         <ul>
           <li>
-            <Link href='/settings'>
-              <MdSettings />
-              Settings
-            </Link>
-          </li>
-          <li>
-            <Link href='/dashboard'>
+            <Link href='/dashboard' prefetch={false}>
               <MdHome />
               Dashboard
             </Link>
           </li>
           <li>
-            <Link href='/notes'>
+            <Link href='/notes' prefetch={false}>
               <MdNoteAlt />
               Notes
             </Link>
           </li>
           <li>
-            <Link href='/account'>
+            <Link href='/settings' prefetch={false}>
+              <MdSettings />
+              Settings
+            </Link>
+          </li>
+          <li>
+            <Link href='/account' prefetch={false}>
               <MdManageAccounts />
               Account
             </Link>
           </li>
           <li>
-            <Link href='/contact'>
+            <Link href='/contact' prefetch={false}>
               <MdMessage />
               Contact
             </Link>

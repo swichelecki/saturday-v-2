@@ -20,7 +20,7 @@ export default async function deleteNote(id, userId) {
   try {
     const result = await Note.find({ _id: id });
     await Note.deleteOne({ _id: id });
-    revalidatePath('/notes');
+    //revalidatePath('/notes');
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

@@ -33,12 +33,7 @@ export default async function updateCategory(item, isFormUpdate) {
   }
 
   // check that data shape is correct
-  const numberOfItems = await Category.find({ userId: cookieUserId }).count();
-  const zodValidationResults = categorySchema.safeParse({
-    ...item,
-    itemLimit: numberOfItems,
-  });
-
+  const zodValidationResults = categorySchema.safeParse(item);
   const {
     data: zodData,
     success,
@@ -120,7 +115,7 @@ export default async function updateCategory(item, isFormUpdate) {
       );
     });
 
-    revalidatePath('/settings');
+    //revalidatePath('/settings');
     return {
       status: 200,
       item: isFormUpdate ? JSON.parse(JSON.stringify(updatedCategory[0])) : '',

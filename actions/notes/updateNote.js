@@ -27,12 +27,7 @@ export default async function updateNote(item) {
   }
 
   // check that data shape is correct
-  const numberOfItems = await Note.find({ userId: cookieUserId }).count();
-  const zodValidationResults = noteSchema.safeParse({
-    ...item,
-    itemLimit: numberOfItems - 1,
-  });
-
+  const zodValidationResults = noteSchema.safeParse(item);
   const {
     data: zodData,
     success,
@@ -74,7 +69,7 @@ export default async function updateNote(item) {
     );
 
     const result = await Note.find({ _id: _id });
-    revalidatePath('/notes');
+    //revalidatePath('/notes');
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

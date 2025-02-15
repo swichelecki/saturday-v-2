@@ -13,11 +13,12 @@ async function getSettingsData() {
   try {
     const { userId, newUser, timezone, admin } = await getUserFromCookie();
 
-    const categories = await Category.find({ userId }).sort({
-      priority: 1,
-    });
-
-    const reminders = await Reminder.find({ userId }).sort({ reminderDate: 1 });
+    const [categories, reminders] = await Promise.all([
+      Category.find({ userId }).sort({
+        priority: 1,
+      }),
+      Reminder.find({ userId }).sort({ reminderDate: 1 }),
+    ]);
 
     return {
       categories: JSON.parse(JSON.stringify(categories)) ?? [],

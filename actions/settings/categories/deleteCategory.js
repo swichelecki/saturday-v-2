@@ -21,7 +21,7 @@ export default async function deleteCategory(userId, _id) {
   try {
     await Task.deleteMany({ categoryId: _id, userId });
     await Category.deleteOne({ _id: _id });
-    revalidatePath('/settings');
+    //revalidatePath('/settings');
     return { status: 200 };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

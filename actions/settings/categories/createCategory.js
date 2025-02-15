@@ -30,12 +30,7 @@ export default async function createCategory(item) {
   if (categoryExists) return { status: 409 };
 
   // check that data shape is correct
-  const numberOfItems = await Category.find({ userId: cookieUserId }).count();
-  const zodValidationResults = categorySchema.safeParse({
-    ...item,
-    itemLimit: numberOfItems,
-  });
-
+  const zodValidationResults = categorySchema.safeParse(item);
   const {
     data: zodData,
     success,
@@ -58,7 +53,7 @@ export default async function createCategory(item) {
       title,
       confirmDeletion,
     });
-    revalidatePath('/settings');
+    //revalidatePath('/settings');
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

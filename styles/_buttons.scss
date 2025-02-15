@@ -74,9 +74,9 @@ button.reminders__reminders-button {
   width: 34px;
   height: 28px;
   border-radius: 10px;
-  background-color: $button-yellow-dark;
+  background-color: $color-input;
   svg {
-    fill: $button-yellow;
+    fill: $button-green;
     width: 0.9rem;
     height: 0.9rem;
   }
@@ -106,12 +106,9 @@ button.reminders__reminders-scroll-button {
   border-radius: 100%;
   padding: 0;
   svg {
-    fill: $button-yellow;
+    fill: $button-green;
     width: 1rem;
     height: 1rem;
-  }
-  &:active {
-    background-color: $button-yellow-dark;
   }
 }
 
@@ -164,10 +161,10 @@ span.form-page__cancel-button {
 }
 
 button.modal__reminder-button {
-  background-color: $button-yellow-dark;
-  color: $button-yellow;
+  background-color: $button-green-dark;
+  color: $button-green;
   .loader {
-    border: 2px solid $button-yellow;
+    border: 2px solid $button-green;
     border-top: 2px solid transparent;
   }
 }
@@ -219,7 +216,6 @@ button.entry-form__button {
   font-size: 1.125rem; // 18px
   border-radius: 26px;
   gap: 6px;
-  border: 1px solid $color-border;
   background-color: $button-purple-dark;
   color: $button-purple;
   .loader {
