@@ -165,6 +165,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
       (item, index) => ({
         ...item,
         priority: index + 1,
+        itemLimit: categoryItems?.length,
       })
     );
 
