@@ -2,7 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
-import { useInnerWidth, useCloseListItemsYAxis, usePrompt } from '../../hooks';
+import {
+  useInnerWidth,
+  useCloseListItemsYAxis,
+  useListItemsMobileReset,
+  usePrompt,
+} from '../../hooks';
 import { deleteNote, getNote, pinNote } from '../../actions';
 import {
   NoteGroup,
@@ -38,6 +43,7 @@ const Notes = ({ notes, user, notesCount }) => {
   } = useAppContext();
 
   const width = useInnerWidth();
+  const handleListItemsMobileReset = useListItemsMobileReset();
   const handleCloseListItemsYAxis = useCloseListItemsYAxis();
   usePrompt(userId, newNotesUser);
 
