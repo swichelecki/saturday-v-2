@@ -55,7 +55,7 @@ const ModalCategory = ({
   };
 
   const handleMandatoryDate = (e) => {
-    setForm({ ...form, mandatoryDate: e.target.checked });
+    setForm({ ...form, [e.target.name]: e.target.checked });
   };
 
   // create or update category

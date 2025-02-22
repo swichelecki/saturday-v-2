@@ -7,11 +7,12 @@
   padding: 10px 10px 10px 16px;
   border-radius: 8px;
   height: 48px;
-  background-color: $color-background-secondary;
+  background-color: $color-yellow-extra-dark;
   &__date {
     font-weight: 300;
     font-size: 0.875rem; // 14px
     padding-right: 6px;
+    color: $color-font;
   }
   &--today {
     background-color: $button-orange-dark;

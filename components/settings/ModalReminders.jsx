@@ -72,7 +72,7 @@ const ModalReminder = ({
   const handleReminderWithExactRecurringDate = (e) => {
     setForm({
       ...form,
-      exactRecurringDate: e.target.checked,
+      [e.target.name]: e.target.checked,
       recurrenceBuffer: 0,
     });
 

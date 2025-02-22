@@ -5,6 +5,11 @@
   gap: 24px;
 }
 
+.dashboard-button-wrapper {
+  max-width: 150px;
+  width: 100%;
+}
+
 .items-column-wrapper {
   display: flex;
   justify-content: center;
@@ -32,6 +37,11 @@
   .content-container {
     gap: 0;
   }
+
+  .dashboard-button-wrapper {
+    padding: 16px 0;
+  }
+
   .items-masonry-column {
     flex: 1 1 auto;
     width: 100%;

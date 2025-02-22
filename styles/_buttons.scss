@@ -6,8 +6,6 @@ button {
 }
 
 a.homepage__signup,
-button.main-controls__add-button,
-span.main-controls__create-button,
 span.list-item__details-edit-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
@@ -21,6 +19,7 @@ button.modal__cancel-button,
 button.modal__delete-button,
 button.modal__update-button,
 button.modal__save-button,
+a.modal__save-button,
 button.modal__reminder-button,
 button.reminders__reminders-button {
   display: flex;
@@ -54,9 +53,7 @@ button.modal__update-button {
   }
 }
 
-button.list-item__details-button,
-button.main-controls__add-button,
-span.main-controls__create-button {
+button.list-item__details-button {
   background-color: $button-purple-dark;
   color: $button-purple;
   svg {
@@ -74,9 +71,9 @@ button.reminders__reminders-button {
   width: 34px;
   height: 28px;
   border-radius: 10px;
-  background-color: $color-input;
+  background-color: $button-yellow-dark;
   svg {
-    fill: $button-green;
+    fill: $button-yellow;
     width: 0.9rem;
     height: 0.9rem;
   }
@@ -128,7 +125,8 @@ button.form-page__delete-button {
 
 a.list-item__edit-button,
 button.form-page__save-button,
-button.modal__save-button {
+button.modal__save-button,
+a.modal__save-button {
   background-color: $button-green-dark;
   color: $button-green;
   svg {
@@ -201,7 +199,6 @@ a.list-item__edit-button {
   }
 }
 
-button.main-controls__add-button,
 button.form-page__save-button,
 button.form-page__delete-button {
   gap: 6px;
@@ -228,6 +225,7 @@ button.modal__cancel-button,
 button.modal__delete-button,
 button.modal__update-button,
 button.modal__save-button,
+a.modal__save-button,
 button.modal__reminder-button {
   width: 100%;
   font-size: 1.125rem; // 18px

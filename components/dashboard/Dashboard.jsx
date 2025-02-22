@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import {
-  MainControls,
   Modal,
   ModalConfirm,
+  ModalCreateItem,
   ModalUpdateItem,
   FormErrorMessage,
   Toast,
@@ -16,14 +16,14 @@ import {
   useListItemsMobileReset,
   useCloseListItemsYAxis,
 } from '../../hooks';
-import { createItem, getItem, deleteItem } from '../../actions';
-import { itemSchema } from '../../schemas/schemas';
+import { getItem, deleteItem } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MOBILE_BREAKPOINT,
   MODAL_CONFIRM_DELETION_HEADLINE,
   MODAL_UPDATE_ITEM_HEADLINE,
   MODAL_CONFIRM_DELETE_BUTTON,
+  LIST_ITEM_LIMIT,
 } from '../../constants';
 
 const ItemsColumn = dynamic(() =>
@@ -42,67 +42,19 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
 
   const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
   const [listItems, setListItems] = useState(tasks);
-  const [listItem, setListItem] = useState({
-    _id: '',
-    userId,
-    categoryId: '',
-    title: '',
-    column: 1,
-    priority: 1,
-    type: '',
-    description: '',
-    date: '',
-    dateAndTime: '',
-    mandatoryDate: false,
-    confirmDeletion: false,
-    itemLimit: 0,
-  });
   const [masonryItems, setMasonryItems] = useState([]);
-  const [priority, setPriority] = useState(0);
   const [taskToEditId, setTaskToEditId] = useState('');
-  const [isAwaitingAddResponse, setIsAwaitingAddResponse] = useState(false);
   const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
-  const [errorMessages, setErrorMessages] = useState('');
+  const [atItemsLimit, setAtItemsLimit] = useState(false);
 
   let allItems = [];
-
-  // set priority of next new item
-  useEffect(() => {
-    if (!listItem?.type) return;
-
-    const selectedCategoryData = listItems.find(
-      (category) => Object.keys(category)[0] === listItem?.type
-    );
-
-    if (typeof selectedCategoryData === 'undefined') {
-      setPriority(1);
-      return;
-    }
-
-    const priorityOfNewItem = Object.values(selectedCategoryData)[0].length + 1;
-
-    setPriority(priorityOfNewItem);
-  }, [listItem]);
-
-  // ensure list item always has correct priorty of next new item
-  useEffect(() => {
-    setListItem({
-      ...listItem,
-      priority,
-    });
-  }, [priority]);
 
   useEffect(() => {
     // set global context user id and timezone
     setUserId(userId);
     setIsAdmin(admin);
-    setListItem({
-      ...listItem,
-      type: categories?.length ? categories[0]['title'] : '',
-      categoryId: categories?.length ? categories[0]['_id'] : '',
-    });
   }, []);
 
   // build masonry
@@ -129,10 +81,6 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
       setMasonryItems(masonryColumns);
       // total number of items for limit handling
       setTotalNumberOfItems(total);
-      setListItem({
-        ...listItem,
-        itemLimit: total,
-      });
     };
 
     const numberOfColumns =
@@ -153,74 +101,30 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
 
   // remove at-item-limit message after item deletion
   useEffect(() => {
-    if (errorMessages?.atItemLimit && totalNumberOfItems < LIST_ITEM_LIMIT) {
-      setErrorMessages({ ...errorMessages, atItemLimit: false });
+    if (atItemsLimit && totalNumberOfItems < LIST_ITEM_LIMIT) {
+      setAtItemsLimit(false);
     }
   }, [totalNumberOfItems]);
 
-  // set item title and priority
-  const handleSetListItem = (e) => {
-    setListItem({
-      ...listItem,
-      title: e.target.value,
-    });
-
-    if (errorMessages) {
-      setErrorMessages('');
-    }
-  };
-
-  // create new item
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-
-    const zodValidationResults = itemSchema.safeParse({
-      ...listItem,
-      isDetailsForm: false,
-    });
-    const { data: zodFormData, success, error } = zodValidationResults;
-    if (!success) {
-      const { title, itemLimit } = error.flatten().fieldErrors;
-
-      if (!title && !itemLimit) {
-        const serverError = {
-          status: 400,
-          error: 'Invalid FormData. Check console.',
-        };
-        setShowToast(<Toast serverError={serverError} />);
-        console.error(error);
-        return;
-      }
-
-      setErrorMessages(title?.[0] ? title?.[0] : itemLimit?.[0]);
+  // open modal for create
+  const handleOpenCreateItemModal = () => {
+    if (totalNumberOfItems >= LIST_ITEM_LIMIT) {
+      setAtItemsLimit(true);
       return;
     }
 
-    setIsAwaitingAddResponse(true);
-    createItem(zodFormData, false).then((res) => {
-      if (res.status === 200) {
-        setListItems(
-          listItems.map((item) => {
-            if (Object.keys(item)[0] === res.item.type) {
-              return {
-                [Object.keys(item)[0]]: [...Object.values(item)[0], res.item],
-              };
-            } else {
-              return item;
-            }
-          })
-        );
-
-        if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
-        setListItem({ ...listItem, title: '' });
-      }
-
-      if (res.status !== 200) {
-        setShowToast(<Toast serverError={res} />);
-      }
-
-      setIsAwaitingAddResponse(false);
-    });
+    setShowModal(
+      <Modal className='modal modal__form-modal--small'>
+        <h2>Create Item</h2>
+        <ModalCreateItem
+          userId={userId}
+          categories={categories}
+          items={listItems}
+          setItems={setListItems}
+          totalNumberOfItems={totalNumberOfItems}
+        />
+      </Modal>
+    );
   };
 
   // open modal for update
@@ -299,24 +203,21 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
 
   return (
     <div className='content-container'>
-      {errorMessages && (
+      {atItemsLimit && (
         <FormErrorMessage
-          errorMessage={errorMessages}
+          errorMessage={`Limit ${LIST_ITEM_LIMIT} Items!`}
           className='form-error-message form-error-message--position-static'
         />
       )}
-      <MainControls
-        categories={categories}
-        handleOnSubmit={handleOnSubmit}
-        title={listItem?.title}
-        handleSetListItem={handleSetListItem}
-        setListItem={setListItem}
-        type={listItem?.type}
-        column={listItem?.column}
-        categoryId={listItem?.categoryId}
-        isAwaitingAddResponse={isAwaitingAddResponse}
-        priority={priority}
-      />
+      <div className='dashboard-button-wrapper'>
+        <button
+          onClick={handleOpenCreateItemModal}
+          type='button'
+          className='entry-form__button'
+        >
+          Create Item
+        </button>
+      </div>
       {reminders && reminders?.length > 0 && (
         <Reminders reminders={reminders} />
       )}

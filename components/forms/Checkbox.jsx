@@ -18,10 +18,10 @@ const Checkbox = ({
         <input
           type='checkbox'
           id={id}
+          name={name}
           checked={checked}
           onChange={onChangeHandler}
         />
-        <input type='hidden' name={name} value={checked ? true : false} />
         <span className='checkbox__checkbox'></span>
       </label>
       {subLabel && <p className='checkbox__sublabel'>{subLabel}</p>}

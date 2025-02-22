@@ -75,7 +75,7 @@ const DetailsForm = ({ task, user }) => {
   };
 
   const handleConfirmDeletion = (e) => {
-    setForm({ ...form, confirmDeletion: e.target.checked });
+    setForm({ ...form, [e.target.name]: e.target.checked });
   };
 
   const handleSetQuill = (value) => {
