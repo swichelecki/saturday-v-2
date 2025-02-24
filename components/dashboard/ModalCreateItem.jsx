@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useAppContext } from '../../context';
 import { createItem } from '../../actions';
-import { useInnerWidth } from '../../hooks';
+import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
 import { FormCheckboxField, FormTextField, Toast } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 import { itemSchema } from '../../schemas/schemas';
@@ -20,6 +20,7 @@ const ModalCreateItem = ({
   const { setShowModal, setShowToast } = useAppContext();
 
   const width = useInnerWidth();
+  const handleListItemsMobileReset = useListItemsMobileReset();
 
   const formRef = useRef(null);
 
