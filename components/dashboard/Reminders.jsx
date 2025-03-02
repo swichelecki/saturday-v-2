@@ -197,9 +197,8 @@ const Reminders = ({ reminders }) => {
       <div className='reminders__wrapper'>
         <button
           className={`h2 ${!showReminders ? 'button-closed' : 'button-open'}`}
-          onClick={() => {
-            setShowReminders((current) => !current);
-          }}
+          onClick={() => setShowReminders((current) => !current)}
+          type='button'
         >
           Reminders
         </button>
@@ -241,12 +240,14 @@ const Reminders = ({ reminders }) => {
             <button
               onClick={handleScrollPrevious}
               className='reminders__reminders-scroll-button'
+              type='button'
             >
               <FaChevronLeft />
             </button>
             <button
               onClick={handleScrollNext}
               className='reminders__reminders-scroll-button'
+              type='button'
             >
               <FaChevronRight />
             </button>

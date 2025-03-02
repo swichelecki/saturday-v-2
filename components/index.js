@@ -6,6 +6,8 @@ export { default as Account } from './auth/Account';
 export { default as Header } from './header/Header';
 export { default as Layout } from './Layout';
 export { default as Dashboard } from './dashboard/Dashboard';
+export { default as Week } from './dashboard/Week';
+export { default as WeekItem } from './dashboard/WeekItem';
 export { default as Reminders } from './dashboard/Reminders';
 export { default as RemindersItem } from './dashboard/RemindersItem';
 export { default as Checkbox } from './forms/Checkbox';

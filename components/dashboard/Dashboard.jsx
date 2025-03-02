@@ -26,12 +26,13 @@ import {
   LIST_ITEM_LIMIT,
 } from '../../constants';
 
+const Week = dynamic(() => import('../../components/dashboard/Week'));
+const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
 const ItemsColumn = dynamic(() =>
   import('../../components/dashboard/ItemsColumn')
 );
-const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
 
-const Dashboard = ({ tasks, categories, reminders, user }) => {
+const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   const { userId, timezone, admin } = user;
 
   const { setUserId, setShowToast, setShowModal, setIsAdmin } = useAppContext();
@@ -42,6 +43,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
 
   const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
   const [listItems, setListItems] = useState(tasks);
+  const [calendarItems, setCalendarItems] = useState(calendar);
   const [masonryItems, setMasonryItems] = useState([]);
   const [taskToEditId, setTaskToEditId] = useState('');
   const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
@@ -52,7 +54,7 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
   let allItems = [];
 
   useEffect(() => {
-    // set global context user id and timezone
+    // set global context
     setUserId(userId);
     setIsAdmin(admin);
   }, []);
@@ -187,6 +189,18 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
           })
         );
 
+        if (calendarItems && calendarItems?.length > 0) {
+          setCalendarItems(
+            calendarItems?.map((item) => {
+              return {
+                [Object.keys(item)[0]]: Object.values(item)[0].filter(
+                  (item) => item?._id !== res.item._id
+                ),
+              };
+            })
+          );
+        }
+
         if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
       }
 
@@ -218,6 +232,9 @@ const Dashboard = ({ tasks, categories, reminders, user }) => {
           Create Item
         </button>
       </div>
+      {calendarItems && calendarItems?.length > 0 && (
+        <Week calendarItems={calendarItems} timezone={timezone} />
+      )}
       {reminders && reminders?.length > 0 && (
         <Reminders reminders={reminders} />
       )}
