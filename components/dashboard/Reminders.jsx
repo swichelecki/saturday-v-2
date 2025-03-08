@@ -37,28 +37,21 @@ const Reminders = ({ reminders }) => {
 
   // handle display of scroll buttons and carousel resize
   useEffect(() => {
-    const handleResize = () => {
-      remindersCarouselRef?.current?.scrollWidth >
-      remindersWrapperRef?.current?.offsetWidth
-        ? setShowScrollButtons(true)
-        : setShowScrollButtons(false);
+    remindersCarouselRef?.current?.scrollWidth >
+    remindersWrapperRef?.current?.offsetWidth
+      ? setShowScrollButtons(true)
+      : setShowScrollButtons(false);
 
-      setRemindersWrapperClientRectRight(
-        remindersWrapperRef?.current?.getBoundingClientRect().right
-      );
-      setRemindersWrapperClientRectLeft(
-        remindersWrapperRef?.current?.getBoundingClientRect().left
-      );
+    setRemindersWrapperClientRectRight(
+      remindersWrapperRef?.current?.getBoundingClientRect().right
+    );
+    setRemindersWrapperClientRectLeft(
+      remindersWrapperRef?.current?.getBoundingClientRect().left
+    );
 
-      if (remindersCarouselRef.current && carouselPositionRef.current) {
-        remindersCarouselRef.current.style.transform = 'translateX(0)';
-        carouselPositionRef.current = 0;
-      }
-    };
-
-    if (width && window && typeof window !== 'undefined') {
-      window.addEventListener('resize', handleResize());
-      return () => window.removeEventListener('resize', handleResize());
+    if (remindersCarouselRef.current && carouselPositionRef.current) {
+      remindersCarouselRef.current.style.transform = 'translateX(0)';
+      carouselPositionRef.current = 0;
     }
   }, [width]);
 
@@ -200,7 +193,7 @@ const Reminders = ({ reminders }) => {
           onClick={() => setShowReminders((current) => !current)}
           type='button'
         >
-          Reminders
+          Recurring Reminders
         </button>
         <div
           className='reminders__reminders-wrapper'
@@ -236,17 +229,17 @@ const Reminders = ({ reminders }) => {
         showReminders &&
         width &&
         width > MOBILE_BREAKPOINT && (
-          <div className='reminders__scroll-buttons-wrapper'>
+          <div className='carousel__buttons-wrapper'>
             <button
               onClick={handleScrollPrevious}
-              className='reminders__reminders-scroll-button'
+              className='carousel__button carousel__button--yellow'
               type='button'
             >
               <FaChevronLeft />
             </button>
             <button
               onClick={handleScrollNext}
-              className='reminders__reminders-scroll-button'
+              className='carousel__button carousel__button--yellow'
               type='button'
             >
               <FaChevronRight />

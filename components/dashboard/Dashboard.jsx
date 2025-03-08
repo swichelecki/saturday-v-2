@@ -232,9 +232,10 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
           Create Item
         </button>
       </div>
-      {calendarItems && calendarItems?.length > 0 && (
-        <Week calendarItems={calendarItems} timezone={timezone} />
-      )}
+      {calendarItems &&
+        calendarItems?.some((item) => Object.values(item)[0]?.length > 0) && (
+          <Week calendarItems={calendarItems} timezone={timezone} />
+        )}
       {reminders && reminders?.length > 0 && (
         <Reminders reminders={reminders} />
       )}

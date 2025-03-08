@@ -58,36 +58,6 @@
     gap: 8px;
     padding: 8px;
   }
-  &__scroll-buttons-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
-    gap: 10px;
-    width: 100%;
-    padding-top: 12px;
-    button {
-      &:first-of-type {
-        svg {
-          position: relative;
-          left: -1px;
-        }
-      }
-      &:last-of-type {
-        svg {
-          position: relative;
-          right: -1px;
-        }
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 800px) {
-  .reminders {
-    &__scroll-buttons-wrapper {
-      padding: 12px 0 0 0;
-    }
-  }
 }
 
 @media screen and (max-width: 600px) {

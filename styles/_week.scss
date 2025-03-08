@@ -1,6 +1,9 @@
 .week {
-  &__wrapper {
+  &__outer-wrapper {
     max-width: 970px;
+    width: 100%;
+  }
+  &__wrapper {
     width: 100%;
     button {
       position: relative;
@@ -8,7 +11,7 @@
       width: 100%;
       text-align: left;
       color: $color-font;
-      border: 1px solid $color-border;
+      box-shadow: 0 0 0 1px $color-border;
       background-color: $color-background;
     }
     button.button-open {
@@ -36,19 +39,31 @@
       }
     }
   }
-  &__inner-wrapper {
+  &__calendar-wrapper {
     overflow: hidden;
     width: 100%;
     transition: height 0.3s;
   }
-  &__calendar-wrapper {
+  &__calendar-month-year {
+    padding: 8px 0 0 8px;
+    font-weight: 600;
+    color: $color-list-item-svg;
+  }
+  &__calendar-carousel {
     display: flex;
     width: 100%;
+    overflow: scroll;
+    -ms-overflow-style: none; // IE and Edge
+    scrollbar-width: none; // FireFox
+    transition: transform 300ms ease-out;
+    &::-webkit-scrollbar {
+      display: none; // Chrome and Safari
+    }
     gap: 8px;
     padding: 8px 8px 0;
   }
   &__calendar-day {
-    flex: 0 1 129.42px;
+    flex: 0 0 129.42px;
     min-height: 129.42px;
     display: flex;
     flex-direction: column;
@@ -63,6 +78,9 @@
           content: unset;
         }
       }
+    }
+    &--past {
+      opacity: 0.5;
     }
   }
   &__day-of-week {
@@ -116,10 +134,14 @@
 
 @media screen and (max-width: 600px) {
   .week {
+    &__outer-wrapper {
+      padding-bottom: 8px;
+    }
     &__wrapper {
       & > button {
         padding: 12px 16px;
         pointer-events: none;
+        box-shadow: unset;
         &:after {
           display: none;
         }

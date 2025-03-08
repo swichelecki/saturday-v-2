@@ -91,21 +91,52 @@ button.list-item__pin-button {
   }
 }
 
-button.reminders__reminders-scroll-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  border: 1px solid $color-border;
-  color: $button-yellow;
-  width: 32px;
-  height: 32px;
-  border-radius: 100%;
-  padding: 0;
-  svg {
-    fill: $button-yellow;
-    width: 1rem;
-    height: 1rem;
+.carousel {
+  &__buttons-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    padding-top: 12px;
+  }
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: 1px solid $color-border;
+    width: 32px;
+    height: 32px;
+    border-radius: 100%;
+    padding: 0;
+    svg {
+      fill: $button-yellow;
+      width: 1rem;
+      height: 1rem;
+    }
+    &:first-of-type {
+      svg {
+        position: relative;
+        left: -1px;
+      }
+    }
+    &:last-of-type {
+      svg {
+        position: relative;
+        right: -1px;
+      }
+    }
+    &--yellow {
+      svg {
+        fill: $button-yellow;
+      }
+    }
+    &--red {
+      svg {
+        fill: $button-red;
+      }
+    }
   }
 }
 
@@ -254,6 +285,10 @@ button.user-menu__button {
   a.homepage__signup {
     padding: 8px 12px;
     font-size: 1rem; // 16px
+  }
+
+  .carousel-buttons-wrapper {
+    padding: 12px 0 0 0;
   }
 }
 

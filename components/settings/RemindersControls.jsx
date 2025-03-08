@@ -120,7 +120,7 @@ const RemindersControls = ({ reminders, userId }) => {
   return (
     <>
       <div className='form-page__list-items-heading-wrapper'>
-        <h1 className='form-page__h2'>Reminders</h1>
+        <h1 className='form-page__h2'>Recurring Reminders</h1>
       </div>
       <div className='settings-controls'>
         {isRemindersPrompt && prompt}
