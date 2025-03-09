@@ -27,21 +27,26 @@ const Week = ({ calendarItems, timezone }) => {
 
   // handle display of scroll buttons and carousel resize
   useEffect(() => {
-    weekCarouselRef?.current?.scrollWidth > weekWrapperRef?.current?.offsetWidth
-      ? setShowScrollButtons(true)
-      : setShowScrollButtons(false);
+    const setRefs = setTimeout(() => {
+      weekCarouselRef?.current?.scrollWidth >
+      weekWrapperRef?.current?.offsetWidth
+        ? setShowScrollButtons(true)
+        : setShowScrollButtons(false);
 
-    setWeekWrapperClientRectRight(
-      weekWrapperRef?.current?.getBoundingClientRect().right
-    );
-    setWeekWrapperClientRectLeft(
-      weekWrapperRef?.current?.getBoundingClientRect().left
-    );
+      setWeekWrapperClientRectRight(
+        weekWrapperRef?.current?.getBoundingClientRect().right
+      );
+      setWeekWrapperClientRectLeft(
+        weekWrapperRef?.current?.getBoundingClientRect().left
+      );
+    }, 100);
 
     if (weekCarouselRef.current && carouselPositionRef.current) {
       weekCarouselRef.current.style.transform = 'translateX(0)';
       carouselPositionRef.current = 0;
     }
+
+    return () => clearTimeout(setRefs);
   }, [width]);
 
   const handleScrollNext = () => {
@@ -122,7 +127,7 @@ const Week = ({ calendarItems, timezone }) => {
             {calendarItems?.map((item, index) => (
               <div
                 className={`week__calendar-day ${
-                  dayOfMonth.toString() !== Object.keys(item)[0]
+                  parseInt(Object.keys(item)[0]) < dayOfMonth
                     ? 'week__calendar-day--past'
                     : ''
                 }`}

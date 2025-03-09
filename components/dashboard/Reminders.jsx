@@ -37,22 +37,26 @@ const Reminders = ({ reminders }) => {
 
   // handle display of scroll buttons and carousel resize
   useEffect(() => {
-    remindersCarouselRef?.current?.scrollWidth >
-    remindersWrapperRef?.current?.offsetWidth
-      ? setShowScrollButtons(true)
-      : setShowScrollButtons(false);
+    const setRefs = setTimeout(() => {
+      remindersCarouselRef?.current?.scrollWidth >
+      remindersWrapperRef?.current?.offsetWidth
+        ? setShowScrollButtons(true)
+        : setShowScrollButtons(false);
 
-    setRemindersWrapperClientRectRight(
-      remindersWrapperRef?.current?.getBoundingClientRect().right
-    );
-    setRemindersWrapperClientRectLeft(
-      remindersWrapperRef?.current?.getBoundingClientRect().left
-    );
+      setRemindersWrapperClientRectRight(
+        remindersWrapperRef?.current?.getBoundingClientRect().right
+      );
+      setRemindersWrapperClientRectLeft(
+        remindersWrapperRef?.current?.getBoundingClientRect().left
+      );
+    }, 100);
 
     if (remindersCarouselRef.current && carouselPositionRef.current) {
       remindersCarouselRef.current.style.transform = 'translateX(0)';
       carouselPositionRef.current = 0;
     }
+
+    return () => clearTimeout(setRefs);
   }, [width]);
 
   // set next reminder date
