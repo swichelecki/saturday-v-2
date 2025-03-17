@@ -14,19 +14,54 @@ const Week = ({ calendarItems, timezone }) => {
   const weekWrapperRef = useRef(null);
   const weekCarouselRef = useRef(null);
   const carouselPositionRef = useRef(null);
+  const carouselHeightRef = useRef(null);
+  const animationIdRef = useRef(null);
 
   const [showWeek, setShowWeek] = useState(true);
   const [showScrollButtons, setShowScrollButtons] = useState(false);
   const [weekWrapperClientRectRight, setWeekWrapperClientRectRight] =
     useState(0);
   const [weekWrapperClientRectLeft, setWeekWrapperClientRectLeft] = useState(0);
+  const [startXPosition, setStartXPosition] = useState(0);
+  const [startYPosition, setStartYPosition] = useState(0);
+  const [previousTranslateX, setPreviousTranslateX] = useState(0);
 
   const today = new Date();
   const dayOfMonth = today.getDate();
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 
+  // dynamically set carousel height when using show / hide button
+  useEffect(() => {
+    carouselHeightRef.current = handleHiddenHeight(weekWrapperRef?.current);
+  }, [calendarItems, width]);
+
+  // on mobile ensure current day of week is in view on page load
+  useEffect(() => {
+    if (!width || width > MOBILE_BREAKPOINT || typeof window === 'undefined')
+      return;
+
+    const todayCalendarItem = document.getElementById('today');
+    if (!todayCalendarItem) return;
+    const clientWidth = window.innerWidth;
+    const todayCalendarItemWidth = todayCalendarItem.clientWidth;
+    const todayCalendarItemClientRectLeft =
+      todayCalendarItem.getBoundingClientRect().left;
+
+    carouselPositionRef.current = todayCalendarItemClientRectLeft - 8;
+    if (carouselPositionRef.current > clientWidth) {
+      carouselPositionRef.current -= clientWidth - todayCalendarItemWidth - 16;
+    }
+
+    weekCarouselRef.current.style.transition = 'unset';
+    weekCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
+
+    setPreviousTranslateX(-carouselPositionRef.current);
+  }, [width]);
+
   // handle display of scroll buttons and carousel resize
   useEffect(() => {
+    if (!width || width <= MOBILE_BREAKPOINT) return;
+
     const setRefs = setTimeout(() => {
       weekCarouselRef?.current?.scrollWidth >
       weekWrapperRef?.current?.offsetWidth
@@ -43,11 +78,94 @@ const Week = ({ calendarItems, timezone }) => {
 
     if (weekCarouselRef.current && carouselPositionRef.current) {
       weekCarouselRef.current.style.transform = 'translateX(0)';
+      weekCarouselRef.current.style.transition = 'transform 300ms ease-out';
       carouselPositionRef.current = 0;
     }
 
     return () => clearTimeout(setRefs);
   }, [width]);
+
+  // disable page scrolling when scrolling week carousel with touch events
+  useEffect(() => {
+    const handlePreventScroll = (e) => {
+      // TODO
+      // if touch move is up or down end touch move
+      /* if (
+        Math.max(
+          e.touches[0].clientY - startYPosition,
+          startYPosition - e.touches[0].clientY
+        ) >
+        Math.max(
+          e.touches[0].clientX - startXPosition,
+          startXPosition - e.touches[0].clientX
+        )
+      )
+        return; */
+
+      if (weekCarouselRef.current.style.transform !== 'translateX(0px)') {
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    weekCarouselRef?.current?.addEventListener(
+      'touchmove',
+      (e) => handlePreventScroll(e),
+      { passive: false }
+    );
+
+    return () => {
+      weekCarouselRef?.current?.removeEventListener(
+        'touchmove',
+        (e) => handlePreventScroll(e),
+        { passive: false }
+      );
+    };
+  }, [startXPosition, startYPosition]);
+
+  const handleTouchStart = (e) => {
+    if (width > MOBILE_BREAKPOINT) return;
+    setStartXPosition(e.touches[0].clientX);
+    //setStartYPosition(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e) => {
+    // TODO
+    // if touch move is up or down end touch move
+    /* if (
+      Math.max(
+        e.touches[0].clientY - startYPosition,
+        startYPosition - e.touches[0].clientY
+      ) >
+      Math.max(
+        e.touches[0].clientX - startXPosition,
+        startXPosition - e.touches[0].clientX
+      )
+    )
+      return; */
+
+    const carouselScrollWidth = weekCarouselRef?.current?.scrollWidth;
+    const currentPosition = e.touches[0].clientX;
+    const clientWidth = window.innerWidth;
+    const maxScrollWidth = -Math.abs(carouselScrollWidth - clientWidth + 8);
+
+    carouselPositionRef.current = Math.max(
+      maxScrollWidth,
+      Math.min(previousTranslateX + currentPosition - startXPosition, 0)
+    );
+
+    animationIdRef.current = requestAnimationFrame(animation);
+  };
+
+  const animation = () => {
+    weekCarouselRef.current.style.transform = `translateX(${carouselPositionRef.current}px)`;
+    cancelAnimationFrame(animationIdRef.current);
+  };
+
+  const handleTouchEnd = () => {
+    setPreviousTranslateX(carouselPositionRef.current);
+  };
 
   const handleScrollNext = () => {
     const daysToShow = [];
@@ -69,7 +187,6 @@ const Week = ({ calendarItems, timezone }) => {
       weekWrapperClientRectRight +
       (daysToShow.length > 1 ? 32 : 8);
 
-    weekCarouselRef.current.style.overflow = 'visible';
     weekCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
   };
 
@@ -93,7 +210,6 @@ const Week = ({ calendarItems, timezone }) => {
       weekWrapperClientRectLeft -
       (daysToShow.length > 1 ? 32 : 8);
 
-    weekCarouselRef.current.style.overflow = 'visible';
     weekCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
   };
 
@@ -115,7 +231,7 @@ const Week = ({ calendarItems, timezone }) => {
           style={
             showWeek
               ? {
-                  height: `${handleHiddenHeight(weekWrapperRef?.current)}px`,
+                  height: `${carouselHeightRef.current}px`,
                 }
               : { height: '0px' }
           }
@@ -123,21 +239,30 @@ const Week = ({ calendarItems, timezone }) => {
           <div className='week__calendar-month-year'>
             {moment(today).tz(timezone).format('MMMM YYYY')}
           </div>
-          <div className='week__calendar-carousel' ref={weekCarouselRef}>
+          <div
+            className='week__calendar-carousel'
+            ref={weekCarouselRef}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             {calendarItems?.map((item, index) => (
               <div
-                className={`week__calendar-day ${
+                className={`week__calendar-day${
                   parseInt(Object.keys(item)[0]) < dayOfMonth
-                    ? 'week__calendar-day--past'
+                    ? ' week__calendar-day--past'
                     : ''
                 }`}
                 key={`calendar-day__${index}`}
+                {...(dayOfMonth.toString() === Object.keys(item)[0]
+                  ? { id: 'today' }
+                  : {})}
               >
                 <p className='week__day-of-week'>{daysOfWeek[index]}</p>
                 <p
                   className={`week__day-of-month${
                     dayOfMonth.toString() === Object.keys(item)[0]
-                      ? '--today'
+                      ? ' week__day-of-month--today'
                       : ''
                   }`}
                 >

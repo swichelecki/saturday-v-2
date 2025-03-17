@@ -52,7 +52,7 @@
   &__calendar-carousel {
     display: flex;
     width: 100%;
-    overflow: scroll;
+    overflow: visible;
     -ms-overflow-style: none; // IE and Edge
     scrollbar-width: none; // FireFox
     transition: transform 300ms ease-out;
