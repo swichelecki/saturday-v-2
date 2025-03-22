@@ -88,7 +88,6 @@ const Week = ({ calendarItems, timezone }) => {
   // disable page scrolling when scrolling week carousel with touch events
   useEffect(() => {
     const handlePreventScroll = (e) => {
-      // TODO
       // if touch move is up or down end touch move
       /* if (
         Math.max(
@@ -131,7 +130,6 @@ const Week = ({ calendarItems, timezone }) => {
   };
 
   const handleTouchMove = (e) => {
-    // TODO
     // if touch move is up or down end touch move
     /* if (
       Math.max(
