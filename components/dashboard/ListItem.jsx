@@ -71,18 +71,18 @@ const ItemList = ({
   const animationXIdRef = useRef(null);
   const animationYIdRef = useRef(null);
   const arrayOfListItemsRef = useRef(null);
+  const currentTranslateXRef = useRef(null);
+  const currentTranslateYRef = useRef(null);
 
   const [isOpen, setIsOpen] = useState(false);
   const [startXPosition, setStartXPosition] = useState(0);
   const [startYPosition, setStartYPosition] = useState(0);
   const [itemXPositionOnStart, setItemXPositionOnStart] = useState(0);
   const [itemXPositionOnEnd, setItemXPositionOnEnd] = useState(0);
-  const [currentTranslateX, setCurrentTranslateX] = useState(0);
   const [previousTranslateX, setPreviousTranslateX] = useState(0);
   const [movedBy, setMovedBy] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [currentTranslateY, setCurrentTranslateY] = useState(0);
   const [listItemYPositionOnStart, setListItemYPositionOnStart] = useState(0);
   const [listItemId, setListItemId] = useState('');
 
@@ -98,7 +98,7 @@ const ItemList = ({
   // when all items are closed automatically make sure state is reset for next item touch
   useEffect(() => {
     if (listItemsMobileReset) {
-      setCurrentTranslateX(0);
+      currentTranslateXRef.current = 0;
       setPreviousTranslateX(0);
       setListItemsMobileReset(false);
     }
@@ -112,13 +112,14 @@ const ItemList = ({
     setCloseListItemsYAxis(false);
   }, [closeListItemsYAxis]);
 
-  // disable scrolling when opening and closing items on touch
+  // disable scrolling when interacting with items on touch
   useEffect(() => {
     const handlePreventScroll = (e) => {
-      if (listItemInnerRef.current.style.transform !== 'translateX(0px)') {
-        if (e.cancelable) {
-          e.preventDefault();
-        }
+      if (
+        (e.cancelable && isDraggingYRef.current) ||
+        (e.cancelable && isSwipingXRef.current)
+      ) {
+        e.preventDefault();
       }
     };
 
@@ -139,7 +140,7 @@ const ItemList = ({
 
   // handle touch x-axis transitions after touchend event
   useEffect(() => {
-    if (currentTranslateX === previousTranslateX) return;
+    if (currentTranslateXRef.current === previousTranslateX) return;
 
     // open item on swipe or when touchmove exceeds open threshold
     if (
@@ -152,7 +153,7 @@ const ItemList = ({
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       listItemInnerRef.current.style.transform = `translateX(-146px)`;
-      setCurrentTranslateX(MAX_MOVE_DISTANCE);
+      currentTranslateXRef.current = MAX_MOVE_DISTANCE;
       setPreviousTranslateX(MAX_MOVE_DISTANCE);
     }
 
@@ -167,7 +168,7 @@ const ItemList = ({
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       listItemInnerRef.current.style.transform = 'translateX(0px)';
-      setCurrentTranslateX(0);
+      currentTranslateXRef.current = 0;
       setPreviousTranslateX(0);
     }
 
@@ -180,7 +181,7 @@ const ItemList = ({
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       listItemInnerRef.current.style.transform = 'translateX(0px)';
-      setCurrentTranslateX(0);
+      currentTranslateXRef.current = 0;
       setPreviousTranslateX(0);
     }
 
@@ -193,28 +194,16 @@ const ItemList = ({
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       listItemInnerRef.current.style.transform = 'translateX(-146px)';
-      setCurrentTranslateX(MAX_MOVE_DISTANCE);
+      currentTranslateXRef.current = MAX_MOVE_DISTANCE;
       setPreviousTranslateX(MAX_MOVE_DISTANCE);
     }
   }, [duration, movedBy]);
 
-  // initialize and run animations
-  useEffect(() => {
-    animationXIdRef.current = requestAnimationFrame(animationX);
-    animationYIdRef.current = requestAnimationFrame(animationY);
-
-    return () => {
-      cancelAnimationFrame(animationXIdRef.current);
-      cancelAnimationFrame(animationYIdRef.current);
-    };
-  }, [currentTranslateX, currentTranslateY]);
-
   // touch x-axis start
   const handleSwipeXStart = (e) => {
-    isSwipingXRef.current = true;
     // after item closes when new item is opened state must be reset on previously opened item
     if (listItemInnerRef.current.id !== previousItemId) {
-      setCurrentTranslateX(0);
+      currentTranslateXRef.current = 0;
       setPreviousTranslateX(0);
     }
     previousItemId = handleCloseOpenItem(listItemInnerRef.current.id);
@@ -244,58 +233,32 @@ const ItemList = ({
 
     if (isOpen) return;
 
+    isSwipingXRef.current = true;
+
     let currentPosition = e.touches[0].clientX;
-    setCurrentTranslateX(
-      Math.max(
-        MAX_MOVE_DISTANCE,
-        Math.min(previousTranslateX + currentPosition - startXPosition, 0)
-      )
+    currentTranslateXRef.current = Math.max(
+      MAX_MOVE_DISTANCE,
+      Math.min(previousTranslateX + currentPosition - startXPosition, 0)
     );
+
+    animationXIdRef.current = requestAnimationFrame(animationX);
+  };
+
+  // animate x-axis
+  const animationX = () => {
+    listItemInnerRef.current.style.transform = `translateX(${currentTranslateXRef.current}px)`;
+    cancelAnimationFrame(animationXIdRef.current);
   };
 
   // touch x-axis end
   const handleSwipeXEnd = () => {
     isSwipingXRef.current = false;
-    setMovedBy(Math.abs(currentTranslateX - previousTranslateX));
+    setMovedBy(Math.abs(currentTranslateXRef.current - previousTranslateX));
     setDuration(new Date().getTime() - startTime);
     setItemXPositionOnEnd(
       listItemInnerRef.current.getBoundingClientRect().left
     );
-    cancelAnimationFrame(animationXIdRef.current);
   };
-
-  // animate x-axis
-  const animationX = () => {
-    if (isSwipingXRef.current) {
-      listItemInnerRef.current.style.transform = `translateX(${currentTranslateX}px)`;
-      requestAnimationFrame(animationX);
-    }
-  };
-
-  // disable scrolling on y-axis move
-  useEffect(() => {
-    const handlePreventScroll = (e) => {
-      if (isDraggingYRef.current) {
-        if (e.cancelable) {
-          e.preventDefault();
-        }
-      }
-    };
-
-    listItemInnerRef.current.addEventListener(
-      'touchmove',
-      (e) => handlePreventScroll(e),
-      { passive: false }
-    );
-
-    return () => {
-      listItemInnerRef.current?.removeEventListener(
-        'touchmove',
-        (e) => handlePreventScroll(e),
-        { passive: false }
-      );
-    };
-  }, [isDraggingYRef.current]);
 
   // y-axis start
   const handleDragYStart = (e) => {
@@ -340,21 +303,21 @@ const ItemList = ({
       ? e.pageY
       : e.touches[0].clientY;
 
-    setCurrentTranslateY(
-      Math.max(
-        0,
-        Math.min(
-          listItemYPositionOnStart + currentPosition - startYPosition,
-          listItemWrapperRef.current.clientHeight -
-            listItemRef.current.clientHeight
-        )
+    currentTranslateYRef.current = Math.max(
+      0,
+      Math.min(
+        listItemYPositionOnStart + currentPosition - startYPosition,
+        listItemWrapperRef.current.clientHeight -
+          listItemRef.current.clientHeight
       )
     );
 
+    animationYIdRef.current = requestAnimationFrame(animationY);
+
     // move up and trigger array resort and dom update
     if (
-      currentTranslateY > 0 &&
-      currentTranslateY <
+      currentTranslateYRef.current > 0 &&
+      currentTranslateYRef.current <
         listItemRef.current.clientHeight * (startingIndexRef.current - 1) +
           listItemRef.current.clientHeight / 2
     ) {
@@ -385,10 +348,10 @@ const ItemList = ({
 
     // move down and trigger array resort and dom update
     if (
-      currentTranslateY <
+      currentTranslateYRef.current <
         listItemWrapperRef.current.clientHeight -
           listItemRef.current.clientHeight &&
-      currentTranslateY >
+      currentTranslateYRef.current >
         listItemRef.current.clientHeight * startingIndexRef.current +
           listItemRef.current.clientHeight / 2
     ) {
@@ -418,10 +381,14 @@ const ItemList = ({
     }
   };
 
+  // animate y-axis
+  const animationY = () => {
+    listItemRef.current.style.top = `${currentTranslateYRef.current}px`;
+    cancelAnimationFrame(animationYIdRef.current);
+  };
+
   // y-axis end
   const handleDragYEnd = (e) => {
-    if (!isDraggingYRef.current) return;
-
     isDraggingYRef.current = false;
     listItemWrapperRef.current.removeAttribute('style');
     handleDragEnd();
@@ -435,17 +402,7 @@ const ItemList = ({
       item.setAttribute('data-list-item-index', parseInt(i));
     });
 
-    cancelAnimationFrame(animationYIdRef.current);
-
     if (e.type.includes('mouse')) e.target.style.cursor = 'grab';
-  };
-
-  // animate y-axis
-  const animationY = () => {
-    if (isDraggingYRef.current) {
-      listItemRef.current.style.top = `${currentTranslateY}px`;
-      requestAnimationFrame(animationY);
-    }
   };
 
   const handleShowDetails = () => {

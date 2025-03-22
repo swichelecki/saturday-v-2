@@ -16,6 +16,7 @@ const Week = ({ calendarItems, timezone }) => {
   const carouselPositionRef = useRef(null);
   const carouselHeightRef = useRef(null);
   const animationIdRef = useRef(null);
+  const isMovingXAxisRef = useRef(null);
 
   const [showWeek, setShowWeek] = useState(true);
   const [showScrollButtons, setShowScrollButtons] = useState(false);
@@ -88,23 +89,8 @@ const Week = ({ calendarItems, timezone }) => {
   // disable page scrolling when scrolling week carousel with touch events
   useEffect(() => {
     const handlePreventScroll = (e) => {
-      // if touch move is up or down end touch move
-      /* if (
-        Math.max(
-          e.touches[0].clientY - startYPosition,
-          startYPosition - e.touches[0].clientY
-        ) >
-        Math.max(
-          e.touches[0].clientX - startXPosition,
-          startXPosition - e.touches[0].clientX
-        )
-      )
-        return; */
-
-      if (weekCarouselRef.current.style.transform !== 'translateX(0px)') {
-        if (e.cancelable) {
-          e.preventDefault();
-        }
+      if (e.cancelable && isMovingXAxisRef.current) {
+        e.preventDefault();
       }
     };
 
@@ -121,17 +107,17 @@ const Week = ({ calendarItems, timezone }) => {
         { passive: false }
       );
     };
-  }, [startXPosition, startYPosition]);
+  }, []);
 
   const handleTouchStart = (e) => {
     if (width > MOBILE_BREAKPOINT) return;
     setStartXPosition(e.touches[0].clientX);
-    //setStartYPosition(e.touches[0].clientY);
+    setStartYPosition(e.touches[0].clientY);
   };
 
   const handleTouchMove = (e) => {
     // if touch move is up or down end touch move
-    /* if (
+    if (
       Math.max(
         e.touches[0].clientY - startYPosition,
         startYPosition - e.touches[0].clientY
@@ -141,7 +127,9 @@ const Week = ({ calendarItems, timezone }) => {
         startXPosition - e.touches[0].clientX
       )
     )
-      return; */
+      return;
+
+    isMovingXAxisRef.current = true;
 
     const carouselScrollWidth = weekCarouselRef?.current?.scrollWidth;
     const currentPosition = e.touches[0].clientX;
@@ -162,6 +150,7 @@ const Week = ({ calendarItems, timezone }) => {
   };
 
   const handleTouchEnd = () => {
+    isMovingXAxisRef.current = false;
     setPreviousTranslateX(carouselPositionRef.current);
   };
 
