@@ -67,7 +67,7 @@
     min-height: 129.42px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     position: relative;
     border-right: 1px solid $color-border;
     border-left: 1px solid $color-border;
@@ -121,14 +121,12 @@
       background-color: $color-background-secondary;
     }
   }
-  &__calendar-item-time {
-    padding-bottom: 4px;
-  }
   &__calendar-item-event {
     font-weight: 300;
     border-radius: 8px;
     padding: 6px 8px;
     background-color: $button-red-dark;
+    border-left: 8px solid $button-red;
   }
 }
 

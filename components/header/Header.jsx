@@ -28,7 +28,7 @@ const Header = () => {
       {/* {showUserAlert && <UserAlert />} */}
       <header className='header'>
         <div className='header__inner-wrapper'>
-          <Link href='/dashboard' className='h1'>
+          <Link href='/dashboard' prefetch={false} className='h1'>
             Saturday
           </Link>
           <div className='header__content-right'>

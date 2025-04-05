@@ -27,8 +27,7 @@ const Week = ({ calendarItems, timezone }) => {
   const [startYPosition, setStartYPosition] = useState(0);
   const [previousTranslateX, setPreviousTranslateX] = useState(0);
 
-  const today = new Date();
-  const dayOfMonth = today.getDate();
+  const today = new Date().toLocaleDateString('en-US', { timeZone: timezone });
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 
   // dynamically set carousel height when using show / hide button
@@ -236,24 +235,22 @@ const Week = ({ calendarItems, timezone }) => {
             {calendarItems?.map((item, index) => (
               <div
                 className={`week__calendar-day${
-                  parseInt(Object.keys(item)[0]) < dayOfMonth
+                  Object.keys(item)[0] < today
                     ? ' week__calendar-day--past'
                     : ''
                 }`}
                 key={`calendar-day__${index}`}
-                {...(dayOfMonth.toString() === Object.keys(item)[0]
-                  ? { id: 'today' }
-                  : {})}
+                {...(Object.keys(item)[0] === today ? { id: 'today' } : {})}
               >
                 <p className='week__day-of-week'>{daysOfWeek[index]}</p>
                 <p
                   className={`week__day-of-month${
-                    dayOfMonth.toString() === Object.keys(item)[0]
+                    Object.keys(item)[0] === today
                       ? ' week__day-of-month--today'
                       : ''
                   }`}
                 >
-                  {Object.keys(item)[0]}
+                  {moment(Object.keys(item)[0]).tz(timezone).format('D')}
                 </p>
                 {Object.values(item)[0]?.map((item, index) => (
                   <WeekItem
