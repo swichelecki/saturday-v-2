@@ -215,26 +215,30 @@ const ModalCreateItem = ({
           </select>
         </div>
       </div>
-      <FormCheckboxField
-        label='Detailed'
-        subLabel='All categories with a date are detailed by default. Click the checkbox to add a description to categories without dates.'
-        name='detailedCheckbox'
-        hasMandatoryDate={hasMandatoryDate}
-        checked={checkbox}
-        onChangeHandler={
-          !Boolean(hasMandatoryDate) ? handleSetCheckbox : () => {}
-        }
-      />
-      <FormTextField
-        label='Title'
-        type='text'
-        id='itemTitle'
-        name='title'
-        value={form?.title}
-        onChangeHandler={handleSetListItem}
-        disabled={checkbox}
-        errorMessage={errorMessage.title}
-      />
+      {!hasMandatoryDate && (
+        <FormCheckboxField
+          label='Detailed'
+          subLabel='All categories with a date are detailed by default. Click the checkbox to add a description to categories without dates.'
+          name='detailedCheckbox'
+          hasMandatoryDate={hasMandatoryDate}
+          checked={checkbox}
+          onChangeHandler={
+            !Boolean(hasMandatoryDate) ? handleSetCheckbox : () => {}
+          }
+        />
+      )}
+      {!checkbox && (
+        <FormTextField
+          label='Title'
+          type='text'
+          id='itemTitle'
+          name='title'
+          value={form?.title}
+          onChangeHandler={handleSetListItem}
+          disabled={checkbox}
+          errorMessage={errorMessage.title}
+        />
+      )}
       <div className='modal__modal-button-wrapper'>
         <button
           onClick={handleCloseModal}
@@ -256,7 +260,7 @@ const ModalCreateItem = ({
               },
             }}
             onClick={handleCloseModal}
-            className='modal__save-button'
+            className='modal__update-button'
           >
             Create
           </Link>

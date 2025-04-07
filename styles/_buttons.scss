@@ -18,6 +18,7 @@ button.form-page__delete-button,
 button.modal__cancel-button,
 button.modal__delete-button,
 button.modal__update-button,
+a.modal__update-button,
 button.modal__save-button,
 a.modal__save-button,
 button.modal__reminder-button,
@@ -44,7 +45,8 @@ a.homepage__signup {
   color: $button-purple;
 }
 
-button.modal__update-button {
+button.modal__update-button,
+a.modal__update-button {
   background-color: $button-blue-dark;
   color: $button-blue;
   .loader {
@@ -255,6 +257,7 @@ button.entry-form__button {
 button.modal__cancel-button,
 button.modal__delete-button,
 button.modal__update-button,
+a.modal__update-button,
 button.modal__save-button,
 a.modal__save-button,
 button.modal__reminder-button {
