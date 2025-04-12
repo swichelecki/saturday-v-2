@@ -223,7 +223,7 @@ const Week = ({ calendarItems, timezone }) => {
           }
         >
           <div className='week__calendar-month-year'>
-            {moment(today).tz(timezone).format('MMMM YYYY')}
+            {moment(today).format('MMMM YYYY')}
           </div>
           <div
             className='week__calendar-carousel'
@@ -235,7 +235,8 @@ const Week = ({ calendarItems, timezone }) => {
             {calendarItems?.map((item, index) => (
               <div
                 className={`week__calendar-day${
-                  Object.keys(item)[0] < today
+                  parseInt(moment(Object.keys(item)[0]).format('D')) <
+                  parseInt(moment(today).format('D'))
                     ? ' week__calendar-day--past'
                     : ''
                 }`}
@@ -250,7 +251,7 @@ const Week = ({ calendarItems, timezone }) => {
                       : ''
                   }`}
                 >
-                  {moment(Object.keys(item)[0]).tz(timezone).format('D')}
+                  {moment(Object.keys(item)[0]).format('D')}
                 </p>
                 {Object.values(item)[0]?.map((item, index) => (
                   <WeekItem

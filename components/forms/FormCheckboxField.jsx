@@ -5,7 +5,6 @@ const FormCheckboxField = ({
   subLabel,
   id,
   name,
-  hasMandatoryDate,
   checked,
   onChangeHandler,
 }) => {
@@ -16,7 +15,6 @@ const FormCheckboxField = ({
         subLabel={subLabel}
         id={id}
         name={name}
-        hasMandatoryDate={hasMandatoryDate}
         checked={checked}
         onChangeHandler={onChangeHandler}
       />

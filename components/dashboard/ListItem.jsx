@@ -73,6 +73,8 @@ const ItemList = ({
   const arrayOfListItemsRef = useRef(null);
   const currentTranslateXRef = useRef(null);
   const currentTranslateYRef = useRef(null);
+  const mobileUpdateOrDetailsButtonRef = useRef(null);
+  const mobileDeleteButtonRef = useRef(null);
 
   const [isOpen, setIsOpen] = useState(false);
   const [startXPosition, setStartXPosition] = useState(0);
@@ -153,6 +155,10 @@ const ItemList = ({
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       listItemInnerRef.current.style.transform = `translateX(-146px)`;
+      mobileUpdateOrDetailsButtonRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      mobileUpdateOrDetailsButtonRef.current.style.transform = `translateX(-146px)`;
+      mobileDeleteButtonRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      mobileDeleteButtonRef.current.style.transform = `translateX(-73px)`;
       currentTranslateXRef.current = MAX_MOVE_DISTANCE;
       setPreviousTranslateX(MAX_MOVE_DISTANCE);
     }
@@ -168,6 +174,10 @@ const ItemList = ({
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       listItemInnerRef.current.style.transform = 'translateX(0px)';
+      mobileUpdateOrDetailsButtonRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      mobileUpdateOrDetailsButtonRef.current.style.transform = `translateX(0)`;
+      mobileDeleteButtonRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      mobileDeleteButtonRef.current.style.transform = `translateX(0)`;
       currentTranslateXRef.current = 0;
       setPreviousTranslateX(0);
     }
@@ -181,6 +191,10 @@ const ItemList = ({
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       listItemInnerRef.current.style.transform = 'translateX(0px)';
+      mobileUpdateOrDetailsButtonRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      mobileUpdateOrDetailsButtonRef.current.style.transform = `translateX(0)`;
+      mobileDeleteButtonRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      mobileDeleteButtonRef.current.style.transform = `translateX(0)`;
       currentTranslateXRef.current = 0;
       setPreviousTranslateX(0);
     }
@@ -194,6 +208,10 @@ const ItemList = ({
       const transitionSpeed = handleTransitionSpeed(movedBy, duration);
       listItemInnerRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
       listItemInnerRef.current.style.transform = 'translateX(-146px)';
+      mobileUpdateOrDetailsButtonRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      mobileUpdateOrDetailsButtonRef.current.style.transform = `translateX(-146px)`;
+      mobileDeleteButtonRef.current.style.transition = `transform ${transitionSpeed}ms ease-out`;
+      mobileDeleteButtonRef.current.style.transform = `translateX(-73px)`;
       currentTranslateXRef.current = MAX_MOVE_DISTANCE;
       setPreviousTranslateX(MAX_MOVE_DISTANCE);
     }
@@ -210,6 +228,8 @@ const ItemList = ({
     setStartXPosition(e.touches[0].clientX);
     setStartYPosition(e.touches[0].clientY);
     listItemInnerRef.current.style.transition = 'none';
+    mobileUpdateOrDetailsButtonRef.current.style.transition = 'none';
+    mobileDeleteButtonRef.current.style.transition = 'none';
     setItemXPositionOnStart(
       listItemInnerRef.current.getBoundingClientRect().left
     );
@@ -247,6 +267,17 @@ const ItemList = ({
   // animate x-axis
   const animationX = () => {
     listItemInnerRef.current.style.transform = `translateX(${currentTranslateXRef.current}px)`;
+
+    if (currentTranslateXRef.current >= -146) {
+      mobileUpdateOrDetailsButtonRef.current.style.transform = `translateX(${currentTranslateXRef.current}px)`;
+    }
+
+    if (currentTranslateXRef.current >= -146) {
+      mobileDeleteButtonRef.current.style.transform = `translateX(${
+        currentTranslateXRef.current / 2
+      }px)`;
+    }
+
     cancelAnimationFrame(animationXIdRef.current);
   };
 
@@ -621,6 +652,8 @@ const ItemList = ({
             isAwaitingEditResponse={isAwaitingEditResponse}
             handleDeleteItem={handleDeleteItem}
             isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+            mobileUpdateOrDetailsButtonRef={mobileUpdateOrDetailsButtonRef}
+            mobileDeleteButtonRef={mobileDeleteButtonRef}
           />
         )}
       </div>

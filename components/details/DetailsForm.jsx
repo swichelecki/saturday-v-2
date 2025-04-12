@@ -38,7 +38,7 @@ const DetailsForm = ({ task, user }) => {
     priority: task?.priority ?? parseInt(priority),
     type: task?.type ?? type,
     column: task?.column ?? parseInt(column),
-    mandatoryDate: task?.mandatoryDate ?? Boolean(hasMandatoryDate),
+    mandatoryDate: task?.mandatoryDate ?? hasMandatoryDate === 'true',
     itemLimit: isUpdate ? numberOfItems - 1 : numberOfItems,
   });
   const [errorMessage, setErrorMessage] = useState({

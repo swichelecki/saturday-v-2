@@ -42,7 +42,7 @@ const ModalCreateItem = ({
   const [priority, setPriority] = useState(0);
   const [checkbox, setCheckbox] = useState(false);
   const [isCheckedByUser, setIsCheckedByUser] = useState(false);
-  const [hasMandatoryDate, setHasMandatoryDate] = useState('');
+  const [hasMandatoryDate, setHasMandatoryDate] = useState(false);
   const [isAwaitingAddResponse, setIsAwaitingAddResponse] = useState(false);
   const [errorMessage, setErrorMessage] = useState({
     title: '',
@@ -201,7 +201,7 @@ const ModalCreateItem = ({
                   ? true
                   : false
               );
-              setHasMandatoryDate(category?.mandatoryDate ? 'true' : '');
+              setHasMandatoryDate(category?.mandatoryDate);
             }}
           >
             {categories?.map((item, index) => (
@@ -220,11 +220,8 @@ const ModalCreateItem = ({
           label='Detailed'
           subLabel='All categories with a date are detailed by default. Click the checkbox to add a description to categories without dates.'
           name='detailedCheckbox'
-          hasMandatoryDate={hasMandatoryDate}
           checked={checkbox}
-          onChangeHandler={
-            !Boolean(hasMandatoryDate) ? handleSetCheckbox : () => {}
-          }
+          onChangeHandler={handleSetCheckbox}
         />
       )}
       {!checkbox && (
@@ -255,7 +252,7 @@ const ModalCreateItem = ({
                 priority,
                 type: form?.type,
                 column: form?.column,
-                hasMandatoryDate,
+                hasMandatoryDate: String(hasMandatoryDate),
                 categoryId: form?.categoryId,
               },
             }}

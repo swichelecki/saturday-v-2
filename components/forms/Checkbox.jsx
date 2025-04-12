@@ -3,17 +3,12 @@ const Checkbox = ({
   subLabel = '',
   id = 'checkbox',
   name,
-  hasMandatoryDate,
   checked,
   onChangeHandler,
 }) => {
   return (
     <>
-      <label
-        className='checkbox__checkbox-container'
-        htmlFor={id}
-        style={hasMandatoryDate && checked ? { cursor: 'no-drop' } : {}}
-      >
+      <label className='checkbox__checkbox-container' htmlFor={id}>
         <span>{label}</span>
         <input
           type='checkbox'

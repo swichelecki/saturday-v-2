@@ -225,10 +225,17 @@ a.list-item__edit-button {
   &--mobile {
     border-radius: 0;
     border: 0;
+    left: 146px;
     svg {
       width: 1.4rem;
       height: 1.4rem;
     }
+  }
+}
+
+button.list-item__delete-button {
+  &--mobile {
+    left: 73px;
   }
 }
 

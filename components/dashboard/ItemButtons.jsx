@@ -21,6 +21,8 @@ const ItemButtons = ({
   isAwaitingEditResponse,
   handleDeleteItem,
   isAwaitingDeleteResponse,
+  mobileDeleteButtonRef,
+  mobileUpdateOrDetailsButtonRef,
 }) => {
   const width = useInnerWidth();
 
@@ -50,6 +52,7 @@ const ItemButtons = ({
         <button
           onClick={handleShowDetails}
           className={`list-item__details-button ${handleDetailsButtonClass()}`}
+          ref={mobileUpdateOrDetailsButtonRef}
         >
           {isOpen ? <FaArrowUp /> : <FaArrowDown />}
         </button>
@@ -57,6 +60,7 @@ const ItemButtons = ({
         <Link
           href={`/details/${itemId}`}
           className={`list-item__edit-button ${handleEditButtonClass()}`}
+          ref={mobileUpdateOrDetailsButtonRef}
         >
           <MdEdit />
         </Link>
@@ -66,6 +70,7 @@ const ItemButtons = ({
             getItemToUpdate(itemId);
           }}
           className={`list-item__edit-button ${handleEditButtonClass()}`}
+          ref={mobileUpdateOrDetailsButtonRef}
         >
           {isAwaitingEditResponse && itemToUpdateId === itemId ? (
             <div className='loader'></div>
@@ -80,6 +85,7 @@ const ItemButtons = ({
           setIdToDelete(itemId);
         }}
         className={`list-item__delete-button ${handleDeleteButtonClass()}`}
+        ref={mobileDeleteButtonRef}
       >
         {isAwaitingDeleteResponse && idToDelete === itemId ? (
           <div className='loader'></div>
