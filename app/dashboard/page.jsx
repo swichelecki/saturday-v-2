@@ -113,9 +113,10 @@ async function getDashboardData() {
 
       // create data shape for week component
       calendarData = daysOfWeek.reduce((calendarDays, item) => {
-        const day = item.toLocaleDateString('en-US', {
-          timeZone: timezone,
-        });
+        const day = Intl.DateTimeFormat('en-US', { timeZone: timezone }).format(
+          item
+        );
+
         calendarDays.push({
           [day]: [
             ...calendarItems?.filter((calItem) => {

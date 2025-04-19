@@ -37,26 +37,22 @@ const Reminders = ({ reminders }) => {
 
   // handle display of scroll buttons and carousel resize
   useEffect(() => {
-    const setRefs = setTimeout(() => {
-      remindersCarouselRef?.current?.scrollWidth >
-      remindersWrapperRef?.current?.offsetWidth
-        ? setShowScrollButtons(true)
-        : setShowScrollButtons(false);
+    remindersCarouselRef?.current?.scrollWidth >
+    remindersWrapperRef?.current?.offsetWidth
+      ? setShowScrollButtons(true)
+      : setShowScrollButtons(false);
 
-      setRemindersWrapperClientRectRight(
-        remindersWrapperRef?.current?.getBoundingClientRect().right
-      );
-      setRemindersWrapperClientRectLeft(
-        remindersWrapperRef?.current?.getBoundingClientRect().left
-      );
-    }, 100);
+    setRemindersWrapperClientRectRight(
+      remindersWrapperRef?.current?.getBoundingClientRect().right
+    );
+    setRemindersWrapperClientRectLeft(
+      remindersWrapperRef?.current?.getBoundingClientRect().left
+    );
 
     if (remindersCarouselRef.current && carouselPositionRef.current) {
       remindersCarouselRef.current.style.transform = 'translateX(0)';
       carouselPositionRef.current = 0;
     }
-
-    return () => clearTimeout(setRefs);
   }, [width]);
 
   // set next reminder date
@@ -104,6 +100,20 @@ const Reminders = ({ reminders }) => {
       });
     }
   }, [reminderToUpdate]);
+
+  // hide scroll buttons after resetting reminder if scrolling no longer required
+  useEffect(() => {
+    if (Object.keys(reminderToUpdate).length <= 0) return;
+
+    if (
+      remindersCarouselRef?.current?.scrollWidth <=
+      remindersWrapperRef?.current?.offsetWidth
+    ) {
+      setShowScrollButtons(false);
+      remindersCarouselRef.current.style.transform = 'translateX(0)';
+      carouselPositionRef.current = 0;
+    }
+  }, [remindersItems]);
 
   // get reminder to update
   const handleResetReminder = (id, confirmUpdate) => {

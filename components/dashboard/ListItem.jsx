@@ -161,6 +161,7 @@ const ItemList = ({
       mobileDeleteButtonRef.current.style.transform = `translateX(-73px)`;
       currentTranslateXRef.current = MAX_MOVE_DISTANCE;
       setPreviousTranslateX(MAX_MOVE_DISTANCE);
+      previousItemId = handleCloseOpenItem(listItemInnerRef.current.id);
     }
 
     // close item on swipe or when touchmove exceeds close threshold
@@ -180,6 +181,7 @@ const ItemList = ({
       mobileDeleteButtonRef.current.style.transform = `translateX(0)`;
       currentTranslateXRef.current = 0;
       setPreviousTranslateX(0);
+      if (isOpen) setIsOpen(false);
     }
 
     // when closed, return item to close state when touchmove does not exceed open threshold
@@ -223,8 +225,8 @@ const ItemList = ({
     if (listItemInnerRef.current.id !== previousItemId) {
       currentTranslateXRef.current = 0;
       setPreviousTranslateX(0);
+      setIsOpen(false);
     }
-    previousItemId = handleCloseOpenItem(listItemInnerRef.current.id);
     setStartXPosition(e.touches[0].clientX);
     setStartYPosition(e.touches[0].clientY);
     listItemInnerRef.current.style.transition = 'none';
@@ -250,8 +252,6 @@ const ItemList = ({
       )
     )
       return;
-
-    if (isOpen) return;
 
     isSwipingXRef.current = true;
 
@@ -436,10 +436,6 @@ const ItemList = ({
     if (e.type.includes('mouse')) e.target.style.cursor = 'grab';
   };
 
-  const handleShowDetails = () => {
-    setIsOpen((prevState) => !prevState);
-  };
-
   const isToday = item?.mandatoryDate
     ? handleTodaysDateCheck(item?.date)
     : false;
@@ -566,7 +562,7 @@ const ItemList = ({
                 dateAndTime={item?.dateAndTime}
                 description={item?.description}
                 confirmDeletion={item?.confirmDeletion}
-                handleShowDetails={handleShowDetails}
+                setIsOpen={setIsOpen}
                 isOpen={isOpen}
                 itemToUpdateId={itemToUpdateId}
                 getItemToUpdate={getItemToUpdate}
@@ -644,7 +640,7 @@ const ItemList = ({
             dateAndTime={item?.dateAndTime}
             description={item?.description}
             confirmDeletion={item?.confirmDeletion}
-            handleShowDetails={handleShowDetails}
+            setIsOpen={setIsOpen}
             isOpen={isOpen}
             itemToUpdateId={itemToUpdateId}
             getItemToUpdate={getItemToUpdate}

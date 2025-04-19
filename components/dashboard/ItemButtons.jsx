@@ -13,7 +13,7 @@ const ItemButtons = ({
   dateAndTime,
   description,
   confirmDeletion,
-  handleShowDetails,
+  setIsOpen,
   isOpen,
   itemToUpdateId,
   getItemToUpdate,
@@ -50,7 +50,9 @@ const ItemButtons = ({
     <>
       {description ? (
         <button
-          onClick={handleShowDetails}
+          onClick={() => {
+            setIsOpen((curr) => !curr);
+          }}
           className={`list-item__details-button ${handleDetailsButtonClass()}`}
           ref={mobileUpdateOrDetailsButtonRef}
         >

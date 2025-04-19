@@ -172,6 +172,7 @@
       overflow: hidden;
     }
     &__details {
+      transition: height 500ms;
       border-radius: 0;
     }
     &__details-padding {

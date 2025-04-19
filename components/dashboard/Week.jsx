@@ -27,7 +27,10 @@ const Week = ({ calendarItems, timezone }) => {
   const [startYPosition, setStartYPosition] = useState(0);
   const [previousTranslateX, setPreviousTranslateX] = useState(0);
 
-  const today = new Date().toLocaleDateString('en-US', { timeZone: timezone });
+  const date = new Date();
+  const today = Intl.DateTimeFormat('en-US', { timeZone: timezone }).format(
+    date
+  );
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
 
   // dynamically set carousel height when using show / hide button
@@ -60,7 +63,7 @@ const Week = ({ calendarItems, timezone }) => {
 
   // handle display of scroll buttons and carousel resize
   useEffect(() => {
-    if (!width || width <= MOBILE_BREAKPOINT) return;
+    if (width <= MOBILE_BREAKPOINT) return;
 
     const setRefs = setTimeout(() => {
       weekCarouselRef?.current?.scrollWidth >
@@ -74,7 +77,7 @@ const Week = ({ calendarItems, timezone }) => {
       setWeekWrapperClientRectLeft(
         weekWrapperRef?.current?.getBoundingClientRect().left
       );
-    }, 100);
+    }, 50);
 
     if (weekCarouselRef.current && carouselPositionRef.current) {
       weekCarouselRef.current.style.transform = 'translateX(0)';
@@ -223,7 +226,7 @@ const Week = ({ calendarItems, timezone }) => {
           }
         >
           <div className='week__calendar-month-year'>
-            {moment(today).format('MMMM YYYY')}
+            {moment(date).tz(timezone).format('MMMM YYYY')}
           </div>
           <div
             className='week__calendar-carousel'
@@ -235,8 +238,7 @@ const Week = ({ calendarItems, timezone }) => {
             {calendarItems?.map((item, index) => (
               <div
                 className={`week__calendar-day${
-                  parseInt(moment(Object.keys(item)[0]).format('D')) <
-                  parseInt(moment(today).format('D'))
+                  Object.keys(item)[0] < today
                     ? ' week__calendar-day--past'
                     : ''
                 }`}

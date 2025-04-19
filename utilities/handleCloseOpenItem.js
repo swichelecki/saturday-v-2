@@ -19,6 +19,7 @@ export const handleCloseOpenItem = (currentItemId) => {
       const deleteButton = item.querySelector(
         '.list-item__delete-button.list-item__delete-button--mobile'
       );
+      const details = item.querySelector('.list-item__details');
 
       listItemInner.style.transition = `transform ${SLOW_TRANSITION_SPEED}ms`;
       listItemInner.style.transform = 'translateX(0)';
@@ -35,6 +36,8 @@ export const handleCloseOpenItem = (currentItemId) => {
 
       deleteButton.style.transition = `transform ${SLOW_TRANSITION_SPEED}ms`;
       deleteButton.style.transform = 'translateX(0)';
+
+      details.style.height = '0';
     }
   });
   return currentItemId;
