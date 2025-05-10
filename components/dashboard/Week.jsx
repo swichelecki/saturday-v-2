@@ -27,11 +27,8 @@ const Week = ({ calendarItems, timezone }) => {
   const [startYPosition, setStartYPosition] = useState(0);
   const [previousTranslateX, setPreviousTranslateX] = useState(0);
 
-  const date = new Date();
-  const today = Intl.DateTimeFormat('en-US', { timeZone: timezone }).format(
-    date
-  );
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+  const today = new Date();
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
 
   // dynamically set carousel height when using show / hide button
   useEffect(() => {
@@ -226,7 +223,7 @@ const Week = ({ calendarItems, timezone }) => {
           }
         >
           <div className='week__calendar-month-year'>
-            {moment(date).tz(timezone).format('MMMM YYYY')}
+            {moment(today).format('MMMM YYYY')}
           </div>
           <div
             className='week__calendar-carousel'
@@ -238,22 +235,24 @@ const Week = ({ calendarItems, timezone }) => {
             {calendarItems?.map((item, index) => (
               <div
                 className={`week__calendar-day${
-                  Object.keys(item)[0] < today
+                  parseInt(Object.keys(item)[0]) < today.getDate()
                     ? ' week__calendar-day--past'
                     : ''
                 }`}
                 key={`calendar-day__${index}`}
-                {...(Object.keys(item)[0] === today ? { id: 'today' } : {})}
+                {...(parseInt(Object.keys(item)[0]) === today.getDate()
+                  ? { id: 'today' }
+                  : {})}
               >
                 <p className='week__day-of-week'>{daysOfWeek[index]}</p>
                 <p
                   className={`week__day-of-month${
-                    Object.keys(item)[0] === today
+                    parseInt(Object.keys(item)[0]) === today.getDate()
                       ? ' week__day-of-month--today'
                       : ''
                   }`}
                 >
-                  {moment(Object.keys(item)[0]).format('D')}
+                  {Object.keys(item)[0]}
                 </p>
                 {Object.values(item)[0]?.map((item, index) => (
                   <WeekItem

@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+//import { RichTextEditor } from '..';
 import { FormErrorMessage } from '../';
 import { useIsMounted } from '../../hooks';
 import 'react-quill-new/dist/quill.snow.css';
@@ -36,24 +37,27 @@ const FormWYSIWYGField = ({
         }`}
       >
         {isMounted ? (
-          <ReactQuill
-            theme='snow'
-            modules={
-              hasToolbar
-                ? {
-                    toolbar: [
-                      ['bold', 'italic', 'underline'],
-                      ['link'],
-                      [{ list: 'ordered' }, { list: 'bullet' }],
-                    ],
-                  }
-                : {
-                    toolbar: [],
-                  }
-            }
-            value={value}
-            onChange={onChangeHandler}
-          />
+          <>
+            <ReactQuill
+              theme='snow'
+              modules={
+                hasToolbar
+                  ? {
+                      toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        ['link'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                      ],
+                    }
+                  : {
+                      toolbar: [],
+                    }
+              }
+              value={value}
+              onChange={onChangeHandler}
+            />
+            {/* <RichTextEditor /> */}
+          </>
         ) : (
           ''
         )}

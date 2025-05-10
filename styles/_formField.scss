@@ -71,6 +71,101 @@
   }
 }
 
+.rich-text-editor {
+  position: relative;
+  margin-top: 24px;
+  border: 1px solid $color-border;
+  border-bottom-right-radius: 9px;
+  border-bottom-left-radius: 9px;
+  &__toolbar {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    background-color: $color-background-dark;
+    padding: 8px;
+  }
+  &__link-box {
+    &--show {
+      display: flex;
+    }
+    display: none;
+    position: absolute;
+    top: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    justify-content: start;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 9px;
+    background-color: $color-background;
+    a {
+      position: relative;
+      max-width: 180px;
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding-left: 28px;
+      gap: 16px;
+      color: $button-blue;
+      font-weight: 400;
+      text-decoration: underline;
+      cursor: pointer;
+      svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+      }
+    }
+    svg {
+      width: 1.3rem;
+      height: 1.3rem;
+    }
+  }
+  &__editor {
+    min-height: 200px;
+    font-family: inherit;
+    background-color: $color-input;
+    padding: 12px 15px;
+    font-weight: 300;
+    p,
+    ul,
+    ol {
+      padding: 0;
+      margin: 0;
+      line-height: 1.6;
+    }
+    a {
+      color: $button-blue;
+      font-weight: 400;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    strong {
+      font-weight: 600;
+    }
+  }
+  &__editor-cursor {
+    border: 0;
+    outline: 0;
+    display: inline-block;
+    position: relative;
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      display: inline-block;
+      //background-color: $color-font;
+      background-color: pink;
+      width: 2px;
+    }
+  }
+}
+
 .quill {
   .ql-toolbar.ql-snow,
   .ql-container.ql-snow {
@@ -86,7 +181,8 @@
       box-shadow: unset;
     }
   }
-  .ql-container.ql-snow {
+  .ql-container.ql-snow,
+  .rich-text-editor__editor {
     min-height: 200px;
     font-family: inherit;
     background-color: $color-input;

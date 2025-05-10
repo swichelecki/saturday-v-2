@@ -95,35 +95,34 @@ async function getDashboardData() {
     }
 
     if (calendarItems?.length > 0) {
-      // get sunday using current date
-      const getSunday = (today) => {
-        const dayOfWeek = today.getDay();
+      // get monday using current date
+      const getMonday = (today) => {
+        const dayOfWeek = today.getDay() - 1;
         const diff = today.getDate() - dayOfWeek;
-        return new Date(today.setDate(diff));
+        const dateInUsersTimezone = Intl.DateTimeFormat('en-US', {
+          timeZone: timezone,
+        }).format(today.setDate(diff));
+        return new Date(dateInUsersTimezone);
       };
 
       // create array of all days of the week
-      const sunday = getSunday(new Date());
+      const monday = getMonday(new Date());
       const daysOfWeek = [];
-      daysOfWeek.push(sunday);
-      const sundayCopy = new Date(sunday);
+      daysOfWeek.push(monday);
+      const mondayCopy = new Date(monday);
       for (let i = 1; i <= 6; i++) {
-        daysOfWeek.push(new Date(sundayCopy.setDate(sundayCopy.getDate() + 1)));
+        daysOfWeek.push(new Date(mondayCopy.setDate(mondayCopy.getDate() + 1)));
       }
 
       // create data shape for week component
-      calendarData = daysOfWeek.reduce((calendarDays, item) => {
-        const day = Intl.DateTimeFormat('en-US', { timeZone: timezone }).format(
-          item
-        );
-
+      calendarData = daysOfWeek.reduce((calendarDays, day) => {
         calendarDays.push({
-          [day]: [
+          [day.getDate()]: [
             ...calendarItems?.filter((calItem) => {
               const calItemDate = new Date(calItem?.date);
               const calItemDateString = calItemDate.toISOString();
               const calItemYearDayMonth = calItemDateString.split('T')[0];
-              const dayOfWeekDateString = item.toISOString();
+              const dayOfWeekDateString = day.toISOString();
               const dayOfWeekYearDayMonth = dayOfWeekDateString.split('T')[0];
 
               if (calItemYearDayMonth === dayOfWeekYearDayMonth) {
