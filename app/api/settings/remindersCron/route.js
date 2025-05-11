@@ -1,13 +1,12 @@
 import connectDB from '../../../../config/db';
 import Reminder from '../../../../models/Reminder';
+import Holiday from '../../../../models/Holiday';
 import { BY_WEEK_INTERVALS, TWENTYFOUR_HOURS } from '../../../../constants';
 
 export async function GET() {
   try {
     await connectDB();
     const reminders = await Reminder.find();
-
-    if (!reminders?.length) return;
 
     const generalReminders = [];
     const exactRecurringDateReminders = [];
@@ -176,6 +175,23 @@ export async function GET() {
             }
           );
         }
+      }
+    }
+
+    // handle fetching US holidays on January 1 of each year
+    const today = Date.now();
+    const yesterday = today - TWENTYFOUR_HOURS;
+    const yearToday = new Date(today).getUTCFullYear();
+    const yearYesterday = new Date(yesterday).getUTCFullYear();
+    if (yearToday > yearYesterday) {
+      await Holiday.deleteMany();
+      const response = await fetch(
+        `https://date.nager.at/api/v3/publicholidays/${yearToday}/US`
+      );
+      const holidays = await response.json();
+
+      for (const holiday of holidays) {
+        await Holiday.create({ title: holiday?.name, date: holiday?.date });
       }
     }
 

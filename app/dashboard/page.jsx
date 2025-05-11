@@ -2,6 +2,7 @@ import connectDB from '../../config/db';
 import Task from '../../models/Task';
 import Category from '../../models/Category';
 import Reminder from '../../models/Reminder';
+import Holiday from '../../models/Holiday';
 import { handleSortItemsAscending } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { Dashboard } from '../../components';
@@ -18,25 +19,28 @@ async function getDashboardData() {
 
     const { userId, timezone, admin } = await getUserFromCookie();
 
-    const [tasksRaw, categoriesRaw, remindersRaw] = await Promise.all([
-      Task.find({ userId }).sort({
-        priority: 1,
-      }),
-      Category.find({ userId }).sort({
-        priority: 1,
-      }),
-      Reminder.find({
-        userId,
-        displayReminder: true,
-      }).sort({
-        reminderDate: 1,
-      }),
-    ]);
+    const [tasksRaw, categoriesRaw, remindersRaw, holidaysRaw] =
+      await Promise.all([
+        Task.find({ userId }).sort({
+          priority: 1,
+        }),
+        Category.find({ userId }).sort({
+          priority: 1,
+        }),
+        Reminder.find({
+          userId,
+          displayReminder: true,
+        }).sort({
+          reminderDate: 1,
+        }),
+        Holiday.find(),
+      ]);
 
     // create data shape for columns
     const tasks = JSON.parse(JSON.stringify(tasksRaw));
     const categories = JSON.parse(JSON.stringify(categoriesRaw));
     const reminders = JSON.parse(JSON.stringify(remindersRaw));
+    const holidays = JSON.parse(JSON.stringify(holidaysRaw));
     const columnsData = [];
     const calendarItems = [];
     let calendarData = [];
@@ -94,10 +98,16 @@ async function getDashboardData() {
         });
     }
 
+    // add holidays to week array
+    for (const holiday of holidays) {
+      calendarItems.push(holiday);
+    }
+
     if (calendarItems?.length > 0) {
       // get monday using current date
       const getMonday = (today) => {
-        const dayOfWeek = today.getDay() - 1;
+        const dayOfWeek =
+          today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
         const diff = today.getDate() - dayOfWeek;
         const dateInUsersTimezone = Intl.DateTimeFormat('en-US', {
           timeZone: timezone,
@@ -116,18 +126,15 @@ async function getDashboardData() {
 
       // create data shape for week component
       calendarData = daysOfWeek.reduce((calendarDays, day) => {
+        const dayOfWeekDateString = day.toISOString();
+        const dayOfWeekYearDayMonth = dayOfWeekDateString.split('T')[0];
         calendarDays.push({
           [day.getDate()]: [
             ...calendarItems?.filter((calItem) => {
               const calItemDate = new Date(calItem?.date);
               const calItemDateString = calItemDate.toISOString();
               const calItemYearDayMonth = calItemDateString.split('T')[0];
-              const dayOfWeekDateString = day.toISOString();
-              const dayOfWeekYearDayMonth = dayOfWeekDateString.split('T')[0];
-
-              if (calItemYearDayMonth === dayOfWeekYearDayMonth) {
-                return calItem;
-              }
+              if (calItemYearDayMonth === dayOfWeekYearDayMonth) return calItem;
             }),
           ],
         });
