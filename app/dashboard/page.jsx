@@ -19,6 +19,23 @@ async function getDashboardData() {
 
     const { userId, timezone, admin } = await getUserFromCookie();
 
+    // get monday using current date
+    const getMonday = (today) => {
+      const dayOfWeek =
+        today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
+      const diff = today.getDate() - dayOfWeek;
+      const dateInUsersTimezone = Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+      }).format(today.setDate(diff));
+      return new Date(dateInUsersTimezone);
+    };
+
+    const monday = getMonday(new Date());
+    const mondayHolidayDate = new Date(monday);
+    const mondayHoliday = mondayHolidayDate.toISOString().split('T')[0];
+    const sunday = mondayHolidayDate.setDate(mondayHolidayDate.getDate() + 6);
+    const sundayHoliday = new Date(sunday).toISOString().split('T')[0];
+
     const [tasksRaw, categoriesRaw, remindersRaw, holidaysRaw] =
       await Promise.all([
         Task.find({ userId }).sort({
@@ -33,7 +50,12 @@ async function getDashboardData() {
         }).sort({
           reminderDate: 1,
         }),
-        Holiday.find(),
+        Holiday.find({
+          date: {
+            $gte: mondayHoliday,
+            $lte: sundayHoliday,
+          },
+        }),
       ]);
 
     // create data shape for columns
@@ -104,19 +126,7 @@ async function getDashboardData() {
     }
 
     if (calendarItems?.length > 0) {
-      // get monday using current date
-      const getMonday = (today) => {
-        const dayOfWeek =
-          today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
-        const diff = today.getDate() - dayOfWeek;
-        const dateInUsersTimezone = Intl.DateTimeFormat('en-US', {
-          timeZone: timezone,
-        }).format(today.setDate(diff));
-        return new Date(dateInUsersTimezone);
-      };
-
       // create array of all days of the week
-      const monday = getMonday(new Date());
       const daysOfWeek = [];
       daysOfWeek.push(monday);
       const mondayCopy = new Date(monday);
