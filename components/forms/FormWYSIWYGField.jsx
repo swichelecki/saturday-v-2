@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-//import { RichTextEditor } from '..';
 import { FormErrorMessage } from '../';
 import { useIsMounted } from '../../hooks';
 import 'react-quill-new/dist/quill.snow.css';
@@ -56,7 +55,6 @@ const FormWYSIWYGField = ({
               value={value}
               onChange={onChangeHandler}
             />
-            {/* <RichTextEditor /> */}
           </>
         ) : (
           ''

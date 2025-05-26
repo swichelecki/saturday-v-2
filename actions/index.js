@@ -12,6 +12,7 @@ export { default as createItem } from './items/createItem';
 export { default as updateItem } from './items/updateItem';
 export { default as getItem } from './items/getItem';
 export { default as deleteItem } from './items/deleteItem';
+export { default as getCalendarItems } from './calendar/getCalendarItems';
 export { default as createCategory } from './settings/categories/createCategory';
 export { default as deleteCategory } from './settings/categories/deleteCategory';
 export { default as updateCategory } from './settings/categories/updateCategory';

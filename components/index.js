@@ -17,7 +17,6 @@ export { default as ItemButtons } from './dashboard/ItemButtons';
 export { default as DetailsForm } from './details/DetailsForm';
 export { default as FormTextField } from './forms/FormTextField';
 export { default as FormWYSIWYGField } from './forms/FormWYSIWYGField';
-export { default as RichTextEditor } from './forms/RichTextEditor';
 export { default as FormCheckboxField } from './forms/FormCheckboxField';
 export { default as FormSelectField } from './forms/FormSelectField';
 export { default as Settings } from './settings/Settings';

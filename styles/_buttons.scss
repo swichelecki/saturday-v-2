@@ -22,8 +22,7 @@ a.modal__update-button,
 button.modal__save-button,
 a.modal__save-button,
 button.modal__reminder-button,
-button.reminders__reminders-button,
-button.rich-text-editor__button {
+button.reminders__reminders-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,8 +144,7 @@ button.list-item__pin-button {
 
 button.list-item__delete-button,
 button.modal__delete-button,
-button.form-page__delete-button,
-button.rich-text-editor__button--unlink {
+button.form-page__delete-button {
   background-color: $button-red-dark;
   color: $button-red;
   svg {
@@ -173,8 +171,7 @@ a.modal__save-button {
   }
 }
 
-button.list-item__edit-button,
-button.rich-text-editor__button--update {
+button.list-item__edit-button {
   background-color: $button-blue-dark;
   svg {
     fill: $button-blue;
@@ -292,25 +289,6 @@ button.user-menu__button {
     height: 1rem;
     pointer-events: none;
   }
-}
-
-button.rich-text-editor__button {
-  min-width: unset;
-  color: $color-font;
-  padding: 6px;
-  svg {
-    width: 1.3rem;
-    height: 1.3rem;
-    pointer-events: none;
-  }
-  &--selected {
-    color: $button-blue;
-  }
-}
-
-button.rich-text-editor__button--update,
-button.rich-text-editor__button--unlink {
-  min-width: 73px;
 }
 
 @media screen and (max-width: 800px) {

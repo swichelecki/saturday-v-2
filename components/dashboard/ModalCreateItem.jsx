@@ -133,7 +133,7 @@ const ModalCreateItem = ({
     }
 
     setIsAwaitingAddResponse(true);
-    createItem(zodFormData, false).then((res) => {
+    createItem(zodFormData).then((res) => {
       if (res.status === 200) {
         setItems(
           items.map((item) => {

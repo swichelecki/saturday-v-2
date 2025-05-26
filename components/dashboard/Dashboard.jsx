@@ -35,7 +35,14 @@ const ItemsColumn = dynamic(() =>
 const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   const { userId, timezone, admin } = user;
 
-  const { setUserId, setShowToast, setShowModal, setIsAdmin } = useAppContext();
+  const {
+    setUserId,
+    setShowToast,
+    setShowModal,
+    setIsAdmin,
+    calendarItems,
+    setCalendarItems,
+  } = useAppContext();
 
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
@@ -43,7 +50,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
 
   const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
   const [listItems, setListItems] = useState(tasks);
-  const [calendarItems, setCalendarItems] = useState(calendar);
   const [masonryItems, setMasonryItems] = useState([]);
   const [taskToEditId, setTaskToEditId] = useState('');
   const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
@@ -57,6 +63,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
     // set global context
     setUserId(userId);
     setIsAdmin(admin);
+    setCalendarItems(calendar);
   }, []);
 
   // build masonry
@@ -232,10 +239,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
           Create Item
         </button>
       </div>
-      {calendarItems &&
-        calendarItems?.some((item) => Object.values(item)[0]?.length > 0) && (
-          <Week calendarItems={calendarItems} timezone={timezone} />
-        )}
+      <Week timezone={timezone} userId={userId} />
       {reminders && reminders?.length > 0 && (
         <Reminders reminders={reminders} />
       )}

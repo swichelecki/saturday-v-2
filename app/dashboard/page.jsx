@@ -136,15 +136,15 @@ async function getDashboardData() {
 
       // create data shape for week component
       calendarData = daysOfWeek.reduce((calendarDays, day) => {
-        const dayOfWeekDateString = day.toISOString();
-        const dayOfWeekYearDayMonth = dayOfWeekDateString.split('T')[0];
+        const yearMonthDay = day.toISOString().split('T')[0];
         calendarDays.push({
-          [day.getDate()]: [
+          [yearMonthDay]: [
             ...calendarItems?.filter((calItem) => {
               const calItemDate = new Date(calItem?.date);
-              const calItemDateString = calItemDate.toISOString();
-              const calItemYearDayMonth = calItemDateString.split('T')[0];
-              if (calItemYearDayMonth === dayOfWeekYearDayMonth) return calItem;
+              const calItemYearMonthDay = calItemDate
+                .toISOString()
+                .split('T')[0];
+              if (calItemYearMonthDay === yearMonthDay) return calItem;
             }),
           ],
         });
