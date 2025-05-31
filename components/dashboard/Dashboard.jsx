@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import {
+  Week,
   Modal,
   ModalConfirm,
   ModalCreateItem,
@@ -26,7 +27,6 @@ import {
   LIST_ITEM_LIMIT,
 } from '../../constants';
 
-const Week = dynamic(() => import('../../components/dashboard/Week'));
 const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
 const ItemsColumn = dynamic(() =>
   import('../../components/dashboard/ItemsColumn')

@@ -5,11 +5,11 @@ export const WeekItem = ({ title, dateAndTime, timezone }) => {
     <div className='week__calendar-item'>
       <div className='week__calendar-item-event'>
         {dateAndTime && (
-          <>
-            {moment(dateAndTime).tz(timezone).format('h:mm A')} <br />
-          </>
+          <p className='week__calendar-item-event-date'>
+            {moment(dateAndTime).tz(timezone).format('h:mm A')}
+          </p>
         )}
-        {title}
+        <p className='week__calendar-item-event-title'>{title}</p>
       </div>
     </div>
   );
