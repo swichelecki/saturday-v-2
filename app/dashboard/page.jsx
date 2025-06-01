@@ -3,7 +3,10 @@ import Task from '../../models/Task';
 import Category from '../../models/Category';
 import Reminder from '../../models/Reminder';
 import Holiday from '../../models/Holiday';
-import { handleSortItemsAscending } from '../../utilities';
+import {
+  handleSortItemsAscending,
+  handleDateToYearMonthDay,
+} from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { Dashboard } from '../../components';
 
@@ -34,9 +37,9 @@ async function getDashboardData() {
 
     const monday = getMonday(new Date());
     const mondayHolidayDate = new Date(monday);
-    const mondayHoliday = mondayHolidayDate.toISOString().split('T')[0];
+    const mondayHoliday = handleDateToYearMonthDay(mondayHolidayDate);
     const sunday = mondayHolidayDate.setDate(mondayHolidayDate.getDate() + 6);
-    const sundayHoliday = new Date(sunday).toISOString().split('T')[0];
+    const sundayHoliday = handleDateToYearMonthDay(sunday);
 
     const [tasksRaw, categoriesRaw, remindersRaw, holidaysRaw] =
       await Promise.all([
@@ -138,8 +141,7 @@ async function getDashboardData() {
 
       // create data shape for week component
       calendarData = daysOfWeek.reduce((calendarDays, day) => {
-        const yearMonthDay = day.toISOString().split('T')[0];
-        console.log('yearMonthDay', yearMonthDay);
+        const yearMonthDay = handleDateToYearMonthDay(day);
         calendarDays.push({
           [yearMonthDay]: [
             ...calendarItems?.filter((calItem) => {

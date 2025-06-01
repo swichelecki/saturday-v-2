@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
-import { handleHiddenHeight } from '../../utilities';
+import { handleHiddenHeight, handleDateToYearMonthDay } from '../../utilities';
 import { WeekItem, Toast } from '../../components';
 import { useInnerWidth } from '../../hooks';
 import moment from 'moment-timezone';
@@ -36,7 +36,7 @@ const Week = ({ timezone, userId }) => {
   const todayInUserTimezone = Intl.DateTimeFormat('en-US', {
     timeZone: timezone,
   }).format(new Date());
-  const today = new Date(todayInUserTimezone).toISOString().split('T')[0];
+  const today = handleDateToYearMonthDay(todayInUserTimezone);
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
 
   // dynamically set carousel height when using show / hide button
@@ -123,20 +123,15 @@ const Week = ({ timezone, userId }) => {
 
     setIsAwaitingCalendarItems(true);
 
-    const nextOrPrevMondayInUserTimezone = Intl.DateTimeFormat('en-US', {
-      timeZone: timezone,
-    }).format(nextOrPrevMonday);
-
-    const nextOrPrevMondayDate = new Date(nextOrPrevMondayInUserTimezone);
-    const nextOrPrevMondayYearMonthDay = nextOrPrevMondayDate
-      .toISOString()
-      .split('T')[0];
+    const nextOrPrevMondayDate = new Date(nextOrPrevMonday);
+    const nextOrPrevMondayYearMonthDay =
+      handleDateToYearMonthDay(nextOrPrevMondayDate);
     const sunday = nextOrPrevMondayDate.setDate(
       nextOrPrevMondayDate.getDate() + 6
     );
-    const nextOrPrevSundayYearMonthDay = new Date(sunday)
-      .toISOString()
-      .split('T')[0];
+    const nextOrPrevSundayYearMonthDay = handleDateToYearMonthDay(
+      new Date(sunday)
+    );
 
     getCalendarItems({
       nextOrPrevMondayYearMonthDay,
@@ -156,7 +151,7 @@ const Week = ({ timezone, userId }) => {
 
         // create data shape for week component
         const calendarData = daysOfWeek.reduce((calendarDays, day) => {
-          const yearMonthDay = day.toISOString().split('T')[0];
+          const yearMonthDay = handleDateToYearMonthDay(day);
           calendarDays.push({
             [yearMonthDay]: [
               ...res.calendarItems?.filter((calItem) => {
@@ -280,7 +275,6 @@ const Week = ({ timezone, userId }) => {
 
   // show next week on button click
   const handleGetNextWeek = () => {
-    // get next monday using current date
     const getNextMonday = (today) => {
       const dayOfWeek =
         today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
@@ -292,13 +286,12 @@ const Week = ({ timezone, userId }) => {
     };
 
     setNextOrPrevMonday(
-      getNextMonday(!nextOrPrevMonday ? new Date() : nextOrPrevMonday)
+      getNextMonday(!nextOrPrevMonday ? new Date(today) : nextOrPrevMonday)
     );
   };
 
   // show previous week on button click
   const handleGetPreviousWeek = () => {
-    // get previous monday using current date
     const getPrevMonday = (today) => {
       const dayOfWeek =
         today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
@@ -310,7 +303,7 @@ const Week = ({ timezone, userId }) => {
     };
 
     setNextOrPrevMonday(
-      getPrevMonday(!nextOrPrevMonday ? new Date() : nextOrPrevMonday)
+      getPrevMonday(!nextOrPrevMonday ? new Date(today) : nextOrPrevMonday)
     );
   };
 
