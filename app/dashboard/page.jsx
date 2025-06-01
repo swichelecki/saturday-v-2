@@ -20,14 +20,16 @@ async function getDashboardData() {
     const { userId, timezone, admin } = await getUserFromCookie();
 
     // get monday using current date
-    const getMonday = (today) => {
+    const getMonday = (date) => {
+      let today = Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+      }).format(date);
+      today = new Date(today);
       const dayOfWeek =
         today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
-      const diff = today.getDate() - dayOfWeek;
-      const dateInUsersTimezone = Intl.DateTimeFormat('en-US', {
-        timeZone: timezone,
-      }).format(today.setDate(diff));
-      return new Date(dateInUsersTimezone);
+      const mondayDayOfMonth = today.getDate() - dayOfWeek;
+      today.setDate(mondayDayOfMonth);
+      return new Date(today);
     };
 
     const monday = getMonday(new Date());
@@ -137,6 +139,7 @@ async function getDashboardData() {
       // create data shape for week component
       calendarData = daysOfWeek.reduce((calendarDays, day) => {
         const yearMonthDay = day.toISOString().split('T')[0];
+        console.log('yearMonthDay', yearMonthDay);
         calendarDays.push({
           [yearMonthDay]: [
             ...calendarItems?.filter((calItem) => {
