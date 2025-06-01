@@ -129,9 +129,7 @@ const Week = ({ timezone, userId }) => {
     const sunday = nextOrPrevMondayDate.setDate(
       nextOrPrevMondayDate.getDate() + 6
     );
-    const nextOrPrevSundayYearMonthDay = handleDateToYearMonthDay(
-      new Date(sunday)
-    );
+    const nextOrPrevSundayYearMonthDay = handleDateToYearMonthDay(sunday);
 
     getCalendarItems({
       nextOrPrevMondayYearMonthDay,
