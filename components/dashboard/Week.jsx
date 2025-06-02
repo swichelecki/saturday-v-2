@@ -274,8 +274,7 @@ const Week = ({ timezone, userId }) => {
   // show next week on button click
   const handleGetNextWeek = () => {
     const getNextMonday = (today) => {
-      const dayOfWeek =
-        today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
+      const dayOfWeek = today.getDay() - 1;
       const mondayDayOfMonth = today.getDate() - dayOfWeek;
       let mondayDate = today.setDate(mondayDayOfMonth);
       mondayDate = new Date(mondayDate);
@@ -291,8 +290,7 @@ const Week = ({ timezone, userId }) => {
   // show previous week on button click
   const handleGetPreviousWeek = () => {
     const getPrevMonday = (today) => {
-      const dayOfWeek =
-        today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
+      const dayOfWeek = today.getDay() - 1;
       const mondayDayOfMonth = today.getDate() - dayOfWeek;
       let mondayDate = today.setDate(mondayDayOfMonth);
       mondayDate = new Date(mondayDate);
