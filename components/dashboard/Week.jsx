@@ -65,7 +65,7 @@ const Week = ({ timezone, userId }) => {
     weekCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
 
     setPreviousTranslateX(-carouselPositionRef.current);
-  }, [width]);
+  }, [width, isAwaitingCalendarItems]);
 
   // handle display of scroll buttons and carousel resize
   useEffect(() => {
@@ -115,7 +115,7 @@ const Week = ({ timezone, userId }) => {
         { passive: false }
       );
     };
-  }, []);
+  }, [calendarItems, isAwaitingCalendarItems]);
 
   // create array of days and calendar items when clicking next or previous week buttons
   useEffect(() => {
@@ -168,6 +168,8 @@ const Week = ({ timezone, userId }) => {
         }, []);
 
         weekWrapperRef.current.style.transition = 'unset';
+        weekCarouselRef.current.style.transform = 'translateX(0px)';
+        setPreviousTranslateX(0);
 
         setCalendarItems(calendarData);
       }

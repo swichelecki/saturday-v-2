@@ -130,33 +130,29 @@ async function getDashboardData() {
       calendarItems.push(holiday);
     }
 
-    if (calendarItems?.length > 0) {
-      // create array of all days of the week
-      const daysOfWeek = [];
-      daysOfWeek.push(monday);
-      const mondayCopy = new Date(monday);
-      for (let i = 1; i <= 6; i++) {
-        daysOfWeek.push(new Date(mondayCopy.setDate(mondayCopy.getDate() + 1)));
-      }
-
-      // create data shape for week component
-      calendarData = daysOfWeek.reduce((calendarDays, day) => {
-        const yearMonthDay = handleDateToYearMonthDay(day);
-        calendarDays.push({
-          [yearMonthDay]: [
-            ...calendarItems?.filter((calItem) => {
-              const calItemDate = new Date(calItem?.date);
-              const calItemYearMonthDay = calItemDate
-                .toISOString()
-                .split('T')[0];
-              if (calItemYearMonthDay === yearMonthDay) return calItem;
-            }),
-          ],
-        });
-
-        return calendarDays;
-      }, []);
+    // create array of all days of the week
+    const daysOfWeek = [];
+    daysOfWeek.push(monday);
+    const mondayCopy = new Date(monday);
+    for (let i = 1; i <= 6; i++) {
+      daysOfWeek.push(new Date(mondayCopy.setDate(mondayCopy.getDate() + 1)));
     }
+
+    // create data shape for week component
+    calendarData = daysOfWeek.reduce((calendarDays, day) => {
+      const yearMonthDay = handleDateToYearMonthDay(day);
+      calendarDays.push({
+        [yearMonthDay]: [
+          ...calendarItems?.filter((calItem) => {
+            const calItemDate = new Date(calItem?.date);
+            const calItemYearMonthDay = calItemDate.toISOString().split('T')[0];
+            if (calItemYearMonthDay === yearMonthDay) return calItem;
+          }),
+        ],
+      });
+
+      return calendarDays;
+    }, []);
 
     return {
       tasks: columnsData ?? [],

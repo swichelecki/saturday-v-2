@@ -152,10 +152,10 @@
       padding-bottom: 8px;
     }
     &__wrapper {
-      & > button {
+      button.h2 {
         padding: 12px 16px;
-        pointer-events: none;
         box-shadow: unset;
+        pointer-events: none;
         &:after {
           display: none;
         }
