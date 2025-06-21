@@ -8,7 +8,7 @@ const SubscriptionSuccess = ({ user }) => {
       <h2>isSubscribed: {isSubscribed ? 'Yes' : 'No'}</h2>
       <h2>Timezone: {timezone}</h2>
       <h2>isAdmin: {admin ? 'Yes' : 'No'}</h2>
-      <h2>userId {userId}</h2>
+      <h2>userId: {userId}</h2>
     </div>
   );
 };
