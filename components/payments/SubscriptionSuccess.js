@@ -3,7 +3,7 @@ const SubscriptionSuccess = ({ user }) => {
   const { userId, timezone, admin, isSubscribed, customerId } = user;
   return (
     <div>
-      <h1>SubscriptionSuccess</h1>
+      <h1>Subscription Success</h1>
       <h2>CustomerID: {customerId}</h2>
       <h2>isSubscribed: {isSubscribed ? 'Yes' : 'No'}</h2>
       <h2>Timezone: {timezone}</h2>
