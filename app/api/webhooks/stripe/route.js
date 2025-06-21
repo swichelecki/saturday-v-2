@@ -2,7 +2,9 @@ import { stripe } from '../../../../lib/stripe';
 import { NextResponse } from 'next/server';
 import connectDB from '../../../../config/db';
 import User from '../../../../models/User';
-import { headers } from 'next/headers';
+import { headers, cookies } from 'next/headers';
+import { SignJWT } from 'jose';
+const jwtSecret = process.env.JWT_SECRET;
 
 export async function POST(request) {
   await connectDB();
@@ -33,7 +35,6 @@ export async function POST(request) {
     });
 
     const customerId = session.customer;
-    //const customer = await stripe.customers.retrieve(customerId);
     const priceId = session.line_items.data[0].price.id;
     const metadata = data.object.metadata;
 
@@ -41,24 +42,60 @@ export async function POST(request) {
       return new NextResponse('Price ID does not match', { status: 400 });
     }
 
-    if (metadata) {
-      const userId = metadata.userId;
-      const updatedUser = await User.findOneAndUpdate(
-        { _id: userId },
-        {
-          isSubscribed: true,
-          customerId,
-        }
-      );
-
-      // TODO: delete and set cookie
-      // TODO: send email to me that someone subscribed
-
-      if (!updatedUser) {
-        return new NextResponse('User not found', { status: 400 });
-      } else {
-        console.log('User subscribed successfully');
+    const userId = metadata.userId;
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        isSubscribed: true,
+        customerId,
       }
+    );
+
+    (await cookies()).delete('saturday');
+
+    const token = await new SignJWT({
+      hasToken: true,
+      id: updatedUser._id,
+      timezone: updatedUser.timezone,
+      admin: updatedUser.admin,
+      newUser: updatedUser.newUser,
+      newNotesUser: updatedUser.newNotesUser,
+      customerId: updatedUser.customerId,
+      isSubscribed: updatedUser.isSubscribed,
+    })
+      .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
+      .sign(new TextEncoder().encode(jwtSecret));
+    (await cookies()).set('saturday', token);
+
+    // TODO: send email to me that someone subscribed
+
+    if (!updatedUser) {
+      return new NextResponse('User not found', { status: 400 });
+    } else {
+      console.log('User subscribed successfully');
+    }
+  }
+
+  if (eventType === 'customer.subscription.deleted') {
+    const subscription = data.object;
+    const customerId = subscription.customer;
+    const priceId = subscription.items.data[0].price.id;
+
+    if (priceId !== process.env.STRIPE_PRICE_ID) {
+      return new NextResponse('Price ID does not match', { status: 400 });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { customerId },
+      {
+        isSubscribed: false,
+      }
+    );
+
+    if (!updatedUser) {
+      return new NextResponse('User not found', { status: 400 });
+    } else {
+      console.log('User canceled subscription successfully');
     }
   }
 

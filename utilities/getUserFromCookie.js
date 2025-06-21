@@ -13,6 +13,8 @@ export const getUserFromCookie = async () => {
   let newUser;
   let newNotesUser;
   let admin;
+  let isSubscribed;
+  let customerId;
   let cookieError = false;
 
   if (!token?.value) return { user };
@@ -30,6 +32,8 @@ export const getUserFromCookie = async () => {
       newUser = payload?.newUser;
       newNotesUser = payload?.newNotesUser;
       admin = payload?.admin;
+      isSubscribed = payload?.isSubscribed;
+      customerId = payload?.customerId;
     }
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
@@ -37,5 +41,15 @@ export const getUserFromCookie = async () => {
     cookieError = { status: 500, error: errorMessage };
   }
 
-  return { user, userId, timezone, newUser, newNotesUser, admin, cookieError };
+  return {
+    user,
+    userId,
+    timezone,
+    newUser,
+    newNotesUser,
+    admin,
+    isSubscribed,
+    customerId,
+    cookieError,
+  };
 };
