@@ -17,7 +17,8 @@ async function getUserCookieData() {
 // TODO: I think customerId will only be needed for the Account page
 // for managing account. returning now for testing.
 
-export default function SubscriptionSuccessPage() {
-  const user = getUserCookieData();
+export default async function SubscriptionSuccessPage() {
+  const user = await getUserCookieData();
+
   return <SubscriptionSuccess user={user} />;
 }
