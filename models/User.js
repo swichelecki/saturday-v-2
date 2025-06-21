@@ -27,6 +27,14 @@ const UserSchema = new Schema(
       type: Boolean,
       required: true,
     },
+    isSubscribed: {
+      type: Boolean,
+      default: false,
+    },
+    customerId: {
+      type: String,
+      default: '',
+    },
   },
   { timestamps: true }
 );

@@ -1,6 +1,6 @@
 'use server';
 
-import connectDB from '../../config/db';
+//import connectDB from '../../config/db';
 import User from '../../models/User';
 import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
@@ -21,7 +21,7 @@ export default async function updateUserHasSeenNotes(userId) {
   }
 
   try {
-    await connectDB();
+    //await connectDB();
 
     await User.updateOne(
       { _id: userId },

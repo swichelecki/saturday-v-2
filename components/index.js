@@ -41,3 +41,5 @@ export { default as Notes } from './notes/Notes';
 export { default as ModalNotes } from './notes/ModalNotes';
 export { default as NoteGroup } from './notes/NoteGroup';
 export { default as SearchField } from './shared/SearchField';
+export { default as SubscriptionSuccess } from './payments/SubscriptionSuccess';
+export { default as SubscriptionCanceled } from './payments/SubscriptionCanceled';
