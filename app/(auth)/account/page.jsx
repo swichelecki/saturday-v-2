@@ -8,9 +8,10 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 async function getUserId() {
-  const { userId, timezone, admin } = await getUserFromCookie();
+  const { userId, timezone, admin, isSubscribed, customerId } =
+    await getUserFromCookie();
 
-  return { userId, timezone, admin };
+  return { userId, timezone, admin, isSubscribed, customerId };
 }
 
 export default async function AccountPage() {

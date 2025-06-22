@@ -2,9 +2,7 @@ import { stripe } from '../../../../lib/stripe';
 import { NextResponse } from 'next/server';
 import connectDB from '../../../../config/db';
 import User from '../../../../models/User';
-import { headers, cookies } from 'next/headers';
-import { SignJWT } from 'jose';
-const jwtSecret = process.env.JWT_SECRET;
+import { headers } from 'next/headers';
 
 export async function POST(request) {
   await connectDB();
@@ -51,22 +49,6 @@ export async function POST(request) {
       }
     );
 
-    (await cookies()).delete('saturday');
-
-    const token = await new SignJWT({
-      hasToken: true,
-      id: updatedUser._id,
-      timezone: updatedUser.timezone,
-      admin: updatedUser.admin,
-      newUser: updatedUser.newUser,
-      newNotesUser: updatedUser.newNotesUser,
-      customerId: updatedUser.customerId,
-      isSubscribed: updatedUser.isSubscribed,
-    })
-      .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
-      .sign(new TextEncoder().encode(jwtSecret));
-    (await cookies()).set('saturday', token);
-
     // TODO: send email to me that someone subscribed
 
     if (!updatedUser) {
@@ -95,7 +77,7 @@ export async function POST(request) {
     if (!updatedUser) {
       return new NextResponse('User not found', { status: 400 });
     } else {
-      console.log('User canceled subscription successfully');
+      console.log('User Subscription Deleted');
     }
   }
 

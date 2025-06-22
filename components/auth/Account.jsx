@@ -23,7 +23,7 @@ import {
 const Account = ({ user }) => {
   const pageRef = useRef(null);
   const router = useRouter();
-  const { userId, timezone, admin } = user;
+  const { userId, timezone, admin, isSubscribed, customerId } = user;
   const { setUserId, setShowToast, setIsAdmin } = useAppContext();
 
   // set global context user id and timezone and state timezone

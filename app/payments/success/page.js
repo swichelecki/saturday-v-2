@@ -1,3 +1,5 @@
+import connectDB from '../../../config/db';
+
 import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { SubscriptionSuccess } from '../../../components';
 
@@ -7,18 +9,17 @@ export const metadata = {
 
 export const dynamic = 'force-dynamic';
 
-async function getUserCookieData() {
-  const { userId, timezone, admin, isSubscribed, customerId } =
-    await getUserFromCookie();
+await connectDB();
 
-  return { userId, timezone, admin, isSubscribed, customerId };
-}
+/* async function getSubscribedUser() {
+  const { userId } = await getUserFromCookie();
 
-// TODO: I think customerId will only be needed for the Account page
-// for managing account. returning now for testing.
+  //const updatedUser = await updateCookieOnStripeSubscribe(userId);
+  return userId;
+} */
 
 export default async function SubscriptionSuccessPage() {
-  const user = await getUserCookieData();
+  const { userId } = await getUserFromCookie();
 
-  return <SubscriptionSuccess user={user} />;
+  return <SubscriptionSuccess userId={userId} />;
 }
