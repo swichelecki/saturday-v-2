@@ -18,14 +18,17 @@ const UserSchema = new Schema(
     admin: {
       type: Boolean,
       required: true,
+      default: false,
     },
     newUser: {
       type: Boolean,
       required: true,
+      default: true,
     },
     newNotesUser: {
       type: Boolean,
       required: true,
+      default: true,
     },
     isSubscribed: {
       type: Boolean,

@@ -2,18 +2,13 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { FormTextField, FormWYSIWYGField, Toast } from '../';
 import { useAppContext } from '../../context';
-import { createContactMessage, stripeSubscribe } from '../../actions';
+import { createContactMessage } from '../../actions';
 import { useScrollToError } from '../../hooks';
 import { contactFormSchema } from '../../schemas/schemas';
 
 const ContactForm = ({ user }) => {
-  /* TODO: Stripe setup code. Move to appropriate files */
-  const router = useRouter();
-  /* TODO: END Stripe setup code. Move to appropriate files */
-
   const formRef = useRef(null);
   const { userId, admin, email } = user;
   const { setUserId, setShowToast, setIsAdmin } = useAppContext();
@@ -99,47 +94,8 @@ const ContactForm = ({ user }) => {
     }
   };
 
-  /* TODO: Stripe setup code. Move to appropriate files */
-  /* youtube video: https://www.youtube.com/watch?v=NfeFXQwmDXA */
-  /* TODO: Don't forget to use production env vars in Heroku */
-  const handleSubscribe = async () => {
-    const response = await stripeSubscribe(userId, email);
-    const { url, status } = response;
-
-    if (status === 200) {
-      router.push(url);
-    } else {
-      setShowToast(<Toast serverError={response} />);
-    }
-  };
-
-  const handleManageSubscription = async () => {
-    const url = process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL;
-    if (url) {
-      router.push(`${url}?prefilled_email=${email}`);
-    }
-  };
-  /* TODO: END Stripe setup code. Move to appropriate files */
-
   return (
     <form onSubmit={onSubmit} ref={formRef} className='form-page contact-form'>
-      {/* TODO: Stripe setup code. Move to appropriate files */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '24px',
-        }}
-      >
-        <button type='button' onClick={handleSubscribe}>
-          Subscribe
-        </button>
-        <button type='button' onClick={handleManageSubscription}>
-          Manage Subscription
-        </button>
-      </div>
-      {/* TODO: END Stripe setup code. Move to appropriate files */}
-
       <h1 className='form-page__h2'>Contact</h1>
       <FormTextField
         label='Email'

@@ -1,6 +1,5 @@
 'use server';
 
-//import connectDB from '../../config/db';
 import User from '../../models/User';
 import { cookies } from 'next/headers';
 import { SignJWT } from 'jose';
@@ -21,8 +20,6 @@ export default async function updateUserHasSeenNotes(userId) {
   }
 
   try {
-    //await connectDB();
-
     await User.updateOne(
       { _id: userId },
       {
@@ -30,7 +27,16 @@ export default async function updateUserHasSeenNotes(userId) {
       }
     );
 
-    const { _id, timezone, admin, newUser, newNotesUser } = await User.findOne({
+    const {
+      _id,
+      timezone,
+      admin,
+      newUser,
+      newNotesUser,
+      email,
+      customerId,
+      isSubscribed,
+    } = await User.findOne({
       _id: userId,
     });
 
@@ -43,6 +49,9 @@ export default async function updateUserHasSeenNotes(userId) {
       admin,
       newUser,
       newNotesUser,
+      email,
+      customerId,
+      isSubscribed,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .sign(new TextEncoder().encode(jwtSecret));

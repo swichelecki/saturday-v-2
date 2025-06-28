@@ -45,6 +45,9 @@ export default async function loginUser(formData) {
         admin: user.admin,
         newUser: user.newUser,
         newNotesUser: user.newNotesUser,
+        email: user.email,
+        customerId: user.customerId,
+        isSubscribed: user.isSubscribed,
       })
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
         .sign(new TextEncoder().encode(jwtSecret));

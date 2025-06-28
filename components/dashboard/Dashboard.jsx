@@ -9,6 +9,7 @@ import {
   ModalConfirm,
   ModalCreateItem,
   ModalUpdateItem,
+  ModalSubscribe,
   FormErrorMessage,
   Toast,
 } from '../../components';
@@ -25,6 +26,7 @@ import {
   MODAL_UPDATE_ITEM_HEADLINE,
   MODAL_CONFIRM_DELETE_BUTTON,
   LIST_ITEM_LIMIT,
+  UNSUBSCRIBED_LIST_ITEM_LIMIT,
 } from '../../constants';
 
 const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
@@ -33,7 +35,7 @@ const ItemsColumn = dynamic(() =>
 );
 
 const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
-  const { userId, timezone, admin } = user;
+  const { userId, timezone, admin, isSubscribed, customerId, email } = user;
 
   const {
     setUserId,
@@ -57,6 +59,10 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
     useState(false);
   const [atItemsLimit, setAtItemsLimit] = useState(false);
 
+  const listItemLimit = isSubscribed
+    ? LIST_ITEM_LIMIT
+    : UNSUBSCRIBED_LIST_ITEM_LIMIT;
+  const userNoLongerSubscribed = !isSubscribed && customerId;
   let allItems = [];
 
   useEffect(() => {
@@ -110,15 +116,25 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
 
   // remove at-item-limit message after item deletion
   useEffect(() => {
-    if (atItemsLimit && totalNumberOfItems < LIST_ITEM_LIMIT) {
+    if (atItemsLimit && totalNumberOfItems < listItemLimit) {
       setAtItemsLimit(false);
     }
   }, [totalNumberOfItems]);
 
   // open modal for create
   const handleOpenCreateItemModal = () => {
-    if (totalNumberOfItems >= LIST_ITEM_LIMIT) {
+    if (totalNumberOfItems >= listItemLimit) {
       setAtItemsLimit(true);
+      setShowModal(
+        <Modal className='modal modal__form-modal--small'>
+          <h2>Subscribe for Just $1 a Month</h2>
+          <ModalSubscribe
+            userNoLongerSubscribed={userNoLongerSubscribed}
+            userId={userId}
+            email={email}
+          />
+        </Modal>
+      );
       return;
     }
 
@@ -226,7 +242,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
     <div className='content-container'>
       {atItemsLimit && (
         <FormErrorMessage
-          errorMessage={`Limit ${LIST_ITEM_LIMIT} Items!`}
+          errorMessage={`Limit ${listItemLimit} Items!`}
           className='form-error-message form-error-message--position-static'
         />
       )}

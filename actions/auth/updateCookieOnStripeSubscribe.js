@@ -28,6 +28,7 @@ export default async function updateCookieOnStripeSubscribe(userId) {
       newNotesUser,
       customerId,
       isSubscribed,
+      email,
     } = await User.findOne({
       _id: userId,
     });
@@ -43,24 +44,13 @@ export default async function updateCookieOnStripeSubscribe(userId) {
       newNotesUser,
       customerId,
       isSubscribed,
+      email,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .sign(new TextEncoder().encode(jwtSecret));
     (await cookies()).set('saturday', token);
 
-    // TODO: only userId and admin need to be returned after cleanup
-    return {
-      status: 200,
-      user: {
-        userId: _id.toString(),
-        timezone,
-        admin,
-        newUser,
-        newNotesUser,
-        customerId,
-        isSubscribed,
-      },
-    };
+    return { status: 200 };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);

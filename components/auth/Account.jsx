@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
+  stripeSubscribe,
   changeUserPassword,
   deleteUserAccount,
   changeUserTimezone,
@@ -18,13 +19,16 @@ import {
 import {
   FORM_TIMEZONES,
   FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
+  SERVER_ERROR_MESSAGE,
 } from '../../constants';
 
 const Account = ({ user }) => {
   const pageRef = useRef(null);
   const router = useRouter();
-  const { userId, timezone, admin, isSubscribed, customerId } = user;
+  const { userId, timezone, admin, isSubscribed, customerId, email } = user;
   const { setUserId, setShowToast, setIsAdmin } = useAppContext();
+  const userIsSubscribed = isSubscribed && customerId;
+  const userNoLongerSubscribed = !isSubscribed && customerId;
 
   // set global context user id and timezone and state timezone
   useEffect(() => {
@@ -66,6 +70,8 @@ const Account = ({ user }) => {
     isAwaitingChangeTimezoneResponse,
     setIsAwaitingChangeTimezoneResponse,
   ] = useState(false);
+  const [isAwaitingStripeResponse, setIsAwaitingStripeResponse] =
+    useState(false);
 
   useScrollToError(pageRef, scrollToErrorMessage, setScrollToErrorMessage);
 
@@ -82,6 +88,33 @@ const Account = ({ user }) => {
 
     if (errorMessage[optionName]) {
       setErrorMessage({ ...errorMessage, [optionName]: '' });
+    }
+  };
+
+  // handle stripe subscribe
+  const handleSubscribe = async () => {
+    setIsAwaitingStripeResponse(true);
+    const response = await stripeSubscribe(userId, email);
+    const { url, status } = response;
+
+    if (status === 200) {
+      router.push(url);
+    } else {
+      setIsAwaitingStripeResponse(false);
+      setShowToast(<Toast serverError={response} />);
+    }
+  };
+
+  // handle stripe unsubscribe
+  const handleManageSubscription = async () => {
+    setIsAwaitingStripeResponse(true);
+    const url = process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL;
+
+    if (url) {
+      router.push(`${url}?prefilled_email=${email}`);
+    } else {
+      setIsAwaitingStripeResponse(false);
+      setShowToast(<Toast serverError={SERVER_ERROR_MESSAGE} />);
     }
   };
 
@@ -218,6 +251,36 @@ const Account = ({ user }) => {
 
   return (
     <div className='form-page' ref={pageRef}>
+      <h1 className='form-page__h2'>Saturday Subscription</h1>
+      {(!userIsSubscribed || userNoLongerSubscribed) && (
+        <div className='form-field'>
+          {userNoLongerSubscribed ? (
+            <p>
+              Why'd you leave? Sign back up for Saturday's paid tier today for
+              just $1 per month and get yourself organized! Powered by Stripe.
+            </p>
+          ) : (
+            <p>
+              Subscribe to Saturday's paid tier today for just $1 per month and
+              get yourself organized! Powered by Stripe.
+            </p>
+          )}
+        </div>
+      )}
+      <div className='form-page__buttons-wrapper'>
+        <button
+          type='button'
+          className='form-page__save-button form-page__update-button'
+          onClick={
+            userIsSubscribed || userNoLongerSubscribed
+              ? handleManageSubscription
+              : handleSubscribe
+          }
+        >
+          {isAwaitingStripeResponse && <div className='loader'></div>}
+          {userIsSubscribed ? 'Manage Subscription' : 'Subscribe Now'}
+        </button>
+      </div>
       <form onSubmit={changeTimezone}>
         <h1 className='form-page__h2'>Change Timezone</h1>
         <FormSelectField

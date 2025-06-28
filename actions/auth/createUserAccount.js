@@ -66,9 +66,6 @@ export default async function createUserAccount(formData) {
       email,
       password: hashedPassword,
       timezone,
-      admin: false,
-      newUser: true,
-      newNotesUser: true,
     });
 
     // create logged-in-user cookie
@@ -79,6 +76,9 @@ export default async function createUserAccount(formData) {
       admin: user.admin,
       newUser: user.newUser,
       newNotesUser: user.newNotesUser,
+      email: user.email,
+      customerId: user.customerId,
+      isSubscribed: user.isSubscribed,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .sign(new TextEncoder().encode(jwtSecret));

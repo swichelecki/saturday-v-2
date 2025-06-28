@@ -1,3 +1,4 @@
+import connectDB from '../../../config/db';
 import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { Account } from '../../../components';
 
@@ -7,15 +8,13 @@ export const metadata = {
 
 export const dynamic = 'force-dynamic';
 
-async function getUserId() {
-  const { userId, timezone, admin, isSubscribed, customerId } =
+export default async function AccountPage() {
+  await connectDB();
+
+  const { userId, timezone, admin, isSubscribed, customerId, email } =
     await getUserFromCookie();
 
-  return { userId, timezone, admin, isSubscribed, customerId };
-}
-
-export default async function AccountPage() {
-  const user = await getUserId();
+  const user = { userId, timezone, admin, isSubscribed, customerId, email };
 
   return <Account user={user} />;
 }

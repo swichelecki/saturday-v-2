@@ -1,3 +1,4 @@
+import connectDB from '../../config/db';
 import Category from '../../models/Category';
 import Reminder from '../../models/Reminder';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
@@ -10,6 +11,8 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 async function getSettingsData() {
+  await connectDB();
+
   try {
     const { userId, newUser, timezone, admin } = await getUserFromCookie();
 

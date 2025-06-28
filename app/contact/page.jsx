@@ -1,5 +1,4 @@
 import connectDB from '../../config/db';
-import User from '../../models/User';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { ContactForm } from '../../components';
 
@@ -9,23 +8,12 @@ export const metadata = {
 
 export const dynamic = 'force-dynamic';
 
-async function getUser() {
-  try {
-    await connectDB();
-
-    const { userId, admin } = await getUserFromCookie();
-
-    const userData = await User.findOne({ _id: userId });
-    const { email } = userData;
-
-    return { userId, admin, email };
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 export default async function ContactPage() {
-  const user = await getUser();
+  await connectDB();
+
+  const { userId, admin, email } = await getUserFromCookie();
+
+  const user = { userId, admin, email };
 
   return <ContactForm user={user} />;
 }

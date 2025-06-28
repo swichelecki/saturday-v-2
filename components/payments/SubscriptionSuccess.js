@@ -1,36 +1,21 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateCookieOnStripeSubscribe } from '../../actions';
 import { useAppContext } from '../../context';
 import { Toast } from '../../components';
 
-const SubscriptionSuccess = ({ userId }) => {
-  /* TODO: handle middleware setup if needed */
-
+const SubscriptionSuccess = ({ userId, admin }) => {
   const router = useRouter();
-  //const { userId, timezone, admin, customerId, isSubscribed, status } = user;
   const { setUserId, setIsAdmin, setShowToast } = useAppContext();
 
-  // temporary state for testing
-  const [isSubscribed, setIsSubscribed] = useState();
-  const [customerId, setCustomerId] = useState();
-
-  // set global context user id and timezone and state timezone
+  // create new cookie with stripe information
   useEffect(() => {
+    // set global context
+    setUserId(userId);
+    setIsAdmin(admin);
+
     updateCookieOnStripeSubscribe(userId).then((res) => {
-      if (res.status === 200) {
-        const { userId, admin, isSubscribed, customerId } = res.user;
-
-        console.log('RES ', res);
-        setUserId(userId);
-        setIsAdmin(admin);
-
-        // temporary for testing
-        setIsSubscribed(isSubscribed);
-        setCustomerId(customerId);
-      }
-
       if (res.status !== 200) {
         setShowToast(<Toast serverError={res} />);
         console.error(res.error);
@@ -44,13 +29,23 @@ const SubscriptionSuccess = ({ userId }) => {
   };
 
   return (
-    <div>
+    <div className='form-page'>
       <h1>Subscription Success</h1>
-      <p>customerId: {customerId} </p>
-      <p>isSubscribed: {isSubscribed ? 'Yes' : 'No'} </p>
-      <button onClick={handleGoToDashboard} type='button'>
-        Go to Dashboard
-      </button>
+      <p className='form-field'>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat.
+      </p>
+      <div className='dashboard-button-wrapper'>
+        <button
+          onClick={handleGoToDashboard}
+          type='button'
+          className='entry-form__button'
+        >
+          Dashboard
+        </button>
+      </div>
     </div>
   );
 };

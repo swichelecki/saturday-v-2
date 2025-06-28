@@ -29,6 +29,8 @@ export { default as ModalCategory } from './settings/ModalCategory';
 export { default as ModalCreateItem } from './dashboard/ModalCreateItem';
 export { default as ModalUpdateItem } from './dashboard/ModalUpdateItem';
 export { default as ModalConfirm } from './shared/ModalConfirm';
+export { default as ModalNotes } from './notes/ModalNotes';
+export { default as ModalSubscribe } from './shared/ModalSubscribe';
 export { default as FormErrorMessage } from './forms/FormErrorMessage';
 export { default as Tooltip } from './shared/Tooltip';
 export { default as TooltipReminderMessage } from './settings/TooltipReminderMessage';
@@ -38,7 +40,6 @@ export { default as UserResetPasswordEmail } from './emails/UserResetPasswordEma
 export { default as ContactFormEmail } from './emails/ContactFormEmail';
 export { default as ContactForm } from './contact/ContactForm';
 export { default as Notes } from './notes/Notes';
-export { default as ModalNotes } from './notes/ModalNotes';
 export { default as NoteGroup } from './notes/NoteGroup';
 export { default as SearchField } from './shared/SearchField';
 export { default as SubscriptionSuccess } from './payments/SubscriptionSuccess';

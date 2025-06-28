@@ -3,6 +3,7 @@ export const OPEN_CLOSE_THRESHOLD = 60;
 export const TOUCH_DURATION_THRESHOLD = 400;
 export const MAX_MOVE_DISTANCE = -146;
 export const SLOW_TRANSITION_SPEED = 500;
+export const UNSUBSCRIBED_LIST_ITEM_LIMIT = 10;
 export const LIST_ITEM_LIMIT = 50;
 export const CATEGORY_ITEM_LIMIT = 12;
 export const REMINDERS_ITEM_LIMIT = 25;
