@@ -13,5 +13,7 @@ export default async function SubscriptionSuccessPage() {
 
   const { userId, admin } = await getUserFromCookie();
 
-  return <SubscriptionSuccess userId={userId} admin={admin} />;
+  const user = { userId, admin };
+
+  return <SubscriptionSuccess user={user} />;
 }

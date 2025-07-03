@@ -5,8 +5,9 @@ import { updateCookieOnStripeSubscribe } from '../../actions';
 import { useAppContext } from '../../context';
 import { Toast } from '../../components';
 
-const SubscriptionSuccess = ({ userId, admin }) => {
+const SubscriptionSuccess = ({ user }) => {
   const router = useRouter();
+  const { userId, admin } = user;
   const { setUserId, setIsAdmin, setShowToast } = useAppContext();
 
   // create new cookie with stripe information
