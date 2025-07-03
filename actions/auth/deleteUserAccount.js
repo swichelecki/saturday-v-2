@@ -5,6 +5,7 @@ import Task from '../../models/Task';
 import Reminder from '../../models/Reminder';
 import Category from '../../models/Category';
 import Note from '../../models/Note';
+import { stripe } from '../../lib/stripe';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { handleServerErrorMessage } from '../../utilities';
@@ -59,6 +60,29 @@ export default async function deleteUserAccount(formData) {
       await Note.deleteMany({ userId });
       await User.deleteOne({ _id: userId });
       (await cookies()).delete('saturday');
+
+      // cancel stripe subscription if one exists
+      const existingCustomer = await stripe.customers.list({ email, limit: 1 });
+      let customerId =
+        existingCustomer.data.length > 0 ? existingCustomer.data[0].id : null;
+
+      if (customerId) {
+        const customerWithSubscriptions = await stripe.customers.retrieve(
+          customerId,
+          { expand: ['subscriptions'] }
+        );
+
+        if (customerWithSubscriptions.subscriptions.data.length > 0) {
+          const subscriptionId =
+            customerWithSubscriptions.subscriptions.data[0].id;
+          const canceledSubscription = await stripe.subscriptions.cancel(
+            subscriptionId
+          );
+          console.log(
+            `Subscription with id of ${canceledSubscription.id} canceled`
+          );
+        }
+      }
 
       return { status: 200 };
     }

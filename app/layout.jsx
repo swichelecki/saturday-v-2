@@ -25,9 +25,9 @@ export const metadata = {
     'todo list',
     'notes',
   ],
-  metadataBase: new URL('https://www.saturdaysimplelife.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_URL),
   openGraph: {
-    url: 'https://www.saturdaysimplelife.com',
+    url: process.env.NEXT_PUBLIC_URL,
     siteName: 'Saturday Simple Life',
     images: '/',
     locale: 'en_US',

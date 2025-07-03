@@ -4,8 +4,7 @@ import { stripe } from '../../lib/stripe';
 import User from '../../models/User';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
-const stripeManageSubscriptionUrl =
-  process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL;
+const stripeManageSubscriptionUrl = process.env.STRIPE_CUSTOMER_PORTAL;
 
 export default async function stripeSubscribe(userId) {
   // check that cookie user id matches param userId
