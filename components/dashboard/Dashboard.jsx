@@ -35,7 +35,7 @@ const ItemsColumn = dynamic(() =>
 );
 
 const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
-  const { userId, timezone, admin, isSubscribed, customerId } = user;
+  const { userId, timezone, admin, isSubscribed } = user;
 
   const {
     setUserId,
@@ -62,7 +62,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   const listItemLimit = isSubscribed
     ? LIST_ITEM_LIMIT
     : UNSUBSCRIBED_LIST_ITEM_LIMIT;
-  const userNoLongerSubscribed = !isSubscribed && customerId;
+
   let allItems = [];
 
   useEffect(() => {
@@ -128,10 +128,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
       setShowModal(
         <Modal className='modal modal__form-modal--small'>
           <h2>Subscribe for Just $1 a Month</h2>
-          <ModalSubscribe
-            userNoLongerSubscribed={userNoLongerSubscribed}
-            userId={userId}
-          />
+          <ModalSubscribe userId={userId} />
         </Modal>
       );
       return;

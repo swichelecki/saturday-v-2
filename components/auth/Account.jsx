@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   stripeSubscribe,
-  stripeManageSubscription,
   changeUserPassword,
   deleteUserAccount,
   changeUserTimezone,
@@ -25,10 +24,8 @@ import {
 const Account = ({ user }) => {
   const pageRef = useRef(null);
   const router = useRouter();
-  const { userId, timezone, admin, isSubscribed, customerId } = user;
+  const { userId, timezone, admin, isSubscribed } = user;
   const { setUserId, setShowToast, setIsAdmin } = useAppContext();
-  const userIsSubscribed = isSubscribed && customerId;
-  const userNoLongerSubscribed = !isSubscribed && customerId;
 
   // set global context user id and timezone and state timezone
   useEffect(() => {
@@ -91,24 +88,10 @@ const Account = ({ user }) => {
     }
   };
 
-  // handle stripe subscribe
+  // handle stripe subscribe, unsubscribe or resubscribe
   const handleSubscribe = async () => {
     setIsAwaitingStripeResponse(true);
     const response = await stripeSubscribe(userId);
-    const { url, status } = response;
-
-    if (status === 200) {
-      router.push(url);
-    } else {
-      setIsAwaitingStripeResponse(false);
-      setShowToast(<Toast serverError={response} />);
-    }
-  };
-
-  // handle stripe unsubscribe or resubscribe
-  const handleManageSubscription = async () => {
-    setIsAwaitingStripeResponse(true);
-    const response = await stripeManageSubscription(userId);
     const { url, status } = response;
 
     if (status === 200) {
@@ -253,33 +236,24 @@ const Account = ({ user }) => {
   return (
     <div className='form-page' ref={pageRef}>
       <h1 className='form-page__h2'>Saturday Subscription</h1>
-      {(!userIsSubscribed || userNoLongerSubscribed) && (
-        <div className='form-field'>
-          {userNoLongerSubscribed ? (
-            <p>
-              Why'd you leave? Sign back up for Saturday's paid tier today for
-              just $1 per month and get yourself organized! Powered by Stripe.
-            </p>
-          ) : (
-            <p>
-              Subscribe to Saturday's paid tier today for just $1 per month and
-              get yourself organized! Powered by Stripe.
-            </p>
-          )}
-        </div>
-      )}
+      <div className='form-field'>
+        {isSubscribed ? (
+          <p>Thank you for supporting Saturday!</p>
+        ) : (
+          <p>
+            Subscribe to Saturday's paid tier today for just $1 per month and
+            get yourself organized! Powered by Stripe.
+          </p>
+        )}
+      </div>
       <div className='form-page__buttons-wrapper'>
         <button
           type='button'
           className='form-page__save-button form-page__update-button'
-          onClick={
-            userIsSubscribed || userNoLongerSubscribed
-              ? handleManageSubscription
-              : handleSubscribe
-          }
+          onClick={handleSubscribe}
         >
           {isAwaitingStripeResponse && <div className='loader'></div>}
-          {userIsSubscribed ? 'Manage Subscription' : 'Subscribe Now'}
+          {isSubscribed ? 'Manage Subscription' : 'Subscribe Now'}
         </button>
       </div>
       <form onSubmit={changeTimezone}>

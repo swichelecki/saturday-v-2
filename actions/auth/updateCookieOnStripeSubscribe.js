@@ -20,17 +20,10 @@ export default async function updateCookieOnStripeSubscribe(userId) {
   }
 
   try {
-    const {
-      _id,
-      timezone,
-      admin,
-      newUser,
-      newNotesUser,
-      customerId,
-      isSubscribed,
-    } = await User.findOne({
-      _id: userId,
-    });
+    const { _id, timezone, admin, newUser, newNotesUser, isSubscribed } =
+      await User.findOne({
+        _id: userId,
+      });
 
     (await cookies()).delete('saturday');
 
@@ -41,7 +34,6 @@ export default async function updateCookieOnStripeSubscribe(userId) {
       admin,
       newUser,
       newNotesUser,
-      customerId,
       isSubscribed,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })

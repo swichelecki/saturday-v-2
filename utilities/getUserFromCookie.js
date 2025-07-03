@@ -14,7 +14,6 @@ export const getUserFromCookie = async () => {
   let newNotesUser;
   let admin;
   let isSubscribed;
-  let customerId;
   let cookieError = false;
 
   if (!token?.value) return { user };
@@ -33,7 +32,6 @@ export const getUserFromCookie = async () => {
       newNotesUser = payload?.newNotesUser;
       admin = payload?.admin;
       isSubscribed = payload?.isSubscribed;
-      customerId = payload?.customerId;
     }
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
@@ -49,7 +47,6 @@ export const getUserFromCookie = async () => {
     newNotesUser,
     admin,
     isSubscribed,
-    customerId,
     cookieError,
   };
 };

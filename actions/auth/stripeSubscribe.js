@@ -4,6 +4,8 @@ import { stripe } from '../../lib/stripe';
 import User from '../../models/User';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
+const stripeManageSubscriptionUrl =
+  process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL;
 
 export default async function stripeSubscribe(userId) {
   // check that cookie user id matches param userId
@@ -19,44 +21,53 @@ export default async function stripeSubscribe(userId) {
 
   try {
     const user = await User.findOne({ _id: userId });
-    const { email } = user;
+    const { email, customerId: stripeCustomerId } = user;
 
     if (!email) return { status: 400, error: 'User email not found' };
 
-    const existingCustomer = await stripe.customers.list({ email, limit: 1 });
-    let customerId =
-      existingCustomer.data.length > 0 ? existingCustomer.data[0].id : null;
+    // handle stripe subscribe for new user - send user to stripe checkout page
+    if (!stripeCustomerId) {
+      const existingCustomer = await stripe.customers.list({ email, limit: 1 });
+      let customerId =
+        existingCustomer.data.length > 0 ? existingCustomer.data[0].id : null;
 
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email,
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email,
+        });
+        customerId = customer.id;
+      }
+
+      const { url } = await stripe.checkout.sessions.create({
+        customer: customerId,
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: process.env.STRIPE_PRICE_ID,
+            quantity: 1,
+          },
+        ],
+        metadata: {
+          userId,
+        },
+        mode: 'subscription',
+        billing_address_collection: 'required',
+        customer_update: {
+          name: 'auto',
+          address: 'auto',
+        },
+        success_url: `${process.env.NEXT_PUBLIC_URL}/payments/success`,
       });
-      customerId = customer.id;
+
+      return { status: 200, url };
     }
 
-    const { url } = await stripe.checkout.sessions.create({
-      customer: customerId,
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: process.env.STRIPE_PRICE_ID,
-          quantity: 1,
-        },
-      ],
-      metadata: {
-        userId,
-      },
-      mode: 'subscription',
-      billing_address_collection: 'required',
-      customer_update: {
-        name: 'auto',
-        address: 'auto',
-      },
-      success_url: `${process.env.NEXT_PUBLIC_URL}/payments/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_URL}/payments/cancel`,
-    });
+    // handle stripe unsubscribe or resubscribe - send user to stripe login page
+    if (stripeCustomerId) {
+      const url = `${stripeManageSubscriptionUrl}?prefilled_email=${email}`;
 
-    return { status: 200, url };
+      return { status: 200, url };
+    }
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);
