@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   stripeSubscribe,
+  stripeManageSubscription,
   changeUserPassword,
   deleteUserAccount,
   changeUserTimezone,
@@ -19,13 +20,12 @@ import {
 import {
   FORM_TIMEZONES,
   FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
-  SERVER_ERROR_MESSAGE,
 } from '../../constants';
 
 const Account = ({ user }) => {
   const pageRef = useRef(null);
   const router = useRouter();
-  const { userId, timezone, admin, isSubscribed, customerId, email } = user;
+  const { userId, timezone, admin, isSubscribed, customerId } = user;
   const { setUserId, setShowToast, setIsAdmin } = useAppContext();
   const userIsSubscribed = isSubscribed && customerId;
   const userNoLongerSubscribed = !isSubscribed && customerId;
@@ -94,7 +94,7 @@ const Account = ({ user }) => {
   // handle stripe subscribe
   const handleSubscribe = async () => {
     setIsAwaitingStripeResponse(true);
-    const response = await stripeSubscribe(userId, email);
+    const response = await stripeSubscribe(userId);
     const { url, status } = response;
 
     if (status === 200) {
@@ -105,16 +105,17 @@ const Account = ({ user }) => {
     }
   };
 
-  // handle stripe unsubscribe
+  // handle stripe unsubscribe or resubscribe
   const handleManageSubscription = async () => {
     setIsAwaitingStripeResponse(true);
-    const url = process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL;
+    const response = await stripeManageSubscription(userId);
+    const { url, status } = response;
 
-    if (url) {
-      router.push(`${url}?prefilled_email=${email}`);
+    if (status === 200) {
+      router.push(url);
     } else {
       setIsAwaitingStripeResponse(false);
-      setShowToast(<Toast serverError={SERVER_ERROR_MESSAGE} />);
+      setShowToast(<Toast serverError={response} />);
     }
   };
 

@@ -225,11 +225,6 @@ export const reminderSchema = z
 export const contactFormSchema = z
   .object({
     userId: z.string(),
-    email: z
-      .string()
-      .min(1, FORM_ERROR_MISSING_EMAIL)
-      .email(FORM_ERROR_INVALID_EMAIL)
-      .max(50, FORM_CHARACTER_LIMIT_50),
     subject: z
       .string()
       .min(1, FORM_ERROR_MISSING_SUBJECT)

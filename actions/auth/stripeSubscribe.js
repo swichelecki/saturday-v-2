@@ -1,10 +1,11 @@
 'use server';
 
 import { stripe } from '../../lib/stripe';
+import User from '../../models/User';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 
-export default async function stripeSubscribe(userId, email) {
+export default async function stripeSubscribe(userId) {
   // check that cookie user id matches param userId
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
@@ -17,6 +18,11 @@ export default async function stripeSubscribe(userId, email) {
   }
 
   try {
+    const user = await User.findOne({ _id: userId });
+    const { email } = user;
+
+    if (!email) return { status: 400, error: 'User email not found' };
+
     const existingCustomer = await stripe.customers.list({ email, limit: 1 });
     let customerId =
       existingCustomer.data.length > 0 ? existingCustomer.data[0].id : null;

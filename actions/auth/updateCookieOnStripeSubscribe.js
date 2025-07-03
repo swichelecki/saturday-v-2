@@ -28,7 +28,6 @@ export default async function updateCookieOnStripeSubscribe(userId) {
       newNotesUser,
       customerId,
       isSubscribed,
-      email,
     } = await User.findOne({
       _id: userId,
     });
@@ -44,7 +43,6 @@ export default async function updateCookieOnStripeSubscribe(userId) {
       newNotesUser,
       customerId,
       isSubscribed,
-      email,
     })
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .sign(new TextEncoder().encode(jwtSecret));

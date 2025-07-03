@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../context';
-import { stripeSubscribe } from '../../actions';
+import { stripeSubscribe, stripeManageSubscription } from '../../actions';
 import { Toast } from '../../components';
 
-const ModalSubscribe = ({ userNoLongerSubscribed, userId, email }) => {
+const ModalSubscribe = ({ userNoLongerSubscribed, userId }) => {
   const router = useRouter();
 
   const { setShowToast } = useAppContext();
@@ -17,7 +17,21 @@ const ModalSubscribe = ({ userNoLongerSubscribed, userId, email }) => {
   // handle stripe subscribe
   const handleSubscribe = async () => {
     setIsAwaitingStripeResponse(true);
-    const response = await stripeSubscribe(userId, email);
+    const response = await stripeSubscribe(userId);
+    const { url, status } = response;
+
+    if (status === 200) {
+      router.push(url);
+    } else {
+      setIsAwaitingStripeResponse(false);
+      setShowToast(<Toast serverError={response} />);
+    }
+  };
+
+  // handle stripe unsubscribe or resubscribe
+  const handleManageSubscription = async () => {
+    setIsAwaitingStripeResponse(true);
+    const response = await stripeManageSubscription(userId);
     const { url, status } = response;
 
     if (status === 200) {
@@ -49,7 +63,9 @@ const ModalSubscribe = ({ userNoLongerSubscribed, userId, email }) => {
         <button
           type='button'
           className='entry-form__button'
-          onClick={handleSubscribe}
+          onClick={
+            userNoLongerSubscribed ? handleManageSubscription : handleSubscribe
+          }
         >
           {isAwaitingStripeResponse && <div className='loader'></div>}
           Subscribe Now

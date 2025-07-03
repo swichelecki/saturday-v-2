@@ -9,6 +9,7 @@ export { default as resetUserPassword } from './auth/resetUserPassword';
 export { default as changeUserTimezone } from './auth/changeUserTimezone';
 export { default as updateUserHasSeenNotes } from './auth/updateUserHasSeenNotes';
 export { default as stripeSubscribe } from './auth/stripeSubscribe';
+export { default as stripeManageSubscription } from './auth/stripeManageSubscription';
 export { default as updateCookieOnStripeSubscribe } from './auth/updateCookieOnStripeSubscribe';
 export { default as createItem } from './items/createItem';
 export { default as updateItem } from './items/updateItem';

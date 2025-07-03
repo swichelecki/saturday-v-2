@@ -11,10 +11,10 @@ export const dynamic = 'force-dynamic';
 export default async function AccountPage() {
   await connectDB();
 
-  const { userId, timezone, admin, isSubscribed, customerId, email } =
+  const { userId, timezone, admin, isSubscribed, customerId } =
     await getUserFromCookie();
 
-  const user = { userId, timezone, admin, isSubscribed, customerId, email };
+  const user = { userId, timezone, admin, isSubscribed, customerId };
 
   return <Account user={user} />;
 }

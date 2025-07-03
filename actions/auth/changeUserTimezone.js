@@ -65,7 +65,6 @@ export default async function changeUserTimezone(formData) {
       admin: userUpdated.admin,
       newUser: userUpdated.newUser,
       newNotesUser: userUpdated.newNotesUser,
-      email: userUpdated.email,
       customerId: userUpdated.customerId,
       isSubscribed: userUpdated.isSubscribed,
     })

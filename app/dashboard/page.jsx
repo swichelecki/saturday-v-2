@@ -20,7 +20,7 @@ async function getDashboardData() {
   try {
     await connectDB();
 
-    const { userId, timezone, admin, isSubscribed, customerId, email } =
+    const { userId, timezone, admin, isSubscribed, customerId } =
       await getUserFromCookie();
 
     // get monday using current date
@@ -160,7 +160,7 @@ async function getDashboardData() {
       calendar: calendarData ?? [],
       categories: categories ?? [],
       reminders: reminders ?? [],
-      user: { userId, timezone, admin, isSubscribed, customerId, email },
+      user: { userId, timezone, admin, isSubscribed, customerId },
     };
   } catch (error) {
     console.log(error);

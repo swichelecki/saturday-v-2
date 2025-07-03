@@ -76,7 +76,6 @@ export default async function createUserAccount(formData) {
       admin: user.admin,
       newUser: user.newUser,
       newNotesUser: user.newNotesUser,
-      email: user.email,
       customerId: user.customerId,
       isSubscribed: user.isSubscribed,
     })

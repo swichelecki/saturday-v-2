@@ -1,6 +1,7 @@
 'use server';
 
 import { Resend } from 'resend';
+import User from '../../models/User';
 import { ContactFormEmail } from '../../components';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
@@ -44,7 +45,12 @@ export default async function createContactMessage(formData) {
   }
 
   try {
-    const { email, subject, message } = zodData;
+    const { userId, subject, message } = zodData;
+
+    const user = await User.findOne({ _id: userId });
+    const { email } = user;
+
+    if (!email) return { status: 400, error: 'User email not found' };
 
     const resend = new Resend(resendApiKey);
 

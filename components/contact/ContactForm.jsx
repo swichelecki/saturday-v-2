@@ -10,7 +10,7 @@ import { contactFormSchema } from '../../schemas/schemas';
 
 const ContactForm = ({ user }) => {
   const formRef = useRef(null);
-  const { userId, admin, email } = user;
+  const { userId, admin } = user;
   const { setUserId, setShowToast, setIsAdmin } = useAppContext();
 
   // set global context user id and timezone and state timezone
@@ -21,7 +21,6 @@ const ContactForm = ({ user }) => {
 
   const [form, setForm] = useState({
     userId,
-    email,
     subject: '',
     message: '',
   });
@@ -97,14 +96,6 @@ const ContactForm = ({ user }) => {
   return (
     <form onSubmit={onSubmit} ref={formRef} className='form-page contact-form'>
       <h1 className='form-page__h2'>Contact</h1>
-      <FormTextField
-        label='Email'
-        type='email novalidate'
-        id='email'
-        name='email'
-        value={email}
-        disabled
-      />
       <FormTextField
         label='Subject'
         type='text'

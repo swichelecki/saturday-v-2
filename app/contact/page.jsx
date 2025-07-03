@@ -11,9 +11,9 @@ export const dynamic = 'force-dynamic';
 export default async function ContactPage() {
   await connectDB();
 
-  const { userId, admin, email } = await getUserFromCookie();
+  const { userId, admin } = await getUserFromCookie();
 
-  const user = { userId, admin, email };
+  const user = { userId, admin };
 
   return <ContactForm user={user} />;
 }

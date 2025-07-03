@@ -35,7 +35,7 @@ const ItemsColumn = dynamic(() =>
 );
 
 const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
-  const { userId, timezone, admin, isSubscribed, customerId, email } = user;
+  const { userId, timezone, admin, isSubscribed, customerId } = user;
 
   const {
     setUserId,
@@ -131,7 +131,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
           <ModalSubscribe
             userNoLongerSubscribed={userNoLongerSubscribed}
             userId={userId}
-            email={email}
           />
         </Modal>
       );

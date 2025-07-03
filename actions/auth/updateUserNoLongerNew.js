@@ -33,7 +33,6 @@ export default async function updateUserNoLongerNew(userId) {
       admin,
       newUser,
       newNotesUser,
-      email,
       customerId,
       isSubscribed,
     } = await User.findOne({
@@ -49,7 +48,6 @@ export default async function updateUserNoLongerNew(userId) {
       admin,
       newUser,
       newNotesUser,
-      email,
       customerId,
       isSubscribed,
     })
