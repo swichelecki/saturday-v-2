@@ -21,12 +21,8 @@ const Settings = ({ categories, reminders, user }) => {
 
   return (
     <div className='form-page form-page__list-items'>
-      <CategoryControls
-        categories={categories}
-        userId={userId}
-        newUser={newUser}
-      />
-      <RemindersControls reminders={reminders} userId={userId} />
+      <CategoryControls categories={categories} user={user} />
+      <RemindersControls reminders={reminders} user={user} />
     </div>
   );
 };

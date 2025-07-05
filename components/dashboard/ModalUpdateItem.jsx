@@ -135,30 +135,33 @@ const ModalUpdateItem = ({
   };
 
   return (
-    <form onSubmit={handleEditSubmit}>
-      <FormTextField
-        type='text'
-        id='update'
-        name='title'
-        value={form?.title}
-        onChangeHandler={handleForm}
-        errorMessage={errorMessage}
-      />
-      <div className='modal__modal-button-wrapper'>
-        <button
-          onClick={handleCloseModal}
-          type='button'
-          className='modal__cancel-button'
-        >
-          Cancel
-        </button>
+    <>
+      <h2>Update Item</h2>
+      <form onSubmit={handleEditSubmit}>
+        <FormTextField
+          type='text'
+          id='update'
+          name='title'
+          value={form?.title}
+          onChangeHandler={handleForm}
+          errorMessage={errorMessage}
+        />
+        <div className='modal__modal-button-wrapper'>
+          <button
+            onClick={handleCloseModal}
+            type='button'
+            className='modal__cancel-button'
+          >
+            Cancel
+          </button>
 
-        <button type='submit' className='modal__update-button'>
-          {isAwaitingSubmitResponse && <div className='loader'></div>}
-          Update
-        </button>
-      </div>
-    </form>
+          <button type='submit' className='modal__update-button'>
+            {isAwaitingSubmitResponse && <div className='loader'></div>}
+            Update
+          </button>
+        </div>
+      </form>
+    </>
   );
 };
 

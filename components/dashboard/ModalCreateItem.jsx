@@ -182,93 +182,97 @@ const ModalCreateItem = ({
   };
 
   return (
-    <form onSubmit={handleOnSubmit} ref={formRef}>
-      <div className='form-field main-controls__select-wrapper'>
-        <label htmlFor='categoriesSelect'>Categories</label>
-        <div className='form-field__select-wrapper'>
-          <select
-            id='categoriesSelect'
-            onChange={(e) => {
-              const category = JSON.parse(e.currentTarget.value);
-              setForm((curr) => ({
-                ...curr,
-                type: category?.title,
-                column: category?.priority,
-                categoryId: category?._id,
-              }));
-              setCheckbox((current) =>
-                (isCheckedByUser && current === true) || category?.mandatoryDate
-                  ? true
-                  : false
-              );
-              setHasMandatoryDate(category?.mandatoryDate);
-            }}
-          >
-            {categories?.map((item, index) => (
-              <option
-                key={`category-option_${index}`}
-                value={JSON.stringify(item)}
-              >
-                {item?.title}
-              </option>
-            ))}
-          </select>
+    <>
+      <h2>Create Item</h2>
+      <form onSubmit={handleOnSubmit} ref={formRef}>
+        <div className='form-field main-controls__select-wrapper'>
+          <label htmlFor='categoriesSelect'>Categories</label>
+          <div className='form-field__select-wrapper'>
+            <select
+              id='categoriesSelect'
+              onChange={(e) => {
+                const category = JSON.parse(e.currentTarget.value);
+                setForm((curr) => ({
+                  ...curr,
+                  type: category?.title,
+                  column: category?.priority,
+                  categoryId: category?._id,
+                }));
+                setCheckbox((current) =>
+                  (isCheckedByUser && current === true) ||
+                  category?.mandatoryDate
+                    ? true
+                    : false
+                );
+                setHasMandatoryDate(category?.mandatoryDate);
+              }}
+            >
+              {categories?.map((item, index) => (
+                <option
+                  key={`category-option_${index}`}
+                  value={JSON.stringify(item)}
+                >
+                  {item?.title}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
-      {!hasMandatoryDate && (
-        <FormCheckboxField
-          label='Detailed'
-          subLabel='All categories with a date are detailed by default. Click the checkbox to add a description to categories without dates.'
-          name='detailedCheckbox'
-          checked={checkbox}
-          onChangeHandler={handleSetCheckbox}
-        />
-      )}
-      {!checkbox && (
-        <FormTextField
-          label='Title'
-          type='text'
-          id='itemTitle'
-          name='title'
-          value={form?.title}
-          onChangeHandler={handleSetListItem}
-          disabled={checkbox}
-          errorMessage={errorMessage.title}
-        />
-      )}
-      <div className='modal__modal-button-wrapper'>
-        <button
-          onClick={handleCloseModal}
-          type='button'
-          className='modal__cancel-button'
-        >
-          Cancel
-        </button>
-        {checkbox ? (
-          <Link
-            href={{
-              pathname: '/details',
-              query: {
-                priority,
-                type: form?.type,
-                column: form?.column,
-                hasMandatoryDate: String(hasMandatoryDate),
-                categoryId: form?.categoryId,
-              },
-            }}
-            onClick={handleCloseModal}
-            className='modal__update-button'
-          >
-            Create
-          </Link>
-        ) : (
-          <button type='submit' className='modal__save-button'>
-            {isAwaitingAddResponse && <div className='loader'></div>}
-            Add
-          </button>
+        {!hasMandatoryDate && (
+          <FormCheckboxField
+            label='Detailed'
+            subLabel='All categories with a date are detailed by default. Click the checkbox to add a description to categories without dates.'
+            name='detailedCheckbox'
+            checked={checkbox}
+            onChangeHandler={handleSetCheckbox}
+          />
         )}
-      </div>
-    </form>
+        {!checkbox && (
+          <FormTextField
+            label='Title'
+            type='text'
+            id='itemTitle'
+            name='title'
+            value={form?.title}
+            onChangeHandler={handleSetListItem}
+            disabled={checkbox}
+            errorMessage={errorMessage.title}
+          />
+        )}
+        <div className='modal__modal-button-wrapper'>
+          <button
+            onClick={handleCloseModal}
+            type='button'
+            className='modal__cancel-button'
+          >
+            Cancel
+          </button>
+          {checkbox ? (
+            <Link
+              href={{
+                pathname: '/details',
+                query: {
+                  priority,
+                  type: form?.type,
+                  column: form?.column,
+                  hasMandatoryDate: String(hasMandatoryDate),
+                  categoryId: form?.categoryId,
+                },
+              }}
+              onClick={handleCloseModal}
+              className='modal__update-button'
+            >
+              Create
+            </Link>
+          ) : (
+            <button type='submit' className='modal__save-button'>
+              {isAwaitingAddResponse && <div className='loader'></div>}
+              Add
+            </button>
+          )}
+        </div>
+      </form>
+    </>
   );
 };
 

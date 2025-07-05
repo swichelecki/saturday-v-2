@@ -73,7 +73,7 @@ const Modal = ({
   };
 
   return (
-    <dialog ref={modalRef} className={`${className ? className : 'modal'}`}>
+    <dialog ref={modalRef} className={`${className || 'modal'}`}>
       <div className='modal__inner-wrapper'>
         {showCloseButton && (
           <button onClick={handleCloseModal} type='button'>

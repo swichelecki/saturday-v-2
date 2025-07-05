@@ -76,6 +76,9 @@ dialog {
       user-select: none;
     }
   }
+  &__subscription-modal {
+    background-color: $color-background-dark;
+  }
 }
 
 @media screen and (max-width: 1080px) {

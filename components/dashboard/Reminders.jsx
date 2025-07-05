@@ -9,12 +9,7 @@ import {
   handleHiddenHeight,
   handleModalResetPageScrolling,
 } from '../../utilities';
-import {
-  MOBILE_BREAKPOINT,
-  BY_WEEK_INTERVALS,
-  MODAL_CONFIRM_RESET_REMINDER,
-  MODAL_CONFIRM_COMPLETE_BUTTON,
-} from '../../constants';
+import { MOBILE_BREAKPOINT, BY_WEEK_INTERVALS } from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
 const Reminders = ({ reminders }) => {
@@ -120,11 +115,10 @@ const Reminders = ({ reminders }) => {
     if (confirmUpdate) {
       setShowModal(
         <Modal showCloseButton={false}>
-          <h2>{MODAL_CONFIRM_RESET_REMINDER}</h2>
           <ModalConfirm
             handleConfirm={handleResetReminder}
             confirmId={id}
-            confirmBtnText={MODAL_CONFIRM_COMPLETE_BUTTON}
+            confirmType='Done'
             className='modal__reminder-button'
           />
         </Modal>

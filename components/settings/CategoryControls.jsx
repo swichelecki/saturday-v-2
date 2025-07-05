@@ -8,22 +8,20 @@ import {
   Modal,
   ModalConfirm,
   ModalCategory,
+  ModalSubscribe,
   FormErrorMessage,
   Toast,
 } from '../../components';
 import { deleteCategory, updateCategory, getCategory } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
-  MODAL_CREATE_CATEGORY_HEADLINE,
   CATEGORY_ITEM_LIMIT,
+  UNSUBSCRIBED_CATEGORY_ITEM_LIMIT,
   ITEM_TYPE_CATEGORY,
-  MODAL_CONFIRM_DELETION_HEADLINE,
-  MODAL_CONFIRM_DELETE_BUTTON,
   MOBILE_BREAKPOINT,
-  MODAL_UPDATE_CATEGORY_HEADLINE,
 } from '../../constants';
 
-const CategoryControls = ({ categories, userId, newUser }) => {
+const CategoryControls = ({ categories, user }) => {
   const dragItemRef = useRef(null);
   const dragOverItemRef = useRef(null);
   const categoryItemWrapperRef = useRef(null);
@@ -39,29 +37,40 @@ const CategoryControls = ({ categories, userId, newUser }) => {
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
 
+  const { userId, newUser, isSubscribed } = user;
+
   const [categoryItems, setCategoryItems] = useState(categories ?? []);
   const [draggableCategories, setDraggableCategories] = useState([]);
   const [atCategoryLimit, setAtCategoryLimit] = useState(false);
   const [isAwatingGetItem, setIsAwaitingGetItem] = useState(false);
   const [itemToUpdateId, setItemToUpdateId] = useState('');
 
+  const categoryLimit = isSubscribed
+    ? CATEGORY_ITEM_LIMIT
+    : UNSUBSCRIBED_CATEGORY_ITEM_LIMIT;
+
   // remove at-category-limit message after category deletion
   useEffect(() => {
-    if (categoryItems?.length < CATEGORY_ITEM_LIMIT && atCategoryLimit) {
+    if (categoryItems?.length < categoryLimit && atCategoryLimit) {
       setAtCategoryLimit(false);
     }
   }, [categoryItems]);
 
   // open modal for create
   const handleOpenCategoryModal = () => {
-    if (categoryItems?.length >= CATEGORY_ITEM_LIMIT) {
+    if (categoryItems?.length >= categoryLimit) {
       setAtCategoryLimit(true);
+      setShowModal(
+        <Modal className='modal modal__form-modal--small modal__subscription-modal'>
+          <ModalSubscribe userId={userId} />
+        </Modal>
+      );
       return;
     }
 
     setShowModal(
       <Modal className='modal modal__form-modal--small'>
-        <h2>{MODAL_CREATE_CATEGORY_HEADLINE}</h2>
+        <h2>Create Category</h2>
         <ModalCategory
           userId={userId}
           setItems={setCategoryItems}
@@ -80,7 +89,7 @@ const CategoryControls = ({ categories, userId, newUser }) => {
       if (res.status === 200) {
         setShowModal(
           <Modal className='modal modal__form-modal--small'>
-            <h2>{MODAL_UPDATE_CATEGORY_HEADLINE}</h2>
+            <h2>Update Category</h2>
             <ModalCategory
               userId={userId}
               setItems={setCategoryItems}
@@ -104,11 +113,10 @@ const CategoryControls = ({ categories, userId, newUser }) => {
     if (confirmDeletion) {
       setShowModal(
         <Modal showCloseButton={false}>
-          <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
           <ModalConfirm
             handleConfirm={handleDeleteCategory}
             confirmId={id}
-            confirmBtnText={MODAL_CONFIRM_DELETE_BUTTON}
+            confirmType='Delete'
           />
         </Modal>
       );
@@ -199,14 +207,14 @@ const CategoryControls = ({ categories, userId, newUser }) => {
           </button>
           {atCategoryLimit && (
             <FormErrorMessage
-              errorMessage={`Limit ${CATEGORY_ITEM_LIMIT} Categories!`}
+              errorMessage={`Limit ${categoryLimit} Categories!`}
               className='form-error-message form-error-message--position-static'
             />
           )}
           <p>
-            Create up to 12 categories representing areas of your life in which
-            you could use a bit of help keeping track of things&#8212;work,
-            school, shopping, appointments, events, etc.
+            Create categories representing areas of your life in which you could
+            use a bit of help keeping track of things&#8212;work, school,
+            shopping, appointments, events, etc.
           </p>
         </div>
         <div

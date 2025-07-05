@@ -14,7 +14,8 @@ async function getSettingsData() {
   await connectDB();
 
   try {
-    const { userId, newUser, timezone, admin } = await getUserFromCookie();
+    const { userId, newUser, timezone, admin, isSubscribed } =
+      await getUserFromCookie();
 
     const [categories, reminders] = await Promise.all([
       Category.find({ userId }).sort({
@@ -31,6 +32,7 @@ async function getSettingsData() {
         timezone,
         admin,
         newUser,
+        isSubscribed,
       },
     };
   } catch (error) {

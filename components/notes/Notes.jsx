@@ -14,24 +14,22 @@ import {
   Modal,
   ModalNotes,
   ModalConfirm,
+  ModalSubscribe,
   FormErrorMessage,
   Toast,
   SearchField,
 } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
-  MODAL_CREATE_NOTE_HEADLINE,
-  MODAL_UPDATE_NOTE_HEADLINE,
   NOTES_ITEM_LIMIT,
-  MODAL_CONFIRM_DELETION_HEADLINE,
+  UNSUBSCRIBED_NOTES_ITEM_LIMIT,
   MOBILE_BREAKPOINT,
-  MODAL_CONFIRM_DELETE_BUTTON,
 } from '../../constants';
 
 const Notes = ({ notes, user, notesCount }) => {
   const closeButtonRef = useRef(null);
 
-  const { userId, admin, newNotesUser } = user;
+  const { userId, admin, newNotesUser, isSubscribed } = user;
   const {
     setUserId,
     setIsAdmin,
@@ -47,6 +45,10 @@ const Notes = ({ notes, user, notesCount }) => {
   const handleCloseListItemsYAxis = useCloseListItemsYAxis();
   usePrompt(userId, newNotesUser);
 
+  const notesLimit = isSubscribed
+    ? NOTES_ITEM_LIMIT
+    : UNSUBSCRIBED_NOTES_ITEM_LIMIT;
+
   const [noteItemsGrouped, setNoteItemsGrouped] = useState(notes);
   const [currentNoteCount, setCurrentNoteCount] = useState(notesCount);
   const [filteredItems, setFilteredItems] = useState([]);
@@ -58,7 +60,7 @@ const Notes = ({ notes, user, notesCount }) => {
 
   // remove at-notes-limit message after note deletion
   useEffect(() => {
-    if (currentNoteCount < NOTES_ITEM_LIMIT && atNotesLimit) {
+    if (currentNoteCount < notesLimit && atNotesLimit) {
       setAtNotesLimit(false);
     }
   }, [atNotesLimit, currentNoteCount]);
@@ -77,14 +79,19 @@ const Notes = ({ notes, user, notesCount }) => {
 
   // open modal for create
   const handleOpenNoteModal = () => {
-    if (currentNoteCount >= NOTES_ITEM_LIMIT) {
+    if (currentNoteCount >= notesLimit) {
       setAtNotesLimit(true);
+      setShowModal(
+        <Modal className='modal modal__form-modal--small modal__subscription-modal'>
+          <ModalSubscribe userId={userId} />
+        </Modal>
+      );
       return;
     }
 
     setShowModal(
       <Modal className='modal modal__form-modal--small'>
-        <h2>{MODAL_CREATE_NOTE_HEADLINE}</h2>
+        <h2>Create Note</h2>
         <ModalNotes
           userId={userId}
           items={noteItemsGrouped}
@@ -106,7 +113,7 @@ const Notes = ({ notes, user, notesCount }) => {
       if (res.status === 200) {
         setShowModal(
           <Modal className='modal modal__form-modal--small'>
-            <h2>{MODAL_UPDATE_NOTE_HEADLINE}</h2>
+            <h2>Update Note</h2>
             <ModalNotes
               userId={userId}
               items={noteItemsGrouped}
@@ -133,11 +140,10 @@ const Notes = ({ notes, user, notesCount }) => {
     if (confirmDeletion) {
       setShowModal(
         <Modal showCloseButton={false}>
-          <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
           <ModalConfirm
             handleConfirm={handleDeleteNote}
             confirmId={id}
-            confirmBtnText={MODAL_CONFIRM_DELETE_BUTTON}
+            confirmType='Delete'
           />
         </Modal>
       );
@@ -229,7 +235,7 @@ const Notes = ({ notes, user, notesCount }) => {
       </div>
       {atNotesLimit && (
         <FormErrorMessage
-          errorMessage={`Limit ${NOTES_ITEM_LIMIT} Notes!`}
+          errorMessage={`Limit ${notesLimit} Notes!`}
           className='form-error-message form-error-message--position-static'
         />
       )}

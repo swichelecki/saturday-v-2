@@ -10,7 +10,12 @@ import {
 } from '../../actions';
 import { useAppContext } from '../../context';
 import { useScrollToError } from '../../hooks';
-import { FormTextField, FormSelectField, Toast } from '../../components';
+import {
+  FormTextField,
+  FormSelectField,
+  SubscriptionFeatures,
+  Toast,
+} from '../../components';
 import {
   changePasswordSchema,
   changeTimezoneSchema,
@@ -240,10 +245,7 @@ const Account = ({ user }) => {
         {isSubscribed ? (
           <p>Thank you for supporting Saturday!</p>
         ) : (
-          <p>
-            Subscribe to Saturday's paid tier today for just $1 per month and
-            get yourself organized! Powered by Stripe.
-          </p>
+          <SubscriptionFeatures />
         )}
       </div>
       <div className='form-page__buttons-wrapper'>

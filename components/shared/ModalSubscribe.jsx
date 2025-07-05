@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../context';
 import { stripeSubscribe } from '../../actions';
-import { Toast } from '../../components';
+import { SubscriptionFeatures, Toast } from '../../components';
 
 const ModalSubscribe = ({ userId }) => {
   const router = useRouter();
@@ -30,12 +30,9 @@ const ModalSubscribe = ({ userId }) => {
 
   return (
     <>
-      <div className='form-field'>
-        <p>
-          Sorry, you've hit the free tier's item limit for this feature.
-          Subscribe to Saturday's paid tier today for just $1 per month and get
-          yourself organized! Powered by Stripe.
-        </p>
+      <h2>Unlock Full Access for $1 a Month</h2>
+      <div className='subscription-features__modal-table-wrapper'>
+        <SubscriptionFeatures />
       </div>
       <div className='form-page__buttons-wrapper'>
         <button

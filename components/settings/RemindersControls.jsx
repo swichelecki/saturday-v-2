@@ -7,23 +7,23 @@ import {
   Modal,
   ModalReminders,
   ModalConfirm,
+  ModalSubscribe,
   FormErrorMessage,
   Toast,
 } from '../../components';
 import { deleteReminder, getReminder } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
-  MODAL_CREATE_REMINDER_HEADLINE,
-  MODAL_UPDATE_REMINDER_HEADLINE,
-  MODAL_CONFIRM_DELETION_HEADLINE,
-  MODAL_CONFIRM_COMPLETE_BUTTON,
   REMINDERS_ITEM_LIMIT,
+  UNSUBSCRIBED_REMINDERS_ITEM_LIMIT,
   ITEM_TYPE_REMINDER,
 } from '../../constants';
 
-const RemindersControls = ({ reminders, userId }) => {
+const RemindersControls = ({ reminders, user }) => {
   const { setShowToast, setShowModal, isRemindersPrompt, prompt } =
     useAppContext();
+
+  const { userId, isSubscribed } = user;
 
   const [remindersItems, setRemindersItems] = useState(reminders ?? []);
   const [reminderToEditId, setReminderToEditId] = useState('');
@@ -33,22 +33,32 @@ const RemindersControls = ({ reminders, userId }) => {
   ] = useState(false);
   const [atRemindersLimit, setAtRemindersLimit] = useState(false);
 
+  const remindersLimit = isSubscribed
+    ? REMINDERS_ITEM_LIMIT
+    : UNSUBSCRIBED_REMINDERS_ITEM_LIMIT;
+
   // remove at-reminders-limit message after reminder deletion
   useEffect(() => {
-    if (remindersItems?.length < REMINDERS_ITEM_LIMIT && atRemindersLimit) {
+    if (remindersItems?.length < remindersLimit && atRemindersLimit) {
       setAtRemindersLimit(false);
     }
   }, [remindersItems]);
 
   // open modal for create
   const handleOpenReminderModal = () => {
-    if (remindersItems?.length >= REMINDERS_ITEM_LIMIT) {
+    if (remindersItems?.length >= remindersLimit) {
       setAtRemindersLimit(true);
+      setShowModal(
+        <Modal className='modal modal__form-modal--small modal__subscription-modal'>
+          <ModalSubscribe userId={userId} />
+        </Modal>
+      );
+      return;
     }
 
     setShowModal(
       <Modal className='modal modal__form-modal--large'>
-        <h2>{MODAL_CREATE_REMINDER_HEADLINE}</h2>
+        <h2>Create Reminder</h2>
         <ModalReminders
           userId={userId}
           items={remindersItems}
@@ -68,7 +78,7 @@ const RemindersControls = ({ reminders, userId }) => {
       if (res.status === 200) {
         setShowModal(
           <Modal className='modal modal__form-modal--large'>
-            <h2>{MODAL_UPDATE_REMINDER_HEADLINE}</h2>
+            <h2>Update Reminder</h2>
             <ModalReminders
               userId={userId}
               items={remindersItems}
@@ -92,11 +102,10 @@ const RemindersControls = ({ reminders, userId }) => {
     if (confirmDeletion) {
       setShowModal(
         <Modal showCloseButton={false}>
-          <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
           <ModalConfirm
             handleConfirm={handleDeleteReminder}
             confirmId={id}
-            confirmBtnText={MODAL_CONFIRM_COMPLETE_BUTTON}
+            confirmType='Delete'
           />
         </Modal>
       );
@@ -134,7 +143,7 @@ const RemindersControls = ({ reminders, userId }) => {
           </button>
           {atRemindersLimit && (
             <FormErrorMessage
-              errorMessage={`Limit ${REMINDERS_ITEM_LIMIT} reminders!`}
+              errorMessage={`Limit ${remindersLimit} reminders!`}
               className='form-error-message form-error-message--position-static'
             />
           )}

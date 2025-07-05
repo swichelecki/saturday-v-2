@@ -3,11 +3,14 @@ export const OPEN_CLOSE_THRESHOLD = 60;
 export const TOUCH_DURATION_THRESHOLD = 400;
 export const MAX_MOVE_DISTANCE = -146;
 export const SLOW_TRANSITION_SPEED = 500;
-export const UNSUBSCRIBED_LIST_ITEM_LIMIT = 10;
 export const LIST_ITEM_LIMIT = 50;
-export const CATEGORY_ITEM_LIMIT = 12;
-export const REMINDERS_ITEM_LIMIT = 25;
+export const CATEGORY_ITEM_LIMIT = 15;
+export const REMINDERS_ITEM_LIMIT = 50;
 export const NOTES_ITEM_LIMIT = 50;
+export const UNSUBSCRIBED_LIST_ITEM_LIMIT = 10;
+export const UNSUBSCRIBED_CATEGORY_ITEM_LIMIT = 5;
+export const UNSUBSCRIBED_REMINDERS_ITEM_LIMIT = 5;
+export const UNSUBSCRIBED_NOTES_ITEM_LIMIT = 5;
 export const TWENTYFOUR_HOURS = 86400000;
 export const FORM_CHARACTER_LIMIT_16 = 'Limit 16 Characters';
 export const FORM_CHARACTER_LIMIT_30 = 'Limit 30 Characters';
@@ -76,18 +79,7 @@ export const FORM_REMINDER_BUFFER_OPTIONS = [
   { title: 'Two Weeks', name: 'recurrenceBuffer', value: 14 },
   { title: 'Three Weeks', name: 'recurrenceBuffer', value: 21 },
 ];
-export const MODAL_CONFIRM_DELETION_HEADLINE = 'Confirm Delete';
-export const MODAL_CREATE_CATEGORY_HEADLINE = 'Create Category';
-export const MODAL_UPDATE_CATEGORY_HEADLINE = 'Update Category';
 export const MODAL_CATEGORY_ALREADY_EXISTS = 'Category Already Exists';
-export const MODAL_CREATE_REMINDER_HEADLINE = 'Create Reminder';
-export const MODAL_UPDATE_REMINDER_HEADLINE = 'Update Reminder';
-export const MODAL_UPDATE_ITEM_HEADLINE = 'Update Item';
-export const MODAL_CREATE_NOTE_HEADLINE = 'Create Note';
-export const MODAL_UPDATE_NOTE_HEADLINE = 'Update Note';
-export const MODAL_CONFIRM_RESET_REMINDER = 'Confirm Complete';
-export const MODAL_CONFIRM_DELETE_BUTTON = 'Delete';
-export const MODAL_CONFIRM_COMPLETE_BUTTON = 'Done';
 export const ITEM_ERROR_AT_ITEM_LIMIT =
   "Limit 50 items! Looks like it's time to get to work.";
 export const CATEGORY_ERROR_AT_ITEM_LIMIT = 'Limit 12 Categories';

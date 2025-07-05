@@ -22,9 +22,6 @@ import { getItem, deleteItem } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MOBILE_BREAKPOINT,
-  MODAL_CONFIRM_DELETION_HEADLINE,
-  MODAL_UPDATE_ITEM_HEADLINE,
-  MODAL_CONFIRM_DELETE_BUTTON,
   LIST_ITEM_LIMIT,
   UNSUBSCRIBED_LIST_ITEM_LIMIT,
 } from '../../constants';
@@ -126,8 +123,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
     if (totalNumberOfItems >= listItemLimit) {
       setAtItemsLimit(true);
       setShowModal(
-        <Modal className='modal modal__form-modal--small'>
-          <h2>Subscribe for Just $1 a Month</h2>
+        <Modal className='modal modal__form-modal--small modal__subscription-modal'>
           <ModalSubscribe userId={userId} />
         </Modal>
       );
@@ -136,7 +132,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
 
     setShowModal(
       <Modal className='modal modal__form-modal--small'>
-        <h2>Create Item</h2>
         <ModalCreateItem
           userId={userId}
           categories={categories}
@@ -156,7 +151,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
       if (res.status === 200) {
         setShowModal(
           <Modal showCloseButton={false}>
-            <h2>{MODAL_UPDATE_ITEM_HEADLINE}</h2>
             <ModalUpdateItem
               itemToUpdate={res.item}
               items={listItems}
@@ -180,11 +174,10 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
     if (confirmDeletion) {
       setShowModal(
         <Modal showCloseButton={false}>
-          <h2>{MODAL_CONFIRM_DELETION_HEADLINE}</h2>
           <ModalConfirm
             handleConfirm={handleDeleteTask}
             confirmId={id}
-            confirmBtnText={MODAL_CONFIRM_DELETE_BUTTON}
+            confirmType='Delete'
           />
         </Modal>
       );

@@ -14,10 +14,10 @@ export const metadata = {
   applicationName: 'Saturday Simple Life',
   title: {
     template: '%s | Saturday Simple Life',
-    default: 'Saturday Simple Life | Free Daily Planner',
+    default: 'Saturday Simple Life | Daily Planner',
   },
   description:
-    'Saturday is your free, super simple daily planner. Manage all of your everyday tasks and obligations with Saturday’s customizable interface designed to simplify your life.',
+    'Saturday is your super simple daily planner. Manage all of your everyday tasks and obligations with Saturday’s customizable interface designed to simplify your life.',
   keywords: [
     'daily planner',
     'daily organizer',

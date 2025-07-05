@@ -41,8 +41,8 @@ export default function Home() {
         <div className='homepage__hero-left'>
           <h1>Plan Your Life, Simply</h1>
           <p>
-            Saturday is your free, super simple daily planner. Manage all of
-            your everyday tasks and obligations with Saturday’s customizable
+            Saturday is your super simple daily planner. Manage all of your
+            everyday tasks and obligations with Saturday’s customizable
             interface designed to simplify your life.
           </p>
           <Link href='/signup' className='homepage__signup'>
