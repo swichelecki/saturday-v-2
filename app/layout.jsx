@@ -14,22 +14,24 @@ export const metadata = {
   applicationName: 'Saturday Simple Life',
   title: {
     template: '%s | Saturday Simple Life',
-    default: 'Saturday Simple Life | Daily Planner',
+    default: 'Saturday Simple Life | AI-Free Daily Planner',
   },
   description:
-    'Saturday is your super simple daily planner. Manage all of your everyday tasks and obligations with Saturday’s customizable interface designed to simplify your life.',
+    'Saturday is your super simple, AI-free daily planner. Manage all of your everyday tasks and obligations with Saturday’s customizable interface designed to simplify your life.',
   keywords: [
     'daily planner',
     'daily organizer',
     'task manager',
     'todo list',
     'notes',
+    'AI-free',
+    'no AI',
   ],
   metadataBase: new URL(process.env.NEXT_PUBLIC_URL),
   openGraph: {
     url: process.env.NEXT_PUBLIC_URL,
     siteName: 'Saturday Simple Life',
-    images: '/',
+    images: '/saturday-homepage-no-ai-no-prob.webp',
     locale: 'en_US',
     type: 'website',
   },
