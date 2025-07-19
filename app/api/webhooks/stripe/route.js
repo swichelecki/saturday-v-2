@@ -49,8 +49,6 @@ export async function POST(request) {
       }
     );
 
-    // TODO: send email to me that someone subscribed
-
     if (!updatedUser) {
       return new NextResponse('User not found', { status: 400 });
     } else {
@@ -77,7 +75,7 @@ export async function POST(request) {
     if (!updatedUser) {
       return new NextResponse('User not found', { status: 400 });
     } else {
-      console.log('User Subscription Deleted');
+      console.log('User Subscription Canceled');
     }
   }
 

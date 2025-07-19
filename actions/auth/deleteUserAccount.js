@@ -6,11 +6,13 @@ import Reminder from '../../models/Reminder';
 import Category from '../../models/Category';
 import Note from '../../models/Note';
 import { stripe } from '../../lib/stripe';
+import { Resend } from 'resend';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { deleteAccountSchema } from '../../schemas/schemas';
+import { UserDeletedEmail } from '../../components';
 
 export default async function deleteUserAccount(formData) {
   if (!(formData instanceof Object)) {
@@ -83,6 +85,22 @@ export default async function deleteUserAccount(formData) {
           );
         }
       }
+
+      // send user deleted email
+      const resend = new Resend(process.env.RESEND_API_KEY);
+
+      const { error } = await resend.emails.send({
+        from: 'Saturday <contact@saturdaysimplelife.com>',
+        to: 'swichelecki@gmail.com',
+        subject: 'Saturday User Account Deleted',
+        react: UserDeletedEmail({
+          email,
+          customerId,
+          createdAt: user.createdAt.toString(),
+        }),
+      });
+
+      if (error) console.error('Resend error: ', error);
 
       return { status: 200 };
     }

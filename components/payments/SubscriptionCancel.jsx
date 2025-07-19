@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateCookieOnStripeSubscribe } from '../../actions';
 import { useAppContext } from '../../context';
-import { Toast } from '../../components';
+import { Toast } from '..';
 
-const SubscriptionSuccess = ({ user }) => {
+const SubscriptionCancel = ({ user }) => {
   const router = useRouter();
   const { userId, admin } = user;
   const { setUserId, setIsAdmin, setShowToast } = useAppContext();
@@ -17,38 +17,35 @@ const SubscriptionSuccess = ({ user }) => {
     setIsAdmin(admin);
 
     updateCookieOnStripeSubscribe(userId).then((res) => {
-      if (res.status !== 200) {
+      if (res.status === 500) {
         setShowToast(<Toast serverError={res} />);
         console.error(res.error);
-        return;
       }
     });
   }, []);
 
-  const handleGoToDashboard = () => {
-    router.push('/dashboard');
+  const handleGoToContact = () => {
+    router.push('/contact');
   };
 
   return (
-    <div className='form-page'>
-      <h1>Subscription Success</h1>
-      <p className='form-field'>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat.
+    <div className='form-page form-page__gap-48'>
+      <h1>Sorry to See You Go!</h1>
+      <p>
+        Please take a minute to tell us why you decided to cancel by sending us
+        a message through our contact page.
       </p>
       <div className='dashboard-button-wrapper'>
         <button
-          onClick={handleGoToDashboard}
+          onClick={handleGoToContact}
           type='button'
           className='entry-form__button'
         >
-          Dashboard
+          Contact
         </button>
       </div>
     </div>
   );
 };
 
-export default SubscriptionSuccess;
+export default SubscriptionCancel;

@@ -30,7 +30,7 @@ const ModalSubscribe = ({ userId }) => {
 
   return (
     <>
-      <h2>Unlock Full Access for $1 a Month</h2>
+      <h2>Subscribe</h2>
       <div className='subscription-features__modal-table-wrapper'>
         <SubscriptionFeatures />
       </div>

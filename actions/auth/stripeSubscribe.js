@@ -4,7 +4,6 @@ import { stripe } from '../../lib/stripe';
 import User from '../../models/User';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
-const stripeManageSubscriptionUrl = process.env.STRIPE_CUSTOMER_PORTAL;
 
 export default async function stripeSubscribe(userId) {
   // check that cookie user id matches param userId
@@ -20,12 +19,12 @@ export default async function stripeSubscribe(userId) {
 
   try {
     const user = await User.findOne({ _id: userId });
-    const { email, customerId: stripeCustomerId } = user;
+    const { email, isSubscribed, customerId: stripeCustomerId } = user;
 
     if (!email) return { status: 400, error: 'User email not found' };
 
     // handle stripe subscribe for new user - send user to stripe checkout page
-    if (!stripeCustomerId) {
+    if (!stripeCustomerId || (stripeCustomerId && !isSubscribed)) {
       const existingCustomer = await stripe.customers.list({ email, limit: 1 });
       let customerId =
         existingCustomer.data.length > 0 ? existingCustomer.data[0].id : null;
@@ -61,9 +60,37 @@ export default async function stripeSubscribe(userId) {
       return { status: 200, url };
     }
 
-    // handle stripe unsubscribe or resubscribe - send user to stripe login page
-    if (stripeCustomerId) {
-      const url = `${stripeManageSubscriptionUrl}?prefilled_email=${email}`;
+    // handle stripe unsubscribe - send user to stripe cancel subscription page
+    if (stripeCustomerId && isSubscribed) {
+      const existingCustomer = await stripe.customers.list({ email, limit: 1 });
+      let customerId =
+        existingCustomer.data.length > 0 ? existingCustomer.data[0].id : null;
+      let subscriptionId = '';
+
+      const customerWithSubscriptions = await stripe.customers.retrieve(
+        customerId,
+        { expand: ['subscriptions'] }
+      );
+
+      if (customerWithSubscriptions.subscriptions.data.length > 0)
+        subscriptionId = customerWithSubscriptions.subscriptions.data[0].id;
+
+      const { url } = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: `${process.env.NEXT_PUBLIC_URL}`,
+        flow_data: {
+          type: 'subscription_cancel',
+          subscription_cancel: {
+            subscription: subscriptionId,
+          },
+          after_completion: {
+            type: 'redirect',
+            redirect: {
+              return_url: `${process.env.NEXT_PUBLIC_URL}/payments/cancel`,
+            },
+          },
+        },
+      });
 
       return { status: 200, url };
     }

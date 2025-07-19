@@ -240,7 +240,7 @@ const Account = ({ user }) => {
 
   return (
     <div className='form-page' ref={pageRef}>
-      <h1 className='form-page__h2'>Saturday Subscription</h1>
+      <h1 className='form-page__h2'>Subscription</h1>
       <div className='form-field'>
         {isSubscribed ? (
           <p>Thank you for supporting Saturday!</p>

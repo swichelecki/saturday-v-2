@@ -7,14 +7,15 @@
   }
   thead {
     background-color: $color-background;
+    border-top: 1px solid $color-border;
   }
   th {
     text-align: left;
     padding: 12px;
-    border: 1px solid $color-border;
+    border-top: 1px solid $color-border;
   }
   th[scope='row'] {
-    font-weight: 400;
+    background-color: $color-gradiant-dark;
   }
   th:nth-child(2) {
     color: $button-orange;
@@ -24,12 +25,33 @@
   }
   td {
     padding: 12px;
-    border: 1px solid $color-border;
+    border-top: 1px solid $color-border;
+    background-color: $color-gradiant-dark;
+  }
+  td:nth-child(2) {
+    color: $button-orange;
+    font-weight: 600;
   }
   td:nth-child(3) {
     color: $button-green;
+    font-weight: 600;
+  }
+  th,
+  td {
+    text-align: center;
   }
   &__modal-table-wrapper {
-    padding-bottom: 32px;
+    padding: 0 0 32px 0;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .subscription-features {
+    &__modal-table-wrapper {
+      th,
+      td {
+        font-size: 1rem; // 16px
+      }
+    }
   }
 }

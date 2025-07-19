@@ -9,13 +9,14 @@ import {
   UNSUBSCRIBED_NOTES_ITEM_LIMIT,
 } from '../../constants';
 
-const SubscriptionFeatures = () => {
+const SubscriptionFeatures = ({ showCaption = true }) => {
   return (
     <table className='subscription-features'>
-      <caption>
-        For just $1 a month, subscribe to Saturday's paid tier and get yourself
-        organized! Powered by Stripe.
-      </caption>
+      {showCaption && (
+        <caption>
+          Subscribe for just $1 a month. <strong>Powered by Stripe.</strong>
+        </caption>
+      )}
       <thead>
         <tr>
           <th scope='col'>Feature</th>
