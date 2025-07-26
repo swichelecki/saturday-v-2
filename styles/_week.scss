@@ -94,10 +94,17 @@
     }
   }
   &__day-of-week {
+    position: relative;
     padding: 4px 16px 2px 0;
     text-align: right;
     background-color: $color-background-secondary;
     box-shadow: 0 0 0 1px $color-background-secondary;
+  }
+  &__month-name {
+    position: absolute;
+    top: 36px;
+    right: 28px;
+    z-index: 10;
   }
   &__day-of-month {
     text-align: right;

@@ -41,7 +41,7 @@ export default function Home() {
         <div className='homepage__hero-left'>
           <h1>Plan Your Life, Simply</h1>
           <p>
-            Saturday is your super simple, AI-free daily planner. Manage all of
+            Saturday is your super simple, no-AI daily planner. Manage all of
             your everyday tasks and obligations with Saturday’s customizable
             interface designed to simplify your life.
           </p>

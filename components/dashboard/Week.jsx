@@ -335,7 +335,7 @@ const Week = ({ timezone, userId }) => {
         >
           <div className='week__calendar-month-year'>
             {moment(!nextOrPrevMonday ? today : nextOrPrevMonday).format(
-              'MMMM YYYY'
+              'MMM YYYY'
             )}
             <button
               onClick={handleGetPreviousWeek}
@@ -376,6 +376,11 @@ const Week = ({ timezone, userId }) => {
                     {...(Object.keys(item)[0] === today ? { id: 'today' } : {})}
                   >
                     <p className='week__day-of-week'>{daysOfWeek[index]}</p>
+                    {moment(Object.keys(item)[0]).format('D') === '1' && (
+                      <p className='week__month-name'>
+                        {moment(Object.keys(item)[0]).format('MMM')}
+                      </p>
+                    )}
                     <p
                       className={`week__day-of-month${
                         Object.keys(item)[0] === today
