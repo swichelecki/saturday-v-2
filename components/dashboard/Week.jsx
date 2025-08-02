@@ -223,6 +223,7 @@ const Week = ({ timezone, userId }) => {
   };
 
   const handleTouchEnd = () => {
+    if (previousTranslateX === -carouselPositionRef.current) return;
     isMovingXAxisRef.current = false;
     setPreviousTranslateX(carouselPositionRef.current);
   };
@@ -376,19 +377,20 @@ const Week = ({ timezone, userId }) => {
                     {...(Object.keys(item)[0] === today ? { id: 'today' } : {})}
                   >
                     <p className='week__day-of-week'>{daysOfWeek[index]}</p>
-                    {moment(Object.keys(item)[0]).format('D') === '1' && (
-                      <p className='week__month-name'>
-                        {moment(Object.keys(item)[0]).format('MMM')}
-                      </p>
-                    )}
                     <p
                       className={`week__day-of-month${
-                        Object.keys(item)[0] === today
+                        Object.keys(item)[0] === today &&
+                        moment(Object.keys(item)[0]).format('D') !== '1'
                           ? ' week__day-of-month--today'
+                          : Object.keys(item)[0] === today &&
+                            moment(Object.keys(item)[0]).format('D') === '1'
+                          ? ' week__day-of-month--today-first-of-month'
                           : ''
                       }`}
                     >
-                      {moment(Object.keys(item)[0]).format('D')}
+                      {moment(Object.keys(item)[0]).format('D') === '1'
+                        ? moment(Object.keys(item)[0]).format('MMM D')
+                        : moment(Object.keys(item)[0]).format('D')}
                     </p>
                     {Object.values(item)[0]?.map((item, index) => (
                       <WeekItem

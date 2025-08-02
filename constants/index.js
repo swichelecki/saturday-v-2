@@ -1,6 +1,7 @@
 export const MOBILE_BREAKPOINT = 600;
 export const OPEN_CLOSE_THRESHOLD = 60;
 export const TOUCH_DURATION_THRESHOLD = 400;
+export const SKIP_TO_NEXT_REMINDER_THRESHOLD = 50;
 export const MAX_MOVE_DISTANCE = -146;
 export const SLOW_TRANSITION_SPEED = 500;
 export const LIST_ITEM_LIMIT = 50;

@@ -9,7 +9,11 @@ import {
   handleHiddenHeight,
   handleModalResetPageScrolling,
 } from '../../utilities';
-import { MOBILE_BREAKPOINT, BY_WEEK_INTERVALS } from '../../constants';
+import {
+  MOBILE_BREAKPOINT,
+  BY_WEEK_INTERVALS,
+  SKIP_TO_NEXT_REMINDER_THRESHOLD,
+} from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
 const Reminders = ({ reminders }) => {
@@ -156,10 +160,25 @@ const Reminders = ({ reminders }) => {
     const nextReminderToShowClientRectRight =
       nextReminderToShow.getBoundingClientRect().right;
 
-    carouselPositionRef.current +=
-      nextReminderToShowClientRectRight -
-      remindersWrapperClientRectRight +
-      (remindersToShow.length > 1 ? 24 : 8);
+    const secondReminderToShow = remindersToShow[1];
+    const secondReminderToShowClientRectRight =
+      secondReminderToShow?.getBoundingClientRect().right;
+
+    if (
+      nextReminderToShowClientRectRight - remindersWrapperClientRectRight <
+        SKIP_TO_NEXT_REMINDER_THRESHOLD &&
+      secondReminderToShow
+    ) {
+      carouselPositionRef.current +=
+        secondReminderToShowClientRectRight -
+        remindersWrapperClientRectRight +
+        (remindersToShow.length > 1 ? 24 : 8);
+    } else {
+      carouselPositionRef.current +=
+        nextReminderToShowClientRectRight -
+        remindersWrapperClientRectRight +
+        (remindersToShow.length > 1 ? 24 : 8);
+    }
 
     remindersCarouselRef.current.style.overflow = 'visible';
     remindersCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
@@ -182,10 +201,25 @@ const Reminders = ({ reminders }) => {
     const nextReminderToShowClientRectLeft =
       nextReminderToShow.getBoundingClientRect().left;
 
-    carouselPositionRef.current +=
-      nextReminderToShowClientRectLeft -
-      remindersWrapperClientRectLeft -
-      (remindersToShow.length > 1 ? 24 : 8);
+    const secondReminderToShow = remindersToShow[remindersToShow.length - 2];
+    const secondReminderToShowClientRectLeft =
+      secondReminderToShow?.getBoundingClientRect().left;
+
+    if (
+      nextReminderToShowClientRectLeft - remindersWrapperClientRectLeft <
+        SKIP_TO_NEXT_REMINDER_THRESHOLD &&
+      secondReminderToShow
+    ) {
+      carouselPositionRef.current +=
+        secondReminderToShowClientRectLeft -
+        remindersWrapperClientRectLeft -
+        (remindersToShow.length > 1 ? 24 : 8);
+    } else {
+      carouselPositionRef.current +=
+        nextReminderToShowClientRectLeft -
+        remindersWrapperClientRectLeft -
+        (remindersToShow.length > 1 ? 24 : 8);
+    }
 
     remindersCarouselRef.current.style.overflow = 'visible';
     remindersCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;

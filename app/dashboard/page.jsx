@@ -22,12 +22,15 @@ async function getDashboardData() {
 
     const { userId, timezone, admin, isSubscribed } = await getUserFromCookie();
 
-    // get monday using current date
-    const getMonday = (date) => {
-      let today = Intl.DateTimeFormat('en-US', {
+    const getDateFormattedForUser = (date) => {
+      const today = Intl.DateTimeFormat('en-US', {
         timeZone: timezone,
       }).format(date);
-      today = new Date(today);
+      return new Date(today);
+    };
+
+    // get monday using current date
+    const getMonday = (today) => {
       const dayOfWeek =
         today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
       const mondayDayOfMonth = today.getDate() - dayOfWeek;
@@ -35,7 +38,7 @@ async function getDashboardData() {
       return new Date(today);
     };
 
-    const monday = getMonday(new Date());
+    const monday = getMonday(getDateFormattedForUser(new Date()));
     const mondayHolidayDate = new Date(monday);
     const mondayHoliday = handleDateToYearMonthDay(mondayHolidayDate);
     const sunday = mondayHolidayDate.setDate(mondayHolidayDate.getDate() + 6);
@@ -70,7 +73,7 @@ async function getDashboardData() {
     const holidays = JSON.parse(JSON.stringify(holidaysRaw));
     const columnsData = [];
     const calendarItems = [];
-    let calendarData = [];
+    const remindersData = [];
 
     // return type and column order
     const columnTypes = [
@@ -139,7 +142,7 @@ async function getDashboardData() {
     }
 
     // create data shape for week component
-    calendarData = daysOfWeek.reduce((calendarDays, day) => {
+    const calendarData = daysOfWeek.reduce((calendarDays, day) => {
       const yearMonthDay = handleDateToYearMonthDay(day);
       calendarDays.push({
         [yearMonthDay]: [
@@ -154,11 +157,29 @@ async function getDashboardData() {
       return calendarDays;
     }, []);
 
+    // if a reminder with an exact date is today display it first
+    if (reminders?.length > 0) {
+      const today = getDateFormattedForUser(new Date())
+        .toISOString()
+        .split('T')[0];
+      const todaysReminders = [];
+      const allOtherReminders = [];
+
+      for (const reminder of reminders) {
+        const reminderDate = reminder?.reminderDate.split('T')[0];
+        reminderDate === today
+          ? todaysReminders.push(reminder)
+          : allOtherReminders.push(reminder);
+      }
+
+      remindersData.push(...todaysReminders.concat(allOtherReminders));
+    }
+
     return {
       tasks: columnsData ?? [],
       calendar: calendarData ?? [],
       categories: categories ?? [],
-      reminders: reminders ?? [],
+      reminders: remindersData ?? [],
       user: { userId, timezone, admin, isSubscribed },
     };
   } catch (error) {
