@@ -193,6 +193,7 @@ export const reminderSchema = z
       .min(1, FORM_ERROR_MISSING_REMINDER_TITLE)
       .max(30, FORM_CHARACTER_LIMIT_30),
     reminderDate: z.string().date(FORM_ERROR_MISSING_REMINDER_DATE),
+    reminderSortDate: z.string().date(),
     recurrenceBuffer: z.number(),
     recurrenceInterval: z.number(),
     exactRecurringDate: z.boolean(),

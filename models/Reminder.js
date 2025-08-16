@@ -14,6 +14,10 @@ const ReminderSchema = new Schema({
     type: Date,
     required: true,
   },
+  reminderSortDate: {
+    type: Date,
+    required: true,
+  },
   recurrenceInterval: {
     type: Number,
     required: true,

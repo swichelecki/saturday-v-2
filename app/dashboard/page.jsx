@@ -56,7 +56,7 @@ async function getDashboardData() {
           userId,
           displayReminder: true,
         }).sort({
-          reminderDate: 1,
+          reminderSortDate: 1,
         }),
         Holiday.find({
           date: {
@@ -157,7 +157,7 @@ async function getDashboardData() {
       return calendarDays;
     }, []);
 
-    // if a reminder with an exact date is today display it first
+    // ensures that if a reminder with an exact date is today display it first
     if (reminders?.length > 0) {
       const today = getDateFormattedForUser(new Date())
         .toISOString()
@@ -167,7 +167,7 @@ async function getDashboardData() {
 
       for (const reminder of reminders) {
         const reminderDate = reminder?.reminderDate.split('T')[0];
-        reminderDate === today
+        reminderDate === today && reminder.exactRecurringDate
           ? todaysReminders.push(reminder)
           : allOtherReminders.push(reminder);
       }

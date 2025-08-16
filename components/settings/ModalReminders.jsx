@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   FormTextField,
   FormCheckboxField,
@@ -39,6 +39,7 @@ const ModalReminder = ({
     title: itemToUpdate?.title ?? '',
     reminderDate: itemToUpdate?.reminderDate?.split('T')[0] ?? '',
     recurrenceInterval: itemToUpdate?.recurrenceInterval ?? 0,
+    reminderSortDate: itemToUpdate?.reminderSortDate ?? '',
     recurrenceBuffer: itemToUpdate?.recurrenceBuffer ?? 0,
     exactRecurringDate: itemToUpdate?.exactRecurringDate ?? false,
     displayReminder: itemToUpdate?.displayReminder ?? false,
@@ -56,6 +57,26 @@ const ModalReminder = ({
     useState(false);
 
   useScrollToError(pageRef, scrollToErrorMessage, setScrollToErrorMessage);
+
+  // set sort date to ensure that all reminders are sorted by the day they appear on the dashboard
+  useEffect(() => {
+    if (!form.reminderDate || form.reminderSortDateForState === 0) return;
+
+    const reminderDateObj = new Date(form.reminderDate);
+    const reminderDateObjMinusBuffer = new Date(
+      reminderDateObj.setDate(reminderDateObj.getDate() - form.recurrenceBuffer)
+    );
+    const reminderSortDateForState = reminderDateObjMinusBuffer
+      .toISOString()
+      .split('T')[0];
+
+    setForm((curr) => {
+      return {
+        ...curr,
+        reminderSortDate: reminderSortDateForState,
+      };
+    });
+  }, [form.reminderDate, form.recurrenceBuffer]);
 
   // state handlers
   const handleForm = (e) => {
@@ -99,6 +120,7 @@ const ModalReminder = ({
       const {
         title,
         reminderDate,
+        reminderSortDate,
         recurrenceInterval,
         recurrenceBuffer,
         confirmDeletion,
@@ -107,6 +129,7 @@ const ModalReminder = ({
       if (
         !title &&
         !reminderDate &&
+        !reminderSortDate &&
         !recurrenceInterval &&
         !recurrenceBuffer &&
         !confirmDeletion
@@ -123,6 +146,7 @@ const ModalReminder = ({
       setErrorMessage({
         title: title?.[0],
         reminderDate: reminderDate?.[0],
+        reminderSortDate: reminderSortDate?.[0],
         recurrenceInterval: recurrenceInterval?.[0],
         recurrenceBuffer: recurrenceBuffer?.[0],
       });

@@ -124,6 +124,7 @@ export async function GET() {
             userId,
             reminder,
             reminderDate,
+            reminderSortDate,
             recurrenceInterval,
             recurrenceBuffer,
             exactRecurringDate,
@@ -135,6 +136,7 @@ export async function GET() {
               userId,
               reminder,
               reminderDate,
+              reminderSortDate,
               recurrenceInterval,
               recurrenceBuffer,
               exactRecurringDate,
@@ -152,6 +154,15 @@ export async function GET() {
           const date = new Date(item?.reminderDate);
           date.setMonth(date.getMonth() + interval);
           const nextDate = date.toISOString();
+          const nextDateObj = new Date(date);
+
+          // get new sort date - date minus recurrencBuffer
+          const reminderDateObjMinusBuffer = new Date(
+            nextDateObj.setDate(nextDateObj.getDate() - item.recurrenceBuffer)
+          );
+          const newReminderSortDate = reminderDateObjMinusBuffer
+            .toISOString()
+            .split('T')[0];
 
           const {
             _id,
@@ -168,6 +179,7 @@ export async function GET() {
               userId,
               reminder,
               reminderDate: nextDate,
+              reminderSortDate: newReminderSortDate,
               recurrenceInterval,
               recurrenceBuffer,
               exactRecurringDate,

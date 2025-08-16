@@ -21,7 +21,7 @@ async function getSettingsData() {
       Category.find({ userId }).sort({
         priority: 1,
       }),
-      Reminder.find({ userId }).sort({ reminderDate: 1 }),
+      Reminder.find({ userId }).sort({ reminderSortDate: 1 }),
     ]);
 
     return {

@@ -80,6 +80,7 @@ const Reminders = ({ reminders }) => {
         userId,
         displayReminder: false,
         reminderDate: nextDate,
+        reminderSortDate: nextDate,
         itemLimit: reminders?.length,
       };
 

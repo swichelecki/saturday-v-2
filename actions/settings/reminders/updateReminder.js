@@ -1,7 +1,6 @@
 'use server';
 
 import Reminder from '../../../models/Reminder';
-import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../../utilities';
 import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { reminderSchema } from '../../../schemas/schemas';
@@ -47,6 +46,7 @@ export default async function updateReminder(item) {
       userId,
       title,
       reminderDate,
+      reminderSortDate,
       recurrenceInterval,
       recurrenceBuffer,
       exactRecurringDate,
@@ -60,6 +60,7 @@ export default async function updateReminder(item) {
         userId,
         title,
         reminderDate,
+        reminderSortDate,
         recurrenceInterval,
         recurrenceBuffer,
         exactRecurringDate,
@@ -69,7 +70,6 @@ export default async function updateReminder(item) {
     );
 
     const result = await Reminder.find({ _id: _id });
-    //revalidatePath('/settings');
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
