@@ -124,7 +124,7 @@ const Reminders = ({ reminders }) => {
             handleConfirm={handleResetReminder}
             confirmId={id}
             confirmType='Done'
-            className='modal__reminder-button'
+            className='cta-button--yellow'
           />
         </Modal>
       );

@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { loginUser } from '../../actions';
 import { useAppContext } from '../../context';
-import { FormTextField, Toast } from '../../components';
+import { FormTextField, Toast, CTA } from '../../components';
 import { loginSchema } from '../../schemas/schemas';
 import { FORM_ERROR_INCORRECT_EMAIL_PASSWORD } from '../../constants';
 
@@ -82,12 +81,27 @@ const Login = () => {
         errorMessage={errorMessage.password}
       />
       <div className='entry-form__form-row'>
-        <button type='submit' className='entry-form__button'>
-          {isAwaitingLogInResponse && <div className='loader'></div>}
-          Log In
-        </button>
-        <Link href='/signup'>Sign Up</Link>
-        <Link href='/reset'>Forgot Password</Link>
+        <CTA
+          text='Log In'
+          className='cta-button cta-button--large cta-button--full cta-button--purple'
+          ariaLabel='Log in to Saturday'
+          btnType='submit'
+          showSpinner={isAwaitingLogInResponse}
+        />
+        <CTA
+          text='Sign Up'
+          type='anchor'
+          href='/signup'
+          className='cta-text-link'
+          ariaLabel='Sign up for Saturday'
+        />
+        <CTA
+          text='Forgot Password'
+          type='anchor'
+          href='/reset'
+          className='cta-text-link'
+          ariaLabel='Reset password'
+        />
       </div>
     </form>
   );

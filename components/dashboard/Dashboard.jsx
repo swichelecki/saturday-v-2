@@ -12,6 +12,7 @@ import {
   ModalSubscribe,
   FormErrorMessage,
   Toast,
+  CTA,
 } from '../../components';
 import {
   useInnerWidth,
@@ -178,6 +179,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
             handleConfirm={handleDeleteTask}
             confirmId={id}
             confirmType='Delete'
+            className='cta-button--red'
           />
         </Modal>
       );
@@ -236,13 +238,12 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
         />
       )}
       <div className='dashboard-button-wrapper'>
-        <button
-          onClick={handleOpenCreateItemModal}
-          type='button'
-          className='entry-form__button'
-        >
-          Create Item
-        </button>
+        <CTA
+          text='Create Item'
+          className='cta-button cta-button--large cta-button--full cta-button--purple'
+          ariaLabel='Create dashboard item'
+          handleClick={handleOpenCreateItemModal}
+        />
       </div>
       <Week timezone={timezone} userId={userId} />
       {reminders && reminders?.length > 0 && (

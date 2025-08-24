@@ -1,11 +1,6 @@
 .header {
   color: $color-font;
   border-bottom: 1px solid $color-border;
-  a {
-    color: $color-font;
-    cursor: pointer;
-    display: inline-block;
-  }
   &__inner-wrapper {
     display: flex;
     justify-content: space-between;
@@ -15,6 +10,10 @@
     max-width: 1296px;
     width: 100%;
     padding: 14px 48px;
+    & > a {
+      color: $color-font;
+      display: inline-block;
+    }
   }
   &__content-right {
     display: flex;
@@ -23,7 +22,6 @@
     min-height: 58px;
     & > a {
       padding: 8px 12px;
-      color: $button-purple;
       opacity: 0.8;
       transition: all 0.3s;
       &:hover {

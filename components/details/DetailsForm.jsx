@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppContext } from '../../context';
 import { createItem, updateItem } from '../../actions';
@@ -13,7 +12,8 @@ import {
   FormCheckboxField,
   FormErrorMessage,
   Toast,
-} from '..';
+  CTA,
+} from '../../components';
 import { itemSchema } from '../../schemas/schemas';
 
 const DetailsForm = ({ task, user }) => {
@@ -210,13 +210,20 @@ const DetailsForm = ({ task, user }) => {
           </>
         )}
         <div className='form-page__buttons-wrapper'>
-          <Link href='/'>
-            <span className='form-page__cancel-button'>Cancel</span>
-          </Link>
-          <button type='submit' className='form-page__save-button'>
-            {isAwaitingSaveResponse && <div className='loader'></div>}
-            Save
-          </button>
+          <CTA
+            text='Cancel'
+            type='anchor'
+            href='/'
+            className='cta-button cta-button--small cta-button--orange'
+            ariaLabel='Navigate back to dashboard'
+          />
+          <CTA
+            text='Save'
+            btnType='submit'
+            className='cta-button cta-button--small cta-button--green'
+            ariaLabel='Add item to dashboard'
+            showSpinner={isAwaitingSaveResponse}
+          />
         </div>
       </form>
     </div>

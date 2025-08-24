@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import Link from 'next/link';
-import { FormTextField, FormWYSIWYGField, Toast } from '../';
+import { FormTextField, FormWYSIWYGField, Toast, CTA } from '../';
 import { useAppContext } from '../../context';
 import { createContactMessage } from '../../actions';
 import { useScrollToError } from '../../hooks';
@@ -113,13 +112,20 @@ const ContactForm = ({ user }) => {
         errorMessage={errorMessage.message}
       />
       <div className='form-page__buttons-wrapper'>
-        <Link href='/'>
-          <span className='form-page__cancel-button'>Cancel</span>
-        </Link>
-        <button type='submit' className='form-page__save-button'>
-          {isAwaitingContactFormResponse && <div className='loader'></div>}
-          Submit
-        </button>
+        <CTA
+          text='Cancel'
+          type='anchor'
+          href='/'
+          className='cta-button cta-button--small cta-button--orange'
+          ariaLabel='Navigate back to dashboard'
+        />
+        <CTA
+          text='Submit'
+          btnType='submit'
+          className='cta-button cta-button--small cta-button--green'
+          ariaLabel='Submit feedback to Saturday'
+          showSpinner={isAwaitingContactFormResponse}
+        />
       </div>
     </form>
   );

@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { createUserAccount } from '../../actions';
 import { useAppContext } from '../../context';
-import { FormTextField, Toast } from '../../components';
+import { FormTextField, Toast, CTA } from '../../components';
 import { createUserSchema } from '../../schemas/schemas';
 import { USER_ALREADY_EXISTS } from '../../constants';
 
@@ -100,12 +99,27 @@ const Signup = () => {
         errorMessage={errorMessage.confirmPassword}
       />
       <div className='entry-form__form-row'>
-        <button type='submit' className='entry-form__button'>
-          {isAwaitingLogInResponse && <div className='loader'></div>}
-          Create Account
-        </button>
-        <Link href='/login'>Log In</Link>
-        <Link href='/reset'>Forgot Password</Link>
+        <CTA
+          text='Create Account'
+          className='cta-button cta-button--large cta-button--full cta-button--purple'
+          ariaLabel='Create your Saturday account'
+          btnType='submit'
+          showSpinner={isAwaitingLogInResponse}
+        />
+        <CTA
+          text='Log In'
+          type='anchor'
+          href='/login'
+          className='cta-text-link'
+          ariaLabel='Log in to Saturday'
+        />
+        <CTA
+          text='Forgot Password'
+          type='anchor'
+          href='/reset'
+          className='cta-text-link'
+          ariaLabel='Reset password'
+        />
       </div>
     </form>
   );

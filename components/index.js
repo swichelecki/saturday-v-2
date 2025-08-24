@@ -47,3 +47,4 @@ export { default as SearchField } from './shared/SearchField';
 export { default as SubscriptionSuccess } from './payments/SubscriptionSuccess';
 export { default as SubscriptionCancel } from './payments/SubscriptionCancel';
 export { default as SubscriptionFeatures } from './shared/SubscriptionFeatures';
+export { default as CTA } from './shared/CTA';

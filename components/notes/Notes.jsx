@@ -18,6 +18,7 @@ import {
   FormErrorMessage,
   Toast,
   SearchField,
+  CTA,
 } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
@@ -144,6 +145,7 @@ const Notes = ({ notes, user, notesCount }) => {
             handleConfirm={handleDeleteNote}
             confirmId={id}
             confirmType='Delete'
+            className='cta-button--red'
           />
         </Modal>
       );
@@ -218,13 +220,12 @@ const Notes = ({ notes, user, notesCount }) => {
       </div>
       <div className='form-page__list-items-controls-wrapper'>
         {isNotesPrompt && prompt}
-        <button
-          onClick={handleOpenNoteModal}
-          type='button'
-          className='form-page__save-button'
-        >
-          Create
-        </button>
+        <CTA
+          text='Create'
+          className='cta-button cta-button--small cta-button--green'
+          ariaLabel='Create dashboard item category'
+          handleClick={handleOpenNoteModal}
+        />
         <SearchField
           searchItems={noteItemsGrouped}
           setSearchItems={setFilteredItems}

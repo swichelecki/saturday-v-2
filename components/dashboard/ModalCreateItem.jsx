@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { useAppContext } from '../../context';
 import { createItem } from '../../actions';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
-import { FormCheckboxField, FormTextField, Toast } from '../../components';
+import { FormCheckboxField, FormTextField, Toast, CTA } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 import { itemSchema } from '../../schemas/schemas';
 import { MOBILE_BREAKPOINT } from '../../constants';
@@ -240,15 +239,16 @@ const ModalCreateItem = ({
           />
         )}
         <div className='modal__modal-button-wrapper'>
-          <button
-            onClick={handleCloseModal}
-            type='button'
-            className='modal__cancel-button'
-          >
-            Cancel
-          </button>
+          <CTA
+            text='Cancel'
+            className='cta-button cta-button--medium cta-button--full cta-button--orange'
+            ariaLabel='Close modal'
+            handleClick={handleCloseModal}
+          />
           {checkbox ? (
-            <Link
+            <CTA
+              text='Create'
+              type='anchor'
               href={{
                 pathname: '/details',
                 query: {
@@ -259,16 +259,18 @@ const ModalCreateItem = ({
                   categoryId: form?.categoryId,
                 },
               }}
-              onClick={handleCloseModal}
-              className='modal__update-button'
-            >
-              Create
-            </Link>
+              className='cta-button cta-button--medium cta-button--full cta-button--blue'
+              handleClick={handleCloseModal}
+              ariaLabel='Create detailed item for dashboard'
+            />
           ) : (
-            <button type='submit' className='modal__save-button'>
-              {isAwaitingAddResponse && <div className='loader'></div>}
-              Add
-            </button>
+            <CTA
+              text='Add'
+              btnType='submit'
+              className='cta-button cta-button--medium cta-button--full cta-button--green'
+              ariaLabel='Add item to dashboard'
+              showSpinner={isAwaitingAddResponse}
+            />
           )}
         </div>
       </form>

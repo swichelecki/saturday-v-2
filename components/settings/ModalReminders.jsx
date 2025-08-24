@@ -6,6 +6,7 @@ import {
   FormCheckboxField,
   FormSelectField,
   Toast,
+  CTA,
 } from '../../components';
 import { createReminder, updateReminder } from '../../actions';
 import { useAppContext } from '../../context';
@@ -282,24 +283,25 @@ const ModalReminder = ({
         disabled={!form?.exactRecurringDate}
       />
       <div className='modal__modal-button-wrapper'>
-        <button
-          onClick={handleCloseModal}
-          type='button'
-          className='modal__cancel-button'
-        >
-          Cancel
-        </button>
-        {!isUpdate ? (
-          <button type='submit' className='modal__save-button'>
-            {isAwaitingSubmitResponse && <div className='loader'></div>}
-            Save
-          </button>
-        ) : (
-          <button type='submit' className='modal__update-button'>
-            {isAwaitingSubmitResponse && <div className='loader'></div>}
-            Update
-          </button>
-        )}
+        <CTA
+          text='Cancel'
+          className='cta-button cta-button--medium cta-button--full cta-button--orange'
+          ariaLabel='Close modal'
+          handleClick={handleCloseModal}
+        />
+        <CTA
+          text={!isUpdate ? 'Save' : 'Update'}
+          btnType='submit'
+          className={`cta-button cta-button--medium cta-button--full cta-button--${
+            !isUpdate ? 'green' : 'blue'
+          }`}
+          ariaLabel={
+            !isUpdate
+              ? 'Save recurring reminder for dashboard'
+              : 'Update recurring reminder for dashboard'
+          }
+          showSpinner={isAwaitingSubmitResponse}
+        />
       </div>
     </form>
   );

@@ -29,7 +29,7 @@ const SubscriptionSuccess = ({ user }) => {
   };
 
   return (
-    <div className='form-page form-page__gap-48'>
+    <div className='form-page form-page--gap-48'>
       <h1>Thank You for Supporting Saturday!</h1>
       <SubscriptionFeatures showCaption={false} />
       <p>

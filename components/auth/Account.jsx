@@ -15,6 +15,7 @@ import {
   FormSelectField,
   SubscriptionFeatures,
   Toast,
+  CTA,
 } from '../../components';
 import {
   changePasswordSchema,
@@ -239,130 +240,140 @@ const Account = ({ user }) => {
   };
 
   return (
-    <div className='form-page' ref={pageRef}>
-      <h1 className='form-page__h2'>Subscription</h1>
-      <div className='form-field'>
-        {isSubscribed ? (
-          <p>Thank you for supporting Saturday!</p>
-        ) : (
-          <SubscriptionFeatures />
-        )}
-      </div>
-      <div className='form-page__buttons-wrapper'>
-        <button
-          type='button'
-          className='form-page__save-button form-page__update-button'
-          onClick={handleSubscribe}
-        >
-          {isAwaitingStripeResponse && <div className='loader'></div>}
-          {isSubscribed ? 'Manage Subscription' : 'Subscribe Now'}
-        </button>
-      </div>
-      <form onSubmit={changeTimezone}>
-        <h1 className='form-page__h2'>Change Timezone</h1>
-        <FormSelectField
-          label='Timezone'
-          id='timezone'
-          name='timezone'
-          value={form?.timezone}
-          onChangeHandler={handleFormSelectField}
-          options={FORM_TIMEZONES}
-          errorMessage={errorMessage.timezone}
-        />
-        <div className='form-page__buttons-wrapper'>
-          <button
-            type='submit'
-            className='form-page__save-button form-page__update-button'
-          >
-            {isAwaitingChangeTimezoneResponse && <div className='loader'></div>}
-            Change Timezone
-          </button>
+    <div className='form-page form-page--gap-48' ref={pageRef}>
+      <section>
+        <h1 className='form-page__h2'>Subscription</h1>
+        <div className='form-field'>
+          {isSubscribed ? (
+            <p>Thank you for supporting Saturday!</p>
+          ) : (
+            <SubscriptionFeatures />
+          )}
         </div>
-      </form>
-      <form onSubmit={changePassword}>
-        <h1 className='form-page__h2'>Change Password</h1>
-        <FormTextField
-          label='Email'
-          type='email novalidate'
-          id='email'
-          name='email'
-          value={form?.email}
-          onChangeHandler={handleForm}
-          errorMessage={errorMessage.email}
-        />
-        <FormTextField
-          label='Current Password'
-          type='password'
-          id='password'
-          name='password'
-          value={form?.password}
-          onChangeHandler={handleForm}
-          errorMessage={errorMessage.password}
-        />
-        <FormTextField
-          label='New Password'
-          type='password'
-          id='newPassword'
-          name='newPassword'
-          value={form?.newPassword}
-          onChangeHandler={handleForm}
-          errorMessage={errorMessage.newPassword}
-        />
-        <FormTextField
-          label='Confirm New Password'
-          type='password'
-          id='confirmNewPassword'
-          name='confirmNewPassword'
-          value={form?.confirmNewPassword}
-          onChangeHandler={handleForm}
-          errorMessage={errorMessage.confirmNewPassword}
-        />
         <div className='form-page__buttons-wrapper'>
-          <button
-            type='submit'
-            className='form-page__save-button form-page__update-button'
-          >
-            {isAwaitingChangePasswordResponse && <div className='loader'></div>}
-            Change Password
-          </button>
+          <CTA
+            text={isSubscribed ? 'Manage Subscription' : 'Subscribe Now'}
+            className='cta-button cta-button--small cta-button--green'
+            ariaLabel='Manage your subscription'
+            showSpinner={isAwaitingStripeResponse}
+            handleClick={handleSubscribe}
+          />
         </div>
-      </form>
-      <form onSubmit={deleteAccount}>
-        <h1 className='form-page__h2'>Delete Account</h1>
-        <FormTextField
-          label='Email'
-          type='email novalidate'
-          id='deleteEmail'
-          name='deleteEmail'
-          value={form?.deleteEmail}
-          onChangeHandler={handleForm}
-          errorMessage={errorMessage.deleteEmail}
-        />
-        <FormTextField
-          label='Password'
-          type='password'
-          id='deletePassword'
-          name='deletePassword'
-          value={form?.deletePassword}
-          onChangeHandler={handleForm}
-          errorMessage={errorMessage.deletePassword}
-        />
-        <FormTextField
-          label='Type "Delete My Account" into the Field Below'
-          type='text'
-          id='deleteConfirmation'
-          name='deleteConfirmation'
-          value={form?.deleteConfirmation}
-          onChangeHandler={handleForm}
-          errorMessage={errorMessage.deleteConfirmation}
-        />
-        <div className='form-page__buttons-wrapper'>
-          <button type='submit' className='form-page__delete-button'>
-            {isAwaitingDeleteAccoungResponse && <div className='loader'></div>}
-            Delete Account
-          </button>
-        </div>
-      </form>
+      </section>
+      <section>
+        <form onSubmit={changeTimezone}>
+          <h1 className='form-page__h2'>Change Timezone</h1>
+          <FormSelectField
+            label='Timezone'
+            id='timezone'
+            name='timezone'
+            value={form?.timezone}
+            onChangeHandler={handleFormSelectField}
+            options={FORM_TIMEZONES}
+            errorMessage={errorMessage.timezone}
+          />
+          <div className='form-page__buttons-wrapper'>
+            <CTA
+              text='Change Timezone'
+              btnType='submit'
+              className='cta-button cta-button--small cta-button--green'
+              ariaLabel='Change your timezone'
+              showSpinner={isAwaitingChangeTimezoneResponse}
+            />
+          </div>
+        </form>
+      </section>
+      <section>
+        <form onSubmit={changePassword}>
+          <h1 className='form-page__h2'>Change Password</h1>
+          <FormTextField
+            label='Email'
+            type='email novalidate'
+            id='email'
+            name='email'
+            value={form?.email}
+            onChangeHandler={handleForm}
+            errorMessage={errorMessage.email}
+          />
+          <FormTextField
+            label='Current Password'
+            type='password'
+            id='password'
+            name='password'
+            value={form?.password}
+            onChangeHandler={handleForm}
+            errorMessage={errorMessage.password}
+          />
+          <FormTextField
+            label='New Password'
+            type='password'
+            id='newPassword'
+            name='newPassword'
+            value={form?.newPassword}
+            onChangeHandler={handleForm}
+            errorMessage={errorMessage.newPassword}
+          />
+          <FormTextField
+            label='Confirm New Password'
+            type='password'
+            id='confirmNewPassword'
+            name='confirmNewPassword'
+            value={form?.confirmNewPassword}
+            onChangeHandler={handleForm}
+            errorMessage={errorMessage.confirmNewPassword}
+          />
+          <div className='form-page__buttons-wrapper'>
+            <CTA
+              text='Change Password'
+              btnType='submit'
+              className='cta-button cta-button--small cta-button--green'
+              ariaLabel='Change your password'
+              showSpinner={isAwaitingChangePasswordResponse}
+            />
+          </div>
+        </form>
+      </section>
+      <section>
+        <form onSubmit={deleteAccount}>
+          <h1 className='form-page__h2'>Delete Account</h1>
+          <FormTextField
+            label='Email'
+            type='email novalidate'
+            id='deleteEmail'
+            name='deleteEmail'
+            value={form?.deleteEmail}
+            onChangeHandler={handleForm}
+            errorMessage={errorMessage.deleteEmail}
+          />
+          <FormTextField
+            label='Password'
+            type='password'
+            id='deletePassword'
+            name='deletePassword'
+            value={form?.deletePassword}
+            onChangeHandler={handleForm}
+            errorMessage={errorMessage.deletePassword}
+          />
+          <FormTextField
+            label='Type "Delete My Account" into the Field Below'
+            type='text'
+            id='deleteConfirmation'
+            name='deleteConfirmation'
+            value={form?.deleteConfirmation}
+            onChangeHandler={handleForm}
+            errorMessage={errorMessage.deleteConfirmation}
+          />
+          <div className='form-page__buttons-wrapper'>
+            <CTA
+              text='Delete Account'
+              btnType='submit'
+              className='cta-button cta-button--small cta-button--red'
+              ariaLabel='Delete your account'
+              showSpinner={isAwaitingDeleteAccoungResponse}
+            />
+          </div>
+        </form>
+      </section>
     </div>
   );
 };

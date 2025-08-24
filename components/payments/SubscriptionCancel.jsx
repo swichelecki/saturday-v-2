@@ -29,7 +29,7 @@ const SubscriptionCancel = ({ user }) => {
   };
 
   return (
-    <div className='form-page form-page__gap-48'>
+    <div className='form-page form-page--gap-48'>
       <h1>Sorry to See You Go!</h1>
       <p>
         Please take a minute to tell us why you decided to cancel by sending us

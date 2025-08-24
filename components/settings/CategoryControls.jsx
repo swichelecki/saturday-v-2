@@ -11,6 +11,7 @@ import {
   ModalSubscribe,
   FormErrorMessage,
   Toast,
+  CTA,
 } from '../../components';
 import { deleteCategory, updateCategory, getCategory } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
@@ -117,6 +118,7 @@ const CategoryControls = ({ categories, user }) => {
             handleConfirm={handleDeleteCategory}
             confirmId={id}
             confirmType='Delete'
+            className='cta-button--red'
           />
         </Modal>
       );
@@ -197,14 +199,12 @@ const CategoryControls = ({ categories, user }) => {
         {isCategoriesPrompt && prompt}
         {isDashboardPrompt && prompt}
         <div className='settings-controls__button-wrapper'>
-          <button
-            onClick={handleOpenCategoryModal}
-            type='button'
-            className='form-page__save-button'
-            id='createCategoryButton'
-          >
-            Create
-          </button>
+          <CTA
+            text='Create'
+            className='cta-button cta-button--small cta-button--green'
+            ariaLabel='Create dashboard item category'
+            handleClick={handleOpenCategoryModal}
+          />
           {atCategoryLimit && (
             <FormErrorMessage
               errorMessage={`Limit ${categoryLimit} Categories!`}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAppContext } from '../../context';
+import { CTA } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 
 const ModalConfirm = ({ handleConfirm, confirmId, confirmType, className }) => {
@@ -19,19 +20,22 @@ const ModalConfirm = ({ handleConfirm, confirmId, confirmType, className }) => {
     <>
       <h2>Confirm {confirmType}</h2>
       <div className='modal__modal-button-wrapper'>
-        <button onClick={handleCloseModal} className='modal__cancel-button'>
-          Cancel
-        </button>
-        <button
-          onClick={() => {
+        <CTA
+          text='Cancel'
+          className='cta-button cta-button--medium cta-button--full cta-button--orange'
+          ariaLabel='Close modal'
+          handleClick={handleCloseModal}
+        />
+        <CTA
+          text={confirmType}
+          className={`cta-button cta-button--medium cta-button--full ${className}`}
+          ariaLabel='Create dashboard item'
+          showSpinner={isAwaitingConfirmResponse}
+          handleClick={() => {
             setIsAwaitingConfirmResponse(true);
             handleConfirm(confirmId);
           }}
-          className={className ? className : 'modal__delete-button'}
-        >
-          {isAwaitingConfirmResponse && <div className='loader'></div>}
-          {confirmType}
-        </button>
+        />
       </div>
     </>
   );

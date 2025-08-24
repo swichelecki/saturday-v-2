@@ -9,7 +9,7 @@ import {
   useScrollToError,
   useCloseListItemsYAxis,
 } from '../../hooks';
-import { FormTextField, FormWYSIWYGField, Toast } from '../../components';
+import { FormTextField, FormWYSIWYGField, Toast, CTA } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 import { noteSchema } from '../../schemas/schemas';
 import { MOBILE_BREAKPOINT } from '../../constants';
@@ -210,20 +210,25 @@ const ModalNotes = ({
         hasToobar={false}
       />
       <div className='modal__modal-button-wrapper'>
-        <button
-          onClick={handleCloseModal}
-          type='button'
-          className='modal__cancel-button'
-        >
-          Cancel
-        </button>
-        <button
-          type='submit'
-          className={`modal__${isUpdate ? 'update' : 'save'}-button`}
-        >
-          {isAwaitingSubmitResponse && <div className='loader'></div>}
-          {isUpdate ? 'Update' : 'Save'}
-        </button>
+        <CTA
+          text='Cancel'
+          className='cta-button cta-button--medium cta-button--full cta-button--orange'
+          ariaLabel='Close modal'
+          handleClick={handleCloseModal}
+        />
+        <CTA
+          text={!isUpdate ? 'Save' : 'Update'}
+          btnType='submit'
+          className={`cta-button cta-button--medium cta-button--full cta-button--${
+            !isUpdate ? 'green' : 'blue'
+          }`}
+          ariaLabel={
+            !isUpdate
+              ? 'Save recurring reminder for dashboard'
+              : 'Update recurring reminder for dashboard'
+          }
+          showSpinner={isAwaitingSubmitResponse}
+        />
       </div>
     </form>
   );

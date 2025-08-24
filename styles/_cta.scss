@@ -1,0 +1,95 @@
+.cta-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+  &--small {
+    min-width: 74px;
+    padding: 8px 18px;
+    border-radius: 20px;
+  }
+  &--medium {
+    padding: 12px 16px;
+    font-size: 1.125rem; // 18px
+    border-radius: 26px;
+  }
+  &--large {
+    padding: 14px;
+    font-size: 1.125rem; // 18px
+    border-radius: 26px;
+  }
+  &--full {
+    width: 100%;
+  }
+  &--purple {
+    background-color: $button-purple-dark;
+    color: $button-purple;
+    svg {
+      fill: $button-purple;
+    }
+    .loader {
+      border: 2px solid $button-purple;
+      border-top: 2px solid transparent;
+    }
+  }
+  &--green {
+    background-color: $button-green-dark;
+    color: $button-green;
+    svg {
+      fill: $button-green;
+    }
+    .loader {
+      border: 2px solid $button-green;
+      border-top: 2px solid transparent;
+    }
+  }
+  &--red {
+    background-color: $button-red-dark;
+    color: $button-red;
+    svg {
+      fill: $button-red;
+    }
+    .loader {
+      border: 2px solid $button-red;
+      border-top: 2px solid transparent;
+    }
+  }
+  &--orange {
+    background-color: $button-orange-dark;
+    color: $button-orange;
+    svg {
+      fill: $button-orange;
+    }
+    .loader {
+      border: 2px solid $button-orange;
+      border-top: 2px solid transparent;
+    }
+  }
+  &--blue {
+    background-color: $button-blue-dark;
+    color: $button-blue;
+    svg {
+      fill: $button-blue;
+    }
+    .loader {
+      border: 2px solid $button-blue;
+      border-top: 2px solid transparent;
+    }
+  }
+  &--yellow {
+    background-color: $button-yellow-dark;
+    color: $button-yellow;
+    svg {
+      fill: $button-yellow;
+    }
+    .loader {
+      border: 2px solid $button-yellow;
+      border-top: 2px solid transparent;
+    }
+  }
+}
+
+.cta-text-link {
+  color: $button-purple;
+}

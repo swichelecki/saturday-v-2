@@ -1,8 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
-import { Modal } from '../components';
+import { Modal, CTA } from '../components';
 import { useAppContext } from '../context';
 import { useInnerWidth } from '../hooks';
 import { ImCheckmark } from 'react-icons/im';
@@ -45,9 +44,13 @@ export default function Home() {
             your everyday tasks and obligations with Saturday’s customizable
             interface designed to simplify your life.
           </p>
-          <Link href='/signup' className='homepage__signup'>
-            Get Started
-          </Link>
+          <CTA
+            text='Get Started'
+            type='anchor'
+            href='/signup'
+            className='cta-button cta-button--medium cta-button--purple'
+            ariaLabel='Sign up for Saturday'
+          />
         </div>
         <div className='homepage__hero-right'>
           <button onClick={handleShowModal} type='button'>
@@ -98,9 +101,13 @@ export default function Home() {
       </div>
       <div className='homepage__direct-cta'>
         <h2 className='h1'>Ready for Super Simple Task Management?</h2>
-        <Link href='/signup' className='homepage__signup'>
-          Get Started
-        </Link>
+        <CTA
+          text='Get Started'
+          type='anchor'
+          href='/signup'
+          className='cta-button cta-button--medium cta-button--purple'
+          ariaLabel='Sign up for Saturday'
+        />
       </div>
     </div>
   );

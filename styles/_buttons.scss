@@ -1,74 +1,17 @@
-button {
-  border: 0;
-  font: inherit;
-  cursor: pointer;
-  padding: unset;
-}
-
-a.homepage__signup,
 span.list-item__details-edit-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
 button.list-item__details-button,
 button.list-item__pin-button,
-a.list-item__edit-button,
-button.form-page__save-button,
-span.form-page__cancel-button,
-button.form-page__delete-button,
-button.modal__cancel-button,
-button.modal__delete-button,
-button.modal__update-button,
-a.modal__update-button,
-button.modal__save-button,
-a.modal__save-button,
-button.modal__reminder-button,
-button.reminders__reminders-button {
+button.reminders__reminders-button,
+a.list-item__edit-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 73px;
-  border-radius: 20px;
-  padding: 8px 18px;
-  border: 0;
-  font: inherit;
-  cursor: pointer;
-  color: $color-background;
-  background-color: transparent;
   text-align: center;
 }
 
-a.homepage__signup {
-  padding: 12px 16px;
-  font-size: 1.125rem; // 18px
-  border-radius: 26px;
-  background-color: $button-purple-dark;
-  color: $button-purple;
-}
-
-button.modal__update-button,
-a.modal__update-button {
-  background-color: $button-blue-dark;
-  color: $button-blue;
-  .loader {
-    border: 2px solid $button-blue;
-    border-top: 2px solid transparent;
-  }
-}
-
-button.list-item__details-button {
-  background-color: $button-purple-dark;
-  color: $button-purple;
-  svg {
-    fill: $button-purple;
-  }
-  .loader {
-    border: 2px solid $button-purple;
-    border-top: 2px solid transparent;
-  }
-}
-
 button.reminders__reminders-button {
-  min-width: unset;
   padding: 0;
   width: 34px;
   height: 28px;
@@ -82,7 +25,6 @@ button.reminders__reminders-button {
 }
 
 button.list-item__pin-button {
-  min-width: unset;
   padding: 0;
   width: 34px;
   height: 28px;
@@ -142,9 +84,19 @@ button.list-item__pin-button {
   }
 }
 
-button.list-item__delete-button,
-button.modal__delete-button,
-button.form-page__delete-button {
+button.list-item__details-button {
+  background-color: $button-purple-dark;
+  color: $button-purple;
+  svg {
+    fill: $button-purple;
+  }
+  .loader {
+    border: 2px solid $button-purple;
+    border-top: 2px solid transparent;
+  }
+}
+
+button.list-item__delete-button {
   background-color: $button-red-dark;
   color: $button-red;
   svg {
@@ -156,10 +108,7 @@ button.form-page__delete-button {
   }
 }
 
-a.list-item__edit-button,
-button.form-page__save-button,
-button.modal__save-button,
-a.modal__save-button {
+a.list-item__edit-button {
   background-color: $button-green-dark;
   color: $button-green;
   svg {
@@ -182,24 +131,6 @@ button.list-item__edit-button {
   }
 }
 
-button.modal__cancel-button,
-span.form-page__cancel-button {
-  background-color: $button-orange-dark;
-  color: $button-orange;
-  svg {
-    fill: $button-orange;
-  }
-}
-
-button.modal__reminder-button {
-  background-color: $button-green-dark;
-  color: $button-green;
-  .loader {
-    border: 2px solid $button-green;
-    border-top: 2px solid transparent;
-  }
-}
-
 button.list-item__details-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
@@ -213,7 +144,6 @@ a.list-item__edit-button {
     transform: translate(-50%, -50%);
   }
   &--desktop {
-    min-width: unset;
     width: 34px;
     height: 28px;
     border-radius: 10px;
@@ -226,6 +156,7 @@ a.list-item__edit-button {
     border-radius: 0;
     border: 0;
     left: 146px;
+    min-width: 73px;
     svg {
       width: 1.4rem;
       height: 1.4rem;
@@ -237,40 +168,6 @@ button.list-item__delete-button {
   &--mobile {
     left: 73px;
   }
-}
-
-button.form-page__save-button,
-button.form-page__delete-button {
-  gap: 6px;
-}
-
-button.entry-form__button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 14px;
-  font-size: 1.125rem; // 18px
-  border-radius: 26px;
-  gap: 6px;
-  background-color: $button-purple-dark;
-  color: $button-purple;
-  .loader {
-    border: 2px solid $button-purple;
-    border-top: 2px solid transparent;
-  }
-}
-
-button.modal__cancel-button,
-button.modal__delete-button,
-button.modal__update-button,
-a.modal__update-button,
-button.modal__save-button,
-a.modal__save-button,
-button.modal__reminder-button {
-  width: 100%;
-  font-size: 1.125rem; // 18px
-  gap: 6px;
 }
 
 button.user-menu__button {
@@ -292,11 +189,6 @@ button.user-menu__button {
 }
 
 @media screen and (max-width: 800px) {
-  a.homepage__signup {
-    padding: 8px 12px;
-    font-size: 1rem; // 16px
-  }
-
   .carousel-buttons-wrapper {
     padding: 12px 0 0 0;
   }

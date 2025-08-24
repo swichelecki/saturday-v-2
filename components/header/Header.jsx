@@ -8,6 +8,7 @@ import { useAppContext } from '../../context';
 
 const Weather = dynamic(() => import('../../components/header/Weather'));
 const UserMenu = dynamic(() => import('../../components/header/UserMenu'));
+const CTA = dynamic(() => import('../../components/shared/CTA'));
 //const UserAlert = dynamic(() => import('../../components/header/UserAlert'));
 
 const Header = () => {
@@ -38,9 +39,15 @@ const Header = () => {
                 <UserMenu />
               </>
             ) : pathname === '/' ? (
-              <Link href='/login' className=''>
-                Log In
-              </Link>
+              <>
+                <CTA
+                  text='Log In'
+                  type='anchor'
+                  href='/login'
+                  className='cta-text-link'
+                  ariaLabel='Log in to Saturday'
+                />
+              </>
             ) : (
               ''
             )}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FormTextField, FormCheckboxField, Toast } from '../../components';
+import { FormTextField, FormCheckboxField, Toast, CTA } from '../../components';
 import { createCategory, updateCategory } from '../../actions';
 import { useAppContext } from '../../context';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
@@ -175,17 +175,19 @@ const ModalCategory = ({
         onChangeHandler={handleMandatoryDate}
       />
       <div className='modal__modal-button-wrapper'>
-        <button
-          onClick={handleCloseModal}
-          type='button'
-          className='modal__cancel-button'
-        >
-          Cancel
-        </button>
-        <button type='submit' className='modal__save-button'>
-          {isAwaitingSubmitResponse && <div className='loader'></div>}
-          Save
-        </button>
+        <CTA
+          text='Cancel'
+          className='cta-button cta-button--medium cta-button--full cta-button--orange'
+          ariaLabel='Close modal'
+          handleClick={handleCloseModal}
+        />
+        <CTA
+          text='Save'
+          btnType='submit'
+          className='cta-button cta-button--medium cta-button--full cta-button--green'
+          ariaLabel='Save dashboard item category'
+          showSpinner={isAwaitingSubmitResponse}
+        />
       </div>
     </form>
   );

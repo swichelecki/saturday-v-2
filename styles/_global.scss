@@ -28,8 +28,16 @@ img {
   padding: 32px 48px;
 }
 
+button {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  padding: unset;
+}
+
 a {
   text-decoration: none;
+  cursor: pointer;
 }
 
 input:disabled {

@@ -2,10 +2,9 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { requestUserPasswordReset, resetUserPassword } from '../../actions';
 import { useAppContext } from '../../context';
-import { FormTextField, Toast } from '../../components';
+import { FormTextField, Toast, CTA } from '../../components';
 import {
   requestPasswordResetSchema,
   resetPasswordSchema,
@@ -158,12 +157,29 @@ const ResetForm = () => {
         </>
       )}
       <div className='entry-form__form-row'>
-        <button type='submit' className='entry-form__button'>
-          {isAwaitingResponse && <div className='loader'></div>}
-          {isResetPassword ? 'Create New Password' : 'Request Password Reset'}
-        </button>
-        <Link href='/login'>Log In</Link>
-        <Link href='/signup'>Sign Up</Link>
+        <CTA
+          text={
+            isResetPassword ? 'Create New Password' : 'Request Password Reset'
+          }
+          className='cta-button cta-button--large cta-button--full cta-button--purple'
+          ariaLabel='Create your Saturday account'
+          btnType='submit'
+          showSpinner={isAwaitingResponse}
+        />
+        <CTA
+          text='Log In'
+          type='anchor'
+          href='/login'
+          className='cta-text-link'
+          ariaLabel='Log in to Saturday'
+        />
+        <CTA
+          text='Sign Up'
+          type='anchor'
+          href='/signup'
+          className='cta-text-link'
+          ariaLabel='Sign up for Saturday'
+        />
       </div>
     </form>
   );

@@ -10,6 +10,7 @@ import {
   ModalSubscribe,
   FormErrorMessage,
   Toast,
+  CTA,
 } from '../../components';
 import { deleteReminder, getReminder } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
@@ -106,6 +107,7 @@ const RemindersControls = ({ reminders, user }) => {
             handleConfirm={handleDeleteReminder}
             confirmId={id}
             confirmType='Delete'
+            className='cta-button--red'
           />
         </Modal>
       );
@@ -134,13 +136,12 @@ const RemindersControls = ({ reminders, user }) => {
       <div className='settings-controls'>
         {isRemindersPrompt && prompt}
         <div className='settings-controls__button-wrapper'>
-          <button
-            onClick={handleOpenReminderModal}
-            type='button'
-            className='form-page__save-button'
-          >
-            Create
-          </button>
+          <CTA
+            text='Create'
+            className='cta-button cta-button--small cta-button--green'
+            ariaLabel='Create recurring reminder item for dashboard'
+            handleClick={handleOpenReminderModal}
+          />
           {atRemindersLimit && (
             <FormErrorMessage
               errorMessage={`Limit ${remindersLimit} reminders!`}

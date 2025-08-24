@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { updateItem } from '../../actions';
 import { useAppContext } from '../../context';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
-import { FormTextField, Toast } from '../../components';
+import { FormTextField, Toast, CTA } from '../../components';
 import { itemSchema } from '../../schemas/schemas';
 import { handleModalResetPageScrolling } from '../../utilities';
 import { MOBILE_BREAKPOINT } from '../../constants';
@@ -147,18 +147,19 @@ const ModalUpdateItem = ({
           errorMessage={errorMessage}
         />
         <div className='modal__modal-button-wrapper'>
-          <button
-            onClick={handleCloseModal}
-            type='button'
-            className='modal__cancel-button'
-          >
-            Cancel
-          </button>
-
-          <button type='submit' className='modal__update-button'>
-            {isAwaitingSubmitResponse && <div className='loader'></div>}
-            Update
-          </button>
+          <CTA
+            text='Cancel'
+            className='cta-button cta-button--medium cta-button--full cta-button--orange'
+            ariaLabel='Close modal'
+            handleClick={handleCloseModal}
+          />
+          <CTA
+            text='Update'
+            btnType='submit'
+            className='cta-button cta-button--medium cta-button--full cta-button--blue'
+            ariaLabel='Update dashboard item'
+            showSpinner={isAwaitingSubmitResponse}
+          />
         </div>
       </form>
     </>
