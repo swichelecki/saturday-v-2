@@ -33,11 +33,25 @@ export default async function loginUser(formData) {
   try {
     await connectDB();
 
-    const { email, password } = zodData;
+    const { email, password, verification } = zodData;
 
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
+      // check that 5 minutes has not passed after 2-factor auth verification code email sent
+      const updatedAtDateObj = new Date(user.updatedAt);
+      const updatedAtMsec = updatedAtDateObj.getTime();
+      const date = new Date();
+      const currentTimeMsc = date.getTime();
+      const fiveMinutesMsc = 300000;
+      if (currentTimeMsc > updatedAtMsec + fiveMinutesMsc)
+        return { status: 410, error: 'Verification Code Expired' };
+
+      // check that 2-factor auth verification code matches
+      if (!(await bcrypt.compare(verification, user.twoFactorAuthCode))) {
+        return { status: 403, error: 'Incorrect Verification Code' };
+      }
+
       const token = await new SignJWT({
         hasToken: true,
         id: user._id,

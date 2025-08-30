@@ -32,10 +32,17 @@ const UserSchema = new Schema(
     },
     isSubscribed: {
       type: Boolean,
+      required: true,
       default: false,
     },
     customerId: {
       type: String,
+      required: true,
+      default: '',
+    },
+    twoFactorAuthCode: {
+      type: String,
+      required: true,
       default: '',
     },
   },

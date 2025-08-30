@@ -26,6 +26,7 @@ import {
   FORM_CHARACTER_LIMIT_30,
   FORM_CHARACTER_LIMIT_50,
   FORM_CHARACTER_LIMIT_5000,
+  FORM_ERROR_2FACTOR_CODE_LIMIT,
   LIST_ITEM_LIMIT,
   ITEM_ERROR_AT_ITEM_LIMIT,
   CATEGORY_ITEM_LIMIT,
@@ -100,6 +101,7 @@ export const loginSchema = z.object({
     .string()
     .min(1, FORM_ERROR_MISSING_PASSWORD)
     .max(50, FORM_CHARACTER_LIMIT_50),
+  verification: z.string().max(6, FORM_ERROR_2FACTOR_CODE_LIMIT).optional(),
 });
 
 export const categorySchema = z

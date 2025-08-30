@@ -1,5 +1,6 @@
 export { default as loginUser } from './auth/loginUser';
 export { default as logoutUser } from './auth/logoutUser';
+export { default as request2FactorAuthentication } from './auth/request2FactorAuthentication';
 export { default as createUserAccount } from './auth/createUserAccount';
 export { default as changeUserPassword } from './auth/changeUserPassword';
 export { default as deleteUserAccount } from './auth/deleteUserAccount';

@@ -38,6 +38,7 @@ export { default as Toast } from './shared/Toast';
 export { default as UserCreatedEmail } from './emails/UserCreatedEmail';
 export { default as UserSubscriptionEmail } from './emails/UserSubscriptionEmail';
 export { default as UserResetPasswordEmail } from './emails/UserResetPasswordEmail';
+export { default as User2FactorAuthEmail } from './emails/User2FactorAuthEmail';
 export { default as ContactFormEmail } from './emails/ContactFormEmail';
 export { default as UserDeletedEmail } from './emails/UserDeletedEmail';
 export { default as ContactForm } from './contact/ContactForm';

@@ -40,6 +40,8 @@ export const FORM_ERROR_MISSING_DELETE_CONFIRMATION =
   'Delete Confirmation Required';
 export const FORM_ERROR_MISSING_DELETE_MISMATCH =
   'Delete Confirmation Is Not Correct';
+export const FORM_ERROR_2FACTOR_CODE_LIMIT =
+  'Verification Code May be No Longer Than 6 Digits';
 export const DELETE_MY_ACCOUNT = 'delete my account';
 export const INVALID_USER_DATA = 'Invalid User Data';
 export const USER_ALREADY_EXISTS = 'User Already Exists';

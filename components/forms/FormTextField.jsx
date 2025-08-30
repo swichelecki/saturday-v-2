@@ -14,6 +14,7 @@ const FormTextField = ({
   errorMessage,
   disabled = false,
   timezone = '',
+  showSpinner = false,
 }) => {
   return (
     <div className={`form-field${errorMessage ? ' form-field--error' : ''}`}>
@@ -34,6 +35,7 @@ const FormTextField = ({
         disabled={disabled}
       />
       {errorMessage && <FormErrorMessage errorMessage={errorMessage} />}
+      {showSpinner && <div className='loader'></div>}
     </div>
   );
 };
