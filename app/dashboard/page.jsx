@@ -56,7 +56,7 @@ async function getDashboardData() {
           userId,
           displayReminder: true,
         }).sort({
-          reminderSortDate: 1,
+          reminderSortDate: -1,
         }),
         Holiday.find({
           date: {

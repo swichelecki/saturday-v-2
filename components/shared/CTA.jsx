@@ -23,18 +23,18 @@ const CTA = ({
   showSpinner = false,
   handleClick,
 }) => {
-  const anchorType = 'anchor';
-  const buttonType = 'button';
+  const anchor = 'anchor';
+  const button = 'button';
 
   if (!text) return;
-  if (type === anchorType && !href) return;
-  if (type === buttonType && btnType === buttonType && !handleClick) return;
+  if (type === anchor && !href) return;
+  if (type === button && btnType === button && !handleClick) return;
 
   const ariaText = ariaLabel || text;
 
   return (
     <>
-      {type === buttonType && (
+      {type === button && (
         <button
           onClick={handleClick}
           type={btnType}
@@ -45,7 +45,7 @@ const CTA = ({
           {text}
         </button>
       )}
-      {type === anchorType && (
+      {type === anchor && (
         <Link
           href={href}
           onClick={handleClick}
