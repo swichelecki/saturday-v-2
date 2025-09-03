@@ -14,9 +14,10 @@ import {
   MdSettings,
   MdMessage,
   MdNoteAlt,
+  MdAdminPanelSettings,
 } from 'react-icons/md';
 
-const UserMenu = () => {
+const UserMenu = ({ isAdmin }) => {
   const menuRef = useRef(null);
 
   const router = useRouter();
@@ -102,6 +103,14 @@ const UserMenu = () => {
               Contact
             </Link>
           </li>
+          {isAdmin && (
+            <li>
+              <Link href='/admin' prefetch={false}>
+                <MdAdminPanelSettings />
+                Admin
+              </Link>
+            </li>
+          )}
           <li>
             <div role='button' onClick={handleUserLogOut} tabIndex='0'>
               <MdOutlineLogout />

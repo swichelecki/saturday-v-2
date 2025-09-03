@@ -13,7 +13,7 @@ const CTA = dynamic(() => import('../../components/shared/CTA'));
 
 const Header = () => {
   //const isMounted = useIsMounted();
-  const { userId } = useAppContext();
+  const { userId, isAdmin } = useAppContext();
   const pathname = usePathname();
 
   /* const showUserAlert =
@@ -36,7 +36,7 @@ const Header = () => {
             {userId ? (
               <>
                 <Weather />
-                <UserMenu />
+                <UserMenu isAdmin={isAdmin} />
               </>
             ) : pathname === '/' ? (
               <>

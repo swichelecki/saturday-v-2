@@ -6,6 +6,7 @@ import Link from 'next/link';
  * @param type {string} button or anchor, button being the default
  * @param href {string} path for anchor
  * @param className {string} button or anchor css such as cta-button cta-button--medium cta-button--purple
+ * @param id {string} id for JavaScript logic
  * @param btnType {string} for buttons - can be button or submit, button being the default
  * @param ariaLabel {string} accessibility label, text being the fallback
  * @param showSpinner {boolean} used for button to show loading spinner, default false
@@ -18,6 +19,7 @@ const CTA = ({
   type = 'button',
   href,
   className,
+  id,
   btnType = 'button',
   ariaLabel,
   showSpinner = false,
@@ -40,6 +42,7 @@ const CTA = ({
           type={btnType}
           className={className}
           aria-label={ariaText}
+          {...(id && { id: id })}
         >
           {showSpinner && <div className='loader'></div>}
           {text}
@@ -51,6 +54,7 @@ const CTA = ({
           onClick={handleClick}
           className={className}
           aria-label={ariaText}
+          {...(id && { id: id })}
         >
           {text}
         </Link>

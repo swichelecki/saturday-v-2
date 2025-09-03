@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getUserFromCookie } from './utilities/getUserFromCookie';
 
 export async function middleware(req) {
-  const { user, newUser } = await getUserFromCookie();
+  const { user, newUser, admin } = await getUserFromCookie();
 
   if (
     (!user && req.nextUrl.pathname === '/login') ||
@@ -37,6 +37,11 @@ export async function middleware(req) {
     return NextResponse.redirect(req.nextUrl);
   }
 
+  if (user && !admin && req.nextUrl.pathname === '/admin') {
+    req.nextUrl.pathname = '/dashboard';
+    return NextResponse.redirect(req.nextUrl);
+  }
+
   return NextResponse.next();
 }
 
@@ -50,6 +55,7 @@ export const config = {
     '/account',
     '/contact',
     '/notes',
+    '/admin',
     '/details/:path*',
     '/',
   ],

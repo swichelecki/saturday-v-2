@@ -202,6 +202,7 @@ const CategoryControls = ({ categories, user }) => {
           <CTA
             text='Create'
             className='cta-button cta-button--small cta-button--green'
+            id='createCategoryButton'
             ariaLabel='Create dashboard item category'
             handleClick={handleOpenCategoryModal}
           />

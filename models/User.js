@@ -37,13 +37,9 @@ const UserSchema = new Schema(
     },
     customerId: {
       type: String,
-      required: true,
-      default: '',
     },
     twoFactorAuthCode: {
       type: String,
-      required: true,
-      default: '',
     },
   },
   { timestamps: true }
