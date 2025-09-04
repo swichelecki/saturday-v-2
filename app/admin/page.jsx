@@ -7,7 +7,7 @@ import Note from '../../models/Note';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { AdminDashboard } from '../../components';
 
-export const metaData = {
+export const metadata = {
   title: 'Admin',
 };
 

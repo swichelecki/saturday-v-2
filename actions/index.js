@@ -31,3 +31,4 @@ export { default as deleteNote } from './notes/deleteNote';
 export { default as updateNote } from './notes/updateNote';
 export { default as pinNote } from './notes/pinNote';
 export { default as getNote } from './notes/getNote';
+export { default as adminDeleteUser } from './admin/adminDeleteUser';

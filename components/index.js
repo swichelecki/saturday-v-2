@@ -52,3 +52,4 @@ export { default as CTA } from './shared/CTA';
 export { default as AdminDashboard } from './admin/AdminDashboard';
 export { default as AdminTable } from './admin/AdminTable';
 export { default as AdminTableRow } from './admin/AdminTableRow';
+export { default as ModalAdminDeleteUser } from './admin/ModalAdminDeleteUser';

@@ -40,8 +40,12 @@ a {
   cursor: pointer;
 }
 
-input:disabled {
-  cursor: not-allowed;
+input:disabled,
+button:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+  background-color: $color-border !important;
+  color: $color-background !important;
 }
 
 .loader {

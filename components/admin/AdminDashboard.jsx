@@ -2,23 +2,35 @@
 
 import { useEffect } from 'react';
 import { useAppContext } from '../../context';
-import { AdminTable } from '../../components';
+import { AdminTable, Modal, ModalAdminDeleteUser } from '../../components';
 
 const AdminDashboard = ({ users, user }) => {
-  const { userId, admin, timezone } = user;
+  const { userId: adminId, admin, timezone } = user;
 
-  const { setUserId, setIsAdmin } = useAppContext();
+  const { setUserId, setIsAdmin, setShowModal } = useAppContext();
 
   useEffect(() => {
     // set global context
-    setUserId(userId);
+    setUserId(adminId);
     setIsAdmin(admin);
   }, []);
+
+  const handleOpenDeleteUserModal = (id) => {
+    setShowModal(
+      <Modal showCloseButton={false}>
+        <ModalAdminDeleteUser adminId={adminId} userId={id} />
+      </Modal>
+    );
+  };
 
   return (
     <div className='admin-content-container'>
       <h1>Administration Dashboard</h1>
-      <AdminTable users={users} timezone={timezone} />
+      <AdminTable
+        users={users}
+        timezone={timezone}
+        handleOpenDeleteUserModal={handleOpenDeleteUserModal}
+      />
     </div>
   );
 };

@@ -34,6 +34,7 @@ export const FORM_ERROR_MISSING_NEW_CONFIRM_PASSWORD =
   'Confirm New Password Required';
 export const FORM_ERROR_INCORRECT_EMAIL_PASSWORD =
   'Incorrect Email Address or Password';
+export const FORM_ERROR_INCORRECT_PASSWORD = 'Incorrect Password';
 export const FORM_ERROR_PASSWORD_MISMATCH =
   'Password and Confirm Password Do Not Match';
 export const FORM_ERROR_MISSING_DELETE_CONFIRMATION =

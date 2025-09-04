@@ -338,3 +338,10 @@ export const noteSchema = z
     message: NOTES_ERROR_AT_ITEM_LIMIT,
     path: ['itemLimit'],
   });
+
+export const adminDeleteUserSchema = z.object({
+  password: z
+    .string()
+    .min(1, FORM_ERROR_MISSING_PASSWORD)
+    .max(50, FORM_CHARACTER_LIMIT_50),
+});

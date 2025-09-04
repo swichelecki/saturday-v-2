@@ -1,6 +1,6 @@
 import { AdminTableRow } from '../../components';
 
-const AdminTable = ({ users, timezone }) => {
+const AdminTable = ({ users, timezone, handleOpenDeleteUserModal }) => {
   return (
     <table className='admin-table'>
       <thead>
@@ -29,6 +29,7 @@ const AdminTable = ({ users, timezone }) => {
               categoriesCount={item?.categoriesCount}
               remindersCount={item?.remindersCount}
               notesCount={item?.notesCount}
+              handleOpenDeleteUserModal={handleOpenDeleteUserModal}
             />
           ))}
       </tbody>

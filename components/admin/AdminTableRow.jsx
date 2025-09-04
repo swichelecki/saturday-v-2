@@ -11,6 +11,7 @@ const AdminTableRow = ({
   notesCount,
   id,
   timezone,
+  handleOpenDeleteUserModal,
 }) => {
   return (
     <tr>
@@ -28,11 +29,7 @@ const AdminTableRow = ({
           text='Delete'
           className='cta-button cta-button--small cta-button--full cta-button--red'
           ariaLabel='Delete user account'
-          //showSpinner={isAwaitingConfirmResponse}
-          handleClick={() => {
-            //setIsAwaitingConfirmResponse(true);
-            //handleConfirm(confirmId);
-          }}
+          handleClick={() => handleOpenDeleteUserModal(id)}
         />
       </td>
     </tr>
