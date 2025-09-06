@@ -420,9 +420,8 @@ const ItemList = ({
 
   // y-axis end
   const handleDragYEnd = (e) => {
-    isDraggingYRef.current = false;
     listItemWrapperRef.current.removeAttribute('style');
-    handleDragEnd();
+    if (isDraggingYRef.current) handleDragEnd();
 
     arrayOfListItemsRef.current?.forEach((item, i) => {
       item.style.position = 'relative';
@@ -434,6 +433,7 @@ const ItemList = ({
     });
 
     if (e.type.includes('mouse')) e.target.style.cursor = 'grab';
+    isDraggingYRef.current = false;
   };
 
   const isToday = item?.mandatoryDate
