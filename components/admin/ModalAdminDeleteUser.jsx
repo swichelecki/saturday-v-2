@@ -7,7 +7,7 @@ import { adminDeleteUser } from '../../actions';
 import { adminDeleteUserSchema } from '../../schemas/schemas';
 import { FORM_ERROR_INCORRECT_PASSWORD } from '../../constants';
 
-const ModalAdminDeleteUser = ({ adminId, userId }) => {
+const ModalAdminDeleteUser = ({ adminId, userId, userEmail }) => {
   const { setShowToast, setShowModal } = useAppContext();
 
   const [password, setPassword] = useState('');
@@ -33,7 +33,8 @@ const ModalAdminDeleteUser = ({ adminId, userId }) => {
     const response = await adminDeleteUser(
       zodPassword.password,
       adminId,
-      userId
+      userId,
+      userEmail
     );
     if (response.status === 200) {
       handleCloseModal();

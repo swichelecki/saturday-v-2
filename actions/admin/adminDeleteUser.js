@@ -1,17 +1,29 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import connectDB from '../../config/db';
 import User from '../../models/User';
+import Task from '../../models/Task';
+import Reminder from '../../models/Reminder';
+import Category from '../../models/Category';
+import Note from '../../models/Note';
+import { stripe } from '../../lib/stripe';
 import bcrypt from 'bcryptjs';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { adminDeleteUserSchema } from '../../schemas/schemas';
 
-export default async function adminDeleteUser(password, adminId, userId) {
+export default async function adminDeleteUser(
+  password,
+  adminId,
+  userId,
+  userEmail
+) {
   if (
     typeof password !== 'string' ||
     typeof adminId !== 'string' ||
-    typeof userId !== 'string'
+    typeof userId !== 'string' ||
+    typeof userEmail !== 'string'
   ) {
     return {
       status: 400,
@@ -50,7 +62,40 @@ export default async function adminDeleteUser(password, adminId, userId) {
     const admin = await User.findOne({ _id: adminId });
 
     if (admin && (await bcrypt.compare(password, admin.password))) {
-      // TODO: delete user and revalidate path
+      await Task.deleteMany({ userId });
+      await Reminder.deleteMany({ userId });
+      await Category.deleteMany({ userId });
+      await Note.deleteMany({ userId });
+      await User.deleteOne({ _id: userId });
+
+      // cancel stripe subscription if one exists
+      const existingCustomer = await stripe.customers.list({
+        email: userEmail,
+        limit: 1,
+      });
+      let customerId =
+        existingCustomer.data.length > 0 ? existingCustomer.data[0].id : null;
+
+      if (customerId) {
+        const customerWithSubscriptions = await stripe.customers.retrieve(
+          customerId,
+          { expand: ['subscriptions'] }
+        );
+
+        if (customerWithSubscriptions.subscriptions.data.length > 0) {
+          const subscriptionId =
+            customerWithSubscriptions.subscriptions.data[0].id;
+          const canceledSubscription = await stripe.subscriptions.cancel(
+            subscriptionId
+          );
+          console.log(
+            `Subscription with id of ${canceledSubscription.id} canceled`
+          );
+        }
+      }
+
+      revalidatePath('/admin');
+
       return { status: 200 };
     }
 

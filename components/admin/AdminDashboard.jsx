@@ -15,10 +15,10 @@ const AdminDashboard = ({ users, user }) => {
     setIsAdmin(admin);
   }, []);
 
-  const handleOpenDeleteUserModal = (id) => {
+  const handleOpenDeleteUserModal = (id, email) => {
     setShowModal(
       <Modal showCloseButton={false}>
-        <ModalAdminDeleteUser adminId={adminId} userId={id} />
+        <ModalAdminDeleteUser adminId={adminId} userId={id} userEmail={email} />
       </Modal>
     );
   };

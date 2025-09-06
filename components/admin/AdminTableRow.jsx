@@ -29,7 +29,7 @@ const AdminTableRow = ({
           text='Delete'
           className='cta-button cta-button--small cta-button--full cta-button--red'
           ariaLabel='Delete user account'
-          handleClick={() => handleOpenDeleteUserModal(id)}
+          handleClick={() => handleOpenDeleteUserModal(id, email)}
         />
       </td>
     </tr>
