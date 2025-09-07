@@ -420,8 +420,11 @@ const ItemList = ({
 
   // y-axis end
   const handleDragYEnd = (e) => {
+    isDraggingYRef.current = false;
+
+    handleDragEnd();
+
     listItemWrapperRef.current.removeAttribute('style');
-    if (isDraggingYRef.current) handleDragEnd();
 
     arrayOfListItemsRef.current?.forEach((item, i) => {
       item.style.position = 'relative';
@@ -433,7 +436,6 @@ const ItemList = ({
     });
 
     if (e.type.includes('mouse')) e.target.style.cursor = 'grab';
-    isDraggingYRef.current = false;
   };
 
   const isToday = item?.mandatoryDate
@@ -503,8 +505,12 @@ const ItemList = ({
               onMouseMove={(e) => {
                 isDraggingYRef.current && handleDragYMove(e);
               }}
-              onMouseUp={handleDragYEnd}
-              onMouseLeave={handleDragYEnd}
+              onMouseUp={(e) => {
+                isDraggingYRef.current && handleDragYEnd(e);
+              }}
+              onMouseLeave={(e) => {
+                isDraggingYRef.current && handleDragYEnd(e);
+              }}
             >
               <GrDrag />
             </div>
