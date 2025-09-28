@@ -36,7 +36,6 @@ export default async function getCalendarItems(queryData) {
       Task.find({ userId, date: { $gte: monday, $lte: sunday } }),
       Reminder.find({
         userId,
-        displayReminder: true,
         exactRecurringDate: true,
         reminderDate: {
           $gte: monday,

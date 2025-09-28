@@ -11,10 +11,10 @@ const sourceSansPro = Source_Sans_3({
 
 export const metadata = {
   generator: 'Next.js',
-  applicationName: 'Saturday Simple Life',
+  applicationName: 'Saturday',
   title: {
-    template: '%s | Saturday Simple Life',
-    default: 'Saturday Simple Life | No-AI Daily Planner',
+    template: '%s | Saturday',
+    default: 'Saturday | No-AI Daily Planner',
   },
   description:
     'Saturday is your super simple, no-AI daily planner. Manage all of your everyday tasks and obligations with Saturday’s customizable interface designed to simplify your life.',
@@ -29,7 +29,7 @@ export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_URL),
   openGraph: {
     url: process.env.NEXT_PUBLIC_URL,
-    siteName: 'Saturday Simple Life',
+    siteName: 'Saturday',
     images: '/saturday-homepage-no-ai-no-prob.webp',
     locale: 'en_US',
     type: 'website',
@@ -39,7 +39,8 @@ export const metadata = {
     statusBarStyle: 'black-translucent',
   },
   icons: {
-    apple: '/',
+    icon: '/favicon-32x32.png',
+    apple: '/apple-touch-icon.png',
   },
 };
 

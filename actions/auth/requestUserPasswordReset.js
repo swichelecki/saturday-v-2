@@ -64,7 +64,7 @@ export default async function requestUserPasswordReset(formData) {
     const { error } = await resend.emails.send({
       from: 'Saturday <contact@saturdaysimplelife.com>',
       to: userEmail,
-      subject: 'Reset User Password - Saturday Simple Life',
+      subject: 'Reset User Password - Saturday',
       react: UserResetPasswordEmail({
         hashedUserId,
         email,

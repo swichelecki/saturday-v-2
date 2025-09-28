@@ -18,7 +18,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    gap: 64px;
+    gap: 100px;
     max-width: 1200px;
     width: 100%;
     position: relative;
@@ -63,6 +63,9 @@
     flex-direction: column;
     align-items: center;
     gap: 32px;
+    h2 {
+      text-align: center;
+    }
   }
   &__benefits-wrapper {
     display: flex;
@@ -85,9 +88,53 @@
       justify-content: center;
       align-items: center;
       gap: 12px;
-      font-size: 1.5rem; // 24px;
+      margin: 0;
+      font-size: 1.75rem; // 28px
       svg {
         fill: $button-green;
+      }
+    }
+  }
+  &__features {
+    display: flex;
+    width: 100%;
+    gap: 32px;
+  }
+  &__features-image {
+    flex: 0 1 65%;
+    button {
+      width: 100%;
+      background-color: transparent;
+    }
+    img {
+      box-shadow: 0 5px 30px $color-gradiant-dark;
+      border-radius: 4px;
+      -webkit-user-drag: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+  }
+  &__features-list {
+    flex: 0 1 35%;
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      li {
+        display: flex;
+        align-items: start;
+        position: relative;
+        padding-left: 34px;
+        svg {
+          position: absolute;
+          top: 2px;
+          left: 0;
+          font-size: 1.5rem; // 24px
+          fill: $button-green;
+        }
       }
     }
   }
@@ -110,13 +157,16 @@
     &__wrapper {
       padding-top: 25px;
     }
-    &__hero {
+    &__hero,
+    &__features {
       flex-direction: column;
     }
-    &__hero-left {
+    &__hero-left,
+    &__features-list {
       flex: 0 1 100%;
     }
-    &__hero-right {
+    &__hero-right,
+    &__features-image {
       flex: 0 1 100%;
       img {
         cursor: default;
@@ -131,7 +181,7 @@
 @media screen and (max-width: 800px) {
   .homepage {
     &__wrapper {
-      gap: 32px;
+      gap: 72px;
     }
   }
 }
@@ -139,7 +189,12 @@
 @media screen and (max-width: 600px) {
   .homepage {
     &__wrapper {
-      padding: 24px;
+      padding: 24px 16px;
+    }
+    &__benefit {
+      h3 {
+        font-size: 1.25rem; // 20px;
+      }
     }
     &__direct-cta {
       h2 {

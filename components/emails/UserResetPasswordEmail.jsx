@@ -2,8 +2,8 @@ const UserRequestPasswordResetEmail = ({ hashedUserId, email }) => {
   return (
     <div>
       <p>
-        A request was made to reset the Saturday Simple Life password for the
-        account associated with the email address {email}.
+        A request was made to reset the Saturday password for the account
+        associated with the email address {email}.
       </p>
       <p>
         Click{' '}
