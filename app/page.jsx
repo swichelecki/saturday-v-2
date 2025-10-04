@@ -31,6 +31,7 @@ export default function Home() {
           width={1000}
           height={563}
           quality={100}
+          unoptimized={altText === saturdayDashboardAltText}
           alt={altText}
         />
       </Modal>
@@ -113,6 +114,7 @@ export default function Home() {
               height={405}
               sizes='(max-width: 768px) calc(100vw - 48px), 1000px'
               quality={100}
+              unoptimized={true}
               alt={saturdayDashboardAltText}
             />
           </button>

@@ -55,6 +55,7 @@ export const createUserSchema = z
       .string()
       .min(1, FORM_ERROR_MISSING_CONFIRM_PASSWORD)
       .max(50, FORM_CHARACTER_LIMIT_50),
+    verification: z.string().max(6, FORM_ERROR_2FACTOR_CODE_LIMIT).optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: FORM_ERROR_PASSWORD_MISMATCH,

@@ -5,7 +5,10 @@ import User from '../../models/User';
 import { Resend } from 'resend';
 import bcrypt from 'bcryptjs';
 import { User2FactorAuthEmail } from '../../components';
-import { handleServerErrorMessage } from '../../utilities';
+import {
+  handleServerErrorMessage,
+  getRandom6DigitNumber,
+} from '../../utilities';
 import { loginSchema } from '../../schemas/schemas';
 const resendApiKey = process.env.RESEND_API_KEY;
 
@@ -30,10 +33,6 @@ export default async function request2FactorAuthentication(formData) {
     return { status: 400, error: 'Invalid FormData. Check server console.' };
   }
 
-  const getRandom6DigitNumber = () => {
-    return Math.floor(100000 + Math.random() * 900000);
-  };
-
   try {
     await connectDB();
 
@@ -45,9 +44,9 @@ export default async function request2FactorAuthentication(formData) {
       // set updatedAt to current time for request expiration
       const date = new Date();
       const dateToISO = date.toISOString();
-      const twoFactorAuthCode = getRandom6DigitNumber();
 
       // encrypt 2-factor auth verification code
+      const twoFactorAuthCode = getRandom6DigitNumber();
       const salt = await bcrypt.genSalt(10);
       const hashedtwoFactorAuthCode = await bcrypt.hash(
         twoFactorAuthCode.toString(),
@@ -62,7 +61,7 @@ export default async function request2FactorAuthentication(formData) {
         }
       );
 
-      // send reset user email
+      // send verification code email
       const resend = new Resend(resendApiKey);
 
       const { error } = await resend.emails.send({
