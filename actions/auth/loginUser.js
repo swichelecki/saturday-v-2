@@ -61,6 +61,7 @@ export default async function loginUser(formData) {
         newNotesUser: user.newNotesUser,
         isSubscribed: user.isSubscribed,
       })
+        .setExpirationTime('7d')
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
         .sign(new TextEncoder().encode(jwtSecret));
       (await cookies()).set('saturday', token);

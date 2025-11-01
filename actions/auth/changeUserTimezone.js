@@ -67,6 +67,7 @@ export default async function changeUserTimezone(formData) {
       newNotesUser: userUpdated.newNotesUser,
       isSubscribed: userUpdated.isSubscribed,
     })
+      .setExpirationTime('7d')
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .sign(new TextEncoder().encode(jwtSecret));
     (await cookies()).set('saturday', token);

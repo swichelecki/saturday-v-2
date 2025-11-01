@@ -46,6 +46,7 @@ export default async function updateCookieOnStripeSubscribe(userId) {
       newNotesUser,
       isSubscribed,
     })
+      .setExpirationTime('7d')
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .sign(new TextEncoder().encode(jwtSecret));
     (await cookies()).set('saturday', token);

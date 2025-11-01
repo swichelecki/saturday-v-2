@@ -43,6 +43,7 @@ export default async function updateUserNoLongerNew(userId) {
       newNotesUser,
       isSubscribed,
     })
+      .setExpirationTime('7d')
       .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
       .sign(new TextEncoder().encode(jwtSecret));
     (await cookies()).set('saturday', token);
