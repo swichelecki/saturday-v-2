@@ -51,6 +51,12 @@ export default async function createUserAccount(formData) {
     if (!ipAddress) ipAddress = headerList.get('x-real-ip') || 'unknown';
     // if localhost use America/Chicago ip address
     if (ipAddress === '::1') ipAddress = '73.111.204.162';
+
+    // check that it's not spam
+    const bannedIPAddresses = [];
+    if (bannedIPAddresses.includes(ipAddress))
+      return { status: 403, error: 'Banned IP Address' };
+
     const response = await fetch(
       `http://ip-api.com/json/${ipAddress}?fields=timezone,continent,country,regionName,city`
     );
@@ -88,7 +94,7 @@ export default async function createUserAccount(formData) {
         country,
         regionName,
         city,
-        twoFactorAuthCode,
+        ipAddress,
       }),
     });
 

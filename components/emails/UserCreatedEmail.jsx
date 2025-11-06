@@ -5,6 +5,7 @@ const UserCreatedEmail = ({
   country,
   regionName,
   city,
+  ipAddress,
 }) => {
   return (
     <div>
@@ -22,6 +23,9 @@ const UserCreatedEmail = ({
       </p>
       <p>
         <strong>Timezone:</strong> {timezone}
+      </p>
+      <p>
+        <strong>IP Address:</strong> {ipAddress}
       </p>
     </div>
   );
