@@ -59,7 +59,7 @@ export default async function createUserAccount(formData) {
     const { timezone, continent, country, regionName, city } = locationData;
 
     // check that it's not spam - getting spammed and IPs don't match
-    const bannedCities = ['Amsterdam, North Holland', 'Moscow, Moscow'];
+    const bannedCities = ['Amsterdam', 'Moscow'];
     if (bannedCities.includes(city)) return { status: 403, error: 'Forbidden' };
 
     // encrypt 2-factor auth verification code
