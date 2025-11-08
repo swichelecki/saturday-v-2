@@ -52,16 +52,15 @@ export default async function createUserAccount(formData) {
     // if localhost use America/Chicago ip address
     if (ipAddress === '::1') ipAddress = '73.111.204.162';
 
-    // check that it's not spam
-    const bannedIPAddresses = [];
-    if (bannedIPAddresses.includes(ipAddress))
-      return { status: 403, error: 'Banned IP Address' };
-
     const response = await fetch(
       `http://ip-api.com/json/${ipAddress}?fields=timezone,continent,country,regionName,city`
     );
     const locationData = await response.json();
     const { timezone, continent, country, regionName, city } = locationData;
+
+    // check that it's not spam - getting spammed and IPs don't match
+    const bannedCities = ['Amsterdam, North Holland', 'Moscow, Moscow'];
+    if (bannedCities.includes(city)) return { status: 403, error: 'Forbidden' };
 
     // encrypt 2-factor auth verification code
     const twoFactorAuthCode = getRandom6DigitNumber();
