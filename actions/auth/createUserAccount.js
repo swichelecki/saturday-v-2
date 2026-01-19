@@ -53,21 +53,20 @@ export default async function createUserAccount(formData) {
     if (ipAddress === '::1') ipAddress = '73.111.204.162';
 
     const response = await fetch(
-      `http://ip-api.com/json/${ipAddress}?fields=timezone,continent,country,regionName,city`
+      `http://ip-api.com/json/${ipAddress}?fields=timezone,continent,country,regionName,city`,
     );
     const locationData = await response.json();
     const { timezone, continent, country, regionName, city } = locationData;
 
-    // check that it's not spam - getting spammed and IPs don't match
-    const bannedCities = ['Amsterdam', 'Moscow'];
-    if (bannedCities.includes(city)) return { status: 403, error: 'Forbidden' };
+    // check that it's not spam - getting spammed from Europe and IPs don't match
+    if (continent === 'Europe') return { status: 403, error: 'Forbidden' };
 
     // encrypt 2-factor auth verification code
     const twoFactorAuthCode = getRandom6DigitNumber();
     const twoFactorAuthSalt = await bcrypt.genSalt(10);
     const hashedtwoFactorAuthCode = await bcrypt.hash(
       twoFactorAuthCode.toString(),
-      twoFactorAuthSalt
+      twoFactorAuthSalt,
     );
 
     const passwordSsalt = await bcrypt.genSalt(10);
