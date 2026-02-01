@@ -6,7 +6,6 @@ import '../styles/styles.scss';
 const sourceSansPro = Source_Sans_3({
   subsets: ['latin'],
   weight: ['300', '400', '600'],
-  variable: '--source-sans-pro',
 });
 
 export const metadata = {
@@ -47,7 +46,26 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang='en'>
-      <body className={sourceSansPro.variable}>
+      <body className={`${sourceSansPro.variable}`}>
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebApplication',
+              name: 'Saturday',
+              url: process.env.NEXT_PUBLIC_URL,
+              description:
+                'Saturday is your super simple, no-AI daily planner. Manage all of your everyday tasks and obligations with Saturday’s customizable interface designed to simplify your life.',
+              applicationCategory: 'BusinessApplication',
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'USD',
+              },
+            }),
+          }}
+        />
         <GloablContext>
           <Layout>{children}</Layout>
         </GloablContext>

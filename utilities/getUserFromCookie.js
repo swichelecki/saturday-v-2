@@ -21,7 +21,7 @@ export const getUserFromCookie = async () => {
   try {
     const { payload } = await jwtVerify(
       token.value,
-      new TextEncoder().encode(jwtSecret)
+      new TextEncoder().encode(jwtSecret),
     );
 
     if (payload.hasToken) {
@@ -34,6 +34,14 @@ export const getUserFromCookie = async () => {
       isSubscribed = payload?.isSubscribed;
     }
   } catch (error) {
+    if (
+      error.code === 'ERR_JWT_EXPIRED' ||
+      error.message?.includes('expired')
+    ) {
+      console.log('JWT token expired - user needs to re-authenticate');
+      return { user: false };
+    }
+
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);
     cookieError = { status: 500, error: errorMessage };
