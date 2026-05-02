@@ -2,11 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { request2FactorAuthentication, loginUser } from '../../actions';
 import { useAppContext } from '../../context';
-import { FormTextField, Toast, CTA } from '../../components';
+import { FormTextField, CTA } from '../../components';
 import { loginSchema } from '../../schemas/schemas';
 import { FORM_ERROR_INCORRECT_EMAIL_PASSWORD } from '../../constants';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const Login = () => {
   const router = useRouter();

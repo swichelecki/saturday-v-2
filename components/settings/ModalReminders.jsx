@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import {
   FormTextField,
   FormCheckboxField,
   FormSelectField,
-  Toast,
   CTA,
 } from '../../components';
 import { createReminder, updateReminder } from '../../actions';
@@ -20,6 +20,10 @@ import {
   FORM_REMINDER_INTERVAL_OPTIONS,
   FORM_REMINDER_BUFFER_OPTIONS,
 } from '../../constants';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const ModalReminder = ({
   userId,
@@ -65,7 +69,9 @@ const ModalReminder = ({
 
     const reminderDateObj = new Date(form.reminderDate);
     const reminderDateObjMinusBuffer = new Date(
-      reminderDateObj.setDate(reminderDateObj.getDate() - form.recurrenceBuffer)
+      reminderDateObj.setDate(
+        reminderDateObj.getDate() - form.recurrenceBuffer,
+      ),
     );
     const reminderSortDateForState = reminderDateObjMinusBuffer
       .toISOString()
@@ -168,8 +174,8 @@ const ModalReminder = ({
                     return item;
                   }
                 }),
-                'reminderDate'
-              )
+                'reminderDate',
+              ),
             );
           }
 
@@ -185,8 +191,8 @@ const ModalReminder = ({
             setItems(
               handleSortItemsAscending(
                 [...copyOfRemindersItems, res.item],
-                'reminderDate'
-              )
+                'reminderDate',
+              ),
             );
           }
 

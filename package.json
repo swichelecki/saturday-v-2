@@ -6,19 +6,19 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "html-react-parser": "^5.1.18",
+    "html-react-parser": "^6.0.1",
     "isomorphic-dompurify": "^2.16.0",
     "jose": "^4.14.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.39",
     "mongoose": "^7.0.2",
-    "next": "^15.2.8",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "^16.2.4",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
     "react-icons": "^4.7.1",
     "react-quill-new": "^3.3.3",
     "resend": "^4.0.0",
@@ -28,8 +28,8 @@
   },
   "devDependencies": {
     "@types/node": "18.7.23",
-    "eslint": "8.24.0",
-    "eslint-config-next": "^15.0.3",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
     "typescript": "4.8.4"
   }
 }

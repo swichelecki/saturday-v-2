@@ -2,14 +2,19 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { requestUserPasswordReset, resetUserPassword } from '../../actions';
 import { useAppContext } from '../../context';
-import { FormTextField, Toast, CTA } from '../../components';
+import { FormTextField, CTA } from '../../components';
 import {
   requestPasswordResetSchema,
   resetPasswordSchema,
 } from '../../schemas/schemas';
 import { FORM_ERROR_USER_NOT_FOUND } from '../../constants';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const ResetForm = () => {
   const router = useRouter();
@@ -104,7 +109,7 @@ const ResetForm = () => {
       : requestUserPasswordReset(zodFormData).then((res) => {
           if (res.status === 200) {
             setShowToast(
-              <Toast isSuccess message='Check your email to reset password.' />
+              <Toast isSuccess message='Check your email to reset password.' />,
             );
             setisAwaitingResponse(false);
           }

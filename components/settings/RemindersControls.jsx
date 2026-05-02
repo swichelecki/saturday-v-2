@@ -1,17 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
-import {
-  ListItem,
-  Modal,
-  ModalReminders,
-  ModalConfirm,
-  ModalSubscribe,
-  FormErrorMessage,
-  Toast,
-  CTA,
-} from '../../components';
+import { ListItem, CTA } from '../../components';
 import { deleteReminder, getReminder } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
@@ -19,6 +11,37 @@ import {
   UNSUBSCRIBED_REMINDERS_ITEM_LIMIT,
   ITEM_TYPE_REMINDER,
 } from '../../constants';
+
+const Modal = dynamic(() => import('../../components/shared/Modal'), {
+  ssr: false,
+});
+const ModalReminders = dynamic(
+  () => import('../../components/settings/ModalReminders'),
+  {
+    ssr: false,
+  },
+);
+const ModalConfirm = dynamic(
+  () => import('../../components/shared/ModalConfirm'),
+  {
+    ssr: false,
+  },
+);
+const ModalSubscribe = dynamic(
+  () => import('../../components/shared/ModalSubscribe'),
+  {
+    ssr: false,
+  },
+);
+const FormErrorMessage = dynamic(
+  () => import('../../components/forms/FormErrorMessage'),
+  {
+    ssr: false,
+  },
+);
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const RemindersControls = ({ reminders, user }) => {
   const { setShowToast, setShowModal, isRemindersPrompt, prompt } =
@@ -52,7 +75,7 @@ const RemindersControls = ({ reminders, user }) => {
       setShowModal(
         <Modal className='modal modal__form-modal--small modal__subscription-modal'>
           <ModalSubscribe userId={userId} />
-        </Modal>
+        </Modal>,
       );
       return;
     }
@@ -67,7 +90,7 @@ const RemindersControls = ({ reminders, user }) => {
           itemToEditId={reminderToEditId}
           numberOfReminders={remindersItems?.length}
         />
-      </Modal>
+      </Modal>,
     );
   };
 
@@ -87,7 +110,7 @@ const RemindersControls = ({ reminders, user }) => {
               itemToUpdate={res.item}
               numberOfReminders={remindersItems?.length}
             />
-          </Modal>
+          </Modal>,
         );
       }
 
@@ -109,7 +132,7 @@ const RemindersControls = ({ reminders, user }) => {
             confirmType='Delete'
             className='cta-button--red'
           />
-        </Modal>
+        </Modal>,
       );
       return;
     }

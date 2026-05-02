@@ -25,14 +25,16 @@ export default async function getWeather(userId) {
 
     // get user location
     const locationDataRes = await fetch(
-      `http://ip-api.com/json/${ipAddress}?fields=lat,lon,city`
+      `http://ip-api.com/json/${ipAddress}?fields=lat,lon,city`,
     );
     const locationData = await locationDataRes.json();
     const { lat, lon, city } = locationData;
 
     // get user weather
     const openMeteoApiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&forecast_days=1`;
-    const weatherRes = await fetch(openMeteoApiUrl);
+    const weatherRes = await fetch(openMeteoApiUrl, {
+      next: { revalidate: 900 },
+    });
     const weatherData = await weatherRes.json();
 
     return { status: 200, data: { weatherData, city } };

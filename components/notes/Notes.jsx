@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import {
   useInnerWidth,
@@ -9,17 +10,7 @@ import {
   usePrompt,
 } from '../../hooks';
 import { deleteNote, getNote, pinNote } from '../../actions';
-import {
-  NoteGroup,
-  Modal,
-  ModalNotes,
-  ModalConfirm,
-  ModalSubscribe,
-  FormErrorMessage,
-  Toast,
-  SearchField,
-  CTA,
-} from '../../components';
+import { NoteGroup, SearchField, CTA } from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
   NOTES_ITEM_LIMIT,
@@ -27,13 +18,39 @@ import {
   MOBILE_BREAKPOINT,
 } from '../../constants';
 
+const Modal = dynamic(() => import('../../components/shared/Modal'), {
+  ssr: false,
+});
+const ModalNotes = dynamic(() => import('../../components/notes/ModalNotes'), {
+  ssr: false,
+});
+const ModalSubscribe = dynamic(
+  () => import('../../components/shared/ModalSubscribe'),
+  {
+    ssr: false,
+  },
+);
+const ModalConfirm = dynamic(
+  () => import('../../components/shared/ModalConfirm'),
+  {
+    ssr: false,
+  },
+);
+const FormErrorMessage = dynamic(
+  () => import('../../components/forms/FormErrorMessage'),
+  {
+    ssr: false,
+  },
+);
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
+
 const Notes = ({ notes, user, notesCount }) => {
   const closeButtonRef = useRef(null);
 
-  const { userId, admin, newNotesUser, isSubscribed } = user;
+  const { userId, newNotesUser, isSubscribed } = user;
   const {
-    setUserId,
-    setIsAdmin,
     setShowModal,
     setShowToast,
     prompt,
@@ -67,9 +84,6 @@ const Notes = ({ notes, user, notesCount }) => {
   }, [atNotesLimit, currentNoteCount]);
 
   useEffect(() => {
-    // set global context
-    setUserId(userId);
-    setIsAdmin(admin);
     if (newNotesUser) setIsNotesPrompt(true);
   }, []);
 
@@ -85,7 +99,7 @@ const Notes = ({ notes, user, notesCount }) => {
       setShowModal(
         <Modal className='modal modal__form-modal--small modal__subscription-modal'>
           <ModalSubscribe userId={userId} />
-        </Modal>
+        </Modal>,
       );
       return;
     }
@@ -102,7 +116,7 @@ const Notes = ({ notes, user, notesCount }) => {
           handleClearSearch={handleClearSearch}
           setCurrentNoteCount={setCurrentNoteCount}
         />
-      </Modal>
+      </Modal>,
     );
   };
 
@@ -124,7 +138,7 @@ const Notes = ({ notes, user, notesCount }) => {
               handleClearSearch={handleClearSearch}
               numberOfItems={noteItemsGrouped?.length}
             />
-          </Modal>
+          </Modal>,
         );
       }
 
@@ -147,7 +161,7 @@ const Notes = ({ notes, user, notesCount }) => {
             confirmType='Delete'
             className='cta-button--red'
           />
-        </Modal>
+        </Modal>,
       );
       return;
     }
@@ -159,13 +173,13 @@ const Notes = ({ notes, user, notesCount }) => {
             if (Object.keys(item)[0] === res.item.type) {
               return {
                 [Object.keys(item)[0]]: Object.values(item)[0].filter(
-                  (item) => item._id !== res.item._id
+                  (item) => item._id !== res.item._id,
                 ),
               };
             } else {
               return item;
             }
-          })
+          }),
         );
 
         if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
@@ -199,11 +213,11 @@ const Notes = ({ notes, user, notesCount }) => {
             } else {
               return {
                 [Object.keys(item)[0]]: Object.values(item)[0].filter(
-                  (item) => item._id !== res.item._id
+                  (item) => item._id !== res.item._id,
                 ),
               };
             }
-          })
+          }),
         );
       }
 

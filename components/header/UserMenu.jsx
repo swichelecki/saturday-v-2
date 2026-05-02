@@ -3,9 +3,8 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAppContext } from '../../context';
+import dynamic from 'next/dynamic';
 import { logoutUser } from '../../actions';
-import { Toast } from '../../components';
 import { FaUser } from 'react-icons/fa';
 import {
   MdOutlineLogout,
@@ -17,12 +16,14 @@ import {
   MdAdminPanelSettings,
 } from 'react-icons/md';
 
-const UserMenu = ({ isAdmin }) => {
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
+
+const UserMenu = ({ isAdmin, userId }) => {
   const menuRef = useRef(null);
 
   const router = useRouter();
-
-  const { userId, setUserId, setIsAdmin } = useAppContext();
 
   // close menu when clicking off of it or on it
   useEffect(() => {
@@ -50,8 +51,6 @@ const UserMenu = ({ isAdmin }) => {
   const handleUserLogOut = async () => {
     const response = await logoutUser();
     if (response.status === 200) {
-      setUserId('');
-      setIsAdmin(false);
       router.push('/');
     } else {
       setShowToast(<Toast serverError={response} />);

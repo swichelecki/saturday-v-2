@@ -6,16 +6,13 @@ import { usePrompt } from '../../hooks';
 import { CategoryControls, RemindersControls } from '../../components';
 
 const Settings = ({ categories, reminders, user }) => {
-  const { userId, newUser, admin } = user;
-  const { setUserId, setIsCategoriesPrompt, setIsAdmin } = useAppContext();
+  const { userId, newUser } = user;
+  const { setIsCategoriesPrompt } = useAppContext();
 
   // if new user show prompts
   usePrompt(userId, newUser);
 
-  // set global contexts
   useEffect(() => {
-    setUserId(userId);
-    setIsAdmin(admin);
     if (newUser) setIsCategoriesPrompt(true);
   }, []);
 

@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { getWeather } from '../../actions';
 import { useAppContext } from '../../context';
 import { handleDayNightCheck } from '../../utilities';
-import { Toast } from '../../components';
 import {
   BsFillSunFill,
   BsCloudSunFill,
@@ -19,8 +19,12 @@ import {
 
 const ICON_MAP = new Map();
 
-const Weather = () => {
-  const { setShowToast, userId } = useAppContext();
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
+
+const Weather = ({ userId }) => {
+  const { setShowToast } = useAppContext();
 
   const [temperature, setTemperature] = useState(0);
   const [weatherCode, setWeatherCode] = useState(0);
@@ -66,7 +70,7 @@ const Weather = () => {
     addMapping([45, 48], <BsFillCloudFogFill />);
     addMapping(
       [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82],
-      <BsFillCloudRainFill />
+      <BsFillCloudRainFill />,
     );
     addMapping([71, 73, 75, 77, 85, 86], <BsSnow />);
     addMapping([95, 96, 99], <BsFillCloudLightningRainFill />);

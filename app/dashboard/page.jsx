@@ -1,4 +1,5 @@
 import connectDB from '../../config/db';
+import { Suspense } from 'react';
 import Task from '../../models/Task';
 import Category from '../../models/Category';
 import Reminder from '../../models/Reminder';
@@ -14,9 +15,7 @@ export const metadata = {
   title: 'Dashboard',
 };
 
-export const dynamic = 'force-dynamic';
-
-async function getDashboardData() {
+async function DashboardWithData() {
   try {
     await connectDB();
 
@@ -79,7 +78,7 @@ async function getDashboardData() {
     const columnTypes = [
       ...categories.reduce(
         (map, item) => map.set(item?.priority, item?.title),
-        new Map()
+        new Map(),
       ),
     ];
 
@@ -110,7 +109,7 @@ async function getDashboardData() {
       ) {
         const itemsWithDatesSortedAsc = handleSortItemsAscending(
           Object.values(item)[0],
-          'date'
+          'date',
         );
 
         Object.values(item)[0].length = 0;
@@ -175,29 +174,24 @@ async function getDashboardData() {
       remindersData.push(...todaysReminders.concat(allOtherReminders));
     }
 
-    return {
-      tasks: columnsData ?? [],
-      calendar: calendarData ?? [],
-      categories: categories ?? [],
-      reminders: remindersData ?? [],
-      user: { userId, timezone, admin, isSubscribed },
-    };
+    return (
+      <Dashboard
+        tasks={columnsData ?? []}
+        calendar={calendarData ?? []}
+        categories={categories ?? []}
+        reminders={remindersData ?? []}
+        user={{ userId, timezone, isSubscribed }}
+      />
+    );
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
 export default async function DashboarPage() {
-  const dashboardData = await getDashboardData();
-  const { tasks, calendar, categories, reminders, user } = dashboardData;
-
   return (
-    <Dashboard
-      tasks={tasks}
-      calendar={calendar}
-      categories={categories}
-      reminders={reminders}
-      user={user}
-    />
+    <Suspense>
+      <DashboardWithData />
+    </Suspense>
   );
 }

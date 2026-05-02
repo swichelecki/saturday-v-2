@@ -1,11 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
-import { FormTextField, Toast, CTA } from '../../components';
+import { FormTextField, CTA } from '../../components';
 import { adminDeleteUser } from '../../actions';
 import { adminDeleteUserSchema } from '../../schemas/schemas';
 import { FORM_ERROR_INCORRECT_PASSWORD } from '../../constants';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const ModalAdminDeleteUser = ({ adminId, userId, userEmail }) => {
   const { setShowToast, setShowModal } = useAppContext();
@@ -34,7 +39,7 @@ const ModalAdminDeleteUser = ({ adminId, userId, userEmail }) => {
       zodPassword.password,
       adminId,
       userId,
-      userEmail
+      userEmail,
     );
     if (response.status === 200) {
       handleCloseModal();

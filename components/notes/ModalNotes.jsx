@@ -9,10 +9,15 @@ import {
   useScrollToError,
   useCloseListItemsYAxis,
 } from '../../hooks';
-import { FormTextField, FormWYSIWYGField, Toast, CTA } from '../../components';
+import { FormTextField, FormWYSIWYGField, CTA } from '../../components';
+import dynamic from 'next/dynamic';
 import { handleModalResetPageScrolling } from '../../utilities';
 import { noteSchema } from '../../schemas/schemas';
 import { MOBILE_BREAKPOINT } from '../../constants';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const ModalNotes = ({
   userId,
@@ -125,13 +130,13 @@ const ModalNotes = ({
                         } else {
                           return item;
                         }
-                      }
+                      },
                     ),
                   };
                 } else {
                   return item;
                 }
-              })
+              }),
             );
 
             if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
@@ -157,7 +162,7 @@ const ModalNotes = ({
                 } else {
                   return item;
                 }
-              })
+              }),
             );
 
             if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();

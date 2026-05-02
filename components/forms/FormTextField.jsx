@@ -1,7 +1,14 @@
 'use client';
 
-import { FormErrorMessage } from '../';
+import dynamic from 'next/dynamic';
 import moment from 'moment-timezone';
+
+const FormErrorMessage = dynamic(
+  () => import('../../components/forms/FormErrorMessage'),
+  {
+    ssr: false,
+  },
+);
 
 const FormTextField = ({
   label = '',
@@ -28,8 +35,8 @@ const FormTextField = ({
           type === 'date'
             ? value?.split('T')[0]
             : type === 'datetime-local'
-            ? moment(value).tz(timezone).format('yyyy-MM-DDTHH:mm')
-            : value
+              ? moment(value).tz(timezone).format('yyyy-MM-DDTHH:mm')
+              : value
         }
         onChange={onChangeHandler}
         disabled={disabled}

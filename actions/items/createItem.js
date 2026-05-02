@@ -1,7 +1,6 @@
 'use server';
 
 import Task from '../../models/Task';
-import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { itemSchema } from '../../schemas/schemas';
@@ -70,7 +69,6 @@ export default async function createItem(item) {
       mandatoryDate,
     });
 
-    //revalidatePath('/dashboard');
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

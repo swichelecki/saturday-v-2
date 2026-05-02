@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
-import { RemindersItem, Modal, ModalConfirm, Toast } from '../../components';
+import { RemindersItem } from '../../components';
 import { getReminder, updateReminder } from '../../actions';
 import { useInnerWidth } from '../../hooks';
 import {
@@ -15,6 +16,19 @@ import {
   SKIP_TO_NEXT_REMINDER_THRESHOLD,
 } from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
+
+const Modal = dynamic(() => import('../../components/shared/Modal'), {
+  ssr: false,
+});
+const ModalConfirm = dynamic(
+  () => import('../../components/shared/ModalConfirm'),
+  {
+    ssr: false,
+  },
+);
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const Reminders = ({ reminders }) => {
   const { setShowToast, userId, setShowModal } = useAppContext();
@@ -42,10 +56,10 @@ const Reminders = ({ reminders }) => {
       : setShowScrollButtons(false);
 
     setRemindersWrapperClientRectRight(
-      remindersWrapperRef?.current?.getBoundingClientRect().right
+      remindersWrapperRef?.current?.getBoundingClientRect().right,
     );
     setRemindersWrapperClientRectLeft(
-      remindersWrapperRef?.current?.getBoundingClientRect().left
+      remindersWrapperRef?.current?.getBoundingClientRect().left,
     );
 
     if (remindersCarouselRef.current && carouselPositionRef.current) {
@@ -68,7 +82,7 @@ const Reminders = ({ reminders }) => {
       } else {
         // set monthly reminder
         reminderStartingDate.setMonth(
-          reminderStartingDate.getMonth() + interval
+          reminderStartingDate.getMonth() + interval,
         );
       }
 
@@ -87,7 +101,7 @@ const Reminders = ({ reminders }) => {
       updateReminder(copyOfReminderToUpdate).then((res) => {
         if (res.status === 200) {
           setReminders(
-            remindersItems.filter((item) => item._id !== reminderToUpdate._id)
+            remindersItems.filter((item) => item._id !== reminderToUpdate._id),
           );
         }
 
@@ -126,7 +140,7 @@ const Reminders = ({ reminders }) => {
             confirmType='Done'
             className='cta-button--yellow'
           />
-        </Modal>
+        </Modal>,
       );
       return;
     }
@@ -245,7 +259,7 @@ const Reminders = ({ reminders }) => {
             showReminders
               ? {
                   height: `${handleHiddenHeight(
-                    remindersWrapperRef.current
+                    remindersWrapperRef.current,
                   )}px`,
                 }
               : { height: '0px' }

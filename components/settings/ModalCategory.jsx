@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { FormTextField, FormCheckboxField, Toast, CTA } from '../../components';
+import { FormTextField, FormCheckboxField, CTA } from '../../components';
+import dynamic from 'next/dynamic';
 import { createCategory, updateCategory } from '../../actions';
 import { useAppContext } from '../../context';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
@@ -11,6 +12,10 @@ import {
   MOBILE_BREAKPOINT,
   MODAL_CATEGORY_ALREADY_EXISTS,
 } from '../../constants';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const ModalCategory = ({
   userId,

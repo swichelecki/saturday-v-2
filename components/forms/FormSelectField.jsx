@@ -1,6 +1,13 @@
 'use client';
 
-import { FormErrorMessage } from '../';
+import dynamic from 'next/dynamic';
+
+const FormErrorMessage = dynamic(
+  () => import('../../components/forms/FormErrorMessage'),
+  {
+    ssr: false,
+  },
+);
 
 const FormSelectField = ({
   label,

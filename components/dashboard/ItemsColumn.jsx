@@ -1,10 +1,15 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ListItem, Toast } from '../../components';
+import { ListItem } from '../../components';
+import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import { updateItem } from '../../actions';
 import { ITEM_TYPE_DASHBOARD } from '../../constants';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const ItemsColumn = ({
   heading,
@@ -44,7 +49,7 @@ const ItemsColumn = ({
         draggableItems.splice(
           dragOverItemIndex,
           0,
-          draggableItems.splice(dragItemIndex, 1)[0]
+          draggableItems.splice(dragItemIndex, 1)[0],
         );
         return draggableItems;
       });
@@ -62,7 +67,7 @@ const ItemsColumn = ({
         priority: index + 1,
         date: '',
         dateAndTime: '',
-      })
+      }),
     );
 
     draggableItemsWithNewPriorities?.forEach((item) => {

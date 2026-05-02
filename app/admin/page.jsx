@@ -1,4 +1,5 @@
 import connectDB from '../../config/db';
+import { Suspense } from 'react';
 import User from '../../models/User';
 import Task from '../../models/Task';
 import Category from '../../models/Category';
@@ -11,9 +12,7 @@ export const metadata = {
   title: 'Admin',
 };
 
-export const dynamic = 'force-dynamic';
-
-async function getAdminData() {
+async function AdminWithData() {
   try {
     await connectDB();
 
@@ -64,17 +63,21 @@ async function getAdminData() {
       return resolvedAcc;
     }, []);
 
-    return {
-      users: usersWithDataCount ?? [],
-      user: { userId, admin, timezone },
-    };
+    return (
+      <AdminDashboard
+        user={{ userId, admin, timezone }}
+        users={usersWithDataCount ?? []}
+      />
+    );
   } catch (error) {
     console.log(error);
   }
 }
 
 export default async function AdminPage() {
-  const adminData = await getAdminData();
-  const { users, user } = adminData;
-  return <AdminDashboard user={user} users={users} />;
+  return (
+    <Suspense>
+      <AdminWithData />
+    </Suspense>
+  );
 }

@@ -17,8 +17,9 @@ export default async function getReminder(userId, id) {
   }
 
   try {
-    const result = await Reminder.find({ _id: id });
-    return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
+    const result = await Reminder.findOne({ _id: id });
+
+    return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);

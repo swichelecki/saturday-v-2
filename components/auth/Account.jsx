@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import {
   stripeSubscribe,
   changeUserPassword,
@@ -14,7 +15,6 @@ import {
   FormTextField,
   FormSelectField,
   SubscriptionFeatures,
-  Toast,
   CTA,
 } from '../../components';
 import {
@@ -27,18 +27,15 @@ import {
   FORM_ERROR_INCORRECT_EMAIL_PASSWORD,
 } from '../../constants';
 
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
+
 const Account = ({ user }) => {
   const pageRef = useRef(null);
   const router = useRouter();
-  const { userId, timezone, admin, isSubscribed } = user;
-  const { setUserId, setShowToast, setIsAdmin } = useAppContext();
-
-  // set global context user id and timezone and state timezone
-  useEffect(() => {
-    setUserId(userId);
-    setIsAdmin(admin);
-    setForm({ ...form, timezone });
-  }, []);
+  const { userId, timezone, isSubscribed } = user;
+  const { setUserId, setShowToast } = useAppContext();
 
   const [form, setForm] = useState({
     userId,
@@ -224,8 +221,6 @@ const Account = ({ user }) => {
     setIsAwaitingDeleteAccoungResponse(true);
     const response = await deleteUserAccount(zodFormData);
     if (response.status === 200) {
-      setUserId('');
-      setIsAdmin(false);
       router.push('/');
     } else if (response.status === 403) {
       setIsAwaitingDeleteAccoungResponse(false);

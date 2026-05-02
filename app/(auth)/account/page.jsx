@@ -1,4 +1,5 @@
 import connectDB from '../../../config/db';
+import { Suspense } from 'react';
 import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { Account } from '../../../components';
 
@@ -6,14 +7,20 @@ export const metadata = {
   title: 'Account',
 };
 
-export const dynamic = 'force-dynamic';
-
-export default async function AccountPage() {
+async function AccountWithData() {
   await connectDB();
 
-  const { userId, timezone, admin, isSubscribed } = await getUserFromCookie();
+  const { userId, timezone, isSubscribed } = await getUserFromCookie();
 
-  const user = { userId, timezone, admin, isSubscribed };
+  const user = { userId, timezone, isSubscribed };
 
   return <Account user={user} />;
+}
+
+export default async function AccountPage() {
+  return (
+    <Suspense>
+      <AccountWithData />
+    </Suspense>
+  );
 }

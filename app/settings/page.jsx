@@ -1,4 +1,5 @@
 import connectDB from '../../config/db';
+import { Suspense } from 'react';
 import Category from '../../models/Category';
 import Reminder from '../../models/Reminder';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
@@ -8,13 +9,11 @@ export const metadata = {
   title: 'Settings',
 };
 
-export const dynamic = 'force-dynamic';
-
-async function getSettingsData() {
+async function SettingsWithData() {
   await connectDB();
 
   try {
-    const { userId, newUser, timezone, admin, isSubscribed } =
+    const { userId, newUser, timezone, isSubscribed } =
       await getUserFromCookie();
 
     const [categories, reminders] = await Promise.all([
@@ -24,24 +23,22 @@ async function getSettingsData() {
       Reminder.find({ userId }).sort({ reminderSortDate: 1 }),
     ]);
 
-    return {
-      categories: JSON.parse(JSON.stringify(categories)) ?? [],
-      reminders: JSON.parse(JSON.stringify(reminders)) ?? [],
-      user: {
-        userId,
-        timezone,
-        admin,
-        newUser,
-        isSubscribed,
-      },
-    };
+    return (
+      <Settings
+        categories={JSON.parse(JSON.stringify(categories)) ?? []}
+        reminders={JSON.parse(JSON.stringify(reminders)) ?? []}
+        user={{ userId, timezone, newUser, isSubscribed }}
+      />
+    );
   } catch (error) {
     console.log(error);
   }
 }
 
 export default async function SettingsPage() {
-  const { categories, reminders, user } = await getSettingsData();
-
-  return <Settings categories={categories} reminders={reminders} user={user} />;
+  return (
+    <Suspense>
+      <SettingsWithData />
+    </Suspense>
+  );
 }

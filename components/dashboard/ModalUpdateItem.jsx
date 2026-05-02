@@ -4,10 +4,15 @@ import { useState } from 'react';
 import { updateItem } from '../../actions';
 import { useAppContext } from '../../context';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
-import { FormTextField, Toast, CTA } from '../../components';
+import { FormTextField, CTA } from '../../components';
+import dynamic from 'next/dynamic';
 import { itemSchema } from '../../schemas/schemas';
 import { handleModalResetPageScrolling } from '../../utilities';
 import { MOBILE_BREAKPOINT } from '../../constants';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const ModalUpdateItem = ({
   itemToUpdate,
@@ -98,7 +103,7 @@ const ModalUpdateItem = ({
             } else {
               return item;
             }
-          })
+          }),
         );
 
         if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();

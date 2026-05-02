@@ -4,10 +4,15 @@ import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
 import { createItem } from '../../actions';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
-import { FormCheckboxField, FormTextField, Toast, CTA } from '../../components';
+import { FormCheckboxField, FormTextField, CTA } from '../../components';
+import dynamic from 'next/dynamic';
 import { handleModalResetPageScrolling } from '../../utilities';
 import { itemSchema } from '../../schemas/schemas';
 import { MOBILE_BREAKPOINT } from '../../constants';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const ModalCreateItem = ({
   userId,
@@ -52,7 +57,7 @@ const ModalCreateItem = ({
     if (!form?.type) return;
 
     const selectedCategoryData = items.find(
-      (category) => Object.keys(category)[0] === form?.type
+      (category) => Object.keys(category)[0] === form?.type,
     );
 
     if (typeof selectedCategoryData === 'undefined') {
@@ -143,7 +148,7 @@ const ModalCreateItem = ({
             } else {
               return item;
             }
-          })
+          }),
         );
 
         if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
@@ -201,7 +206,7 @@ const ModalCreateItem = ({
                   (isCheckedByUser && current === true) ||
                   category?.mandatoryDate
                     ? true
-                    : false
+                    : false,
                 );
                 setHasMandatoryDate(category?.mandatoryDate);
               }}

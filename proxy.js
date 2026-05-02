@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getUserFromCookie } from './utilities/getUserFromCookie';
 
-export async function middleware(req) {
+export async function proxy(req) {
   const { user, newUser, admin } = await getUserFromCookie();
 
   if (

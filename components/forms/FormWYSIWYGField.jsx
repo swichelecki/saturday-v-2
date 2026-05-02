@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { FormErrorMessage } from '../';
 import { useIsMounted } from '../../hooks';
 import 'react-quill-new/dist/quill.snow.css';
 
@@ -15,6 +14,12 @@ import 'react-quill-new/dist/quill.snow.css';
 // https://github.com/zenoamaro/react-quill/issues/989
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+const FormErrorMessage = dynamic(
+  () => import('../../components/forms/FormErrorMessage'),
+  {
+    ssr: false,
+  },
+);
 
 const FormWYSIWYGField = ({
   label = '',

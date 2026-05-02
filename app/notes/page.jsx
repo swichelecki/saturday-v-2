@@ -1,4 +1,5 @@
 import connectDB from '../../config/db';
+import { Suspense } from 'react';
 import Note from '../../models/Note';
 import { Notes } from '../../components';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
@@ -7,14 +8,11 @@ export const metadata = {
   title: 'Notes',
 };
 
-export const dynamic = 'force-dynamic';
-
-async function getNotesData() {
+async function NotesWithData() {
   try {
     await connectDB();
 
-    const { userId, admin, newNotesUser, isSubscribed } =
-      await getUserFromCookie();
+    const { userId, newNotesUser, isSubscribed } = await getUserFromCookie();
 
     const notesRaw = await Note.find({ userId }).sort({ date: -1 });
     const notes = JSON.parse(JSON.stringify(notesRaw));
@@ -61,24 +59,27 @@ async function getNotesData() {
         Object.values(note)[0].length > 0
       ) {
         Object.values(note)[0] = Object.values(note)[0].sort(
-          (a, b) => a?.pinnedDate + b?.pinnedDate
+          (a, b) => a?.pinnedDate + b?.pinnedDate,
         );
       }
     }
 
-    return {
-      notes: notesData ?? [],
-      user: { userId, admin, newNotesUser, isSubscribed },
-      notesCount: notesCount ?? 0,
-    };
+    return (
+      <Notes
+        notes={notesData ?? []}
+        user={{ userId, newNotesUser, isSubscribed }}
+        notesCount={notesCount ?? 0}
+      />
+    );
   } catch (error) {
     console.log(error);
   }
 }
 
 export default async function NotesPage() {
-  const notesData = await getNotesData();
-  const { notes, user, notesCount } = notesData;
-
-  return <Notes notes={notes} user={user} notesCount={notesCount} />;
+  return (
+    <Suspense>
+      <NotesWithData />
+    </Suspense>
+  );
 }

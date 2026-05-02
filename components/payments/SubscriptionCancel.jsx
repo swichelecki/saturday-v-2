@@ -1,21 +1,20 @@
 'use client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { updateCookieOnStripeSubscribe } from '../../actions';
 import { useAppContext } from '../../context';
-import { Toast } from '..';
 
-const SubscriptionCancel = ({ user }) => {
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
+
+const SubscriptionCancel = ({ userId }) => {
   const router = useRouter();
-  const { userId, admin } = user;
-  const { setUserId, setIsAdmin, setShowToast } = useAppContext();
+  const { setShowToast } = useAppContext();
 
   // create new cookie with stripe information
   useEffect(() => {
-    // set global context
-    setUserId(userId);
-    setIsAdmin(admin);
-
     updateCookieOnStripeSubscribe(userId).then((res) => {
       if (res.status === 500) {
         setShowToast(<Toast serverError={res} />);

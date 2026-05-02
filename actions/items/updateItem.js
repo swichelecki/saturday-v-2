@@ -1,7 +1,6 @@
 'use server';
 
 import Task from '../../models/Task';
-import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 import { itemSchema } from '../../schemas/schemas';
@@ -71,11 +70,10 @@ export default async function itemUpdate(item) {
         column,
         confirmDeletion,
         mandatoryDate,
-      }
+      },
     );
 
     const result = await Task.find({ _id: _id });
-    //revalidatePath('/dashboard');
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

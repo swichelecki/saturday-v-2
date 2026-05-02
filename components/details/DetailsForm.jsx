@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import { createItem, updateItem } from '../../actions';
 import { useScrollToError } from '../../hooks';
@@ -10,11 +11,19 @@ import {
   FormTextField,
   FormWYSIWYGField,
   FormCheckboxField,
-  FormErrorMessage,
-  Toast,
   CTA,
 } from '../../components';
 import { itemSchema } from '../../schemas/schemas';
+
+const FormErrorMessage = dynamic(
+  () => import('../../components/forms/FormErrorMessage'),
+  {
+    ssr: false,
+  },
+);
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const DetailsForm = ({ task, user }) => {
   const formRef = useRef(null);
@@ -23,8 +32,8 @@ const DetailsForm = ({ task, user }) => {
   const [priority, type, column, hasMandatoryDate, categoryId] =
     params.values();
   const isUpdate = !!Object.keys(task ?? {}).length;
-  const { userId, timezone, admin, numberOfItems } = user;
-  const { setShowToast, setUserId, setIsAdmin } = useAppContext();
+  const { userId, timezone, numberOfItems } = user;
+  const { setShowToast } = useAppContext();
 
   const [form, setForm] = useState({
     _id: task?._id ?? '',
@@ -52,12 +61,6 @@ const DetailsForm = ({ task, user }) => {
   const [isAwaitingSaveResponse, setIsAwaitingSaveResponse] = useState(false);
 
   useScrollToError(formRef, scrollToErrorMessage, setScrollToErrorMessage);
-
-  useEffect(() => {
-    // set global context user id and timezone
-    setUserId(userId);
-    setIsAdmin(admin);
-  }, []);
 
   const handleSetForm = (e) => {
     setForm({

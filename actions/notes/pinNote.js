@@ -1,7 +1,6 @@
 'use server';
 
 import Note from '../../models/Note';
-import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 
@@ -23,10 +22,9 @@ export default async function pinNote(id, userId, pinnedStatus, year) {
     const pinnedDate = new Date().toISOString();
     await Note.updateOne(
       { _id: id },
-      { pinned: pinnedStatus, pinnedDate, type }
+      { pinned: pinnedStatus, pinnedDate, type },
     );
     const result = await Note.find({ _id: id });
-    //revalidatePath('/notes');
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

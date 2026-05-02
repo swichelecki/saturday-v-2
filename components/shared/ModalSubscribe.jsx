@@ -3,8 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../context';
+import dynamic from 'next/dynamic';
 import { stripeSubscribe } from '../../actions';
-import { SubscriptionFeatures, Toast } from '../../components';
+import { SubscriptionFeatures } from '../../components';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const ModalSubscribe = ({ userId }) => {
   const router = useRouter();

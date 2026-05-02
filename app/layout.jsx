@@ -1,6 +1,7 @@
 import { Source_Sans_3 } from 'next/font/google';
-import { GloablContext } from '../components';
-import { Layout } from '../components';
+import { GloablContext, Layout } from '../components';
+import Header from '../components/header/Header';
+
 import '../styles/styles.scss';
 
 const sourceSansPro = Source_Sans_3({
@@ -67,6 +68,7 @@ export default function RootLayout({ children }) {
           }}
         />
         <GloablContext>
+          <Header />
           <Layout>{children}</Layout>
         </GloablContext>
       </body>

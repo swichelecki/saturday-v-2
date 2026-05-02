@@ -1,22 +1,20 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { FormTextField, FormWYSIWYGField, Toast, CTA } from '../';
+import { FormTextField, FormWYSIWYGField, CTA } from '../';
+import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import { createContactMessage } from '../../actions';
 import { useScrollToError } from '../../hooks';
 import { contactFormSchema } from '../../schemas/schemas';
 
-const ContactForm = ({ user }) => {
-  const formRef = useRef(null);
-  const { userId, admin } = user;
-  const { setUserId, setShowToast, setIsAdmin } = useAppContext();
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
-  // set global context user id and timezone and state timezone
-  useEffect(() => {
-    setUserId(userId);
-    setIsAdmin(admin);
-  }, []);
+const ContactForm = ({ userId }) => {
+  const formRef = useRef(null);
+  const { setShowToast } = useAppContext();
 
   const [form, setForm] = useState({
     userId,

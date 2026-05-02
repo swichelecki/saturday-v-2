@@ -1,25 +1,23 @@
 'use client';
 
-import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
-import { AdminTable, Modal, ModalAdminDeleteUser } from '../../components';
+import { AdminTable, ModalAdminDeleteUser } from '../../components';
+
+const Modal = dynamic(() => import('../../components/shared/Modal'), {
+  ssr: false,
+});
 
 const AdminDashboard = ({ users, user }) => {
-  const { userId: adminId, admin, timezone } = user;
+  const { userId: adminId, timezone } = user;
 
-  const { setUserId, setIsAdmin, setShowModal } = useAppContext();
-
-  useEffect(() => {
-    // set global context
-    setUserId(adminId);
-    setIsAdmin(admin);
-  }, []);
+  const { setShowModal } = useAppContext();
 
   const handleOpenDeleteUserModal = (id, email) => {
     setShowModal(
       <Modal showCloseButton={false}>
         <ModalAdminDeleteUser adminId={adminId} userId={id} userEmail={email} />
-      </Modal>
+      </Modal>,
     );
   };
 

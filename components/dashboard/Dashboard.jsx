@@ -3,17 +3,7 @@
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
-import {
-  Week,
-  Modal,
-  ModalConfirm,
-  ModalCreateItem,
-  ModalUpdateItem,
-  ModalSubscribe,
-  FormErrorMessage,
-  Toast,
-  CTA,
-} from '../../components';
+import { Week, CTA } from '../../components';
 import {
   useInnerWidth,
   useListItemsMobileReset,
@@ -27,22 +17,52 @@ import {
   UNSUBSCRIBED_LIST_ITEM_LIMIT,
 } from '../../constants';
 
-const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
-const ItemsColumn = dynamic(() =>
-  import('../../components/dashboard/ItemsColumn')
+const Modal = dynamic(() => import('../../components/shared/Modal'), {
+  ssr: false,
+});
+const ModalCreateItem = dynamic(
+  () => import('../../components/dashboard/ModalCreateItem'),
+  {
+    ssr: false,
+  },
 );
+const ModalUpdateItem = dynamic(
+  () => import('../../components/dashboard/ModalUpdateItem'),
+  {
+    ssr: false,
+  },
+);
+const ModalConfirm = dynamic(
+  () => import('../../components/shared/ModalConfirm'),
+  {
+    ssr: false,
+  },
+);
+const ModalSubscribe = dynamic(
+  () => import('../../components/shared/ModalSubscribe'),
+  {
+    ssr: false,
+  },
+);
+const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
+const ItemsColumn = dynamic(
+  () => import('../../components/dashboard/ItemsColumn'),
+);
+const FormErrorMessage = dynamic(
+  () => import('../../components/forms/FormErrorMessage'),
+  {
+    ssr: false,
+  },
+);
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
-  const { userId, timezone, admin, isSubscribed } = user;
+  const { userId, timezone, isSubscribed } = user;
 
-  const {
-    setUserId,
-    setShowToast,
-    setShowModal,
-    setIsAdmin,
-    calendarItems,
-    setCalendarItems,
-  } = useAppContext();
+  const { setShowToast, setShowModal, calendarItems, setCalendarItems } =
+    useAppContext();
 
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
@@ -64,9 +84,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   let allItems = [];
 
   useEffect(() => {
-    // set global context
-    setUserId(userId);
-    setIsAdmin(admin);
     setCalendarItems(calendar);
   }, []);
 
@@ -100,14 +117,14 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
       width >= 1400 && items?.length >= 4
         ? 4
         : (width < 1400 && width >= 1080 && items?.length >= 3) ||
-          (items?.length === 3 && width >= 1080)
-        ? 3
-        : (width < 1080 && width >= 704 && items?.length >= 2) ||
-          (items?.length === 2 && width >= 704)
-        ? 2
-        : width < 704 || items?.length === 1
-        ? 1
-        : undefined;
+            (items?.length === 3 && width >= 1080)
+          ? 3
+          : (width < 1080 && width >= 704 && items?.length >= 2) ||
+              (items?.length === 2 && width >= 704)
+            ? 2
+            : width < 704 || items?.length === 1
+              ? 1
+              : undefined;
 
     handleMasonry(numberOfColumns, items);
   }, [listItems, width]);
@@ -126,7 +143,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
       setShowModal(
         <Modal className='modal modal__form-modal--small modal__subscription-modal'>
           <ModalSubscribe userId={userId} />
-        </Modal>
+        </Modal>,
       );
       return;
     }
@@ -140,7 +157,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
           setItems={setListItems}
           totalNumberOfItems={totalNumberOfItems}
         />
-      </Modal>
+      </Modal>,
     );
   };
 
@@ -158,7 +175,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
               setItems={setListItems}
               totalNumberOfItems={totalNumberOfItems}
             />
-          </Modal>
+          </Modal>,
         );
       }
 
@@ -181,7 +198,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
             confirmType='Delete'
             className='cta-button--red'
           />
-        </Modal>
+        </Modal>,
       );
       return;
     }
@@ -194,13 +211,13 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
             if (Object.keys(item)[0] === res.item.type) {
               return {
                 [Object.keys(item)[0]]: Object.values(item)[0].filter(
-                  (item) => item._id !== res.item._id
+                  (item) => item._id !== res.item._id,
                 ),
               };
             } else {
               return item;
             }
-          })
+          }),
         );
 
         if (calendarItems && calendarItems?.length > 0) {
@@ -208,10 +225,10 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
             calendarItems?.map((item) => {
               return {
                 [Object.keys(item)[0]]: Object.values(item)[0].filter(
-                  (item) => item?._id !== res.item._id
+                  (item) => item?._id !== res.item._id,
                 ),
               };
-            })
+            }),
           );
         }
 

@@ -1,12 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-import { Modal, CTA } from '../components';
+import dynamic from 'next/dynamic';
+import { CTA } from '../components';
 import { useAppContext } from '../context';
 import { useInnerWidth } from '../hooks';
 import { ImCheckmark } from 'react-icons/im';
 import homepageImage from '../public/saturday-homepage-no-ai-no-prob.webp';
 import saturdayDashboard from '../public/saturday-dashboard.webp';
+
+const Modal = dynamic(() => import('../components/shared/Modal'), {
+  ssr: false,
+});
 
 export default function Home() {
   const { setShowModal } = useAppContext();
@@ -34,7 +39,7 @@ export default function Home() {
           unoptimized={altText === saturdayDashboardAltText}
           alt={altText}
         />
-      </Modal>
+      </Modal>,
     );
   };
 

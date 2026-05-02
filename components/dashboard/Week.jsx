@@ -3,12 +3,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../context';
 import { handleHiddenHeight, handleDateToYearMonthDay } from '../../utilities';
-import { WeekItem, Toast } from '../../components';
+import { WeekItem } from '../../components';
+import dynamic from 'next/dynamic';
 import { useInnerWidth } from '../../hooks';
 import moment from 'moment-timezone';
 import { getCalendarItems } from '../../actions';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
+
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const Week = ({ timezone, userId }) => {
   const { calendarItems, setCalendarItems } = useAppContext();
@@ -78,10 +83,10 @@ const Week = ({ timezone, userId }) => {
         : setShowScrollButtons(false);
 
       setWeekWrapperClientRectRight(
-        weekWrapperRef?.current?.getBoundingClientRect().right
+        weekWrapperRef?.current?.getBoundingClientRect().right,
       );
       setWeekWrapperClientRectLeft(
-        weekWrapperRef?.current?.getBoundingClientRect().left
+        weekWrapperRef?.current?.getBoundingClientRect().left,
       );
     }, 50);
 
@@ -105,14 +110,14 @@ const Week = ({ timezone, userId }) => {
     weekCarouselRef?.current?.addEventListener(
       'touchmove',
       (e) => handlePreventScroll(e),
-      { passive: false }
+      { passive: false },
     );
 
     return () => {
       weekCarouselRef?.current?.removeEventListener(
         'touchmove',
         (e) => handlePreventScroll(e),
-        { passive: false }
+        { passive: false },
       );
     };
   }, [calendarItems, isAwaitingCalendarItems]);
@@ -127,7 +132,7 @@ const Week = ({ timezone, userId }) => {
     const nextOrPrevMondayYearMonthDay =
       handleDateToYearMonthDay(nextOrPrevMondayDate);
     const sunday = nextOrPrevMondayDate.setDate(
-      nextOrPrevMondayDate.getDate() + 6
+      nextOrPrevMondayDate.getDate() + 6,
     );
     const nextOrPrevSundayYearMonthDay = handleDateToYearMonthDay(sunday);
 
@@ -143,7 +148,7 @@ const Week = ({ timezone, userId }) => {
         const mondayCopy = new Date(nextOrPrevMonday);
         for (let i = 1; i <= 6; i++) {
           daysOfWeek.push(
-            new Date(mondayCopy.setDate(mondayCopy.getDate() + 1))
+            new Date(mondayCopy.setDate(mondayCopy.getDate() + 1)),
           );
         }
 
@@ -154,7 +159,7 @@ const Week = ({ timezone, userId }) => {
             [yearMonthDay]: [
               ...res.calendarItems?.filter((calItem) => {
                 const calItemDate = new Date(
-                  calItem?.date ? calItem?.date : calItem?.reminderDate
+                  calItem?.date ? calItem?.date : calItem?.reminderDate,
                 );
                 const calItemYearMonthDay = calItemDate
                   .toISOString()
@@ -193,11 +198,11 @@ const Week = ({ timezone, userId }) => {
     if (
       Math.max(
         e.touches[0].clientY - startYPosition,
-        startYPosition - e.touches[0].clientY
+        startYPosition - e.touches[0].clientY,
       ) >
       Math.max(
         e.touches[0].clientX - startXPosition,
-        startXPosition - e.touches[0].clientX
+        startXPosition - e.touches[0].clientX,
       )
     )
       return;
@@ -211,7 +216,7 @@ const Week = ({ timezone, userId }) => {
 
     carouselPositionRef.current = Math.max(
       maxScrollWidth,
-      Math.min(previousTranslateX + currentPosition - startXPosition, 0)
+      Math.min(previousTranslateX + currentPosition - startXPosition, 0),
     );
 
     animationIdRef.current = requestAnimationFrame(animation);
@@ -286,7 +291,7 @@ const Week = ({ timezone, userId }) => {
     };
 
     setNextOrPrevMonday(
-      getNextMonday(!nextOrPrevMonday ? new Date(today) : nextOrPrevMonday)
+      getNextMonday(!nextOrPrevMonday ? new Date(today) : nextOrPrevMonday),
     );
   };
 
@@ -302,7 +307,7 @@ const Week = ({ timezone, userId }) => {
     };
 
     setNextOrPrevMonday(
-      getPrevMonday(!nextOrPrevMonday ? new Date(today) : nextOrPrevMonday)
+      getPrevMonday(!nextOrPrevMonday ? new Date(today) : nextOrPrevMonday),
     );
   };
 
@@ -336,7 +341,7 @@ const Week = ({ timezone, userId }) => {
         >
           <div className='week__calendar-month-year'>
             {moment(!nextOrPrevMonday ? today : nextOrPrevMonday).format(
-              'MMM YYYY'
+              'MMM YYYY',
             )}
             <button
               onClick={handleGetPreviousWeek}
@@ -383,9 +388,9 @@ const Week = ({ timezone, userId }) => {
                         moment(Object.keys(item)[0]).format('D') !== '1'
                           ? ' week__day-of-month--today'
                           : Object.keys(item)[0] === today &&
-                            moment(Object.keys(item)[0]).format('D') === '1'
-                          ? ' week__day-of-month--today-first-of-month'
-                          : ''
+                              moment(Object.keys(item)[0]).format('D') === '1'
+                            ? ' week__day-of-month--today-first-of-month'
+                            : ''
                       }`}
                     >
                       {moment(Object.keys(item)[0]).format('D') === '1'

@@ -1,18 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
-import {
-  ListItem,
-  Modal,
-  ModalConfirm,
-  ModalCategory,
-  ModalSubscribe,
-  FormErrorMessage,
-  Toast,
-  CTA,
-} from '../../components';
+import { ListItem, CTA } from '../../components';
 import { deleteCategory, updateCategory, getCategory } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
@@ -21,6 +13,37 @@ import {
   ITEM_TYPE_CATEGORY,
   MOBILE_BREAKPOINT,
 } from '../../constants';
+
+const Modal = dynamic(() => import('../../components/shared/Modal'), {
+  ssr: false,
+});
+const ModalCategory = dynamic(
+  () => import('../../components/settings/ModalCategory'),
+  {
+    ssr: false,
+  },
+);
+const ModalSubscribe = dynamic(
+  () => import('../../components/shared/ModalSubscribe'),
+  {
+    ssr: false,
+  },
+);
+const ModalConfirm = dynamic(
+  () => import('../../components/shared/ModalConfirm'),
+  {
+    ssr: false,
+  },
+);
+const FormErrorMessage = dynamic(
+  () => import('../../components/forms/FormErrorMessage'),
+  {
+    ssr: false,
+  },
+);
+const Toast = dynamic(() => import('../../components/shared/Toast'), {
+  ssr: false,
+});
 
 const CategoryControls = ({ categories, user }) => {
   const dragItemRef = useRef(null);
@@ -64,7 +87,7 @@ const CategoryControls = ({ categories, user }) => {
       setShowModal(
         <Modal className='modal modal__form-modal--small modal__subscription-modal'>
           <ModalSubscribe userId={userId} />
-        </Modal>
+        </Modal>,
       );
       return;
     }
@@ -78,7 +101,7 @@ const CategoryControls = ({ categories, user }) => {
           newUser={newUser}
           numberOfItems={categoryItems?.length}
         />
-      </Modal>
+      </Modal>,
     );
   };
 
@@ -97,7 +120,7 @@ const CategoryControls = ({ categories, user }) => {
               itemToUpdate={res.item}
               numberOfItems={categoryItems?.length}
             />
-          </Modal>
+          </Modal>,
         );
       }
 
@@ -120,7 +143,7 @@ const CategoryControls = ({ categories, user }) => {
             confirmType='Delete'
             className='cta-button--red'
           />
-        </Modal>
+        </Modal>,
       );
       return;
     }
@@ -159,7 +182,7 @@ const CategoryControls = ({ categories, user }) => {
         draggableCategories.splice(
           dragOverItemIndex,
           0,
-          draggableCategories.splice(dragItemIndex, 1)[0]
+          draggableCategories.splice(dragItemIndex, 1)[0],
         );
         return draggableCategories;
       });
@@ -176,7 +199,7 @@ const CategoryControls = ({ categories, user }) => {
         ...item,
         priority: index + 1,
         itemLimit: categoryItems?.length,
-      })
+      }),
     );
 
     draggableCategoriesWithNewPriorities?.forEach((item) => {

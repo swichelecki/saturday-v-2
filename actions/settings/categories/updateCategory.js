@@ -2,7 +2,6 @@
 
 import Task from '../../../models/Task';
 import Category from '../../../models/Category';
-import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../../utilities';
 import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { categorySchema } from '../../../schemas/schemas';
@@ -66,7 +65,7 @@ export default async function updateCategory(item, isFormUpdate) {
         title: categoryTitle,
         mandatoryDate: categoryMandatoryDate,
         confirmDeletion: categoryConfirmDeletion,
-      }
+      },
     );
 
     let updatedCategory;
@@ -111,11 +110,10 @@ export default async function updateCategory(item, isFormUpdate) {
               : ''
             : dateAndTime,
           mandatoryDate: isFormUpdate ? categoryMandatoryDate : mandatoryDate,
-        }
+        },
       );
     });
 
-    //revalidatePath('/settings');
     return {
       status: 200,
       item: isFormUpdate ? JSON.parse(JSON.stringify(updatedCategory[0])) : '',
