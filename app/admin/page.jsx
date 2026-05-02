@@ -74,7 +74,7 @@ async function AdminWithData() {
   }
 }
 
-export default async function AdminPage() {
+export default function AdminPage() {
   return (
     <Suspense>
       <AdminWithData />

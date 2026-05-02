@@ -17,7 +17,7 @@ async function AccountWithData() {
   return <Account user={user} />;
 }
 
-export default async function AccountPage() {
+export default function AccountPage() {
   return (
     <Suspense>
       <AccountWithData />

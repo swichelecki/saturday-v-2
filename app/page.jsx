@@ -1,47 +1,11 @@
-'use client';
-
-import Image from 'next/image';
-import dynamic from 'next/dynamic';
-import { CTA } from '../components';
-import { useAppContext } from '../context';
-import { useInnerWidth } from '../hooks';
+import { CTA, HomeImage } from '../components';
 import { ImCheckmark } from 'react-icons/im';
 import homepageImage from '../public/saturday-homepage-no-ai-no-prob.webp';
 import saturdayDashboard from '../public/saturday-dashboard.webp';
 
-const Modal = dynamic(() => import('../components/shared/Modal'), {
-  ssr: false,
-});
-
 export default function Home() {
-  const { setShowModal } = useAppContext();
-
-  const width = useInnerWidth();
-
   const hideThePainArnoldAltText = 'Hide the Pain Arnold. No AI. No Problem.';
   const saturdayDashboardAltText = 'Screenshot of the Saturday dashboard';
-
-  // show image modal
-  const handleShowModal = (image, altText) => {
-    if (width <= 1000) return;
-
-    setShowModal(
-      <Modal
-        className='modal modal__image-modal'
-        showCloseButton={false}
-        closeModalWhenClickingOutside={true}
-      >
-        <Image
-          src={image}
-          width={1000}
-          height={563}
-          quality={100}
-          unoptimized={altText === saturdayDashboardAltText}
-          alt={altText}
-        />
-      </Modal>,
-    );
-  };
 
   return (
     <div className='homepage__wrapper'>
@@ -63,22 +27,7 @@ export default function Home() {
           />
         </div>
         <div className='homepage__hero-right'>
-          <button
-            onClick={() => {
-              handleShowModal(homepageImage, hideThePainArnoldAltText);
-            }}
-            type='button'
-          >
-            <Image
-              src={homepageImage}
-              width={720}
-              height={405}
-              sizes='(max-width: 768px) calc(100vw - 48px), 1000px'
-              quality={100}
-              priority
-              alt={hideThePainArnoldAltText}
-            />
-          </button>
+          <HomeImage image={homepageImage} alt={hideThePainArnoldAltText} />
         </div>
       </section>
       <section className='homepage__benefits'>
@@ -107,22 +56,7 @@ export default function Home() {
       </section>
       <section className='homepage__features'>
         <div className='homepage__features-image'>
-          <button
-            onClick={() => {
-              handleShowModal(saturdayDashboard, saturdayDashboardAltText);
-            }}
-            type='button'
-          >
-            <Image
-              src={saturdayDashboard}
-              width={720}
-              height={405}
-              sizes='(max-width: 768px) calc(100vw - 48px), 1000px'
-              quality={100}
-              unoptimized={true}
-              alt={saturdayDashboardAltText}
-            />
-          </button>
+          <HomeImage image={saturdayDashboard} alt={saturdayDashboardAltText} />
         </div>
         <div className='homepage__features-list'>
           <ul>

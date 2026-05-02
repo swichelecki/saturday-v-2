@@ -15,7 +15,7 @@ async function SubscriptionCancelWithData() {
   return <SubscriptionCancel userId={userId} />;
 }
 
-export default async function SubscriptionCancelPage() {
+export default function SubscriptionCancelPage() {
   return (
     <Suspense>
       <SubscriptionCancelWithData />

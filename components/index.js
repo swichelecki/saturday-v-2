@@ -38,6 +38,7 @@ export { default as SubscriptionSuccess } from './payments/SubscriptionSuccess';
 export { default as SubscriptionCancel } from './payments/SubscriptionCancel';
 export { default as SubscriptionFeatures } from './shared/SubscriptionFeatures';
 export { default as CTA } from './shared/CTA';
+export { default as HomeImage } from './home/HomeImage';
 export { default as AdminDashboard } from './admin/AdminDashboard';
 export { default as AdminTable } from './admin/AdminTable';
 export { default as AdminTableRow } from './admin/AdminTableRow';

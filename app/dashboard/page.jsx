@@ -19,7 +19,7 @@ async function DashboardWithData() {
   try {
     await connectDB();
 
-    const { userId, timezone, admin, isSubscribed } = await getUserFromCookie();
+    const { userId, timezone, isSubscribed } = await getUserFromCookie();
 
     const getDateFormattedForUser = (date) => {
       const today = Intl.DateTimeFormat('en-US', {
@@ -188,7 +188,7 @@ async function DashboardWithData() {
   }
 }
 
-export default async function DashboarPage() {
+export default function DashboarPage() {
   return (
     <Suspense>
       <DashboardWithData />

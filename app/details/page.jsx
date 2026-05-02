@@ -24,7 +24,7 @@ async function DetailsWithData() {
   }
 }
 
-export default async function AddDetails() {
+export default function AddDetails() {
   return (
     <Suspense>
       <DetailsWithData />

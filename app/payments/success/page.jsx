@@ -15,7 +15,7 @@ async function SubscriptionSuccessWithData() {
   return <SubscriptionSuccess userId={userId} />;
 }
 
-export default async function SubscriptionSuccessPage() {
+export default function SubscriptionSuccessPage() {
   return (
     <Suspense>
       <SubscriptionSuccessWithData />

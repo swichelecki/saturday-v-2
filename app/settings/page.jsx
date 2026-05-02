@@ -35,7 +35,7 @@ async function SettingsWithData() {
   }
 }
 
-export default async function SettingsPage() {
+export default function SettingsPage() {
   return (
     <Suspense>
       <SettingsWithData />

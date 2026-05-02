@@ -15,7 +15,7 @@ async function ContactWithData() {
   return <ContactForm userId={userId} />;
 }
 
-export default async function ContactPage() {
+export default function ContactPage() {
   return (
     <Suspense>
       <ContactWithData />

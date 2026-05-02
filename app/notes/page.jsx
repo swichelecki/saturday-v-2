@@ -76,7 +76,7 @@ async function NotesWithData() {
   }
 }
 
-export default async function NotesPage() {
+export default function NotesPage() {
   return (
     <Suspense>
       <NotesWithData />
