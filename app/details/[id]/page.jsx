@@ -8,7 +8,10 @@ export const metadata = {
   title: 'Details',
 };
 
-async function DetailsWithData({ id }) {
+async function DetailsWithData({ props }) {
+  const params = await props.params;
+  const { id } = params;
+
   try {
     await connectDB();
 
@@ -30,13 +33,10 @@ async function DetailsWithData({ id }) {
   }
 }
 
-export default async function EditDetails(props) {
-  const params = await props.params;
-  const { id } = params;
-
+export default function EditDetails(props) {
   return (
     <Suspense>
-      <DetailsWithData id={id} />
+      <DetailsWithData props={props} />
     </Suspense>
   );
 }

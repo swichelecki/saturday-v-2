@@ -188,7 +188,7 @@ async function DashboardWithData() {
   }
 }
 
-export default function DashboarPage() {
+export default function DashboardPage() {
   return (
     <Suspense>
       <DashboardWithData />

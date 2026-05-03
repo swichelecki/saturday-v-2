@@ -51,7 +51,7 @@ const HomeImage = ({ image, alt }) => {
         height={405}
         sizes='(max-width: 768px) calc(100vw - 48px), 1000px'
         quality={100}
-        priority
+        priority={alt !== saturdayDashboardAltText}
         alt={alt}
       />
     </button>
