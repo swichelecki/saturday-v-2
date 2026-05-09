@@ -10,7 +10,16 @@ import {
   usePrompt,
 } from '../../hooks';
 import { deleteNote, getNote, pinNote } from '../../actions';
-import { NoteGroup, SearchField, CTA } from '../../components';
+import {
+  NoteGroup,
+  SearchField,
+  CTA,
+  Modal,
+  ModalNotes,
+  ModalSubscribe,
+  ModalConfirm,
+  FormErrorMessage,
+} from '../../components';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
   NOTES_ITEM_LIMIT,
@@ -18,30 +27,6 @@ import {
   MOBILE_BREAKPOINT,
 } from '../../constants';
 
-const Modal = dynamic(() => import('../../components/shared/Modal'), {
-  ssr: false,
-});
-const ModalNotes = dynamic(() => import('../../components/notes/ModalNotes'), {
-  ssr: false,
-});
-const ModalSubscribe = dynamic(
-  () => import('../../components/shared/ModalSubscribe'),
-  {
-    ssr: false,
-  },
-);
-const ModalConfirm = dynamic(
-  () => import('../../components/shared/ModalConfirm'),
-  {
-    ssr: false,
-  },
-);
-const FormErrorMessage = dynamic(
-  () => import('../../components/forms/FormErrorMessage'),
-  {
-    ssr: false,
-  },
-);
 const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
@@ -79,6 +64,7 @@ const Notes = ({ notes, user, notesCount }) => {
   // remove at-notes-limit message after note deletion
   useEffect(() => {
     if (currentNoteCount < notesLimit && atNotesLimit) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAtNotesLimit(false);
     }
   }, [atNotesLimit, currentNoteCount]);

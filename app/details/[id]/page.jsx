@@ -12,25 +12,21 @@ async function DetailsWithData({ props }) {
   const params = await props.params;
   const { id } = params;
 
-  try {
-    await connectDB();
+  await connectDB();
 
-    const { userId, timezone } = await getUserFromCookie();
+  const { userId, timezone } = await getUserFromCookie();
 
-    const [task, numberOfItems] = await Promise.all([
-      Task.find({ _id: id, userId }),
-      Task.find({ userId }).count(),
-    ]);
+  const [task, numberOfItems] = await Promise.all([
+    Task.find({ _id: id, userId }),
+    Task.find({ userId }).count(),
+  ]);
 
-    return (
-      <DetailsForm
-        task={JSON.parse(JSON.stringify(task[0]))}
-        user={{ userId, timezone, numberOfItems }}
-      />
-    );
-  } catch (error) {
-    console.log(error);
-  }
+  return (
+    <DetailsForm
+      task={JSON.parse(JSON.stringify(task[0]))}
+      user={{ userId, timezone, numberOfItems }}
+    />
+  );
 }
 
 export default function EditDetails(props) {

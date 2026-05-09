@@ -1,10 +1,11 @@
 'use server';
 
 import Task from '../../models/Task';
+import { revalidatePath } from 'next/cache';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
 
-export default async function deleteTask(_id, userId) {
+export default async function deleteTask(_id, isCalendarItem, userId) {
   // check that cookie user id matches param userId
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
@@ -17,9 +18,10 @@ export default async function deleteTask(_id, userId) {
   }
 
   try {
-    const result = await Task.find({ _id: _id });
+    const result = await Task.findOne({ _id: _id });
     await Task.deleteOne({ _id: _id });
-    return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
+    if (isCalendarItem) revalidatePath('/dashboard');
+    return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);

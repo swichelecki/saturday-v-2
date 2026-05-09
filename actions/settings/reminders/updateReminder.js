@@ -66,11 +66,11 @@ export default async function updateReminder(item) {
         exactRecurringDate,
         displayReminder,
         confirmDeletion,
-      }
+      },
     );
 
-    const result = await Reminder.find({ _id: _id });
-    return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
+    const result = await Reminder.findOne({ _id: _id });
+    return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);

@@ -73,38 +73,38 @@ const UserMenu = ({ isAdmin, userId }) => {
       <nav ref={menuRef} className='user-menu__nav'>
         <ul>
           <li>
-            <Link href='/dashboard' prefetch={false}>
+            <Link href='/dashboard'>
               <MdHome />
               Dashboard
             </Link>
           </li>
           <li>
-            <Link href='/notes' prefetch={false}>
+            <Link href='/notes'>
               <MdNoteAlt />
               Notes
             </Link>
           </li>
           <li>
-            <Link href='/settings' prefetch={false}>
+            <Link href='/settings'>
               <MdSettings />
               Settings
             </Link>
           </li>
           <li>
-            <Link href='/account' prefetch={false}>
+            <Link href='/account'>
               <MdManageAccounts />
               Account
             </Link>
           </li>
           <li>
-            <Link href='/contact' prefetch={false}>
+            <Link href='/contact'>
               <MdMessage />
               Contact
             </Link>
           </li>
           {isAdmin && (
             <li>
-              <Link href='/admin' prefetch={false}>
+              <Link href='/admin'>
                 <MdAdminPanelSettings />
                 Admin
               </Link>

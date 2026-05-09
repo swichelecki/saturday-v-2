@@ -9,19 +9,13 @@ export const metadata = {
 };
 
 async function DetailsWithData() {
-  try {
-    await connectDB();
+  await connectDB();
 
-    const { userId, timezone } = await getUserFromCookie();
+  const { userId, timezone } = await getUserFromCookie();
+  const numberOfItems = await Task.find({ userId }).count();
+  const user = { userId, timezone, numberOfItems };
 
-    const numberOfItems = await Task.find({ userId }).count();
-
-    const user = { userId, timezone, numberOfItems };
-
-    return <DetailsForm user={user} />;
-  } catch (error) {
-    console.log(error);
-  }
+  return <DetailsForm user={user} />;
 }
 
 export default function AddDetails() {

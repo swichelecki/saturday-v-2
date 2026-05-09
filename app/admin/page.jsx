@@ -13,65 +13,57 @@ export const metadata = {
 };
 
 async function AdminWithData() {
-  try {
-    await connectDB();
+  await connectDB();
 
-    const { userId, admin, timezone } = await getUserFromCookie();
+  const { userId, admin, timezone } = await getUserFromCookie();
 
-    if (!admin) throw new Error('User is not an admin.');
+  if (!admin) throw new Error('User is not an admin.');
 
-    const usersRaw = await User.find().sort({ updatedAt: -1 });
-    const users = JSON.parse(JSON.stringify(usersRaw));
+  const usersRaw = await User.find().sort({ updatedAt: -1 });
+  const users = JSON.parse(JSON.stringify(usersRaw));
 
-    // put user item counts into their own array
-    const getUserDataCounts = async (userId) => {
-      const [dashboardItemsCount, categoriesCount, remindersCount, notesCount] =
-        await Promise.all([
-          Task.countDocuments({ userId }),
-          Category.countDocuments({ userId }),
-          Reminder.countDocuments({ userId }),
-          Note.countDocuments({ userId }),
-        ]);
+  // put user item counts into their own array
+  const getUserDataCounts = async (userId) => {
+    const [dashboardItemsCount, categoriesCount, remindersCount, notesCount] =
+      await Promise.all([
+        Task.countDocuments({ userId }),
+        Category.countDocuments({ userId }),
+        Reminder.countDocuments({ userId }),
+        Note.countDocuments({ userId }),
+      ]);
 
-      return {
-        dashboardItemsCount,
-        categoriesCount,
-        remindersCount,
-        notesCount,
-      };
+    return {
+      dashboardItemsCount,
+      categoriesCount,
+      remindersCount,
+      notesCount,
     };
+  };
 
-    // add user item counts to the user data array
-    const usersWithDataCount = await users.reduce(async (acc, item) => {
-      const resolvedAcc = await acc;
+  // add user item counts to the user data array
+  const usersWithDataCount = await users.reduce(async (acc, item) => {
+    const resolvedAcc = await acc;
 
-      const {
-        dashboardItemsCount,
-        categoriesCount,
-        remindersCount,
-        notesCount,
-      } = await getUserDataCounts(item?._id);
+    const { dashboardItemsCount, categoriesCount, remindersCount, notesCount } =
+      await getUserDataCounts(item?._id);
 
-      resolvedAcc.push({
-        ...item,
-        dashboardItemsCount,
-        categoriesCount,
-        remindersCount,
-        notesCount,
-      });
+    resolvedAcc.push({
+      ...item,
+      dashboardItemsCount,
+      categoriesCount,
+      remindersCount,
+      notesCount,
+    });
 
-      return resolvedAcc;
-    }, []);
+    return resolvedAcc;
+  }, []);
 
-    return (
-      <AdminDashboard
-        user={{ userId, admin, timezone }}
-        users={usersWithDataCount ?? []}
-      />
-    );
-  } catch (error) {
-    console.log(error);
-  }
+  return (
+    <AdminDashboard
+      user={{ userId, admin, timezone }}
+      users={usersWithDataCount ?? []}
+    />
+  );
 }
 
 export default function AdminPage() {

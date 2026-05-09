@@ -3,7 +3,15 @@
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
-import { ListItem, CTA } from '../../components';
+import {
+  ListItem,
+  CTA,
+  Modal,
+  ModalReminders,
+  ModalConfirm,
+  ModalSubscribe,
+  FormErrorMessage,
+} from '../../components';
 import { deleteReminder, getReminder } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
@@ -12,33 +20,6 @@ import {
   ITEM_TYPE_REMINDER,
 } from '../../constants';
 
-const Modal = dynamic(() => import('../../components/shared/Modal'), {
-  ssr: false,
-});
-const ModalReminders = dynamic(
-  () => import('../../components/settings/ModalReminders'),
-  {
-    ssr: false,
-  },
-);
-const ModalConfirm = dynamic(
-  () => import('../../components/shared/ModalConfirm'),
-  {
-    ssr: false,
-  },
-);
-const ModalSubscribe = dynamic(
-  () => import('../../components/shared/ModalSubscribe'),
-  {
-    ssr: false,
-  },
-);
-const FormErrorMessage = dynamic(
-  () => import('../../components/forms/FormErrorMessage'),
-  {
-    ssr: false,
-  },
-);
 const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
@@ -64,6 +45,7 @@ const RemindersControls = ({ reminders, user }) => {
   // remove at-reminders-limit message after reminder deletion
   useEffect(() => {
     if (remindersItems?.length < remindersLimit && atRemindersLimit) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAtRemindersLimit(false);
     }
   }, [remindersItems]);

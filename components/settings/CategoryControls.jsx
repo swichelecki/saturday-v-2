@@ -4,7 +4,15 @@ import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import { useInnerWidth, useListItemsMobileReset } from '../../hooks';
-import { ListItem, CTA } from '../../components';
+import {
+  ListItem,
+  CTA,
+  ModalCategory,
+  Modal,
+  ModalSubscribe,
+  ModalConfirm,
+  FormErrorMessage,
+} from '../../components';
 import { deleteCategory, updateCategory, getCategory } from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
@@ -14,33 +22,6 @@ import {
   MOBILE_BREAKPOINT,
 } from '../../constants';
 
-const Modal = dynamic(() => import('../../components/shared/Modal'), {
-  ssr: false,
-});
-const ModalCategory = dynamic(
-  () => import('../../components/settings/ModalCategory'),
-  {
-    ssr: false,
-  },
-);
-const ModalSubscribe = dynamic(
-  () => import('../../components/shared/ModalSubscribe'),
-  {
-    ssr: false,
-  },
-);
-const ModalConfirm = dynamic(
-  () => import('../../components/shared/ModalConfirm'),
-  {
-    ssr: false,
-  },
-);
-const FormErrorMessage = dynamic(
-  () => import('../../components/forms/FormErrorMessage'),
-  {
-    ssr: false,
-  },
-);
 const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
@@ -76,6 +57,7 @@ const CategoryControls = ({ categories, user }) => {
   // remove at-category-limit message after category deletion
   useEffect(() => {
     if (categoryItems?.length < categoryLimit && atCategoryLimit) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAtCategoryLimit(false);
     }
   }, [categoryItems]);
@@ -166,6 +148,7 @@ const CategoryControls = ({ categories, user }) => {
   // handle item reordering
   useEffect(() => {
     const copyOfCategories = [...categoryItems];
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDraggableCategories(copyOfCategories);
   }, [categoryItems]);
 

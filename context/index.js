@@ -12,7 +12,6 @@ export function AppWrapper({ children }) {
   const [isNotesPrompt, setIsNotesPrompt] = useState(false);
   const [listItemsMobileReset, setListItemsMobileReset] = useState(false);
   const [closeListItemsYAxis, setCloseListItemsYAxis] = useState(false);
-  const [calendarItems, setCalendarItems] = useState([]);
 
   return (
     <AppContext.Provider
@@ -35,8 +34,6 @@ export function AppWrapper({ children }) {
         setCloseListItemsYAxis,
         isNotesPrompt,
         setIsNotesPrompt,
-        calendarItems,
-        setCalendarItems,
       }}
     >
       {children}

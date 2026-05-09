@@ -16,176 +16,172 @@ export const metadata = {
 };
 
 async function DashboardWithData() {
-  try {
-    await connectDB();
+  await connectDB();
 
-    const { userId, timezone, isSubscribed } = await getUserFromCookie();
+  const { userId, timezone, isSubscribed } = await getUserFromCookie();
 
-    const getDateFormattedForUser = (date) => {
-      const today = Intl.DateTimeFormat('en-US', {
-        timeZone: timezone,
-      }).format(date);
-      return new Date(today);
-    };
+  const getDateFormattedForUser = (date) => {
+    const today = Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+    }).format(date);
+    return new Date(today);
+  };
 
-    // get monday using current date
-    const getMonday = (today) => {
-      const dayOfWeek =
-        today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
-      const mondayDayOfMonth = today.getDate() - dayOfWeek;
-      today.setDate(mondayDayOfMonth);
-      return new Date(today);
-    };
+  // get monday using current date
+  const getMonday = (today) => {
+    const dayOfWeek =
+      today.getDay() === 0 ? today.getDay() + 6 : today.getDay() - 1;
+    const mondayDayOfMonth = today.getDate() - dayOfWeek;
+    today.setDate(mondayDayOfMonth);
+    return new Date(today);
+  };
 
-    const monday = getMonday(getDateFormattedForUser(new Date()));
-    const mondayHolidayDate = new Date(monday);
-    const mondayHoliday = handleDateToYearMonthDay(mondayHolidayDate);
-    const sunday = mondayHolidayDate.setDate(mondayHolidayDate.getDate() + 6);
-    const sundayHoliday = handleDateToYearMonthDay(sunday);
+  const monday = getMonday(getDateFormattedForUser(new Date()));
+  const mondayHolidayDate = new Date(monday);
+  const mondayHoliday = handleDateToYearMonthDay(mondayHolidayDate);
+  const sunday = mondayHolidayDate.setDate(mondayHolidayDate.getDate() + 6);
+  const sundayHoliday = handleDateToYearMonthDay(sunday);
 
-    const [tasksRaw, categoriesRaw, remindersRaw, holidaysRaw] =
-      await Promise.all([
-        Task.find({ userId }).sort({
-          priority: 1,
-        }),
-        Category.find({ userId }).sort({
-          priority: 1,
-        }),
-        Reminder.find({
-          userId,
-          displayReminder: true,
-        }).sort({
-          reminderSortDate: -1,
-        }),
-        Holiday.find({
-          date: {
-            $gte: mondayHoliday,
-            $lte: sundayHoliday,
-          },
-        }),
-      ]);
+  const [tasksRaw, categoriesRaw, remindersRaw, holidaysRaw] =
+    await Promise.all([
+      Task.find({ userId }).sort({
+        priority: 1,
+      }),
+      Category.find({ userId }).sort({
+        priority: 1,
+      }),
+      Reminder.find({
+        userId,
+        displayReminder: true,
+      }).sort({
+        reminderSortDate: -1,
+      }),
+      Holiday.find({
+        date: {
+          $gte: mondayHoliday,
+          $lte: sundayHoliday,
+        },
+      }),
+    ]);
 
-    // create data shape for columns
-    const tasks = JSON.parse(JSON.stringify(tasksRaw));
-    const categories = JSON.parse(JSON.stringify(categoriesRaw));
-    const reminders = JSON.parse(JSON.stringify(remindersRaw));
-    const holidays = JSON.parse(JSON.stringify(holidaysRaw));
-    const columnsData = [];
-    const calendarItems = [];
-    const remindersData = [];
+  // create data shape for columns
+  const tasks = JSON.parse(JSON.stringify(tasksRaw));
+  const categories = JSON.parse(JSON.stringify(categoriesRaw));
+  const reminders = JSON.parse(JSON.stringify(remindersRaw));
+  const holidays = JSON.parse(JSON.stringify(holidaysRaw));
+  const columnsData = [];
+  const calendarItems = [];
+  const remindersData = [];
 
-    // return type and column order
-    const columnTypes = [
-      ...categories.reduce(
-        (map, item) => map.set(item?.priority, item?.title),
-        new Map(),
-      ),
-    ];
+  // return type and column order
+  const columnTypes = [
+    ...categories.reduce(
+      (map, item) => map.set(item?.priority, item?.title),
+      new Map(),
+    ),
+  ];
 
-    // sort column order ascending
-    const sortedColumnTypes = columnTypes.sort((a, b) => a[0] - b[0]);
+  // sort column order ascending
+  const sortedColumnTypes = columnTypes.sort((a, b) => a[0] - b[0]);
 
-    // create data structure
-    for (const item of sortedColumnTypes) {
-      const obj = {};
-      obj[item[1]] = [];
-      columnsData.push(obj);
-    }
-
-    // add items to array
-    for (const item of tasks) {
-      for (const column of columnsData) {
-        if (Object.keys(column)[0] === item?.type) {
-          Object.values(column)[0].push(item);
-        }
-      }
-    }
-
-    // sort arrays by date asc when date is present
-    for (const item of columnsData) {
-      if (
-        Object.values(item)[0]?.length &&
-        Object.values(item)[0][0]['date'] !== null
-      ) {
-        const itemsWithDatesSortedAsc = handleSortItemsAscending(
-          Object.values(item)[0],
-          'date',
-        );
-
-        Object.values(item)[0].length = 0;
-        Object.values(item)[0].push(...itemsWithDatesSortedAsc);
-        calendarItems.push(...itemsWithDatesSortedAsc);
-      }
-    }
-
-    // add reminders with exact recurring dates to week array
-    for (const item of reminders) {
-      if (item?.exactRecurringDate)
-        calendarItems.push({
-          ...item,
-          date: new Date(item?.reminderDate).toISOString().split('T')[0],
-        });
-    }
-
-    // add holidays to week array
-    for (const holiday of holidays) {
-      calendarItems.push(holiday);
-    }
-
-    // create array of all days of the week
-    const daysOfWeek = [];
-    daysOfWeek.push(monday);
-    const mondayCopy = new Date(monday);
-    for (let i = 1; i <= 6; i++) {
-      daysOfWeek.push(new Date(mondayCopy.setDate(mondayCopy.getDate() + 1)));
-    }
-
-    // create data shape for week component
-    const calendarData = daysOfWeek.reduce((calendarDays, day) => {
-      const yearMonthDay = handleDateToYearMonthDay(day);
-      calendarDays.push({
-        [yearMonthDay]: [
-          ...calendarItems?.filter((calItem) => {
-            const calItemDate = new Date(calItem?.date);
-            const calItemYearMonthDay = calItemDate.toISOString().split('T')[0];
-            if (calItemYearMonthDay === yearMonthDay) return calItem;
-          }),
-        ],
-      });
-
-      return calendarDays;
-    }, []);
-
-    // ensures that if a reminder with an exact date is today display it first
-    if (reminders?.length > 0) {
-      const today = getDateFormattedForUser(new Date())
-        .toISOString()
-        .split('T')[0];
-      const todaysReminders = [];
-      const allOtherReminders = [];
-
-      for (const reminder of reminders) {
-        const reminderDate = reminder?.reminderDate.split('T')[0];
-        reminderDate === today && reminder.exactRecurringDate
-          ? todaysReminders.push(reminder)
-          : allOtherReminders.push(reminder);
-      }
-
-      remindersData.push(...todaysReminders.concat(allOtherReminders));
-    }
-
-    return (
-      <Dashboard
-        tasks={columnsData ?? []}
-        calendar={calendarData ?? []}
-        categories={categories ?? []}
-        reminders={remindersData ?? []}
-        user={{ userId, timezone, isSubscribed }}
-      />
-    );
-  } catch (error) {
-    console.error(error);
+  // create data structure
+  for (const item of sortedColumnTypes) {
+    const obj = {};
+    obj[item[1]] = [];
+    columnsData.push(obj);
   }
+
+  // add items to array
+  for (const item of tasks) {
+    for (const column of columnsData) {
+      if (Object.keys(column)[0] === item?.type) {
+        Object.values(column)[0].push(item);
+      }
+    }
+  }
+
+  // sort arrays by date asc when date is present
+  for (const item of columnsData) {
+    if (
+      Object.values(item)[0]?.length &&
+      Object.values(item)[0][0]['date'] !== null
+    ) {
+      const itemsWithDatesSortedAsc = handleSortItemsAscending(
+        Object.values(item)[0],
+        'date',
+      );
+
+      Object.values(item)[0].length = 0;
+      Object.values(item)[0].push(...itemsWithDatesSortedAsc);
+      calendarItems.push(...itemsWithDatesSortedAsc);
+    }
+  }
+
+  // add reminders with exact recurring dates to week array
+  for (const item of reminders) {
+    if (item?.exactRecurringDate)
+      calendarItems.push({
+        ...item,
+        date: new Date(item?.reminderDate).toISOString().split('T')[0],
+      });
+  }
+
+  // add holidays to week array
+  for (const holiday of holidays) {
+    calendarItems.push(holiday);
+  }
+
+  // create array of all days of the week
+  const daysOfWeek = [];
+  daysOfWeek.push(monday);
+  const mondayCopy = new Date(monday);
+  for (let i = 1; i <= 6; i++) {
+    daysOfWeek.push(new Date(mondayCopy.setDate(mondayCopy.getDate() + 1)));
+  }
+
+  // create data shape for week component
+  const calendarData = daysOfWeek.reduce((calendarDays, day) => {
+    const yearMonthDay = handleDateToYearMonthDay(day);
+    calendarDays.push({
+      [yearMonthDay]: [
+        ...calendarItems?.filter((calItem) => {
+          const calItemDate = new Date(calItem?.date);
+          const calItemYearMonthDay = calItemDate.toISOString().split('T')[0];
+          if (calItemYearMonthDay === yearMonthDay) return calItem;
+        }),
+      ],
+    });
+
+    return calendarDays;
+  }, []);
+
+  // ensures that if a reminder with an exact date is today display it first
+  if (reminders?.length > 0) {
+    const today = getDateFormattedForUser(new Date())
+      .toISOString()
+      .split('T')[0];
+    const todaysReminders = [];
+    const allOtherReminders = [];
+
+    for (const reminder of reminders) {
+      const reminderDate = reminder?.reminderDate.split('T')[0];
+      reminderDate === today && reminder.exactRecurringDate
+        ? todaysReminders.push(reminder)
+        : allOtherReminders.push(reminder);
+    }
+
+    remindersData.push(...todaysReminders.concat(allOtherReminders));
+  }
+
+  return (
+    <Dashboard
+      tasks={columnsData ?? []}
+      calendar={calendarData ?? []}
+      categories={categories ?? []}
+      reminders={remindersData ?? []}
+      user={{ userId, timezone, isSubscribed }}
+    />
+  );
 }
 
 export default function DashboardPage() {

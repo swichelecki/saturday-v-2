@@ -1,12 +1,7 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
-import { AdminTable, ModalAdminDeleteUser } from '../../components';
-
-const Modal = dynamic(() => import('../../components/shared/Modal'), {
-  ssr: false,
-});
+import { AdminTable, ModalAdminDeleteUser, Modal } from '../../components';
 
 const AdminDashboard = ({ users, user }) => {
   const { userId: adminId, timezone } = user;

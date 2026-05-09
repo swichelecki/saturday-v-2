@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
-import { RemindersItem } from '../../components';
+import { RemindersItem, Modal, ModalConfirm } from '../../components';
 import { getReminder, updateReminder } from '../../actions';
 import { useInnerWidth } from '../../hooks';
 import {
@@ -17,21 +17,12 @@ import {
 } from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
-const Modal = dynamic(() => import('../../components/shared/Modal'), {
-  ssr: false,
-});
-const ModalConfirm = dynamic(
-  () => import('../../components/shared/ModalConfirm'),
-  {
-    ssr: false,
-  },
-);
 const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
 
-const Reminders = ({ reminders }) => {
-  const { setShowToast, userId, setShowModal } = useAppContext();
+const Reminders = ({ reminders, userId }) => {
+  const { setShowToast, setShowModal } = useAppContext();
 
   const width = useInnerWidth();
 

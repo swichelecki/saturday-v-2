@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useAppContext } from '../../context';
 import { handleHiddenHeight, handleDateToYearMonthDay } from '../../utilities';
 import { WeekItem } from '../../components';
 import dynamic from 'next/dynamic';
@@ -15,9 +14,7 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
 
-const Week = ({ timezone, userId }) => {
-  const { calendarItems, setCalendarItems } = useAppContext();
-
+const Week = ({ timezone, userId, calendar }) => {
   const width = useInnerWidth();
 
   const weekWrapperRef = useRef(null);
@@ -26,9 +23,10 @@ const Week = ({ timezone, userId }) => {
   const animationIdRef = useRef(null);
   const isMovingXAxisRef = useRef(null);
 
+  const [calendarItems, setCalendarItems] = useState(calendar);
   const [nextOrPrevMonday, setNextOrPrevMonday] = useState(null);
   const [calendarHeight, setCalendarHeight] = useState(0);
-  const [isAwaitingCalendarItems, setIsAwaitingCalendarItems] = useState(false);
+
   const [showWeek, setShowWeek] = useState(true);
   const [showScrollButtons, setShowScrollButtons] = useState(false);
   const [weekWrapperClientRectRight, setWeekWrapperClientRectRight] =
@@ -44,10 +42,16 @@ const Week = ({ timezone, userId }) => {
   const today = handleDateToYearMonthDay(todayInUserTimezone);
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
 
+  // sync with server data when calendar prop changes (e.g. after router.refresh())
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCalendarItems(calendar);
+  }, [calendar]);
+
   // dynamically set carousel height when using show / hide button
   useEffect(() => {
     setCalendarHeight(handleHiddenHeight(weekWrapperRef?.current));
-  }, [calendarItems, width, isAwaitingCalendarItems]);
+  }, [calendarItems, width]);
 
   // on mobile ensure current day of week is in view on page load
   useEffect(() => {
@@ -70,7 +74,7 @@ const Week = ({ timezone, userId }) => {
     weekCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
 
     setPreviousTranslateX(-carouselPositionRef.current);
-  }, [width, isAwaitingCalendarItems]);
+  }, [width]);
 
   // handle display of scroll buttons and carousel resize
   useEffect(() => {
@@ -120,13 +124,11 @@ const Week = ({ timezone, userId }) => {
         { passive: false },
       );
     };
-  }, [calendarItems, isAwaitingCalendarItems]);
+  }, [calendarItems]);
 
   // create array of days and calendar items when clicking next or previous week buttons
   useEffect(() => {
     if (!nextOrPrevMonday) return;
-
-    setIsAwaitingCalendarItems(true);
 
     const nextOrPrevMondayDate = new Date(nextOrPrevMonday);
     const nextOrPrevMondayYearMonthDay =
@@ -182,8 +184,6 @@ const Week = ({ timezone, userId }) => {
       if (res.status !== 200) {
         setShowToast(<Toast serverError={res} />);
       }
-
-      setIsAwaitingCalendarItems(false);
     });
   }, [nextOrPrevMonday]);
 
@@ -365,50 +365,44 @@ const Week = ({ timezone, userId }) => {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {isAwaitingCalendarItems ? (
-              <div className='week__calendar-loading-wrapper'>
-                <div className='loader'></div>
-              </div>
-            ) : (
-              <>
-                {calendarItems?.map((item, index) => (
-                  <div
-                    className={`week__calendar-day${
-                      Object.keys(item)[0] < today
-                        ? ' week__calendar-day--past'
-                        : ''
+            {calendarItems &&
+              calendarItems.length > 0 &&
+              calendarItems?.map((item, index) => (
+                <div
+                  className={`week__calendar-day${
+                    Object.keys(item)[0] < today
+                      ? ' week__calendar-day--past'
+                      : ''
+                  }`}
+                  key={`calendar-day__${index}`}
+                  {...(Object.keys(item)[0] === today ? { id: 'today' } : {})}
+                >
+                  <p className='week__day-of-week'>{daysOfWeek[index]}</p>
+                  <p
+                    className={`week__day-of-month${
+                      Object.keys(item)[0] === today &&
+                      moment(Object.keys(item)[0]).format('D') !== '1'
+                        ? ' week__day-of-month--today'
+                        : Object.keys(item)[0] === today &&
+                            moment(Object.keys(item)[0]).format('D') === '1'
+                          ? ' week__day-of-month--today-first-of-month'
+                          : ''
                     }`}
-                    key={`calendar-day__${index}`}
-                    {...(Object.keys(item)[0] === today ? { id: 'today' } : {})}
                   >
-                    <p className='week__day-of-week'>{daysOfWeek[index]}</p>
-                    <p
-                      className={`week__day-of-month${
-                        Object.keys(item)[0] === today &&
-                        moment(Object.keys(item)[0]).format('D') !== '1'
-                          ? ' week__day-of-month--today'
-                          : Object.keys(item)[0] === today &&
-                              moment(Object.keys(item)[0]).format('D') === '1'
-                            ? ' week__day-of-month--today-first-of-month'
-                            : ''
-                      }`}
-                    >
-                      {moment(Object.keys(item)[0]).format('D') === '1'
-                        ? moment(Object.keys(item)[0]).format('MMM D')
-                        : moment(Object.keys(item)[0]).format('D')}
-                    </p>
-                    {Object.values(item)[0]?.map((item, index) => (
-                      <WeekItem
-                        key={`week-item__${index}`}
-                        title={item?.title}
-                        dateAndTime={item?.dateAndTime}
-                        timezone={timezone}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </>
-            )}
+                    {moment(Object.keys(item)[0]).format('D') === '1'
+                      ? moment(Object.keys(item)[0]).format('MMM D')
+                      : moment(Object.keys(item)[0]).format('D')}
+                  </p>
+                  {Object.values(item)[0]?.map((item, index) => (
+                    <WeekItem
+                      key={`week-item__${index}`}
+                      title={item?.title}
+                      dateAndTime={item?.dateAndTime}
+                      timezone={timezone}
+                    />
+                  ))}
+                </div>
+              ))}
           </div>
         </div>
       </div>

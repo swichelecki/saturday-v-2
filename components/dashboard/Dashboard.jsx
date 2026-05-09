@@ -2,8 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../context';
-import { Week, CTA } from '../../components';
+import {
+  Week,
+  ItemsColumn,
+  CTA,
+  Modal,
+  ModalCreateItem,
+  ModalUpdateItem,
+  ModalConfirm,
+  ModalSubscribe,
+  FormErrorMessage,
+} from '../../components';
 import {
   useInnerWidth,
   useListItemsMobileReset,
@@ -17,43 +28,7 @@ import {
   UNSUBSCRIBED_LIST_ITEM_LIMIT,
 } from '../../constants';
 
-const Modal = dynamic(() => import('../../components/shared/Modal'), {
-  ssr: false,
-});
-const ModalCreateItem = dynamic(
-  () => import('../../components/dashboard/ModalCreateItem'),
-  {
-    ssr: false,
-  },
-);
-const ModalUpdateItem = dynamic(
-  () => import('../../components/dashboard/ModalUpdateItem'),
-  {
-    ssr: false,
-  },
-);
-const ModalConfirm = dynamic(
-  () => import('../../components/shared/ModalConfirm'),
-  {
-    ssr: false,
-  },
-);
-const ModalSubscribe = dynamic(
-  () => import('../../components/shared/ModalSubscribe'),
-  {
-    ssr: false,
-  },
-);
 const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
-const ItemsColumn = dynamic(
-  () => import('../../components/dashboard/ItemsColumn'),
-);
-const FormErrorMessage = dynamic(
-  () => import('../../components/forms/FormErrorMessage'),
-  {
-    ssr: false,
-  },
-);
 const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
@@ -61,8 +36,9 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
 const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   const { userId, timezone, isSubscribed } = user;
 
-  const { setShowToast, setShowModal, calendarItems, setCalendarItems } =
-    useAppContext();
+  const router = useRouter();
+
+  const { setShowToast, setShowModal } = useAppContext();
 
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
@@ -83,15 +59,10 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
 
   let allItems = [];
 
-  useEffect(() => {
-    setCalendarItems(calendar);
-  }, []);
-
   // build masonry
   useEffect(() => {
     if (!width) return;
-    const itemsCopy = [...listItems];
-    const items = itemsCopy.filter((item) => Object.values(item)[0]?.length);
+    const items = listItems?.filter((item) => Object.values(item)[0]?.length);
     let total = 0;
 
     const handleMasonry = (columns, items) => {
@@ -132,6 +103,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   // remove at-item-limit message after item deletion
   useEffect(() => {
     if (atItemsLimit && totalNumberOfItems < listItemLimit) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAtItemsLimit(false);
     }
   }, [totalNumberOfItems]);
@@ -204,7 +176,20 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
     }
 
     setIsAwaitingDeleteResponse(true);
-    deleteItem(id, userId).then((res) => {
+
+    // Check whether item is in calendar and revalidate path on server if so
+    const checkForCalendarItem = (id) => {
+      if (calendar && calendar?.length > 0) {
+        for (const item of calendar) {
+          if (Object.values(item)[0].find((item) => item._id === id))
+            return true;
+        }
+      }
+
+      return false;
+    };
+
+    deleteItem(id, checkForCalendarItem(id), userId).then((res) => {
       if (res.status === 200) {
         setListItems(
           listItems.map((item) => {
@@ -219,18 +204,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
             }
           }),
         );
-
-        if (calendarItems && calendarItems?.length > 0) {
-          setCalendarItems(
-            calendarItems?.map((item) => {
-              return {
-                [Object.keys(item)[0]]: Object.values(item)[0].filter(
-                  (item) => item?._id !== res.item._id,
-                ),
-              };
-            }),
-          );
-        }
 
         if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
       }
@@ -262,34 +235,36 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
           handleClick={handleOpenCreateItemModal}
         />
       </div>
-      <Week timezone={timezone} userId={userId} />
+      <Week timezone={timezone} userId={userId} calendar={calendar} />
       {reminders && reminders?.length > 0 && (
-        <Reminders reminders={reminders} />
+        <Reminders reminders={reminders} userId={userId} />
       )}
       <div className='items-column-wrapper'>
-        {masonryItems.map((columnData, index) => (
-          <div
-            className='items-masonry-column'
-            key={`items-masonry-column_${index}`}
-          >
-            {Object.values(columnData)[0].map((item, index) => (
-              <ItemsColumn
-                key={`items-column_${index}`}
-                heading={Object.keys(item)[0]}
-                items={Object.values(item)[0]}
-                setListItems={setListItems}
-                getItemToUpdate={getItemToUpdate}
-                handleDeleteItem={handleDeleteTask}
-                itemToUpdateId={taskToEditId}
-                isAwaitingEditResponse={isAwaitingEditResponse}
-                isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-                allItems={allItems}
-                timezone={timezone}
-                totalNumberOfItems={totalNumberOfItems}
-              />
-            ))}
-          </div>
-        ))}
+        {masonryItems &&
+          masonryItems?.length > 0 &&
+          masonryItems.map((columnData, index) => (
+            <div
+              className='items-masonry-column'
+              key={`items-masonry-column_${index}`}
+            >
+              {Object.values(columnData)[0].map((item, index) => (
+                <ItemsColumn
+                  key={`items-column_${index}`}
+                  heading={Object.keys(item)[0]}
+                  items={Object.values(item)[0]}
+                  setListItems={setListItems}
+                  getItemToUpdate={getItemToUpdate}
+                  handleDeleteItem={handleDeleteTask}
+                  itemToUpdateId={taskToEditId}
+                  isAwaitingEditResponse={isAwaitingEditResponse}
+                  isAwaitingDeleteResponse={isAwaitingDeleteResponse}
+                  allItems={allItems}
+                  timezone={timezone}
+                  totalNumberOfItems={totalNumberOfItems}
+                />
+              ))}
+            </div>
+          ))}
       </div>
     </div>
   );

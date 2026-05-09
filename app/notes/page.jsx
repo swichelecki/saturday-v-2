@@ -9,71 +9,67 @@ export const metadata = {
 };
 
 async function NotesWithData() {
-  try {
-    await connectDB();
+  await connectDB();
 
-    const { userId, newNotesUser, isSubscribed } = await getUserFromCookie();
+  const { userId, newNotesUser, isSubscribed } = await getUserFromCookie();
 
-    const notesRaw = await Note.find({ userId }).sort({ date: -1 });
-    const notes = JSON.parse(JSON.stringify(notesRaw));
-    const notesCount = notes?.length;
-    const pinnedNoteKey = 'Pinned';
-    const thisYear = new Date().getFullYear();
+  const notesRaw = await Note.find({ userId }).sort({ date: -1 });
+  const notes = JSON.parse(JSON.stringify(notesRaw));
+  const notesCount = notes?.length;
+  const pinnedNoteKey = 'Pinned';
+  const thisYear = new Date().getFullYear();
 
-    // create array of years in which notes were created before current year
-    const notePastYears = notes.reduce((acc, note) => {
-      const year = note?.date?.split('T')[0].split('-')[0];
-      if (!acc.includes(year) && year !== String(thisYear)) acc.push(year);
-      return acc;
-    }, []);
+  // create array of years in which notes were created before current year
+  const notePastYears = notes.reduce((acc, note) => {
+    const year = note?.date?.split('T')[0].split('-')[0];
+    if (!acc.includes(year) && year !== String(thisYear)) acc.push(year);
+    return acc;
+  }, []);
 
-    // create notes data structure
-    let notesData = [{ Pinned: [] }, { [thisYear]: [] }];
-    for (const year of notePastYears) {
-      notesData = [...notesData, { [year]: [] }];
-    }
-
-    // add notes to data structure
-    for (const note of notes) {
-      for (const noteSegment of notesData) {
-        // add pinned note
-        if (Object.keys(noteSegment)[0] === pinnedNoteKey && note?.pinned) {
-          Object.values(noteSegment)[0].push(note);
-        }
-
-        // add note by year
-        if (
-          Object.keys(noteSegment)[0] ===
-            note?.date?.split('T')[0].split('-')[0] &&
-          !note?.pinned
-        ) {
-          Object.values(noteSegment)[0].push(note);
-        }
-      }
-    }
-
-    // sort pinned items in descending order
-    for (const note of notesData) {
-      if (
-        Object.keys(note)[0] === pinnedNoteKey &&
-        Object.values(note)[0].length > 0
-      ) {
-        Object.values(note)[0] = Object.values(note)[0].sort(
-          (a, b) => a?.pinnedDate + b?.pinnedDate,
-        );
-      }
-    }
-
-    return (
-      <Notes
-        notes={notesData ?? []}
-        user={{ userId, newNotesUser, isSubscribed }}
-        notesCount={notesCount ?? 0}
-      />
-    );
-  } catch (error) {
-    console.log(error);
+  // create notes data structure
+  let notesData = [{ Pinned: [] }, { [thisYear]: [] }];
+  for (const year of notePastYears) {
+    notesData = [...notesData, { [year]: [] }];
   }
+
+  // add notes to data structure
+  for (const note of notes) {
+    for (const noteSegment of notesData) {
+      // add pinned note
+      if (Object.keys(noteSegment)[0] === pinnedNoteKey && note?.pinned) {
+        Object.values(noteSegment)[0].push(note);
+      }
+
+      // add note by year
+      if (
+        Object.keys(noteSegment)[0] ===
+          note?.date?.split('T')[0].split('-')[0] &&
+        !note?.pinned
+      ) {
+        Object.values(noteSegment)[0].push(note);
+      }
+    }
+  }
+
+  // sort pinned items in descending order
+  for (const note of notesData) {
+    if (
+      Object.keys(note)[0] === pinnedNoteKey &&
+      Object.values(note)[0].length > 0
+    ) {
+      Object.values(note)[0] = Object.values(note)[0].sort(
+        (a, b) => a?.pinnedDate + b?.pinnedDate,
+      );
+    }
+  }
+
+  return (
+    <Notes
+      notes={notesData ?? []}
+      user={{ userId, newNotesUser, isSubscribed }}
+      notesCount={notesCount ?? 0}
+    />
+  );
 }
 
 export default function NotesPage() {
