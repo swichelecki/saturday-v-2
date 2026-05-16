@@ -72,9 +72,31 @@ const Reminders = ({ reminders, userId }) => {
         reminderStartingDate.setTime(reminderStartingDate.getTime() + interval);
       } else {
         // set monthly reminder
-        reminderStartingDate.setMonth(
-          reminderStartingDate.getMonth() + interval,
-        );
+        const reminderDay = reminderStartingDate.getDate();
+        const reminderMonth = reminderStartingDate.getMonth();
+
+        let getLastDayOfReminderMonth = new Date();
+        getLastDayOfReminderMonth.setMonth(reminderMonth + 1); // Move to next month
+        getLastDayOfReminderMonth.setDate(0); // Roll back to last day of the previous month
+        const lastDayOfReminderMonth = getLastDayOfReminderMonth.getDate();
+
+        let lastDayOfMonth = false;
+        if (reminderDay === lastDayOfReminderMonth) lastDayOfMonth = true;
+
+        let getLastDayOfNextMonth = new Date();
+        getLastDayOfNextMonth.setMonth(reminderMonth + interval + 1); // Move to next month
+        getLastDayOfNextMonth.setDate(0); // Roll back to last day of the previous month
+        const lastDayOfNextMonth = getLastDayOfNextMonth.getDate();
+
+        // next interval calendar number is within current calendar number range and not last day
+        if (reminderDay <= lastDayOfNextMonth && !lastDayOfMonth) {
+          reminderStartingDate.setMonth(
+            reminderStartingDate.getMonth() + interval,
+          );
+        } else {
+          // set last day of next interval month - current calendar number not in range of next or current calendar number last day of month
+          reminderStartingDate.setTime(getLastDayOfNextMonth);
+        }
       }
 
       let nextDate = reminderStartingDate.toISOString();
@@ -198,16 +220,17 @@ const Reminders = ({ reminders, userId }) => {
     reminders.forEach((item) => {
       if (item.getBoundingClientRect().left <= remindersWrapperClientRectLeft) {
         remindersToShow.push(item);
+        if (remindersToShow.length >= 2) remindersToShow.shift();
       }
     });
 
     if (remindersToShow.length === 0) return;
 
-    const nextReminderToShow = remindersToShow[remindersToShow.length - 1];
+    const nextReminderToShow = remindersToShow[0];
     const nextReminderToShowClientRectLeft =
       nextReminderToShow.getBoundingClientRect().left;
 
-    const secondReminderToShow = remindersToShow[remindersToShow.length - 2];
+    const secondReminderToShow = remindersToShow[1];
     const secondReminderToShowClientRectLeft =
       secondReminderToShow?.getBoundingClientRect().left;
 

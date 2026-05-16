@@ -50,7 +50,7 @@ export async function GET() {
               recurrenceBuffer,
               exactRecurringDate,
               displayReminder: true,
-            }
+            },
           );
         }
 
@@ -61,7 +61,7 @@ export async function GET() {
           item?.displayReminder
         ) {
           reminderStartingDate.setTime(
-            reminderStartingDate.getTime() + interval
+            reminderStartingDate.getTime() + interval,
           );
           const nextDate = reminderStartingDate.toISOString();
 
@@ -76,19 +76,50 @@ export async function GET() {
               recurrenceBuffer,
               exactRecurringDate,
               displayReminder,
-            }
+            },
           );
         }
 
         // add interval to by-month reminders not reset before next interval start date begins
         if (
           !BY_WEEK_INTERVALS.includes(interval) &&
-          reminderStartingDate.setMonth(
-            reminderStartingDate.getMonth() + interval
+          reminderStartingDate.setUTCMonth(
+            reminderStartingDate.getUTCMonth() + interval,
           ) <= Date.now() &&
           item?.displayReminder
         ) {
-          const nextDate = reminderStartingDate.toISOString();
+          const interval = item?.recurrenceInterval;
+          const date = new Date(item?.reminderDate);
+
+          const reminderDay = date.getUTCDate();
+          const reminderMonth = date.getUTCMonth();
+          const reminderYear = date.getUTCFullYear();
+
+          // get last day of the current reminder's month
+          const lastDayOfReminderMonth = new Date(
+            Date.UTC(reminderYear, reminderMonth + 1, 0),
+          ).getUTCDate();
+
+          const lastDayOfMonth = reminderDay === lastDayOfReminderMonth;
+
+          // get last day of the next scheduled month
+          const lastDayOfNextMonth = new Date(
+            Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
+          ).getUTCDate();
+
+          // next interval calendar number is within current calendar number range and not last day
+          if (reminderDay <= lastDayOfNextMonth && !lastDayOfMonth) {
+            date.setUTCMonth(date.getUTCMonth() + interval);
+          } else {
+            // set last day of next interval month - current calendar number not in range of next or current calendar number last day of month
+            date.setTime(
+              new Date(
+                Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
+              ).getTime(),
+            );
+          }
+
+          const nextDate = date.toISOString().split('T')[0];
 
           await Reminder.updateOne(
             { _id: _id },
@@ -101,7 +132,7 @@ export async function GET() {
               recurrenceBuffer,
               exactRecurringDate,
               displayReminder,
-            }
+            },
           );
         }
       }
@@ -114,7 +145,7 @@ export async function GET() {
         const nextOccurrance = new Date(item?.reminderDate).getTime();
         const reminderDateObject = new Date(item?.reminderDate);
         const reminderDateMinusBuffer = reminderDateObject.setDate(
-          reminderDateObject.getDate() - item?.recurrenceBuffer
+          reminderDateObject.getDate() - item?.recurrenceBuffer,
         );
 
         // display reminders with exact recurring date
@@ -145,7 +176,7 @@ export async function GET() {
               recurrenceBuffer,
               exactRecurringDate,
               displayReminder: true,
-            }
+            },
           );
         }
 
@@ -156,17 +187,41 @@ export async function GET() {
         ) {
           const interval = item?.recurrenceInterval;
           const date = new Date(item?.reminderDate);
-          date.setMonth(date.getMonth() + interval);
-          const nextDate = date.toISOString();
-          const nextDateObj = new Date(date);
 
-          // get new sort date - date minus recurrencBuffer
-          const reminderDateObjMinusBuffer = new Date(
-            nextDateObj.setDate(nextDateObj.getDate() - item.recurrenceBuffer)
-          );
-          const newReminderSortDate = reminderDateObjMinusBuffer
-            .toISOString()
-            .split('T')[0];
+          const reminderDay = date.getUTCDate();
+          const reminderMonth = date.getUTCMonth();
+          const reminderYear = date.getUTCFullYear();
+
+          // get last day of the current reminder's month
+          const lastDayOfReminderMonth = new Date(
+            Date.UTC(reminderYear, reminderMonth + 1, 0),
+          ).getUTCDate();
+
+          const lastDayOfMonth = reminderDay === lastDayOfReminderMonth;
+
+          // get last day of the next scheduled month
+          const lastDayOfNextMonth = new Date(
+            Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
+          ).getUTCDate();
+
+          // next interval calendar number is within current calendar number range and not last day
+          if (reminderDay <= lastDayOfNextMonth && !lastDayOfMonth) {
+            date.setUTCMonth(date.getUTCMonth() + interval);
+          } else {
+            // set last day of next interval month - current calendar number not in range of next or current calendar number last day of month
+            date.setTime(
+              new Date(
+                Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
+              ).getTime(),
+            );
+          }
+
+          const nextDate = date.toISOString().split('T')[0];
+
+          // get new sort date - date minus recurrenceBuffer
+          const sortDate = new Date(date);
+          sortDate.setUTCDate(sortDate.getUTCDate() - item.recurrenceBuffer);
+          const newReminderSortDate = sortDate.toISOString().split('T')[0];
 
           const {
             _id,
@@ -188,7 +243,7 @@ export async function GET() {
               recurrenceBuffer,
               exactRecurringDate,
               displayReminder: false,
-            }
+            },
           );
         }
       }
@@ -202,7 +257,7 @@ export async function GET() {
     if (yearToday > yearYesterday) {
       await Holiday.deleteMany();
       const response = await fetch(
-        `https://date.nager.at/api/v3/publicholidays/${yearToday}/US`
+        `https://date.nager.at/api/v3/publicholidays/${yearToday}/US`,
       );
       const holidays = await response.json();
 
