@@ -1,5 +1,6 @@
+import { Suspense } from 'react';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
-import Weather from '../../components/header/Weather';
+import Weather from './Weather';
 import UserMenu from '../../components/header/UserMenu';
 import CTA from '../../components/shared/CTA';
 
@@ -10,7 +11,9 @@ const UserOptions = async () => {
     <div className='header__content-right'>
       {userId ? (
         <>
-          <Weather userId={userId} />
+          <Suspense>
+            <Weather />
+          </Suspense>
           <UserMenu isAdmin={admin} userId={userId} />
         </>
       ) : (

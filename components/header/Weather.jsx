@@ -1,8 +1,6 @@
-'use client';
-
-import { useState, useEffect, startTransition } from 'react';
-import { getWeather } from '../../actions';
+import { headers } from 'next/headers';
 import { handleDayNightCheck } from '../../utilities';
+import { handleServerErrorMessage } from '../../utilities';
 import {
   BsFillSunFill,
   BsCloudSunFill,
@@ -15,66 +13,62 @@ import {
   BsFillCloudMoonFill,
 } from 'react-icons/bs';
 
-const ICON_MAP = new Map();
+async function getWeatherData() {
+  try {
+    const headerList = await headers();
+    let ipAddress = headerList.get('x-forwarded-for')?.split(',')[0];
 
-const Weather = ({ userId }) => {
-  const [weather, setWeather] = useState(null);
+    if (!ipAddress || ipAddress === '::1') ipAddress = '73.111.204.162';
 
-  useEffect(() => {
-    let ignore = false;
-
-    getWeather(userId).then((res) => {
-      if (ignore) return;
-      if (res.status === 200) {
-        startTransition(() => {
-          const { data } = res;
-          const { weatherData, city } = data;
-          const { current, daily } = weatherData;
-          const { temperature_2m, weather_code } = current;
-          const { temperature_2m_max, temperature_2m_min } = daily;
-
-          setWeather({
-            temperature: Math.round(temperature_2m),
-            weatherCode: handleDayNightCheck(weather_code),
-            todaysHigh: Math.round(temperature_2m_max),
-            todaysLow: Math.round(temperature_2m_min),
-            city,
-          });
-        });
-      } else {
-        console.error(`Weather API error: ${res.error}`);
-      }
-    });
-
-    return () => {
-      ignore = true;
-    };
-  }, [userId]);
-
-  useEffect(() => {
-    const addMapping = (weatherCodes, icon) => {
-      weatherCodes.forEach((code) => {
-        ICON_MAP.set(code, icon);
-      });
-    };
-
-    addMapping([0, 1], <BsFillSunFill />);
-    addMapping([2], <BsCloudSunFill />);
-    addMapping([3], <BsFillCloudFill />);
-    addMapping([45, 48], <BsFillCloudFogFill />);
-    addMapping(
-      [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82],
-      <BsFillCloudRainFill />,
+    const locationDataRes = await fetch(
+      `http://ip-api.com/json/${ipAddress}?fields=lat,lon,city`,
     );
-    addMapping([71, 73, 75, 77, 85, 86], <BsSnow />);
-    addMapping([95, 96, 99], <BsFillCloudLightningRainFill />);
-    addMapping([100], <BsFillMoonStarsFill />);
-    addMapping([101], <BsFillCloudMoonFill />);
-  }, []);
+    const locationData = await locationDataRes.json();
+    const { lat, lon, city } = locationData;
 
-  if (!weather) {
-    return <></>;
+    const openMeteoApiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&forecast_days=1`;
+    const weatherRes = await fetch(openMeteoApiUrl);
+    const weatherData = await weatherRes.json();
+
+    const { current, daily } = weatherData;
+    const { temperature_2m, weather_code } = current;
+    const { temperature_2m_max, temperature_2m_min } = daily;
+
+    return {
+      temperature: Math.round(temperature_2m),
+      weatherCode: handleDayNightCheck(weather_code),
+      todaysHigh: Math.round(temperature_2m_max),
+      todaysLow: Math.round(temperature_2m_min),
+      city,
+    };
+  } catch (error) {
+    const errorMessage = handleServerErrorMessage(error);
+    console.error('Weather fetch error:', errorMessage);
+    return null;
   }
+}
+
+const Weather = async () => {
+  const weather = await getWeatherData();
+
+  if (!weather) return null;
+
+  const ICON_MAP = new Map();
+  ICON_MAP.set(0, <BsFillSunFill />);
+  ICON_MAP.set(1, <BsFillSunFill />);
+  ICON_MAP.set(2, <BsCloudSunFill />);
+  ICON_MAP.set(3, <BsFillCloudFill />);
+  ICON_MAP.set(45, <BsFillCloudFogFill />);
+  ICON_MAP.set(48, <BsFillCloudFogFill />);
+  [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].forEach((code) =>
+    ICON_MAP.set(code, <BsFillCloudRainFill />),
+  );
+  [71, 73, 75, 77, 85, 86].forEach((code) => ICON_MAP.set(code, <BsSnow />));
+  [95, 96, 99].forEach((code) =>
+    ICON_MAP.set(code, <BsFillCloudLightningRainFill />),
+  );
+  ICON_MAP.set(100, <BsFillMoonStarsFill />);
+  ICON_MAP.set(101, <BsFillCloudMoonFill />);
 
   return (
     <div className='weather'>
