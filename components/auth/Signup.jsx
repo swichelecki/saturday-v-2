@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { createUserAccount, loginUser } from '../../actions';
 import { useAppContext } from '../../context';
-import { FormTextField, CTA } from '../../components';
+import { FormTextField, CTA, FormCheckboxField } from '../../components';
 import { createUserSchema, loginSchema } from '../../schemas/schemas';
 import { USER_ALREADY_EXISTS } from '../../constants';
 
@@ -23,6 +23,7 @@ const Signup = () => {
     password: '',
     confirmPassword: '',
     verification: '',
+    enable2FA: false,
   });
   const [errorMessage, setErrorMessage] = useState({
     email: '',
@@ -33,41 +34,44 @@ const Signup = () => {
   const [show2FactorAuthField, setShow2FactorAuthField] = useState(false);
   const [isAwaitingLogInResponse, setisAwaitingLogInResponse] = useState(false);
 
-  // when 6-digit 2-factor authentication code added to form log in user
-  useEffect(() => {
-    if (form.verification.length >= 6) {
-      handleUserLoginAfter2FactorVerification();
-    }
-  }, [form.verification]);
-
   useEffect(() => {
     if (window && typeof window !== 'undefined') {
       window.scrollTo(0, 0);
     }
   }, []);
 
-  const handleUserLoginAfter2FactorVerification = async () => {
-    const zodValidationResults = loginSchema.safeParse(form);
-    const { data: zodFormData, success, error } = zodValidationResults;
-    if (!success) {
-      const { verification } = error.flatten().fieldErrors;
-      return setErrorMessage({ verification: verification?.[0] });
-    }
+  // when 6-digit 2-factor authentication code added to form log in user
+  useEffect(() => {
+    if (form.verification.length >= 6) {
+      const zodValidationResults = loginSchema.safeParse(form);
+      const { data: zodFormData, success, error } = zodValidationResults;
+      if (!success) {
+        const { verification } = error.flatten().fieldErrors;
+        startTransition(() => {
+          setErrorMessage({ verification: verification?.[0] });
+        });
+        return;
+      }
 
-    setisAwaitingLogInResponse(true);
-    const response = await loginUser(zodFormData);
-    if (response.status === 200) {
-      router.push('/settings');
-    } else if (response.status === 403 || response.status === 410) {
-      setisAwaitingLogInResponse(false);
-      setErrorMessage({
-        verification: response.error,
+      startTransition(() => {
+        setisAwaitingLogInResponse(true);
       });
-    } else {
-      setShowToast(<Toast serverError={response} />);
-      setisAwaitingLogInResponse(false);
+
+      loginUser(zodFormData).then((res) => {
+        if (res.status === 200) {
+          router.push('/settings');
+        } else if (res.status === 403 || res.status === 410) {
+          setisAwaitingLogInResponse(false);
+          setErrorMessage({
+            verification: res.error,
+          });
+        } else {
+          setShowToast(<Toast serverError={response} />);
+          setisAwaitingLogInResponse(false);
+        }
+      });
     }
-  };
+  }, [form.verification]);
 
   const handleForm = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -75,6 +79,10 @@ const Signup = () => {
     if (errorMessage[e.target.name]) {
       setErrorMessage({ ...errorMessage, [e.target.name]: '' });
     }
+  };
+
+  const handleEnable2FA = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.checked });
   };
 
   // create account and send user 2-factor authentication code in email
@@ -142,11 +150,17 @@ const Signup = () => {
             onChangeHandler={handleForm}
             errorMessage={errorMessage.confirmPassword}
           />
+          <FormCheckboxField
+            label='Enable Two-Factor Authentication (2FA)'
+            name='enable2FA'
+            checked={form?.enable2FA}
+            onChangeHandler={handleEnable2FA}
+          />
         </>
       )}
       {show2FactorAuthField && (
         <FormTextField
-          label='Verification Code'
+          label='Verify Account'
           subLabel='Check your email and enter 6-digit verification code'
           type='text'
           id='verification'

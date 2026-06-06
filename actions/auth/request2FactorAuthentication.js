@@ -41,6 +41,11 @@ export default async function request2FactorAuthentication(formData) {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
+      // if user has opted out of 2FA skip creating code and sending email
+      if (!user.enable2FA) {
+        return { status: 200, enable2FA: false };
+      }
+
       // set updatedAt to current time for request expiration
       const date = new Date();
       const dateToISO = date.toISOString();
@@ -50,7 +55,7 @@ export default async function request2FactorAuthentication(formData) {
       const salt = await bcrypt.genSalt(10);
       const hashedtwoFactorAuthCode = await bcrypt.hash(
         twoFactorAuthCode.toString(),
-        salt
+        salt,
       );
 
       await User.updateOne(
@@ -58,7 +63,7 @@ export default async function request2FactorAuthentication(formData) {
         {
           updatedAt: dateToISO,
           twoFactorAuthCode: hashedtwoFactorAuthCode,
-        }
+        },
       );
 
       // send verification code email
@@ -75,7 +80,7 @@ export default async function request2FactorAuthentication(formData) {
 
       if (error) console.error('Resend error: ', error);
 
-      return { status: 200 };
+      return { status: 200, enable2FA: true };
     }
 
     return { status: 403 };

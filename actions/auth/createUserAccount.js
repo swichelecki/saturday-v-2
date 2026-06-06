@@ -41,7 +41,7 @@ export default async function createUserAccount(formData) {
     await connectDB();
 
     const headerList = await headers();
-    const { email, password } = zodData;
+    const { email, password, enable2FA } = zodData;
 
     const userExists = await User.findOne({ email });
     if (userExists) return { status: 409 };
@@ -76,6 +76,7 @@ export default async function createUserAccount(formData) {
       password: hashedPassword,
       timezone,
       twoFactorAuthCode: hashedtwoFactorAuthCode,
+      enable2FA,
     });
 
     // send new-user email to admin

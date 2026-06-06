@@ -38,6 +38,26 @@ export default async function loginUser(formData) {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
+      // if user has opted out of 2FA skip creating code and sending email
+      if (!user.enable2FA) {
+        const token = await new SignJWT({
+          hasToken: true,
+          id: user._id,
+          timezone: user.timezone,
+          admin: user.admin,
+          newUser: user.newUser,
+          newNotesUser: user.newNotesUser,
+          isSubscribed: user.isSubscribed,
+          enable2FA: user.enable2FA,
+        })
+          .setExpirationTime('7d')
+          .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
+          .sign(new TextEncoder().encode(jwtSecret));
+        (await cookies()).set('saturday', token);
+
+        return { status: 200 };
+      }
+
       // check that 5 minutes has not passed after 2-factor auth verification code email sent
       const updatedAtDateObj = new Date(user.updatedAt);
       const updatedAtMsec = updatedAtDateObj.getTime();
@@ -60,11 +80,13 @@ export default async function loginUser(formData) {
         newUser: user.newUser,
         newNotesUser: user.newNotesUser,
         isSubscribed: user.isSubscribed,
+        enable2FA: user.enable2FA,
       })
         .setExpirationTime('7d')
         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
         .sign(new TextEncoder().encode(jwtSecret));
       (await cookies()).set('saturday', token);
+
       return { status: 200 };
     }
 

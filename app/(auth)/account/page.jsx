@@ -10,9 +10,10 @@ export const metadata = {
 async function AccountWithData() {
   await connectDB();
 
-  const { userId, timezone, isSubscribed } = await getUserFromCookie();
+  const { userId, timezone, isSubscribed, enable2FA } =
+    await getUserFromCookie();
 
-  const user = { userId, timezone, isSubscribed };
+  const user = { userId, timezone, isSubscribed, enable2FA };
 
   return <Account user={user} />;
 }

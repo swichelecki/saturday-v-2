@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { request2FactorAuthentication, loginUser } from '../../actions';
@@ -40,32 +40,35 @@ const Login = () => {
   // when 6-digit 2-factor authentication code added to form log in user
   useEffect(() => {
     if (form.verification.length >= 6) {
-      handleUserLoginAfter2FactorVerification();
+      const zodValidationResults = loginSchema.safeParse(form);
+      const { data: zodFormData, success, error } = zodValidationResults;
+      if (!success) {
+        const { verification } = error.flatten().fieldErrors;
+        startTransition(() => {
+          setErrorMessage({ verification: verification?.[0] });
+        });
+        return;
+      }
+
+      startTransition(() => {
+        setisAwaitingLogInResponse(true);
+      });
+
+      loginUser(zodFormData).then((res) => {
+        if (res.status === 200) {
+          router.push('/dashboard');
+        } else if (res.status === 403 || res.status === 410) {
+          setisAwaitingLogInResponse(false);
+          setErrorMessage({
+            verification: res.error,
+          });
+        } else {
+          setShowToast(<Toast serverError={response} />);
+          setisAwaitingLogInResponse(false);
+        }
+      });
     }
   }, [form.verification]);
-
-  const handleUserLoginAfter2FactorVerification = async () => {
-    const zodValidationResults = loginSchema.safeParse(form);
-    const { data: zodFormData, success, error } = zodValidationResults;
-    if (!success) {
-      const { verification } = error.flatten().fieldErrors;
-      return setErrorMessage({ verification: verification?.[0] });
-    }
-
-    setisAwaitingLogInResponse(true);
-    const response = await loginUser(zodFormData);
-    if (response.status === 200) {
-      router.push('/dashboard');
-    } else if (response.status === 403 || response.status === 410) {
-      setisAwaitingLogInResponse(false);
-      setErrorMessage({
-        verification: response.error,
-      });
-    } else {
-      setShowToast(<Toast serverError={response} />);
-      setisAwaitingLogInResponse(false);
-    }
-  };
 
   const handleForm = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -89,8 +92,27 @@ const Login = () => {
     setisAwaitingLogInResponse(true);
     const response = await request2FactorAuthentication(zodFormData);
     if (response.status === 200) {
-      setShow2FactorAuthField(true);
-      setisAwaitingLogInResponse(false);
+      // if user has opted out of 2FA skip creating code and sending email
+      if (!response.enable2FA) {
+        const response = await loginUser(zodFormData);
+        if (response.status === 200) {
+          router.push('/dashboard');
+        } else if (response.status === 403 || response.status === 410) {
+          setisAwaitingLogInResponse(false);
+          setErrorMessage({
+            verification: response.error,
+          });
+        } else {
+          setShowToast(<Toast serverError={response} />);
+          setisAwaitingLogInResponse(false);
+        }
+      }
+
+      // handle 2FA
+      if (response.enable2FA) {
+        setShow2FactorAuthField(true);
+        setisAwaitingLogInResponse(false);
+      }
     } else if (response.status === 403) {
       setisAwaitingLogInResponse(false);
       setErrorMessage({

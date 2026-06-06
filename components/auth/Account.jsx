@@ -8,6 +8,7 @@ import {
   changeUserPassword,
   deleteUserAccount,
   changeUserTimezone,
+  changeUser2FA,
 } from '../../actions';
 import { useAppContext } from '../../context';
 import { useScrollToError } from '../../hooks';
@@ -16,9 +17,11 @@ import {
   FormSelectField,
   SubscriptionFeatures,
   CTA,
+  FormCheckboxField,
 } from '../../components';
 import {
   changePasswordSchema,
+  change2FASchema,
   changeTimezoneSchema,
   deleteAccountSchema,
 } from '../../schemas/schemas';
@@ -34,8 +37,8 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
 const Account = ({ user }) => {
   const pageRef = useRef(null);
   const router = useRouter();
-  const { userId, timezone, isSubscribed } = user;
-  const { setUserId, setShowToast } = useAppContext();
+  const { userId, timezone, isSubscribed, enable2FA } = user;
+  const { setShowToast } = useAppContext();
 
   const [form, setForm] = useState({
     userId,
@@ -48,6 +51,7 @@ const Account = ({ user }) => {
     deleteConfirmation: '',
     timezone: '',
     currentTimezone: timezone,
+    enable2FA,
   });
   const [errorMessage, setErrorMessage] = useState({
     email: '',
@@ -81,6 +85,35 @@ const Account = ({ user }) => {
     if (errorMessage[e.target.name]) {
       setErrorMessage({ ...errorMessage, [e.target.name]: '' });
     }
+  };
+
+  // handle change 2FA
+  const handleEnable2FA = (e) => {
+    const updatedForm = { ...form, [e.target.name]: e.target.checked };
+    setForm(updatedForm);
+
+    const zodValidationResults = change2FASchema.safeParse(updatedForm);
+    const { data: zodFormData, success, error } = zodValidationResults;
+    if (!success) {
+      const { enable2FA } = error.flatten().fieldErrors;
+      if (!enable2FA) {
+        const serverError = {
+          status: 400,
+          error: 'Zod validation failed. Check console.',
+        };
+        setShowToast(<Toast serverError={serverError} />);
+        console.error(error);
+        return;
+      }
+    }
+
+    changeUser2FA(zodFormData).then((res) => {
+      if (res.status === 200) {
+        setShowToast(<Toast isSuccess message='2FA preference updated!' />);
+      } else {
+        setShowToast(<Toast serverError={res} />);
+      }
+    });
   };
 
   const handleFormSelectField = (optionName, optionValue) => {
@@ -254,6 +287,19 @@ const Account = ({ user }) => {
             handleClick={handleSubscribe}
           />
         </div>
+      </section>
+      <section>
+        {/*   <form onSubmit={changeEnable2FA}> */}
+        <h1 className='form-page__h2'>
+          Change Two-Factor Authentication (2FA)
+        </h1>
+        <FormCheckboxField
+          label={`${!form?.enable2FA ? 'Enable' : 'Disable'} Two-Factor Authentication (2FA)`}
+          name='enable2FA'
+          checked={form?.enable2FA}
+          onChangeHandler={handleEnable2FA}
+        />
+        {/*   </form> */}
       </section>
       <section>
         <form onSubmit={changeTimezone}>

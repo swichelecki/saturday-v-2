@@ -56,6 +56,7 @@ export const createUserSchema = z
       .min(1, FORM_ERROR_MISSING_CONFIRM_PASSWORD)
       .max(50, FORM_CHARACTER_LIMIT_50),
     verification: z.string().max(6, FORM_ERROR_2FACTOR_CODE_LIMIT).optional(),
+    enable2FA: z.boolean(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: FORM_ERROR_PASSWORD_MISMATCH,
@@ -157,7 +158,7 @@ export const itemSchema = z
     {
       message: FORM_ERROR_MISSING_DESCRIPTION,
       path: ['description'],
-    }
+    },
   )
   .refine(
     (data) =>
@@ -167,7 +168,7 @@ export const itemSchema = z
     {
       message: FORM_ERROR_MISSING_DATE,
       path: ['date'],
-    }
+    },
   )
   .refine(
     (data) =>
@@ -180,7 +181,7 @@ export const itemSchema = z
     {
       message: FORM_ERROR_DATE_NOT_TODAY_OR_GREATER,
       path: ['date'],
-    }
+    },
   )
   .refine((data) => Number(data.itemLimit) < LIST_ITEM_LIMIT, {
     message: ITEM_ERROR_AT_ITEM_LIMIT,
@@ -219,7 +220,7 @@ export const reminderSchema = z
     {
       message: FORM_ERROR_MISSING_REMINDER_BUFFER,
       path: ['recurrenceBuffer'],
-    }
+    },
   )
   .refine((data) => Number(data.itemLimit) < REMINDERS_ITEM_LIMIT, {
     message: REMINDERS_ERROR_AT_ITEM_LIMIT,
@@ -243,7 +244,7 @@ export const contactFormSchema = z
     {
       message: FORM_ERROR_MISSING_MESSAGE,
       path: ['message'],
-    }
+    },
   );
 
 export const changePasswordSchema = z
@@ -280,6 +281,11 @@ export const changePasswordSchema = z
     }
   });
 
+export const change2FASchema = z.object({
+  userId: z.string(),
+  enable2FA: z.boolean(),
+});
+
 export const changeTimezoneSchema = z
   .object({
     userId: z.string(),
@@ -313,7 +319,7 @@ export const deleteAccountSchema = z
     {
       message: FORM_ERROR_MISSING_DELETE_MISMATCH,
       path: ['deleteConfirmation'],
-    }
+    },
   );
 
 export const noteSchema = z

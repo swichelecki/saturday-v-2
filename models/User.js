@@ -41,8 +41,13 @@ const UserSchema = new Schema(
     twoFactorAuthCode: {
       type: String,
     },
+    enable2FA: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = models.User ?? model('User', UserSchema);
