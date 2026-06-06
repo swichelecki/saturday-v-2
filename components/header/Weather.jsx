@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import { useState, useEffect, startTransition } from 'react';
 import { getWeather } from '../../actions';
-import { useAppContext } from '../../context';
 import { handleDayNightCheck } from '../../utilities';
 import {
   BsFillSunFill,
@@ -19,43 +17,39 @@ import {
 
 const ICON_MAP = new Map();
 
-const Toast = dynamic(() => import('../../components/shared/Toast'), {
-  ssr: false,
-});
-
 const Weather = ({ userId }) => {
-  const { setShowToast } = useAppContext();
-
-  const [temperature, setTemperature] = useState(0);
-  const [weatherCode, setWeatherCode] = useState(0);
-  const [todaysHigh, setTodaysHigh] = useState(0);
-  const [todaysLow, setTodaysLow] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [city, setCity] = useState('');
-
-  const getWeatherData = async () => {
-    const res = await getWeather(userId);
-    if (res.status === 200) {
-      const { data } = res;
-      const { weatherData, city } = data;
-      const { current, daily } = weatherData;
-      const { temperature_2m, weather_code } = current;
-      const { temperature_2m_max, temperature_2m_min } = daily;
-
-      setTemperature(Math.round(temperature_2m));
-      setWeatherCode(handleDayNightCheck(weather_code));
-      setTodaysHigh(Math.round(temperature_2m_max));
-      setTodaysLow(Math.round(temperature_2m_min));
-      setCity(city);
-      setIsLoading(false);
-    } else {
-      setShowToast(<Toast serverError={res} />);
-    }
-  };
+  const [weather, setWeather] = useState(null);
 
   useEffect(() => {
-    getWeatherData();
-  }, []);
+    let ignore = false;
+
+    getWeather(userId).then((res) => {
+      if (ignore) return;
+      if (res.status === 200) {
+        startTransition(() => {
+          const { data } = res;
+          const { weatherData, city } = data;
+          const { current, daily } = weatherData;
+          const { temperature_2m, weather_code } = current;
+          const { temperature_2m_max, temperature_2m_min } = daily;
+
+          setWeather({
+            temperature: Math.round(temperature_2m),
+            weatherCode: handleDayNightCheck(weather_code),
+            todaysHigh: Math.round(temperature_2m_max),
+            todaysLow: Math.round(temperature_2m_min),
+            city,
+          });
+        });
+      } else {
+        console.error(`Weather API error: ${res.error}`);
+      }
+    });
+
+    return () => {
+      ignore = true;
+    };
+  }, [userId]);
 
   useEffect(() => {
     const addMapping = (weatherCodes, icon) => {
@@ -78,7 +72,7 @@ const Weather = ({ userId }) => {
     addMapping([101], <BsFillCloudMoonFill />);
   }, []);
 
-  if (isLoading) {
+  if (!weather) {
     return <></>;
   }
 
@@ -86,21 +80,21 @@ const Weather = ({ userId }) => {
     <div className='weather'>
       <div className='weather__icon-temp-location-wrapper'>
         <div className='weather__icon-temp'>
-          {ICON_MAP.get(weatherCode)}
+          {ICON_MAP.get(weather.weatherCode)}
           <p>
-            {temperature}
+            {weather.temperature}
             <span>&deg;</span>
           </p>
         </div>
-        <p className='weather__location'>{city}</p>
+        <p className='weather__location'>{weather.city}</p>
       </div>
       <div className='weather__high-low-wrapper'>
         <p>
-          H: {todaysHigh}
+          H: {weather.todaysHigh}
           <span>&deg;</span>
         </p>
         <p>
-          L: {todaysLow}
+          L: {weather.todaysLow}
           <span>&deg;</span>
         </p>
       </div>
