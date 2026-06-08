@@ -49,8 +49,7 @@ const Account = ({ user }) => {
     deleteEmail: '',
     deletePassword: '',
     deleteConfirmation: '',
-    timezone: '',
-    currentTimezone: timezone,
+    timezone,
     enable2FA,
   });
   const [errorMessage, setErrorMessage] = useState({
@@ -289,21 +288,17 @@ const Account = ({ user }) => {
         </div>
       </section>
       <section>
-        {/*   <form onSubmit={changeEnable2FA}> */}
-        <h1 className='form-page__h2'>
-          Change Two-Factor Authentication (2FA)
-        </h1>
+        <h1 className='form-page__h2'>Set Two-Factor Authentication (2FA)</h1>
         <FormCheckboxField
-          label={`${!form?.enable2FA ? 'Enable' : 'Disable'} Two-Factor Authentication (2FA)`}
+          label='Two-Factor Authentication'
           name='enable2FA'
           checked={form?.enable2FA}
           onChangeHandler={handleEnable2FA}
         />
-        {/*   </form> */}
       </section>
       <section>
         <form onSubmit={changeTimezone}>
-          <h1 className='form-page__h2'>Change Timezone</h1>
+          <h1 className='form-page__h2'>Set Timezone</h1>
           <FormSelectField
             label='Timezone'
             id='timezone'
