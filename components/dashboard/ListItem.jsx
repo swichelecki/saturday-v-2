@@ -30,8 +30,8 @@ import {
 } from '../../constants';
 
 const Tooltip = dynamic(() => import('../shared/Tooltip'));
-const TooltipReminderMessage = dynamic(() =>
-  import('../settings/TooltipReminderMessage')
+const TooltipReminderMessage = dynamic(
+  () => import('../settings/TooltipReminderMessage'),
 );
 
 let previousItemId = '';
@@ -76,6 +76,7 @@ const ItemList = ({
   const mobileUpdateOrDetailsButtonRef = useRef(null);
   const mobileDeleteButtonRef = useRef(null);
 
+  const [itemDetailsHeight, setItemDetailsHeight] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [startXPosition, setStartXPosition] = useState(0);
   const [startYPosition, setStartYPosition] = useState(0);
@@ -128,16 +129,21 @@ const ItemList = ({
     listItemInnerRef.current.addEventListener(
       'touchmove',
       (e) => handlePreventScroll(e),
-      { passive: false }
+      { passive: false },
     );
 
     return () => {
       listItemInnerRef.current?.removeEventListener(
         'touchmove',
         (e) => handlePreventScroll(e),
-        { passive: false }
+        { passive: false },
       );
     };
+  }, []);
+
+  // set item details height for when item is open
+  useEffect(() => {
+    setItemDetailsHeight(handleHiddenHeight(detailsRef.current));
   }, []);
 
   // handle touch x-axis transitions after touchend event
@@ -233,7 +239,7 @@ const ItemList = ({
     mobileUpdateOrDetailsButtonRef.current.style.transition = 'none';
     mobileDeleteButtonRef.current.style.transition = 'none';
     setItemXPositionOnStart(
-      listItemInnerRef.current.getBoundingClientRect().left
+      listItemInnerRef.current.getBoundingClientRect().left,
     );
     setStartTime(new Date().getTime());
   };
@@ -244,11 +250,11 @@ const ItemList = ({
     if (
       Math.max(
         e.touches[0].clientY - startYPosition,
-        startYPosition - e.touches[0].clientY
+        startYPosition - e.touches[0].clientY,
       ) >
       Math.max(
         e.touches[0].clientX - startXPosition,
-        startXPosition - e.touches[0].clientX
+        startXPosition - e.touches[0].clientX,
       )
     )
       return;
@@ -258,7 +264,7 @@ const ItemList = ({
     let currentPosition = e.touches[0].clientX;
     currentTranslateXRef.current = Math.max(
       MAX_MOVE_DISTANCE,
-      Math.min(previousTranslateX + currentPosition - startXPosition, 0)
+      Math.min(previousTranslateX + currentPosition - startXPosition, 0),
     );
 
     animationXIdRef.current = requestAnimationFrame(animationX);
@@ -287,7 +293,7 @@ const ItemList = ({
     setMovedBy(Math.abs(currentTranslateXRef.current - previousTranslateX));
     setDuration(new Date().getTime() - startTime);
     setItemXPositionOnEnd(
-      listItemInnerRef.current.getBoundingClientRect().left
+      listItemInnerRef.current.getBoundingClientRect().left,
     );
   };
 
@@ -296,7 +302,7 @@ const ItemList = ({
     isDraggingYRef.current = true;
     handleDragStart(index);
     setStartYPosition(
-      e.type.includes('mouse') ? e.pageY : e.touches[0].clientY
+      e.type.includes('mouse') ? e.pageY : e.touches[0].clientY,
     );
     setListItemYPositionOnStart(listItemRef.current.clientHeight * index);
     setListItemId(listItemRef.current.id);
@@ -309,7 +315,7 @@ const ItemList = ({
 
     listItemWrapperRef.current.setAttribute(
       'style',
-      `height: ${handleWrapperHeight(numberOfItemsInColumn)}px`
+      `height: ${handleWrapperHeight(numberOfItemsInColumn)}px`,
     );
 
     // make each item absolutely positioned
@@ -339,8 +345,8 @@ const ItemList = ({
       Math.min(
         listItemYPositionOnStart + currentPosition - startYPosition,
         listItemWrapperRef.current.clientHeight -
-          listItemRef.current.clientHeight
-      )
+          listItemRef.current.clientHeight,
+      ),
     );
 
     animationYIdRef.current = requestAnimationFrame(animationY);
@@ -363,7 +369,7 @@ const ItemList = ({
           }px`;
           item.setAttribute(
             'data-list-item-index',
-            parseInt(item.dataset.listItemIndex) + 1
+            parseInt(item.dataset.listItemIndex) + 1,
           );
         }
 
@@ -371,7 +377,7 @@ const ItemList = ({
         if (listItemId === item.id) {
           item.setAttribute(
             'data-list-item-index',
-            parseInt(item.dataset.listItemIndex) - 1
+            parseInt(item.dataset.listItemIndex) - 1,
           );
         }
       });
@@ -397,7 +403,7 @@ const ItemList = ({
           }px`;
           item.setAttribute(
             'data-list-item-index',
-            parseInt(item.dataset.listItemIndex) - 1
+            parseInt(item.dataset.listItemIndex) - 1,
           );
         }
 
@@ -405,7 +411,7 @@ const ItemList = ({
         if (listItemId === item.id) {
           item.setAttribute(
             'data-list-item-index',
-            parseInt(item.dataset.listItemIndex) + 1
+            parseInt(item.dataset.listItemIndex) + 1,
           );
         }
       });
@@ -467,8 +473,8 @@ const ItemList = ({
                 isToday
                   ? ' list-item__upcoming-date-time--is-today'
                   : isPastDue
-                  ? ' list-item__upcoming-date-time--pastDue'
-                  : ''
+                    ? ' list-item__upcoming-date-time--pastDue'
+                    : ''
               }`}
             >
               {item?.dateAndTime ? (
@@ -526,7 +532,7 @@ const ItemList = ({
                     item?._id,
                     item?.userId,
                     !item?.pinned,
-                    item?.date
+                    item?.date,
                   );
                 }}
                 type='button'
@@ -586,7 +592,7 @@ const ItemList = ({
           style={
             isOpen
               ? {
-                  height: `${handleHiddenHeight(detailsRef.current)}px`,
+                  height: `${itemDetailsHeight}px`,
                 }
               : { height: '0px' }
           }

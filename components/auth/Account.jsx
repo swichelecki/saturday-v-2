@@ -50,6 +50,7 @@ const Account = ({ user }) => {
     deletePassword: '',
     deleteConfirmation: '',
     timezone,
+    currentTimezone: timezone,
     enable2FA,
   });
   const [errorMessage, setErrorMessage] = useState({
@@ -69,10 +70,6 @@ const Account = ({ user }) => {
   const [isAwaitingDeleteAccoungResponse, setIsAwaitingDeleteAccoungResponse] =
     useState(false);
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
-  const [
-    isAwaitingChangeTimezoneResponse,
-    setIsAwaitingChangeTimezoneResponse,
-  ] = useState(false);
   const [isAwaitingStripeResponse, setIsAwaitingStripeResponse] =
     useState(false);
 
@@ -83,43 +80,6 @@ const Account = ({ user }) => {
 
     if (errorMessage[e.target.name]) {
       setErrorMessage({ ...errorMessage, [e.target.name]: '' });
-    }
-  };
-
-  // handle change 2FA
-  const handleEnable2FA = (e) => {
-    const updatedForm = { ...form, [e.target.name]: e.target.checked };
-    setForm(updatedForm);
-
-    const zodValidationResults = change2FASchema.safeParse(updatedForm);
-    const { data: zodFormData, success, error } = zodValidationResults;
-    if (!success) {
-      const { enable2FA } = error.flatten().fieldErrors;
-      if (!enable2FA) {
-        const serverError = {
-          status: 400,
-          error: 'Zod validation failed. Check console.',
-        };
-        setShowToast(<Toast serverError={serverError} />);
-        console.error(error);
-        return;
-      }
-    }
-
-    changeUser2FA(zodFormData).then((res) => {
-      if (res.status === 200) {
-        setShowToast(<Toast isSuccess message='2FA preference updated!' />);
-      } else {
-        setShowToast(<Toast serverError={res} />);
-      }
-    });
-  };
-
-  const handleFormSelectField = (optionName, optionValue) => {
-    setForm({ ...form, [optionName]: optionValue });
-
-    if (errorMessage[optionName]) {
-      setErrorMessage({ ...errorMessage, [optionName]: '' });
     }
   };
 
@@ -137,11 +97,39 @@ const Account = ({ user }) => {
     }
   };
 
-  // change timezone
-  const changeTimezone = async (e) => {
-    e.preventDefault();
+  // handle change 2FA
+  const handleEnable2FA = (e) => {
+    const updatedForm = { ...form, [e.target.name]: e.target.checked };
+    setForm(updatedForm);
 
-    const zodValidationResults = changeTimezoneSchema.safeParse(form);
+    const zodValidationResults = change2FASchema.safeParse(updatedForm);
+    const { data: zodFormData, success, error } = zodValidationResults;
+    if (!success) {
+      const { enable2FA } = error.flatten().fieldErrors;
+      setShowToast(<Toast serverError={enable2FA?.[0] ?? error} />);
+      console.error(error);
+      return;
+    }
+
+    changeUser2FA(zodFormData).then((res) => {
+      if (res.status === 200) {
+        setShowToast(<Toast isSuccess message='2FA preference updated!' />);
+      } else {
+        setShowToast(<Toast serverError={res} />);
+      }
+    });
+  };
+
+  // change timezone
+  const changeTimezone = (optionName, optionValue) => {
+    const updatedForm = { ...form, [optionName]: optionValue };
+    setForm(updatedForm);
+
+    if (errorMessage[optionName]) {
+      setErrorMessage({ ...errorMessage, [optionName]: '' });
+    }
+
+    const zodValidationResults = changeTimezoneSchema.safeParse(updatedForm);
     const { data: zodFormData, success, error } = zodValidationResults;
     if (!success) {
       const { timezone } = error.flatten().fieldErrors;
@@ -164,15 +152,13 @@ const Account = ({ user }) => {
       return;
     }
 
-    setIsAwaitingChangeTimezoneResponse(true);
-    const response = await changeUserTimezone(zodFormData);
-    if (response.status === 200) {
-      setIsAwaitingChangeTimezoneResponse(false);
-      setShowToast(<Toast isSuccess message='Timezone updated!' />);
-    } else {
-      setShowToast(<Toast serverError={response} />);
-      setIsAwaitingChangeTimezoneResponse(false);
-    }
+    changeUserTimezone(zodFormData).then((res) => {
+      if (res.status === 200) {
+        setShowToast(<Toast isSuccess message='Timezone updated!' />);
+      } else {
+        setShowToast(<Toast serverError={response} />);
+      }
+    });
   };
 
   // change password
@@ -297,18 +283,18 @@ const Account = ({ user }) => {
         />
       </section>
       <section>
-        <form onSubmit={changeTimezone}>
-          <h1 className='form-page__h2'>Set Timezone</h1>
-          <FormSelectField
-            label='Timezone'
-            id='timezone'
-            name='timezone'
-            value={form?.timezone}
-            onChangeHandler={handleFormSelectField}
-            options={FORM_TIMEZONES}
-            errorMessage={errorMessage.timezone}
-          />
-          <div className='form-page__buttons-wrapper'>
+        {/*  <form onSubmit={changeTimezone}> */}
+        <h1 className='form-page__h2'>Set Timezone</h1>
+        <FormSelectField
+          label='Timezone'
+          id='timezone'
+          name='timezone'
+          value={form?.timezone}
+          onChangeHandler={changeTimezone}
+          options={FORM_TIMEZONES}
+          errorMessage={errorMessage.timezone}
+        />
+        {/*  <div className='form-page__buttons-wrapper'>
             <CTA
               text='Change Timezone'
               btnType='submit'
@@ -316,8 +302,8 @@ const Account = ({ user }) => {
               ariaLabel='Change your timezone'
               showSpinner={isAwaitingChangeTimezoneResponse}
             />
-          </div>
-        </form>
+          </div> */}
+        {/*   </form> */}
       </section>
       <section>
         <form onSubmit={changePassword}>

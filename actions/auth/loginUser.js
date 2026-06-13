@@ -40,6 +40,17 @@ export default async function loginUser(formData) {
     if (user && (await bcrypt.compare(password, user.password))) {
       // if user has opted out of 2FA skip creating code and sending email
       if (!user.enable2FA) {
+        // set updatedAt to record log in
+        const date = new Date();
+        const dateToISO = date.toISOString();
+
+        await User.updateOne(
+          { _id: user._id },
+          {
+            updatedAt: dateToISO,
+          },
+        );
+
         const token = await new SignJWT({
           hasToken: true,
           id: user._id,
