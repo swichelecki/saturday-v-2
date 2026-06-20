@@ -6,13 +6,13 @@
     text-align: left;
   }
   thead {
-    background-color: $color-background;
-    border-top: 1px solid $color-border;
+    background-color: $background;
+    border-top: 1px solid $border;
   }
   th {
     text-align: left;
     padding: 12px;
-    border-top: 1px solid $color-border;
+    border-top: 1px solid $border;
   }
   th[scope='row'] {
     background-color: $color-gradiant-dark;
@@ -25,7 +25,7 @@
   }
   td {
     padding: 12px;
-    border-top: 1px solid $color-border;
+    border-top: 1px solid $border;
     background-color: $color-gradiant-dark;
   }
   td:nth-child(2) {

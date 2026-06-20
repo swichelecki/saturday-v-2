@@ -5,42 +5,16 @@
   }
   &__wrapper {
     width: 100%;
-    button.h2 {
-      position: relative;
-      padding: 8px 16px;
-      width: 100%;
-      text-align: left;
-      color: $color-font;
-      box-shadow: 0 0 0 1px $color-border;
-      background-color: $color-background;
-    }
-    button.h2.button-open {
-      &:after {
-        content: '';
-        position: absolute;
-        top: 46%;
-        right: 12px;
-        cursor: pointer;
-        border-left: 6px solid transparent;
-        border-right: 6px solid transparent;
-        border-bottom: 6px solid $color-list-item-svg;
-      }
-    }
-    button.h2.button-closed {
-      &:after {
-        content: '';
-        position: absolute;
-        top: 46%;
-        right: 12px;
-        cursor: pointer;
-        border-left: 6px solid transparent;
-        border-right: 6px solid transparent;
-        border-top: 6px solid $color-list-item-svg;
-      }
+    overflow: hidden;
+    h2 {
+      padding: 16px;
+      border-radius: 8px;
+      color: $font;
+      background-color: $background-accent;
+      box-shadow: 0px 0px 0 1px $border-accent inset;
     }
   }
   &__calendar-wrapper {
-    overflow: hidden;
     width: 100%;
   }
   &__calendar-month-year {
@@ -50,7 +24,6 @@
     gap: 10px;
     padding: 8px 0 0 16px;
     font-weight: 600;
-    color: $color-list-item-svg;
   }
   &__calendar-carousel {
     display: flex;
@@ -72,9 +45,9 @@
     flex-direction: column;
     gap: 8px;
     position: relative;
-    border-right: 1px solid $color-border;
-    border-left: 1px solid $color-border;
-    border-bottom: 1px solid $color-border;
+    border-right: 1px solid $background-light;
+    border-left: 1px solid $background-light;
+    border-bottom: 1px solid $background-light;
     .week__calendar-item {
       &:last-of-type {
         &:after {
@@ -82,16 +55,13 @@
         }
       }
     }
-    &--past {
-      opacity: 0.5;
-    }
   }
   &__day-of-week {
     position: relative;
     padding: 4px 16px 2px 0;
     text-align: right;
-    background-color: $color-background-secondary;
-    box-shadow: 0 0 0 1px $color-background-secondary;
+    background-color: $background-light;
+    box-shadow: 0 0 0 1px $background-light;
   }
   &__day-of-month {
     text-align: right;
@@ -106,7 +76,9 @@
       top: -4px;
       right: 6px;
       padding: 0;
-      background-color: $button-red-dark;
+      color: $button-purple;
+      background-color: $background-accent;
+      box-shadow: 0px 0px 0 1px $border-accent inset;
       border-radius: 50%;
       width: 32px;
       height: 32px;
@@ -128,15 +100,14 @@
       left: 50%;
       transform: translate(-50%, 0);
       height: 1px;
-      background-color: $color-background-secondary;
+      background-color: $background-light;
     }
   }
   &__calendar-item-event {
-    font-weight: 300;
     border-radius: 8px;
-    padding: 6px 8px;
-    background-color: $button-red-dark;
-    border-left: 8px solid $button-red;
+    padding: 8px;
+    background-color: $button-purple-dark;
+    box-shadow: 0px 0px 0 1px $border-accent inset;
   }
   &__calendar-item-event-date {
     font-weight: 400;
@@ -152,13 +123,12 @@
       padding-bottom: 8px;
     }
     &__wrapper {
-      button.h2 {
+      h2 {
+        margin-bottom: 0;
+        border: 0;
         padding: 12px 16px;
+        border-radius: 0;
         box-shadow: unset;
-        pointer-events: none;
-        &:after {
-          display: none;
-        }
       }
     }
   }

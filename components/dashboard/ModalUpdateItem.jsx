@@ -154,14 +154,14 @@ const ModalUpdateItem = ({
         <div className='modal__modal-button-wrapper'>
           <CTA
             text='Cancel'
-            className='cta-button cta-button--medium cta-button--full cta-button--orange'
+            className='cta-button cta-button--medium cta-button--full cta-button--cancel'
             ariaLabel='Close modal'
             handleClick={handleCloseModal}
           />
           <CTA
             text='Update'
             btnType='submit'
-            className='cta-button cta-button--medium cta-button--full cta-button--blue'
+            className='cta-button cta-button--medium cta-button--full cta-button--purple'
             ariaLabel='Update dashboard item'
             showSpinner={isAwaitingSubmitResponse}
           />

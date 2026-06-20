@@ -166,7 +166,7 @@ const ResetForm = () => {
           text={
             isResetPassword ? 'Create New Password' : 'Request Password Reset'
           }
-          className='cta-button cta-button--large cta-button--full cta-button--purple'
+          className='cta-button cta-button--medium cta-button--full cta-button--purple'
           ariaLabel='Create your Saturday account'
           btnType='submit'
           showSpinner={isAwaitingResponse}

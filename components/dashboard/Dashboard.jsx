@@ -227,14 +227,12 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
           className='form-error-message form-error-message--position-static'
         />
       )}
-      <div className='dashboard-button-wrapper'>
-        <CTA
-          text='Create Item'
-          className='cta-button cta-button--large cta-button--full cta-button--purple'
-          ariaLabel='Create dashboard item'
-          handleClick={handleOpenCreateItemModal}
-        />
-      </div>
+      <CTA
+        text='Create Item'
+        className='cta-button cta-button--medium cta-button--purple'
+        ariaLabel='Create dashboard item'
+        handleClick={handleOpenCreateItemModal}
+      />
       <Week timezone={timezone} userId={userId} calendar={calendar} />
       {reminders && reminders?.length > 0 && (
         <Reminders reminders={reminders} userId={userId} />

@@ -6,10 +6,7 @@ import { useAppContext } from '../../context';
 import { RemindersItem, Modal, ModalConfirm } from '../../components';
 import { getReminder, updateReminder } from '../../actions';
 import { useInnerWidth } from '../../hooks';
-import {
-  handleHiddenHeight,
-  handleModalResetPageScrolling,
-} from '../../utilities';
+import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MOBILE_BREAKPOINT,
   BY_WEEK_INTERVALS,
@@ -32,7 +29,6 @@ const Reminders = ({ reminders, userId }) => {
 
   const [remindersItems, setReminders] = useState(reminders ?? []);
   const [reminderToUpdate, setReminderToUpdate] = useState({});
-  const [showReminders, setShowReminders] = useState(true);
   const [showScrollButtons, setShowScrollButtons] = useState(false);
   const [remindersWrapperClientRectRight, setRemindersWrapperClientRectRight] =
     useState(0);
@@ -151,7 +147,7 @@ const Reminders = ({ reminders, userId }) => {
             handleConfirm={handleResetReminder}
             confirmId={id}
             confirmType='Done'
-            className='cta-button--yellow'
+            className='cta-button--purple'
           />
         </Modal>,
       );
@@ -254,31 +250,13 @@ const Reminders = ({ reminders, userId }) => {
     remindersCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
   };
 
-  if (!remindersItems?.length) return <></>;
+  if (!remindersItems || !remindersItems?.length) return <></>;
 
   return (
     <div className='reminders__outer-wrapper'>
       <div className='reminders__wrapper'>
-        <button
-          className={`h2 ${!showReminders ? 'button-closed' : 'button-open'}`}
-          onClick={() => setShowReminders((current) => !current)}
-          type='button'
-        >
-          Recurring Reminders
-        </button>
-        <div
-          className='reminders__reminders-wrapper'
-          ref={remindersWrapperRef}
-          style={
-            showReminders
-              ? {
-                  height: `${handleHiddenHeight(
-                    remindersWrapperRef.current,
-                  )}px`,
-                }
-              : { height: '0px' }
-          }
-        >
+        <h2>Recurring Reminders</h2>
+        <div className='reminders__reminders-wrapper' ref={remindersWrapperRef}>
           <div
             className='reminders__reminders-carousel'
             ref={remindersCarouselRef}
@@ -296,27 +274,24 @@ const Reminders = ({ reminders, userId }) => {
           </div>
         </div>
       </div>
-      {showScrollButtons &&
-        showReminders &&
-        width &&
-        width > MOBILE_BREAKPOINT && (
-          <div className='carousel__buttons-wrapper'>
-            <button
-              onClick={handleScrollPrevious}
-              className='carousel__button carousel__button--yellow'
-              type='button'
-            >
-              <FaChevronLeft />
-            </button>
-            <button
-              onClick={handleScrollNext}
-              className='carousel__button carousel__button--yellow'
-              type='button'
-            >
-              <FaChevronRight />
-            </button>
-          </div>
-        )}
+      {showScrollButtons && width && width > MOBILE_BREAKPOINT && (
+        <div className='carousel__buttons-wrapper'>
+          <button
+            onClick={handleScrollPrevious}
+            className='carousel__button'
+            type='button'
+          >
+            <FaChevronLeft />
+          </button>
+          <button
+            onClick={handleScrollNext}
+            className='carousel__button'
+            type='button'
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -166,7 +166,7 @@ const Login = () => {
         {!show2FactorAuthField && (
           <CTA
             text='Log In'
-            className='cta-button cta-button--large cta-button--full cta-button--purple'
+            className='cta-button cta-button--medium cta-button--full cta-button--purple'
             ariaLabel='Log in to Saturday'
             btnType='submit'
             showSpinner={isAwaitingLogInResponse}

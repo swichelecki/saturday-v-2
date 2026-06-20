@@ -6,11 +6,12 @@
     left: 0;
     bottom: 0;
     z-index: -1;
-    background: linear-gradient(
-      120deg,
-      rgb($color-gradiant-darkest, 1) 30%,
-      rgb($color-gradiant-dark, 1) 46%,
-      rgb($button-blue-dark, 0.9) 90%
+    background-image: linear-gradient(
+      $button-purple-dark,
+      $background-accent,
+      $background-accent,
+      $background-dark,
+      $color-gradiant-dark
     );
   }
   &__wrapper {
@@ -24,9 +25,11 @@
     position: relative;
     margin: 0 auto;
     padding-top: 50px;
+    color: $font-light;
     p {
       line-height: 1.6;
       font-size: 1.125rem; // 18px
+      color: $font;
     }
   }
   &__hero {
@@ -51,7 +54,7 @@
       background-color: transparent;
     }
     img {
-      box-shadow: 0 5px 30px $color-gradiant-dark;
+      box-shadow: 0 10px 60px $button-purple-dark;
       border-radius: 4px;
       -webkit-user-drag: none;
       -moz-user-select: none;
@@ -81,8 +84,8 @@
     padding: 32px 18px;
     border-radius: 12px;
     text-align: center;
-    font-weight: 300;
-    background-color: $color-background-dark;
+    background-color: $background-accent;
+    box-shadow: 0px 0px 0 1px $border-accent inset;
     h3 {
       display: flex;
       justify-content: center;
@@ -90,9 +93,6 @@
       gap: 12px;
       margin: 0;
       font-size: 1.75rem; // 28px
-      svg {
-        fill: $button-green;
-      }
     }
   }
   &__features {
@@ -107,7 +107,7 @@
       background-color: transparent;
     }
     img {
-      box-shadow: 0 5px 30px $color-gradiant-dark;
+      box-shadow: 0 10px 60px $button-purple-dark;
       border-radius: 4px;
       -webkit-user-drag: none;
       -moz-user-select: none;
@@ -128,12 +128,13 @@
         align-items: start;
         position: relative;
         padding-left: 34px;
+        color: $font;
         svg {
           position: absolute;
           top: 2px;
           left: 0;
           font-size: 1.5rem; // 24px
-          fill: $button-green;
+          fill: $button-purple;
         }
       }
     }
@@ -148,7 +149,8 @@
     padding: 32px 32px 48px;
     text-align: center;
     border-radius: 12px;
-    background-color: $color-background-dark;
+    background-color: $background-accent;
+    box-shadow: 0px 0px 0 1px $border-accent inset;
   }
 }
 

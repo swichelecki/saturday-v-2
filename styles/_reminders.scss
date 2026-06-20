@@ -5,45 +5,17 @@
   }
   &__wrapper {
     width: 100%;
-    border: 1px solid $color-border;
     overflow: hidden;
-    & > button {
-      position: relative;
-      width: 100%;
-      text-align: left;
-      color: $color-font;
-      font-weight: 600;
-      padding: 8px 16px;
-      background-color: $color-background;
-    }
-    button.button-open {
-      box-shadow: 0 0 0 1px $color-border;
-      &:after {
-        content: '';
-        position: absolute;
-        top: 46%;
-        right: 12px;
-        cursor: pointer;
-        border-left: 6px solid transparent;
-        border-right: 6px solid transparent;
-        border-bottom: 6px solid $color-list-item-svg;
-      }
-    }
-    button.button-closed {
-      &:after {
-        content: '';
-        position: absolute;
-        top: 46%;
-        right: 12px;
-        cursor: pointer;
-        border-left: 6px solid transparent;
-        border-right: 6px solid transparent;
-        border-top: 6px solid $color-list-item-svg;
-      }
+    h2 {
+      padding: 16px;
+      border-radius: 8px;
+      color: $font;
+      background-color: $background-accent;
+      box-shadow: 0px 0px 0 1px $border-accent inset;
     }
   }
   &__reminders-wrapper {
-    transition: height 0.3s;
+    width: 100%;
   }
   &__reminders-carousel {
     display: flex;
@@ -64,14 +36,11 @@
   .reminders {
     &__wrapper {
       border: 0;
-      & > button {
+      h2 {
+        margin-bottom: 0;
+        border: 0;
         padding: 12px 16px;
-        pointer-events: none;
-        &:after {
-          display: none;
-        }
-      }
-      & > button.button-open {
+        border-radius: 0;
         box-shadow: unset;
       }
     }

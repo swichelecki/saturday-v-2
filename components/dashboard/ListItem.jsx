@@ -143,8 +143,9 @@ const ItemList = ({
 
   // set item details height for when item is open
   useEffect(() => {
+    if (!item?.description) return;
     setItemDetailsHeight(handleHiddenHeight(detailsRef.current));
-  }, []);
+  }, [item]);
 
   // handle touch x-axis transitions after touchend event
   useEffect(() => {
@@ -522,10 +523,7 @@ const ItemList = ({
             </div>
           )}
           {!item?.mandatoryDate && itemType === ITEM_TYPE_NOTE && (
-            <div
-              className='list-item__item-pin-zone'
-              style={{ opacity: item?.pinned ? '0.9' : '0.5' }}
-            >
+            <div className='list-item__item-pin-zone'>
               <button
                 onClick={() => {
                   handlePinNote(

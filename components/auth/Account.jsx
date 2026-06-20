@@ -266,7 +266,7 @@ const Account = ({ user }) => {
         <div className='form-page__buttons-wrapper'>
           <CTA
             text={isSubscribed ? 'Manage Subscription' : 'Subscribe Now'}
-            className='cta-button cta-button--small cta-button--green'
+            className='cta-button cta-button--medium cta-button--purple'
             ariaLabel='Manage your subscription'
             showSpinner={isAwaitingStripeResponse}
             handleClick={handleSubscribe}
@@ -283,7 +283,6 @@ const Account = ({ user }) => {
         />
       </section>
       <section>
-        {/*  <form onSubmit={changeTimezone}> */}
         <h1 className='form-page__h2'>Set Timezone</h1>
         <FormSelectField
           label='Timezone'
@@ -294,16 +293,6 @@ const Account = ({ user }) => {
           options={FORM_TIMEZONES}
           errorMessage={errorMessage.timezone}
         />
-        {/*  <div className='form-page__buttons-wrapper'>
-            <CTA
-              text='Change Timezone'
-              btnType='submit'
-              className='cta-button cta-button--small cta-button--green'
-              ariaLabel='Change your timezone'
-              showSpinner={isAwaitingChangeTimezoneResponse}
-            />
-          </div> */}
-        {/*   </form> */}
       </section>
       <section>
         <form onSubmit={changePassword}>
@@ -348,7 +337,7 @@ const Account = ({ user }) => {
             <CTA
               text='Change Password'
               btnType='submit'
-              className='cta-button cta-button--small cta-button--green'
+              className='cta-button cta-button--medium cta-button--purple'
               ariaLabel='Change your password'
               showSpinner={isAwaitingChangePasswordResponse}
             />
@@ -389,7 +378,7 @@ const Account = ({ user }) => {
             <CTA
               text='Delete Account'
               btnType='submit'
-              className='cta-button cta-button--small cta-button--red'
+              className='cta-button cta-button--medium cta-button--red'
               ariaLabel='Delete your account'
               showSpinner={isAwaitingDeleteAccoungResponse}
             />

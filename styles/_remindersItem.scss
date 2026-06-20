@@ -4,21 +4,20 @@
   align-items: center;
   flex: 0 0 auto;
   gap: 10px;
-  padding: 10px 10px 10px 16px;
+  padding: 16px;
   border-radius: 8px;
   height: 48px;
-  background-color: $color-yellow-extra-dark;
-  border-left: 8px solid $button-yellow-dark;
+  box-shadow: 0 0 0 1px $border;
+  background-color: $background-light;
   &__date {
     font-weight: 300;
     font-size: 0.875rem; // 14px
     padding-right: 6px;
-    color: $color-font;
+    color: $font;
   }
   &--today {
     background-color: $button-orange-dark;
     color: $button-orange;
-    border-left: 8px solid $button-orange;
   }
 }
 

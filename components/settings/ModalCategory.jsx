@@ -182,14 +182,14 @@ const ModalCategory = ({
       <div className='modal__modal-button-wrapper'>
         <CTA
           text='Cancel'
-          className='cta-button cta-button--medium cta-button--full cta-button--orange'
+          className='cta-button cta-button--medium cta-button--full cta-button--cancel'
           ariaLabel='Close modal'
           handleClick={handleCloseModal}
         />
         <CTA
           text='Save'
           btnType='submit'
-          className='cta-button cta-button--medium cta-button--full cta-button--green'
+          className='cta-button cta-button--medium cta-button--full cta-button--purple'
           ariaLabel='Save dashboard item category'
           showSpinner={isAwaitingSubmitResponse}
         />

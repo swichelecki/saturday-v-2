@@ -1,6 +1,5 @@
 .header {
-  color: $color-font;
-  border-bottom: 1px solid $color-border;
+  color: $font;
   &__inner-wrapper {
     display: flex;
     justify-content: space-between;
@@ -11,7 +10,7 @@
     width: 100%;
     padding: 14px 48px;
     & > a {
-      color: $color-font;
+      color: $font;
       display: inline-block;
     }
   }

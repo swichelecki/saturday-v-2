@@ -11,136 +11,20 @@ a.list-item__edit-button {
   text-align: center;
 }
 
-button.reminders__reminders-button {
-  padding: 0;
-  width: 34px;
-  height: 28px;
-  border-radius: 10px;
-  background-color: $button-yellow-dark;
-  svg {
-    fill: $button-yellow;
-    width: 0.9rem;
-    height: 0.9rem;
-  }
-}
-
-button.list-item__pin-button {
-  padding: 0;
-  width: 34px;
-  height: 28px;
-  svg {
-    fill: $button-orange;
-    width: 1.3rem;
-    height: 1.3rem;
-  }
-}
-
-.carousel {
-  &__buttons-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
-    gap: 10px;
-    width: 100%;
-    padding-top: 12px;
-  }
-  &__button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid $color-border;
-    width: 32px;
-    height: 32px;
-    border-radius: 100%;
-    padding: 0;
-    svg {
-      fill: $button-yellow;
-      width: 1rem;
-      height: 1rem;
-    }
-    &:first-of-type {
-      svg {
-        position: relative;
-        left: -1px;
-      }
-    }
-    &:last-of-type {
-      svg {
-        position: relative;
-        right: -1px;
-      }
-    }
-    &--yellow {
-      svg {
-        fill: $button-yellow;
-      }
-    }
-    &--red {
-      svg {
-        fill: $button-red;
-      }
-    }
-  }
-}
-
-button.list-item__details-button {
-  background-color: $button-purple-dark;
-  color: $button-purple;
-  svg {
-    fill: $button-purple;
-  }
-  .loader {
-    border: 2px solid $button-purple;
-    border-top: 2px solid transparent;
-  }
-}
-
-button.list-item__delete-button {
-  background-color: $button-red-dark;
-  color: $button-red;
-  svg {
-    fill: $button-red;
-  }
-  .loader {
-    border: 2px solid $button-red;
-    border-top: 2px solid transparent;
-  }
-}
-
-a.list-item__edit-button {
-  background-color: $button-green-dark;
-  color: $button-green;
-  svg {
-    fill: $button-green;
-  }
-  .loader {
-    border: 2px solid $button-green;
-    border-top: 2px solid transparent;
-  }
-}
-
-button.list-item__edit-button {
-  background-color: $button-blue-dark;
-  svg {
-    fill: $button-blue;
-  }
-  .loader {
-    border: 2px solid $button-blue;
-    border-top: 2px solid transparent;
-  }
-}
-
 button.list-item__details-button,
 button.list-item__delete-button,
 button.list-item__edit-button,
 a.list-item__edit-button {
   position: relative;
   padding: 0;
+  background-color: $button-purple-dark;
+  box-shadow: 0px 0px 0 1px $border-accent inset;
   svg {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    fill: $button-purple;
   }
   &--desktop {
     width: 34px;
@@ -161,6 +45,74 @@ a.list-item__edit-button {
       height: 1.4rem;
     }
   }
+  .loader {
+    border: 2px solid $button-purple;
+    border-top: 2px solid transparent;
+  }
+}
+
+button.reminders__reminders-button {
+  padding: 0;
+  width: 34px;
+  height: 28px;
+  border-radius: 10px;
+  background-color: $button-purple-dark;
+  box-shadow: 0px 0px 0 1px $border-accent inset;
+  svg {
+    fill: $button-purple;
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+}
+
+button.list-item__pin-button {
+  padding: 0;
+  width: 34px;
+  height: 28px;
+  svg {
+    fill: $font;
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+}
+
+.carousel {
+  &__buttons-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    padding-top: 12px;
+  }
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 100%;
+    padding: 0;
+    background-color: $background-accent;
+    box-shadow: 0px 0px 0 1px $border-accent inset;
+    svg {
+      fill: $button-purple;
+      width: 1rem;
+      height: 1rem;
+    }
+    &:first-of-type {
+      svg {
+        position: relative;
+        left: -1px;
+      }
+    }
+    &:last-of-type {
+      svg {
+        position: relative;
+        right: -1px;
+      }
+    }
+  }
 }
 
 button.list-item__delete-button {
@@ -177,9 +129,9 @@ button.user-menu__button {
   padding: 0;
   min-width: 24px;
   height: 24px;
-  color: $color-background;
+  color: $background;
   font-size: 1.375rem; // 22px
-  background-color: $color-font;
+  background-color: $font;
   svg {
     width: 1rem;
     height: 1rem;

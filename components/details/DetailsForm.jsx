@@ -212,13 +212,13 @@ const DetailsForm = ({ task, user }) => {
             text='Cancel'
             type='anchor'
             href='/'
-            className='cta-button cta-button--small cta-button--orange'
+            className='cta-button cta-button--medium cta-button--full cta-button--cancel'
             ariaLabel='Navigate back to dashboard'
           />
           <CTA
             text='Save'
             btnType='submit'
-            className='cta-button cta-button--small cta-button--green'
+            className='cta-button cta-button--medium cta-button--full cta-button--purple'
             ariaLabel='Add item to dashboard'
             showSpinner={isAwaitingSaveResponse}
           />

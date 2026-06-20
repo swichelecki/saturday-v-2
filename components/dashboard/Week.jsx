@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { handleHiddenHeight, handleDateToYearMonthDay } from '../../utilities';
+import { handleDateToYearMonthDay } from '../../utilities';
 import { WeekItem } from '../../components';
 import dynamic from 'next/dynamic';
 import { useInnerWidth } from '../../hooks';
@@ -25,13 +25,6 @@ const Week = ({ timezone, userId, calendar }) => {
 
   const [calendarItems, setCalendarItems] = useState(calendar);
   const [nextOrPrevMonday, setNextOrPrevMonday] = useState(null);
-  const [calendarHeight, setCalendarHeight] = useState(0);
-
-  const [showWeek, setShowWeek] = useState(true);
-  const [showScrollButtons, setShowScrollButtons] = useState(false);
-  const [weekWrapperClientRectRight, setWeekWrapperClientRectRight] =
-    useState(0);
-  const [weekWrapperClientRectLeft, setWeekWrapperClientRectLeft] = useState(0);
   const [startXPosition, setStartXPosition] = useState(0);
   const [startYPosition, setStartYPosition] = useState(0);
   const [previousTranslateX, setPreviousTranslateX] = useState(0);
@@ -47,11 +40,6 @@ const Week = ({ timezone, userId, calendar }) => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCalendarItems(calendar);
   }, [calendar]);
-
-  // dynamically set carousel height when using show / hide button
-  useEffect(() => {
-    setCalendarHeight(handleHiddenHeight(weekWrapperRef?.current));
-  }, [calendarItems, width]);
 
   // on mobile ensure current day of week is in view on page load
   useEffect(() => {
@@ -74,33 +62,23 @@ const Week = ({ timezone, userId, calendar }) => {
     weekCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
 
     setPreviousTranslateX(-carouselPositionRef.current);
+
+    if (width > MOBILE_BREAKPOINT) {
+      weekCarouselRef.current.style.transform = 'translateX(0)';
+      weekCarouselRef.current.style.transition = 'transform 300ms ease-out';
+      carouselPositionRef.current = 0;
+    }
   }, [width]);
 
-  // handle display of scroll buttons and carousel resize
+  // handle carousel resize
   useEffect(() => {
     if (width <= MOBILE_BREAKPOINT) return;
-
-    const setRefs = setTimeout(() => {
-      weekCarouselRef?.current?.scrollWidth >
-      weekWrapperRef?.current?.offsetWidth
-        ? setShowScrollButtons(true)
-        : setShowScrollButtons(false);
-
-      setWeekWrapperClientRectRight(
-        weekWrapperRef?.current?.getBoundingClientRect().right,
-      );
-      setWeekWrapperClientRectLeft(
-        weekWrapperRef?.current?.getBoundingClientRect().left,
-      );
-    }, 50);
 
     if (weekCarouselRef.current && carouselPositionRef.current) {
       weekCarouselRef.current.style.transform = 'translateX(0)';
       weekCarouselRef.current.style.transition = 'transform 300ms ease-out';
       carouselPositionRef.current = 0;
     }
-
-    return () => clearTimeout(setRefs);
   }, [width]);
 
   // disable page scrolling when scrolling week carousel with touch events
@@ -188,7 +166,6 @@ const Week = ({ timezone, userId, calendar }) => {
   }, [nextOrPrevMonday]);
 
   const handleTouchStart = (e) => {
-    if (width > MOBILE_BREAKPOINT) return;
     setStartXPosition(e.touches[0].clientX);
     setStartYPosition(e.touches[0].clientY);
   };
@@ -233,52 +210,6 @@ const Week = ({ timezone, userId, calendar }) => {
     setPreviousTranslateX(carouselPositionRef.current);
   };
 
-  const handleScrollNext = () => {
-    const daysToShow = [];
-    const days = weekWrapperRef.current.querySelectorAll('.week__calendar-day');
-    days.forEach((item) => {
-      if (item.getBoundingClientRect().right >= weekWrapperClientRectRight) {
-        daysToShow.push(item);
-      }
-    });
-
-    if (daysToShow.length === 0) return;
-
-    const nextDayToShow = daysToShow[0];
-    const nextDayToShowClientRectRight =
-      nextDayToShow.getBoundingClientRect().right;
-
-    carouselPositionRef.current +=
-      nextDayToShowClientRectRight -
-      weekWrapperClientRectRight +
-      (daysToShow.length > 1 ? 32 : 8);
-
-    weekCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
-  };
-
-  const handleScrollPrevious = () => {
-    const daysToShow = [];
-    const days = weekWrapperRef.current.querySelectorAll('.week__calendar-day');
-    days.forEach((item) => {
-      if (item.getBoundingClientRect().left <= weekWrapperClientRectLeft) {
-        daysToShow.push(item);
-      }
-    });
-
-    if (daysToShow.length === 0) return;
-
-    const nextDayToShow = daysToShow[daysToShow.length - 1];
-    const nextDayToShowClientRectLeft =
-      nextDayToShow.getBoundingClientRect().left;
-
-    carouselPositionRef.current +=
-      nextDayToShowClientRectLeft -
-      weekWrapperClientRectLeft -
-      (daysToShow.length > 1 ? 32 : 8);
-
-    weekCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
-  };
-
   // show next week on button click
   const handleGetNextWeek = () => {
     const getNextMonday = (today) => {
@@ -311,48 +242,27 @@ const Week = ({ timezone, userId, calendar }) => {
     );
   };
 
-  const showHideCalendar = () => {
-    setShowWeek((current) => !current);
-    weekWrapperRef.current.style.transition = 'height 0.3s';
-  };
-
-  if (!calendarItems?.length) return <></>;
+  if (!calendarItems || !calendarItems?.length) return <></>;
 
   return (
     <div className='week__outer-wrapper'>
       <div className='week__wrapper'>
-        <button
-          className={`h2 ${!showWeek ? 'button-closed' : 'button-open'}`}
-          onClick={showHideCalendar}
-          type='button'
-        >
-          Week at a Glance
-        </button>
-        <div
-          className='week__calendar-wrapper'
-          ref={weekWrapperRef}
-          style={
-            showWeek
-              ? {
-                  height: `${calendarHeight}px`,
-                }
-              : { height: '0px' }
-          }
-        >
+        <h2>Week at a Glance</h2>
+        <div className='week__calendar-wrapper' ref={weekWrapperRef}>
           <div className='week__calendar-month-year'>
             {moment(!nextOrPrevMonday ? today : nextOrPrevMonday).format(
               'MMM YYYY',
             )}
             <button
               onClick={handleGetPreviousWeek}
-              className='carousel__button carousel__button--red'
+              className='carousel__button'
               type='button'
             >
               <FaChevronLeft />
             </button>
             <button
               onClick={handleGetNextWeek}
-              className='carousel__button carousel__button--red'
+              className='carousel__button'
               type='button'
             >
               <FaChevronRight />
@@ -365,65 +275,45 @@ const Week = ({ timezone, userId, calendar }) => {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {calendarItems &&
-              calendarItems.length > 0 &&
-              calendarItems?.map((item, index) => (
-                <div
-                  className={`week__calendar-day${
-                    Object.keys(item)[0] < today
-                      ? ' week__calendar-day--past'
-                      : ''
+            {calendarItems?.map((item, index) => (
+              <div
+                className={`week__calendar-day${
+                  Object.keys(item)[0] < today
+                    ? ' week__calendar-day--past'
+                    : ''
+                }`}
+                key={`calendar-day__${index}`}
+                {...(Object.keys(item)[0] === today ? { id: 'today' } : {})}
+              >
+                <p className='week__day-of-week'>{daysOfWeek[index]}</p>
+                <p
+                  className={`week__day-of-month${
+                    Object.keys(item)[0] === today &&
+                    moment(Object.keys(item)[0]).format('D') !== '1'
+                      ? ' week__day-of-month--today'
+                      : Object.keys(item)[0] === today &&
+                          moment(Object.keys(item)[0]).format('D') === '1'
+                        ? ' week__day-of-month--today-first-of-month'
+                        : ''
                   }`}
-                  key={`calendar-day__${index}`}
-                  {...(Object.keys(item)[0] === today ? { id: 'today' } : {})}
                 >
-                  <p className='week__day-of-week'>{daysOfWeek[index]}</p>
-                  <p
-                    className={`week__day-of-month${
-                      Object.keys(item)[0] === today &&
-                      moment(Object.keys(item)[0]).format('D') !== '1'
-                        ? ' week__day-of-month--today'
-                        : Object.keys(item)[0] === today &&
-                            moment(Object.keys(item)[0]).format('D') === '1'
-                          ? ' week__day-of-month--today-first-of-month'
-                          : ''
-                    }`}
-                  >
-                    {moment(Object.keys(item)[0]).format('D') === '1'
-                      ? moment(Object.keys(item)[0]).format('MMM D')
-                      : moment(Object.keys(item)[0]).format('D')}
-                  </p>
-                  {Object.values(item)[0]?.map((item, index) => (
-                    <WeekItem
-                      key={`week-item__${index}`}
-                      title={item?.title}
-                      dateAndTime={item?.dateAndTime}
-                      timezone={timezone}
-                    />
-                  ))}
-                </div>
-              ))}
+                  {moment(Object.keys(item)[0]).format('D') === '1'
+                    ? moment(Object.keys(item)[0]).format('MMM D')
+                    : moment(Object.keys(item)[0]).format('D')}
+                </p>
+                {Object.values(item)[0]?.map((item, index) => (
+                  <WeekItem
+                    key={`week-item__${index}`}
+                    title={item?.title}
+                    dateAndTime={item?.dateAndTime}
+                    timezone={timezone}
+                  />
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </div>
-      {showScrollButtons && showWeek && width && width > MOBILE_BREAKPOINT && (
-        <div className='carousel__buttons-wrapper'>
-          <button
-            onClick={handleScrollPrevious}
-            className='carousel__button carousel__button--red'
-            type='button'
-          >
-            <FaChevronLeft />
-          </button>
-          <button
-            onClick={handleScrollNext}
-            className='carousel__button carousel__button--red'
-            type='button'
-          >
-            <FaChevronRight />
-          </button>
-        </div>
-      )}
     </div>
   );
 };

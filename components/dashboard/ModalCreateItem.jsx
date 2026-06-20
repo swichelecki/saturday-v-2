@@ -246,7 +246,7 @@ const ModalCreateItem = ({
         <div className='modal__modal-button-wrapper'>
           <CTA
             text='Cancel'
-            className='cta-button cta-button--medium cta-button--full cta-button--orange'
+            className='cta-button cta-button--medium cta-button--full cta-button--cancel'
             ariaLabel='Close modal'
             handleClick={handleCloseModal}
           />
@@ -264,7 +264,7 @@ const ModalCreateItem = ({
                   categoryId: form?.categoryId,
                 },
               }}
-              className='cta-button cta-button--medium cta-button--full cta-button--blue'
+              className='cta-button cta-button--medium cta-button--full cta-button--purple'
               handleClick={handleCloseModal}
               ariaLabel='Create detailed item for dashboard'
             />
@@ -272,7 +272,7 @@ const ModalCreateItem = ({
             <CTA
               text='Add'
               btnType='submit'
-              className='cta-button cta-button--medium cta-button--full cta-button--green'
+              className='cta-button cta-button--medium cta-button--full cta-button--purple'
               ariaLabel='Add item to dashboard'
               showSpinner={isAwaitingAddResponse}
             />

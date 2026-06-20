@@ -143,7 +143,7 @@ const RemindersControls = ({ reminders, user }) => {
         <div className='settings-controls__button-wrapper'>
           <CTA
             text='Create'
-            className='cta-button cta-button--small cta-button--green'
+            className='cta-button cta-button--medium cta-button--purple'
             ariaLabel='Create recurring reminder item for dashboard'
             handleClick={handleOpenReminderModal}
           />

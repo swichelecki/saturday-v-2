@@ -9,7 +9,7 @@
   border-radius: 12px;
   z-index: 2;
   opacity: 0;
-  color: $color-font;
+  color: $font;
   border-left: 16px solid $button-purple;
   background-color: $button-purple-dark;
   line-height: 1.6;
@@ -30,7 +30,7 @@
     background-color: transparent;
     svg {
       font-size: 2rem; // 34px
-      fill: $color-font;
+      fill: $font;
     }
   }
   &__new-user-background-overlay {

@@ -175,7 +175,7 @@ const Signup = () => {
         {!show2FactorAuthField && (
           <CTA
             text='Create Account'
-            className='cta-button cta-button--large cta-button--full cta-button--purple'
+            className='cta-button cta-button--medium cta-button--full cta-button--purple'
             ariaLabel='Create your Saturday account'
             btnType='submit'
             showSpinner={isAwaitingLogInResponse}

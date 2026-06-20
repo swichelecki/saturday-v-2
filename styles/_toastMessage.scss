@@ -8,20 +8,19 @@
   gap: 12px;
   padding: 14px 35px 14px 14px;
   border-radius: 4px;
-  border-left: 8px solid $button-red;
-  background-color: $color-white;
-  color: $button-red;
+  border-left: 8px solid $button-purple;
+  background-color: $background-accent;
+  box-shadow: 0px 0px 0 1px $border-accent inset;
+  color: $font;
   transition: top 0.2s;
   z-index: 2;
   svg {
     font-size: 1.75rem; // 28px;
   }
   p:first-of-type {
-    color: $color-background;
     font-weight: 600;
   }
   p:last-of-type {
-    color: $color-list-item-svg;
     font-size: 0.8125rem; // 13px;
   }
   button {
@@ -38,12 +37,9 @@
   &--success {
     gap: 8px;
     p:first-of-type {
-      color: $button-blue-dark;
       font-weight: unset;
       font-size: 1rem; // 16px
     }
-    border-left: 8px solid $button-blue;
-    color: $button-blue;
     svg {
       font-size: 1.125rem; // 18px;
     }

@@ -7,9 +7,9 @@ dialog {
   padding: 0;
   border-radius: 12px;
   overflow: visible;
-  background-color: $color-background;
-  color: $color-font;
-  border: 1px solid $color-border;
+  background-color: $background;
+  color: $font;
+  border: 1px solid $border-dark;
 }
 
 .modal {
@@ -27,7 +27,7 @@ dialog {
       top: 18px;
       right: 18px;
       border-radius: 50%;
-      color: $color-font;
+      color: $font;
       background-color: transparent;
       transition: all 0.3s;
       svg {
@@ -35,8 +35,8 @@ dialog {
         height: 1.5rem;
       }
       &:hover {
-        box-shadow: 0 0 0 1px $color-font;
-        background-color: $color-background-dark;
+        box-shadow: 0 0 0 1px $font;
+        background-color: $background-dark;
       }
     }
   }
@@ -78,7 +78,7 @@ dialog {
     }
   }
   &__subscription-modal {
-    background-color: $color-background-dark;
+    background-color: $background-dark;
   }
 }
 

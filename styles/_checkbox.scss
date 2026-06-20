@@ -12,7 +12,7 @@
       width: 0;
     }
     &:hover input ~ .checkbox__checkbox {
-      background-color: $color-background-secondary;
+      background-color: $background-light;
     }
     & input:checked ~ .checkbox__checkbox {
       background-color: $button-purple-dark;
@@ -21,14 +21,14 @@
       display: block;
     }
     & input:focus:not(:focus-visible) ~ .checkbox__checkbox {
-      border: 1px solid $color-border;
+      border: 1px solid $border;
     }
     & input:focus-visible ~ .checkbox__checkbox {
       box-shadow: 0px 0px 0 1px $button-blue inset;
       &:before {
         content: '';
         position: absolute;
-        box-shadow: 0px 0px 0 1px $color-white inset;
+        box-shadow: 0px 0px 0 1px $font-light inset;
         top: -2px;
         right: -2px;
         bottom: -2px;
@@ -42,8 +42,8 @@
     left: 0;
     height: 25px;
     width: 25px;
-    background-color: $color-background;
-    border: 1px solid $color-border;
+    background-color: $background;
+    border: 1px solid $border;
     &:after {
       content: '';
       position: absolute;
@@ -52,7 +52,7 @@
       top: 4px;
       width: 5px;
       height: 10px;
-      border: solid $color-font;
+      border: solid $font;
       border-width: 0 3px 3px 0;
       transform: rotate(45deg);
     }
@@ -60,7 +60,7 @@
   &__sublabel {
     font-weight: 300;
     line-height: 1.6;
-    color: $color-list-item-svg;
+    color: $font;
     margin-top: 6px;
   }
 }

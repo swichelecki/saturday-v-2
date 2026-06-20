@@ -207,7 +207,7 @@ const CategoryControls = ({ categories, user }) => {
         <div className='settings-controls__button-wrapper'>
           <CTA
             text='Create'
-            className='cta-button cta-button--small cta-button--green'
+            className='cta-button cta-button--medium cta-button--purple'
             id='createCategoryButton'
             ariaLabel='Create dashboard item category'
             handleClick={handleOpenCategoryModal}

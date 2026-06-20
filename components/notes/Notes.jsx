@@ -222,7 +222,7 @@ const Notes = ({ notes, user, notesCount }) => {
         {isNotesPrompt && prompt}
         <CTA
           text='Create'
-          className='cta-button cta-button--small cta-button--green'
+          className='cta-button cta-button--medium cta-button--purple'
           ariaLabel='Create dashboard item category'
           handleClick={handleOpenNoteModal}
         />
