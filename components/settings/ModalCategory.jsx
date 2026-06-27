@@ -173,7 +173,7 @@ const ModalCategory = ({
       />
       <FormCheckboxField
         label='Date or Date & Time'
-        subLabel='Check the box if this category requires dates or dates and times. This option allows you to add additional details as well.'
+        subLabel='Check the box if this category requires dates, dates and times and/or detailed information. If a simple to-do list will suffice, leave the box unchecked.'
         id='categoryDateTimeCheckbox'
         name='mandatoryDate'
         checked={form?.mandatoryDate}

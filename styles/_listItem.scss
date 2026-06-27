@@ -138,7 +138,8 @@
     }
     &__upcoming-date-time {
       height: 37px;
-      background-color: $background-dark;
+      padding: 6px 12px 0 16px;
+      background-color: $color-gradiant-dark;
     }
     &__item {
       height: 57px;

@@ -101,3 +101,50 @@
 .cta-text-link {
   color: $button-purple;
 }
+
+@media screen and (max-width: 600px) {
+  .cta-button--purple {
+    &:hover,
+    &:active {
+      background-color: $button-purple-dark;
+      color: $button-purple;
+      box-shadow: 0px 0px 0 1px $button-purple-dark inset;
+      svg {
+        fill: $button-purple;
+      }
+      .loader {
+        border: 3px solid $button-purple;
+        border-top: 3px solid transparent;
+      }
+    }
+  }
+  .cta-button--red {
+    &:hover,
+    &:active {
+      background-color: $button-red-dark;
+      color: $button-red;
+      svg {
+        fill: $button-red;
+      }
+      .loader {
+        border: 3px solid $button-red;
+        border-top: 3px solid transparent;
+      }
+    }
+  }
+  .cta-button--cancel {
+    &:hover,
+    &:active {
+      background-color: $background;
+      color: $font;
+      box-shadow: 0px 0px 0 1px $border inset;
+      svg {
+        fill: $font;
+      }
+      .loader {
+        border: 3px solid font;
+        border-top: 3px solid transparent;
+      }
+    }
+  }
+}

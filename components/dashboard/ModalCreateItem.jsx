@@ -223,15 +223,6 @@ const ModalCreateItem = ({
           </div>
         </div>
         {!hasMandatoryDate && (
-          <FormCheckboxField
-            label='Detailed'
-            subLabel='All categories with a date are detailed by default. Click the checkbox to add a description to categories without dates.'
-            name='detailedCheckbox'
-            checked={checkbox}
-            onChangeHandler={handleSetCheckbox}
-          />
-        )}
-        {!checkbox && (
           <FormTextField
             label='Title'
             type='text'
@@ -239,8 +230,16 @@ const ModalCreateItem = ({
             name='title'
             value={form?.title}
             onChangeHandler={handleSetListItem}
-            disabled={checkbox}
             errorMessage={errorMessage.title}
+          />
+        )}
+        {!hasMandatoryDate && (
+          <FormCheckboxField
+            label='Add Description'
+            subLabel='All categories requiring a date can have a description by default. Click the checkbox to add a description to a category without a date.'
+            name='detailedCheckbox'
+            checked={checkbox}
+            onChangeHandler={handleSetCheckbox}
           />
         )}
         <div className='modal__modal-button-wrapper'>
@@ -262,6 +261,7 @@ const ModalCreateItem = ({
                   column: form?.column,
                   hasMandatoryDate: String(hasMandatoryDate),
                   categoryId: form?.categoryId,
+                  ...(form?.title && { title: form?.title }),
                 },
               }}
               className='cta-button cta-button--medium cta-button--full cta-button--purple'

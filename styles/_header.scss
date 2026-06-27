@@ -49,6 +49,11 @@
     }
     &__content-right {
       min-height: auto;
+      & > a {
+        &:hover {
+          opacity: 0.8;
+        }
+      }
     }
   }
 }

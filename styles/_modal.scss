@@ -114,4 +114,11 @@ dialog {
   dialog.modal.modal__form-modal--small {
     width: 90%;
   }
+
+  dialog.modal .modal__inner-wrapper button {
+    &:hover {
+      box-shadow: unset;
+      background-color: transparent;
+    }
+  }
 }

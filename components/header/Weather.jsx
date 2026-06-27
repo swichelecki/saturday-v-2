@@ -18,7 +18,8 @@ async function getWeatherData() {
     const headerList = await headers();
     let ipAddress = headerList.get('x-forwarded-for')?.split(',')[0];
 
-    if (!ipAddress || ipAddress === '::1') ipAddress = '73.111.204.162';
+    if (!ipAddress || ipAddress === '::1' || ipAddress === '::ffff:127.0.0.1')
+      ipAddress = '73.111.204.162';
 
     const locationDataRes = await fetch(
       `http://ip-api.com/json/${ipAddress}?fields=lat,lon,city`,

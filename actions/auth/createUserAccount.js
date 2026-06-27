@@ -50,7 +50,8 @@ export default async function createUserAccount(formData) {
     let ipAddress = headerList.get('x-forwarded-for')?.split(',')[0];
     if (!ipAddress) ipAddress = headerList.get('x-real-ip') || 'unknown';
     // if localhost use America/Chicago ip address
-    if (ipAddress === '::1') ipAddress = '73.111.204.162';
+    if (ipAddress === '::1' || ipAddress === '::ffff:127.0.0.1')
+      ipAddress = '73.111.204.162';
 
     const response = await fetch(
       `http://ip-api.com/json/${ipAddress}?fields=timezone,continent,country,regionName,city`,

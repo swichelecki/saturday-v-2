@@ -24,7 +24,7 @@ const DetailsForm = ({ task, user }) => {
   const formRef = useRef(null);
   const router = useRouter();
   const params = useSearchParams();
-  const [priority, type, column, hasMandatoryDate, categoryId] =
+  const [priority, type, column, hasMandatoryDate, categoryId, title] =
     params.values();
   const isUpdate = !!Object.keys(task ?? {}).length;
   const { userId, timezone, numberOfItems } = user;
@@ -34,7 +34,7 @@ const DetailsForm = ({ task, user }) => {
     _id: task?._id ?? '',
     userId: task?.userId ?? userId,
     categoryId: task?.categoryId ?? categoryId,
-    title: task?.title ?? '',
+    title: task?.title ?? title ?? '',
     description: task?.description ?? '',
     confirmDeletion: task?.confirmDeletion ?? false,
     date: task?.date ?? '',

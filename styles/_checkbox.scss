@@ -1,7 +1,7 @@
 .checkbox {
   &__checkbox-container {
     position: relative;
-    padding: 3px 0 0 37px;
+    padding: 1px 0 0 37px;
     cursor: pointer;
     user-select: none;
     & input {
@@ -67,6 +67,11 @@
 
 @media screen and (max-width: 600px) {
   .checkbox {
+    &__checkbox-container {
+      &:hover input ~ .checkbox__checkbox {
+        background-color: unset;
+      }
+    }
     &__sublabel {
       font-size: 1rem; // 16px
     }

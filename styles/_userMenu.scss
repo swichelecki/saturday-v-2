@@ -57,6 +57,24 @@
   .user-menu {
     &__nav {
       top: 43px;
+      ul {
+        list-style-type: none;
+        width: 150px;
+        margin: 0;
+        padding: 12px 0 24px;
+        color: $background;
+        li {
+          a,
+          div {
+            &:hover {
+              opacity: 0.8;
+            }
+          }
+          &:hover {
+            background-color: $background;
+          }
+        }
+      }
     }
   }
 }
