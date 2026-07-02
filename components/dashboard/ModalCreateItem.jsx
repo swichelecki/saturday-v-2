@@ -236,7 +236,6 @@ const ModalCreateItem = ({
         {!hasMandatoryDate && (
           <FormCheckboxField
             label='Add Description'
-            subLabel='All categories requiring a date can have a description by default. Click the checkbox to add a description to a category without a date.'
             name='detailedCheckbox'
             checked={checkbox}
             onChangeHandler={handleSetCheckbox}

@@ -18,6 +18,7 @@
   &--today {
     background-color: $button-orange-dark;
     color: $button-orange;
+    box-shadow: 0 0 0 1px $button-orange-dark;
   }
 }
 
