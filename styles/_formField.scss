@@ -56,6 +56,14 @@
       min-height: 198px;
     }
   }
+  &__label-with-tooltip {
+    display: flex;
+    gap: 6px;
+  }
+  &__label-with-tooltip-message {
+    max-width: 250px;
+    width: 100%;
+  }
   .loader {
     position: absolute;
     bottom: 18px;

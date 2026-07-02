@@ -2,12 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import {
-  FormTextField,
-  FormCheckboxField,
-  FormSelectField,
-  CTA,
-} from '../../components';
+import { FormTextField, FormSelectField, CTA, Tooltip } from '../../components';
 import { createReminder, updateReminder } from '../../actions';
 import { useAppContext } from '../../context';
 import { useScrollToError } from '../../hooks';
@@ -18,8 +13,10 @@ import {
 import { reminderSchema } from '../../schemas/schemas';
 import {
   FORM_REMINDER_INTERVAL_OPTIONS,
+  FORM_REMINDER_RESET_OPTIONS,
   FORM_REMINDER_BUFFER_OPTIONS,
 } from '../../constants';
+import { BsQuestionCircleFill } from 'react-icons/bs';
 
 const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
@@ -46,7 +43,7 @@ const ModalReminder = ({
     recurrenceInterval: itemToUpdate?.recurrenceInterval ?? 0,
     reminderSortDate: itemToUpdate?.reminderSortDate ?? '',
     recurrenceBuffer: itemToUpdate?.recurrenceBuffer ?? 0,
-    exactRecurringDate: itemToUpdate?.exactRecurringDate ?? false,
+    exactRecurringDate: itemToUpdate?.exactRecurringDate ?? 0,
     displayReminder: itemToUpdate?.displayReminder ?? false,
     confirmDeletion: itemToUpdate?.confirmDeletion ?? true,
     itemLimit: isUpdate ? numberOfReminders - 1 : numberOfReminders,
@@ -55,6 +52,7 @@ const ModalReminder = ({
     title: '',
     reminderDate: '',
     recurrenceInterval: '',
+    exactRecurringDate: '',
     recurrenceBuffer: '',
   });
   const [scrollToErrorMessage, setScrollToErrorMessage] = useState(false);
@@ -97,20 +95,14 @@ const ModalReminder = ({
     }
   };
 
-  const handleReminderWithExactRecurringDate = (e) => {
+  const handleFormSelectField = (optionName, optionValue) => {
     setForm({
       ...form,
-      [e.target.name]: e.target.checked,
-      recurrenceBuffer: 0,
+      [optionName]:
+        optionName === 'exactRecurringDate'
+          ? JSON.parse(optionValue)
+          : parseInt(optionValue),
     });
-
-    if (errorMessage.recurrenceBuffer) {
-      setErrorMessage({ ...errorMessage, recurrenceBuffer: '' });
-    }
-  };
-
-  const handleFormSelectField = (optionName, optionValue) => {
-    setForm({ ...form, [optionName]: parseInt(optionValue) });
 
     if (errorMessage[optionName]) {
       setErrorMessage({ ...errorMessage, [optionName]: '' });
@@ -129,6 +121,7 @@ const ModalReminder = ({
         reminderDate,
         reminderSortDate,
         recurrenceInterval,
+        exactRecurringDate,
         recurrenceBuffer,
         confirmDeletion,
       } = error.flatten().fieldErrors;
@@ -138,6 +131,7 @@ const ModalReminder = ({
         !reminderDate &&
         !reminderSortDate &&
         !recurrenceInterval &&
+        !exactRecurringDate &&
         !recurrenceBuffer &&
         !confirmDeletion
       ) {
@@ -155,6 +149,7 @@ const ModalReminder = ({
         reminderDate: reminderDate?.[0],
         reminderSortDate: reminderSortDate?.[0],
         recurrenceInterval: recurrenceInterval?.[0],
+        exactRecurringDate: exactRecurringDate?.[0],
         recurrenceBuffer: recurrenceBuffer?.[0],
       });
       setScrollToErrorMessage(true);
@@ -222,6 +217,7 @@ const ModalReminder = ({
       title: '',
       reminderDate: '',
       recurrenceInterval: '',
+      exactRecurringDate: '',
       recurrenceBuffer: '',
     });
     handleModalResetPageScrolling();
@@ -269,17 +265,42 @@ const ModalReminder = ({
         options={FORM_REMINDER_INTERVAL_OPTIONS}
         errorMessage={errorMessage.recurrenceInterval}
       />
-      <FormCheckboxField
-        label='Early Display & Show Date'
-        subLabel='Check the box if you want this reminder to appear before the next recurrence date. Set by how many weeks using the dropdown below. For example, when a birthday is coming up you may want the reminder to appear a week or two in advance.'
+      <FormSelectField
+        label={
+          <span className='form-field__label-with-tooltip'>
+            <span>Reminder Reset</span>
+            <Tooltip icon={<BsQuestionCircleFill />}>
+              <p className='form-field__label-with-tooltip-message'>
+                A reminder can be a task to be completed and reset manually
+                (e.g., oil change, pay mortgage) or it can be tied to a specific
+                date (e.g., birthday, anniversary), displaying before that date
+                and resetting automatically after the date has passed.
+              </p>
+            </Tooltip>
+          </span>
+        }
+        subLabel='Set whether the reminder is a recurring task or tied to a date.'
         id='remindersWithExactRecurringDate'
         name='exactRecurringDate'
-        checked={form?.exactRecurringDate}
-        onChangeHandler={handleReminderWithExactRecurringDate}
+        value={form?.exactRecurringDate}
+        onChangeHandler={handleFormSelectField}
+        options={FORM_REMINDER_RESET_OPTIONS}
+        errorMessage={errorMessage.exactRecurringDate}
       />
       <FormSelectField
-        label='Set Early Display'
-        subLabel='Set how many weeks in advance this reminder will appear.'
+        label={
+          <span className='form-field__label-with-tooltip'>
+            <span>Set Early Display</span>
+            <Tooltip icon={<BsQuestionCircleFill />}>
+              <p className='form-field__label-with-tooltip-message'>
+                Reminders tied to a date will display one, two or three weeks
+                before the actual date. For example, when a birthday is coming
+                up you may want the reminder to appear a week or two in advance.
+              </p>
+            </Tooltip>
+          </span>
+        }
+        subLabel='When tied to a date, set how far in advance to dispaly the reminder.'
         id='reminderRecurrenceBuffer'
         name='recurrenceBuffer'
         value={form?.recurrenceBuffer}

@@ -48,12 +48,13 @@ export const INVALID_USER_DATA = 'Invalid User Data';
 export const USER_ALREADY_EXISTS = 'User Already Exists';
 export const SERVER_ERROR_MESSAGE = 'A Server Error Has Occurred';
 export const SETTINGS_MISSING_CATEGORY = 'Category Required';
-export const FORM_ERROR_MISSING_REMINDER_TITLE = 'Reminder Required';
+export const FORM_ERROR_MISSING_REMINDER_TITLE = 'Reminder Name Required';
 export const FORM_ERROR_MISSING_REMINDER_DATE = 'Reminder Date Required';
 export const FORM_ERROR_REMINDER_DATE_IN_PAST =
   'Reminder Date Must Be in the Future';
 export const FORM_ERROR_MISSING_REMINDER_INTERVAL =
   'Reminder Interval Required';
+export const FORM_ERROR_MISSING_REMINDER_RESET = 'Reminder Reset Required';
 export const FORM_ERROR_MISSING_REMINDER_BUFFER = 'Reminder Buffer Required';
 export const FORM_ERROR_MISSING_SUBJECT = 'Subject Required';
 export const FORM_ERROR_MISSING_MESSAGE = 'Message Required';
@@ -82,6 +83,18 @@ export const FORM_REMINDER_BUFFER_OPTIONS = [
   { title: 'One Week', name: 'recurrenceBuffer', value: 7 },
   { title: 'Two Weeks', name: 'recurrenceBuffer', value: 14 },
   { title: 'Three Weeks', name: 'recurrenceBuffer', value: 21 },
+];
+export const FORM_REMINDER_RESET_OPTIONS = [
+  {
+    title: 'Reset Manually when Task is Complete',
+    name: 'exactRecurringDate',
+    value: false,
+  },
+  {
+    title: 'Reset Automatically when Date has Passed',
+    name: 'exactRecurringDate',
+    value: true,
+  },
 ];
 export const MODAL_CATEGORY_ALREADY_EXISTS = 'Category Already Exists';
 export const ITEM_ERROR_AT_ITEM_LIMIT =

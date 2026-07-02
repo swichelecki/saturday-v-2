@@ -10,6 +10,7 @@ import {
   FORM_ERROR_MISSING_MESSAGE,
   FORM_ERROR_MISSING_REMINDER_TITLE,
   FORM_ERROR_MISSING_REMINDER_INTERVAL,
+  FORM_ERROR_MISSING_REMINDER_RESET,
   FORM_ERROR_MISSING_REMINDER_BUFFER,
   FORM_ERROR_MISSING_REMINDER_DATE,
   FORM_ERROR_MISSING_NEW_PASSWORD,
@@ -200,7 +201,7 @@ export const reminderSchema = z
     reminderSortDate: z.string().date(),
     recurrenceBuffer: z.number(),
     recurrenceInterval: z.number(),
-    exactRecurringDate: z.boolean(),
+    exactRecurringDate: z.union([z.number(), z.boolean()]),
     displayReminder: z.boolean(),
     confirmDeletion: z.boolean(),
     itemLimit: z.number(),
@@ -212,6 +213,10 @@ export const reminderSchema = z
   .refine((data) => data.recurrenceInterval !== 0, {
     message: FORM_ERROR_MISSING_REMINDER_INTERVAL,
     path: ['recurrenceInterval'],
+  })
+  .refine((data) => data.exactRecurringDate !== 0, {
+    message: FORM_ERROR_MISSING_REMINDER_RESET,
+    path: ['exactRecurringDate'],
   })
   .refine(
     (data) =>
