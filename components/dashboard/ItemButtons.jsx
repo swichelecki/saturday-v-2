@@ -46,6 +46,15 @@ const ItemButtons = ({
       : 'list-item__delete-button--desktop';
   };
 
+  /*     ) : (date || dateAndTime) && !description ? (
+        <Link
+          href={`/details/${itemId}`}
+          className={`list-item__edit-button ${handleEditButtonClass()}`}
+          ref={mobileUpdateOrDetailsButtonRef}
+        >
+          <MdEdit />
+        </Link> */
+
   return (
     <>
       {description ? (
@@ -58,14 +67,6 @@ const ItemButtons = ({
         >
           {isOpen ? <FaArrowUp /> : <FaArrowDown />}
         </button>
-      ) : (date || dateAndTime) && !description ? (
-        <Link
-          href={`/details/${itemId}`}
-          className={`list-item__edit-button ${handleEditButtonClass()}`}
-          ref={mobileUpdateOrDetailsButtonRef}
-        >
-          <MdEdit />
-        </Link>
       ) : (
         <button
           onClick={() => {

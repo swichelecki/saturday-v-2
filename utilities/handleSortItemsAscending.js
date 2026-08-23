@@ -2,12 +2,12 @@ export const handleSortItemsAscending = (filteredUpcomingTasks, keyName) => {
   const tasksWithFormattedDate = filteredUpcomingTasks.map((item) => {
     return {
       ...item,
-      [keyName]: new Date(item[keyName]),
+      [keyName]: item[keyName] ? new Date(item[keyName]) : null,
     };
   });
 
   const TasksSortedDateAsc = tasksWithFormattedDate.sort(
-    (objA, objB) => Number(objA[keyName]) - Number(objB[keyName])
+    (objA, objB) => Number(objA[keyName]) - Number(objB[keyName]),
   );
 
   const upcomingTasksSortedByDateAsc = TasksSortedDateAsc.map((item) => {

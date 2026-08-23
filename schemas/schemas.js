@@ -6,7 +6,7 @@ import {
   FORM_ERROR_MISSING_TITLE,
   FORM_ERROR_MISSING_SUBJECT,
   FORM_ERROR_MISSING_DESCRIPTION,
-  FORM_ERROR_MISSING_DATE,
+  //FORM_ERROR_MISSING_DATE,
   FORM_ERROR_MISSING_MESSAGE,
   FORM_ERROR_MISSING_REMINDER_TITLE,
   FORM_ERROR_MISSING_REMINDER_INTERVAL,
@@ -148,7 +148,7 @@ export const itemSchema = z
     isDetailsForm: z.boolean().or(z.string().nullable()),
     itemLimit: z.number(),
   })
-  .refine(
+  /*   .refine(
     (data) =>
       data.mandatoryDate ||
       !data.isDetailsForm ||
@@ -170,7 +170,7 @@ export const itemSchema = z
       message: FORM_ERROR_MISSING_DATE,
       path: ['date'],
     },
-  )
+  ) */
   .refine(
     (data) =>
       (data.date?.length > 0 &&

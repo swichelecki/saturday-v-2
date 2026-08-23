@@ -36,10 +36,10 @@ const Week = ({ timezone, userId, calendar }) => {
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
 
   // sync with server data when calendar prop changes (e.g. after router.refresh())
-  useEffect(() => {
+  /*   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCalendarItems(calendar);
-  }, [calendar]);
+  }, [calendar]); */
 
   // on mobile ensure current day of week is in view on page load
   useEffect(() => {
@@ -275,7 +275,7 @@ const Week = ({ timezone, userId, calendar }) => {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {calendarItems?.map((item, index) => (
+            {calendar?.map((item, index) => (
               <div
                 className={`week__calendar-day${
                   Object.keys(item)[0] < today

@@ -445,13 +445,8 @@ const ItemList = ({
     if (e.type.includes('mouse')) e.target.style.cursor = 'grab';
   };
 
-  const isToday = item?.mandatoryDate
-    ? handleTodaysDateCheck(item?.date)
-    : false;
-
-  const isPastDue = item?.mandatoryDate
-    ? handleItemPastDueCheck(item?.date)
-    : false;
+  const isToday = item?.date ? handleTodaysDateCheck(item?.date) : false;
+  const isPastDue = item?.date ? handleItemPastDueCheck(item?.date) : false;
 
   return (
     <div
@@ -501,7 +496,7 @@ const ItemList = ({
           className='list-item__item'
           id={`list-item-inner_${item?._id}`}
         >
-          {((!item?.mandatoryDate && itemType === ITEM_TYPE_DASHBOARD) ||
+          {(itemType === ITEM_TYPE_DASHBOARD ||
             itemType === ITEM_TYPE_CATEGORY) && (
             <div
               className='list-item__item-drag-zone'
@@ -522,7 +517,7 @@ const ItemList = ({
               <GrDrag />
             </div>
           )}
-          {!item?.mandatoryDate && itemType === ITEM_TYPE_NOTE && (
+          {itemType === ITEM_TYPE_NOTE && (
             <div className='list-item__item-pin-zone'>
               <button
                 onClick={() => {
@@ -553,11 +548,12 @@ const ItemList = ({
             </div>
           )}
           <div
-            className={`list-item__item-swipe-zone ${
-              item?.mandatoryDate && itemType === ITEM_TYPE_DASHBOARD
+            className='list-item__item-swipe-zone'
+            /*  className={`list-item__item-swipe-zone ${
+              item?.date && itemType === ITEM_TYPE_DASHBOARD
                 ? 'list-item__item-swipe-zone--upcoming'
                 : ''
-            }`}
+            }`} */
             onTouchStart={handleSwipeXStart}
             onTouchMove={handleSwipeXMove}
             onTouchEnd={handleSwipeXEnd}
@@ -610,7 +606,7 @@ const ItemList = ({
               />
             )}
             <div className='list-item__details-controls-left'>
-              {itemType !== ITEM_TYPE_NOTE && (
+              {/*   {itemType !== ITEM_TYPE_NOTE && (
                 <Link
                   href={`/details/${item?._id}`}
                   className='list-item__edit-button list-item__edit-button--desktop'
@@ -618,21 +614,21 @@ const ItemList = ({
                   <MdEdit />
                 </Link>
               )}
-              {itemType === ITEM_TYPE_NOTE && (
-                <button
-                  onClick={() => {
-                    getItemToUpdate(item?._id);
-                  }}
-                  type='button'
-                  className='list-item__edit-button list-item__edit-button--desktop'
-                >
-                  {isAwaitingEditResponse && itemToUpdateId === item?._id ? (
-                    <div className='loader'></div>
-                  ) : (
-                    <MdEdit />
-                  )}
-                </button>
-              )}
+              {itemType === ITEM_TYPE_NOTE && ( */}
+              <button
+                onClick={() => {
+                  getItemToUpdate(item?._id);
+                }}
+                type='button'
+                className='list-item__edit-button list-item__edit-button--desktop'
+              >
+                {isAwaitingEditResponse && itemToUpdateId === item?._id ? (
+                  <div className='loader'></div>
+                ) : (
+                  <MdEdit />
+                )}
+              </button>
+              {/*   )} */}
             </div>
           </div>
         </div>

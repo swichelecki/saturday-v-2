@@ -1,0 +1,27 @@
+.accordion {
+  &__accordion-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  &__child {
+    padding: 24px 16px 0px;
+    //padding: 24px 0 6px;
+
+    //background-color: $background-dark;
+    //border-radius: 8px;
+  }
+  &__content {
+    transition: height 0.3s;
+    overflow: hidden;
+    // display: none;
+    //padding: 24px 0;
+    // box-shadow: 0px -1px 0 1px $border inset;
+    //border-radius: 0 0 8px 8px;
+  }
+  &__button-wrapper {
+    display: flex;
+    gap: 16px;
+  }
+}
