@@ -14,6 +14,7 @@ export { default as stripeSubscribe } from './auth/stripeSubscribe';
 export { default as updateCookieOnStripeSubscribe } from './auth/updateCookieOnStripeSubscribe';
 export { default as createItem } from './items/createItem';
 export { default as updateItem } from './items/updateItem';
+export { default as updateItemPriorities } from './items/updateItemPriorities';
 export { default as getItem } from './items/getItem';
 export { default as deleteItem } from './items/deleteItem';
 export { default as getCalendarItems } from './calendar/getCalendarItems';

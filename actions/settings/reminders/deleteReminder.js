@@ -17,7 +17,15 @@ export default async function deleteReminder(userId, id) {
   }
 
   try {
-    await Reminder.deleteOne({ _id: id });
+    const { deletedCount } = await Reminder.deleteOne({
+      _id: id,
+      userId: cookieUserId,
+    });
+
+    if (!deletedCount) {
+      return { status: 404, error: 'Reminder not found' };
+    }
+
     return { status: 200 };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

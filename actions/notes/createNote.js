@@ -42,7 +42,6 @@ export default async function createNote(item) {
 
   try {
     const {
-      userId,
       title,
       description,
       date,
@@ -53,7 +52,7 @@ export default async function createNote(item) {
     } = zodData;
 
     const result = await Note.create({
-      userId,
+      userId: cookieUserId,
       title,
       description,
       date,

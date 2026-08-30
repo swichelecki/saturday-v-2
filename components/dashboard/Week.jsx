@@ -14,7 +14,7 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
 
-const Week = ({ timezone, userId, calendar }) => {
+const Week = ({ timezone, userId, calendarItems, setCalendarItems }) => {
   const width = useInnerWidth();
 
   const weekWrapperRef = useRef(null);
@@ -23,7 +23,6 @@ const Week = ({ timezone, userId, calendar }) => {
   const animationIdRef = useRef(null);
   const isMovingXAxisRef = useRef(null);
 
-  const [calendarItems, setCalendarItems] = useState(calendar);
   const [nextOrPrevMonday, setNextOrPrevMonday] = useState(null);
   const [startXPosition, setStartXPosition] = useState(0);
   const [startYPosition, setStartYPosition] = useState(0);
@@ -34,12 +33,6 @@ const Week = ({ timezone, userId, calendar }) => {
   }).format(new Date());
   const today = handleDateToYearMonthDay(todayInUserTimezone);
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
-
-  // sync with server data when calendar prop changes (e.g. after router.refresh())
-  /*   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCalendarItems(calendar);
-  }, [calendar]); */
 
   // on mobile ensure current day of week is in view on page load
   useEffect(() => {
@@ -275,7 +268,7 @@ const Week = ({ timezone, userId, calendar }) => {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {calendar?.map((item, index) => (
+            {calendarItems?.map((item, index) => (
               <div
                 className={`week__calendar-day${
                   Object.keys(item)[0] < today

@@ -86,7 +86,6 @@ export default async function createUserAccount(formData) {
     await Category.create({
       userId: _id,
       priority: 1,
-      mandatoryDate: false,
       title: 'Miscellaneous',
       confirmDeletion: true,
     });

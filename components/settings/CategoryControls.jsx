@@ -34,9 +34,9 @@ const CategoryControls = ({ categories, user }) => {
   const {
     setShowToast,
     setShowModal,
-    isCategoriesPrompt,
-    isDashboardPrompt,
-    prompt,
+    //isCategoriesPrompt,
+    //isDashboardPrompt,
+    //prompt,
   } = useAppContext();
 
   const width = useInnerWidth();
@@ -202,8 +202,8 @@ const CategoryControls = ({ categories, user }) => {
         <h1 className='form-page__h2'>Categories</h1>
       </div>
       <div className='settings-controls'>
-        {isCategoriesPrompt && prompt}
-        {isDashboardPrompt && prompt}
+        {/* {isCategoriesPrompt && prompt}
+        {isDashboardPrompt && prompt} */}
         <div className='settings-controls__button-wrapper'>
           <CTA
             text='Create'

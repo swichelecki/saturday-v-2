@@ -3,21 +3,12 @@
 import Task from '../../models/Task';
 import { handleServerErrorMessage } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
-import { itemSchema } from '../../schemas/schemas';
+import { itemPrioritiesSchema } from '../../schemas/schemas';
 
-export default async function createItem(item) {
-  if (!(item instanceof Object)) {
-    return {
-      status: 400,
-      error: 'Bad Request',
-    };
-  }
-
-  // check that cookie user id matches FormData user id
+export default async function updateItemPriorities(userId, items) {
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  const { userId } = item;
   if (!userId || userId !== cookieUserId) {
     return {
       status: 400,
@@ -25,8 +16,10 @@ export default async function createItem(item) {
     };
   }
 
-  // check that data shape is correct
-  const zodValidationResults = itemSchema.safeParse(item);
+  const zodValidationResults = itemPrioritiesSchema.safeParse({
+    userId,
+    items,
+  });
   const {
     data: zodData,
     success,
@@ -41,32 +34,20 @@ export default async function createItem(item) {
   }
 
   try {
-    const {
-      categoryId,
-      title,
-      description,
-      date,
-      dateAndTime,
-      priority,
-      type,
-      column,
-      confirmDeletion,
-    } = zodData;
+    const { matchedCount } = await Task.bulkWrite(
+      zodData.items.map(({ _id, priority }) => ({
+        updateOne: {
+          filter: { _id, userId: cookieUserId },
+          update: { $set: { priority } },
+        },
+      })),
+    );
 
-    const result = await Task.create({
-      categoryId,
-      userId: cookieUserId,
-      title,
-      description,
-      date,
-      dateAndTime,
-      priority,
-      type,
-      column,
-      confirmDeletion,
-    });
+    if (matchedCount !== zodData.items.length) {
+      return { status: 404, error: 'One or more items not found' };
+    }
 
-    return { status: 200, item: JSON.parse(JSON.stringify(result)) };
+    return { status: 200 };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
     console.error(errorMessage);

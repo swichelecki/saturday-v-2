@@ -1,20 +1,20 @@
-'use client';
+//'use client';
 
-import { useEffect } from 'react';
-import { useAppContext } from '../../context';
-import { usePrompt } from '../../hooks';
+//import { useEffect } from 'react';
+//import { useAppContext } from '../../context';
+//import { usePrompt } from '../../hooks';
 import { CategoryControls, RemindersControls } from '../../components';
 
 const Settings = ({ categories, reminders, user }) => {
-  const { userId, newUser } = user;
-  const { setIsCategoriesPrompt } = useAppContext();
+  //const { userId, newUser } = user;
+  //const { setIsCategoriesPrompt } = useAppContext();
 
   // if new user show prompts
-  usePrompt(userId, newUser);
+  //usePrompt(userId, newUser);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (newUser) setIsCategoriesPrompt(true);
-  }, []);
+  }, []); */
 
   return (
     <div className='form-page form-page__list-items'>

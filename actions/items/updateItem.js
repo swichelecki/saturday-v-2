@@ -43,7 +43,6 @@ export default async function itemUpdate(item) {
   try {
     const {
       _id,
-      userId,
       categoryId,
       title,
       description,
@@ -53,13 +52,11 @@ export default async function itemUpdate(item) {
       date,
       dateAndTime,
       confirmDeletion,
-      mandatoryDate,
     } = zodData;
 
-    await Task.updateOne(
-      { _id: _id },
+    const { matchedCount } = await Task.updateOne(
+      { _id, userId: cookieUserId },
       {
-        userId,
         categoryId,
         title,
         description,
@@ -69,11 +66,14 @@ export default async function itemUpdate(item) {
         type,
         column,
         confirmDeletion,
-        mandatoryDate,
       },
     );
 
-    const result = await Task.find({ _id: _id });
+    if (!matchedCount) {
+      return { status: 404, error: 'Item not found' };
+    }
+
+    const result = await Task.find({ _id, userId: cookieUserId });
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

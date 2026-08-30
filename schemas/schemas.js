@@ -116,7 +116,6 @@ export const categorySchema = z
       .string()
       .min(1, SETTINGS_MISSING_CATEGORY)
       .max(16, FORM_CHARACTER_LIMIT_16),
-    mandatoryDate: z.boolean(),
     confirmDeletion: z.boolean(),
     itemLimit: z.number(),
   })
@@ -141,44 +140,18 @@ export const itemSchema = z
       .min(1, SETTINGS_MISSING_CATEGORY)
       .max(16, FORM_CHARACTER_LIMIT_16),
     description: z.string().max(5000, FORM_CHARACTER_LIMIT_5000),
-    date: z.string().date().or(z.string()),
-    dateAndTime: z.string().datetime().or(z.string()),
-    mandatoryDate: z.boolean(),
+    date: z.string().nullish(),
+    dateAndTime: z.string().nullish(),
     confirmDeletion: z.boolean(),
-    isDetailsForm: z.boolean().or(z.string().nullable()),
     itemLimit: z.number(),
   })
-  /*   .refine(
-    (data) =>
-      data.mandatoryDate ||
-      !data.isDetailsForm ||
-      !data.isDetailsForm ||
-      (!data.mandatoryDate &&
-        data.isDetailsForm &&
-        data.description?.length > 0),
-    {
-      message: FORM_ERROR_MISSING_DESCRIPTION,
-      path: ['description'],
-    },
-  )
   .refine(
     (data) =>
-      data.date?.length > 0 ||
-      data.dateAndTime?.length > 0 ||
-      !data.mandatoryDate,
-    {
-      message: FORM_ERROR_MISSING_DATE,
-      path: ['date'],
-    },
-  ) */
-  .refine(
-    (data) =>
+      (!data.date && !data.dateAndTime) ||
       (data.date?.length > 0 &&
         new Date(data.date).getTime() >= Date.now() - TWENTYFOUR_HOURS) ||
       (data.dateAndTime?.length > 0 &&
-        new Date(data.dateAndTime).getTime() >=
-          Date.now() - TWENTYFOUR_HOURS) ||
-      !data.mandatoryDate,
+        new Date(data.dateAndTime).getTime() >= Date.now() - TWENTYFOUR_HOURS),
     {
       message: FORM_ERROR_DATE_NOT_TODAY_OR_GREATER,
       path: ['date'],
@@ -188,6 +161,19 @@ export const itemSchema = z
     message: ITEM_ERROR_AT_ITEM_LIMIT,
     path: ['itemLimit'],
   });
+
+export const itemPrioritiesSchema = z.object({
+  userId: z.string().min(1),
+  items: z
+    .array(
+      z.object({
+        _id: z.string().min(1),
+        priority: z.number().int().positive(),
+      }),
+    )
+    .min(1)
+    .max(LIST_ITEM_LIMIT),
+});
 
 export const reminderSchema = z
   .object({

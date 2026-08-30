@@ -17,8 +17,13 @@ export default async function deleteNote(id, userId) {
   }
 
   try {
-    const result = await Note.find({ _id: id });
-    await Note.deleteOne({ _id: id });
+    const result = await Note.find({ _id: id, userId: cookieUserId });
+
+    if (!result[0]) {
+      return { status: 404, error: 'Note not found' };
+    }
+
+    await Note.deleteOne({ _id: id, userId: cookieUserId });
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

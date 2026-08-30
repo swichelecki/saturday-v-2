@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getUserFromCookie } from './utilities/getUserFromCookie';
 
 export async function proxy(req) {
-  const { user, newUser, admin } = await getUserFromCookie();
+  const { user, /*newUser,*/ admin } = await getUserFromCookie();
 
   if (
     (!user && req.nextUrl.pathname === '/login') ||
@@ -18,14 +18,14 @@ export async function proxy(req) {
     return NextResponse.redirect(req.nextUrl);
   }
 
-  if (user && newUser && req.nextUrl.pathname === '/settings') {
+  /* if (user && newUser && req.nextUrl.pathname === '/settings') {
     return NextResponse.next();
   }
 
   if (user && newUser && req.nextUrl.pathname !== '/account') {
     req.nextUrl.pathname = '/settings';
     return NextResponse.redirect(req.nextUrl);
-  }
+  } */
 
   if (
     (user && req.nextUrl.pathname === '/login') ||

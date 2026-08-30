@@ -43,7 +43,6 @@ export default async function updateReminder(item) {
   try {
     const {
       _id,
-      userId,
       title,
       reminderDate,
       reminderSortDate,
@@ -54,10 +53,9 @@ export default async function updateReminder(item) {
       confirmDeletion,
     } = zodData;
 
-    await Reminder.updateOne(
-      { _id: _id },
+    const { matchedCount } = await Reminder.updateOne(
+      { _id: _id, userId: cookieUserId },
       {
-        userId,
         title,
         reminderDate,
         reminderSortDate,
@@ -69,7 +67,11 @@ export default async function updateReminder(item) {
       },
     );
 
-    const result = await Reminder.findOne({ _id: _id });
+    if (!matchedCount) {
+      return { status: 404, error: 'Reminder not found' };
+    }
+
+    const result = await Reminder.findOne({ _id: _id, userId: cookieUserId });
     return { status: 200, item: JSON.parse(JSON.stringify(result)) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ListItem } from '../../components';
 import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
-import { updateItem } from '../../actions';
+import { updateItemPriorities } from '../../actions';
 import { ITEM_TYPE_DASHBOARD } from '../../constants';
 
 const Toast = dynamic(() => import('../../components/shared/Toast'), {
@@ -21,7 +21,7 @@ const ItemsColumn = ({
   isAwaitingEditResponse,
   isAwaitingDeleteResponse,
   timezone,
-  totalNumberOfItems,
+  userId,
 }) => {
   const dragItemRef = useRef(null);
   const dragOverItemRef = useRef(null);
@@ -65,21 +65,21 @@ const ItemsColumn = ({
       (item, index) => ({
         ...item,
         priority: index + 1,
-        date: '',
-        dateAndTime: '',
       }),
     );
 
-    draggableItemsWithNewPriorities?.forEach((item) => {
-      updateItem({
-        ...item,
-        itemLimit: totalNumberOfItems,
-        isDetailsForm: false,
-      }).then((res) => {
-        if (res.status !== 200) {
-          setShowToast(<Toast serverError={res} />);
-        }
-      });
+    if (!draggableItemsWithNewPriorities?.length) return;
+
+    updateItemPriorities(
+      userId,
+      draggableItemsWithNewPriorities.map(({ _id, priority }) => ({
+        _id,
+        priority,
+      })),
+    ).then((res) => {
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
     });
 
     setListItems((current) => {

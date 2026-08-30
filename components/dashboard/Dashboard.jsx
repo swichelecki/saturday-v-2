@@ -273,7 +273,12 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
         ariaLabel='Create dashboard item'
         handleClick={handleOpenCreateItemModal}
       />
-      <Week timezone={timezone} userId={userId} calendar={calendarItems} />
+      <Week
+        timezone={timezone}
+        userId={userId}
+        calendarItems={calendarItems}
+        setCalendarItems={setCalendarItems}
+      />
       {reminders && reminders?.length > 0 && (
         <Reminders reminders={reminders} userId={userId} />
       )}
@@ -298,7 +303,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
                   isAwaitingDeleteResponse={isAwaitingDeleteResponse}
                   allItems={allItems}
                   timezone={timezone}
-                  totalNumberOfItems={totalNumberOfItems}
+                  userId={userId}
                 />
               ))}
             </div>

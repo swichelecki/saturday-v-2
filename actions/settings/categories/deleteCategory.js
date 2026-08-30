@@ -18,8 +18,16 @@ export default async function deleteCategory(userId, _id) {
   }
 
   try {
-    await Task.deleteMany({ categoryId: _id, userId });
-    await Category.deleteOne({ _id: _id });
+    const { deletedCount } = await Category.deleteOne({
+      _id: _id,
+      userId: cookieUserId,
+    });
+
+    if (!deletedCount) {
+      return { status: 404, error: 'Category not found' };
+    }
+
+    await Task.deleteMany({ categoryId: _id, userId: cookieUserId });
     return { status: 200 };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

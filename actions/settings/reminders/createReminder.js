@@ -42,7 +42,6 @@ export default async function createReminder(item) {
 
   try {
     const {
-      userId,
       title,
       reminderDate,
       reminderSortDate,
@@ -54,7 +53,7 @@ export default async function createReminder(item) {
     } = zodData;
 
     const result = await Reminder.create({
-      userId,
+      userId: cookieUserId,
       title,
       reminderDate,
       reminderSortDate,

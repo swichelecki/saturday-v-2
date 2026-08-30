@@ -50,32 +50,35 @@ export default async function updateCategory(item, isFormUpdate) {
     // update category - either by draggig to change order in list or using update modal
     const {
       _id: categoryId,
-      userId: categoryUserId,
       priority: categoryPriority,
       title: categoryTitle,
-      mandatoryDate: categoryMandatoryDate,
       confirmDeletion: categoryConfirmDeletion,
     } = zodData;
 
-    await Category.updateOne(
-      { _id: categoryId },
+    const { matchedCount } = await Category.updateOne(
+      { _id: categoryId, userId: cookieUserId },
       {
-        userId: categoryUserId,
         priority: categoryPriority,
         title: categoryTitle,
-        mandatoryDate: categoryMandatoryDate,
         confirmDeletion: categoryConfirmDeletion,
       },
     );
 
+    if (!matchedCount) {
+      return { status: 404, error: 'Category not found' };
+    }
+
     let updatedCategory;
     if (isFormUpdate)
-      updatedCategory = await Category.find({ _id: categoryId });
+      updatedCategory = await Category.find({
+        _id: categoryId,
+        userId: cookieUserId,
+      });
 
     // update all tasks associated with category
     const itemsOfCategoryType = await Task.find({
       categoryId,
-      userId: categoryUserId,
+      userId: cookieUserId,
     });
 
     itemsOfCategoryType.forEach(async (item) => {
@@ -89,7 +92,6 @@ export default async function updateCategory(item, isFormUpdate) {
         confirmDeletion,
         date,
         dateAndTime,
-        mandatoryDate,
       } = item;
 
       await Task.updateOne(
@@ -103,13 +105,8 @@ export default async function updateCategory(item, isFormUpdate) {
           title,
           description,
           confirmDeletion,
-          date: isFormUpdate ? (categoryMandatoryDate ? date : '') : date,
-          dateAndTime: isFormUpdate
-            ? categoryMandatoryDate
-              ? dateAndTime
-              : ''
-            : dateAndTime,
-          mandatoryDate: isFormUpdate ? categoryMandatoryDate : mandatoryDate,
+          date,
+          dateAndTime,
         },
       );
     });
