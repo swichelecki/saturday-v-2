@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../context';
 import {
   Week,
@@ -10,7 +9,6 @@ import {
   CTA,
   Modal,
   ModalCreateItem,
-  ModalUpdateItem,
   ModalConfirm,
   ModalSubscribe,
   FormErrorMessage,
@@ -36,8 +34,6 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
 const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   const { userId, timezone, isSubscribed } = user;
 
-  const router = useRouter();
-
   const { setShowToast, setShowModal } = useAppContext();
 
   const width = useInnerWidth();
@@ -46,6 +42,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
 
   const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
   const [listItems, setListItems] = useState(tasks);
+  const [calendarItems, setCalendarItems] = useState(calendar);
   const [masonryItems, setMasonryItems] = useState([]);
   const [taskToEditId, setTaskToEditId] = useState('');
   const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
@@ -56,8 +53,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   const listItemLimit = isSubscribed
     ? LIST_ITEM_LIMIT
     : UNSUBSCRIBED_LIST_ITEM_LIMIT;
-
-  let allItems = [];
 
   // build masonry
   useEffect(() => {
@@ -128,6 +123,12 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
           items={listItems}
           setItems={setListItems}
           totalNumberOfItems={totalNumberOfItems}
+          timezone={timezone}
+          isUpdate={false}
+          totalNumberOfCategories={categories?.length}
+          itemToUpdate=''
+          calendarItems={calendarItems}
+          setCalendarItems={setCalendarItems}
         />
       </Modal>,
     );
@@ -140,12 +141,19 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
     getItem(id, userId).then((res) => {
       if (res.status === 200) {
         setShowModal(
-          <Modal showCloseButton={false}>
-            <ModalUpdateItem
-              itemToUpdate={res.item}
+          <Modal className='modal modal__form-modal--small'>
+            <ModalCreateItem
+              userId={userId}
+              categories={categories}
               items={listItems}
               setItems={setListItems}
               totalNumberOfItems={totalNumberOfItems}
+              timezone={timezone}
+              isUpdate
+              totalNumberOfCategories={categories?.length}
+              itemToUpdate={res.item}
+              calendarItems={calendarItems}
+              setCalendarItems={setCalendarItems}
             />
           </Modal>,
         );
@@ -177,23 +185,25 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
 
     setIsAwaitingDeleteResponse(true);
 
-    // Check whether item is in calendar and revalidate path on server if so
-    const checkForCalendarItem = (id) => {
-      if (calendar && calendar?.length > 0) {
-        for (const item of calendar) {
-          if (Object.values(item)[0].find((item) => item._id === id))
-            return true;
-        }
-      }
-
-      return false;
-    };
-
-    deleteItem(id, checkForCalendarItem(id), userId).then((res) => {
+    deleteItem(id, userId).then((res) => {
       if (res.status === 200) {
         setListItems(
           listItems.map((item) => {
             if (Object.keys(item)[0] === res.item.type) {
+              return {
+                [Object.keys(item)[0]]: Object.values(item)[0].filter(
+                  (item) => item._id !== res.item._id,
+                ),
+              };
+            } else {
+              return item;
+            }
+          }),
+        );
+
+        setCalendarItems(
+          calendarItems.map((item) => {
+            if (Object.values(item)[0] && Object.values(item)[0]?.length > 0) {
               return {
                 [Object.keys(item)[0]]: Object.values(item)[0].filter(
                   (item) => item._id !== res.item._id,
@@ -233,7 +243,12 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
         ariaLabel='Create dashboard item'
         handleClick={handleOpenCreateItemModal}
       />
-      <Week timezone={timezone} userId={userId} calendar={calendar} />
+      <Week
+        timezone={timezone}
+        userId={userId}
+        calendarItems={calendarItems}
+        setCalendarItems={setCalendarItems}
+      />
       {reminders && reminders?.length > 0 && (
         <Reminders reminders={reminders} userId={userId} />
       )}
@@ -256,9 +271,8 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
                   itemToUpdateId={taskToEditId}
                   isAwaitingEditResponse={isAwaitingEditResponse}
                   isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-                  allItems={allItems}
                   timezone={timezone}
-                  totalNumberOfItems={totalNumberOfItems}
+                  userId={userId}
                 />
               ))}
             </div>

@@ -43,7 +43,6 @@ export default async function updateNote(item) {
   try {
     const {
       _id,
-      userId,
       title,
       description,
       date,
@@ -53,10 +52,9 @@ export default async function updateNote(item) {
       confirmDeletion,
     } = zodData;
 
-    await Note.updateOne(
-      { _id: _id },
+    const { matchedCount } = await Note.updateOne(
+      { _id: _id, userId: cookieUserId },
       {
-        userId,
         title,
         description,
         date,
@@ -67,7 +65,11 @@ export default async function updateNote(item) {
       },
     );
 
-    const result = await Note.find({ _id: _id });
+    if (!matchedCount) {
+      return { status: 404, error: 'Note not found' };
+    }
+
+    const result = await Note.find({ _id: _id, userId: cookieUserId });
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

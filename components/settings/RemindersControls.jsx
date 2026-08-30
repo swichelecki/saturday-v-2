@@ -25,7 +25,7 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
 });
 
 const RemindersControls = ({ reminders, user }) => {
-  const { setShowToast, setShowModal, isRemindersPrompt, prompt } =
+  const { setShowToast, setShowModal /* isRemindersPrompt, prompt */ } =
     useAppContext();
 
   const { userId, isSubscribed } = user;
@@ -139,7 +139,7 @@ const RemindersControls = ({ reminders, user }) => {
         <h1 className='form-page__h2'>Recurring Reminders</h1>
       </div>
       <div className='settings-controls'>
-        {isRemindersPrompt && prompt}
+        {/* {isRemindersPrompt && prompt} */}
         <div className='settings-controls__button-wrapper'>
           <CTA
             text='Create'

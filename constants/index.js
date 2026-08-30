@@ -21,7 +21,6 @@ export const FORM_CHARACTER_LIMIT_5000 = 'Limit 5000 Characters';
 export const FORM_CHARACTER_LIMIT_10000 = 'Limit 10,000 Characters';
 export const FORM_ERROR_MISSING_TITLE = 'Title Required';
 export const FORM_ERROR_MISSING_DESCRIPTION = 'Description Required';
-export const FORM_ERROR_MISSING_DATE = 'Date or Date & Time Required';
 export const FORM_ERROR_DATE_NOT_TODAY_OR_GREATER =
   'Date Must Be Today or in the Future';
 export const FORM_ERROR_MISSING_EMAIL = 'Email Address Required';

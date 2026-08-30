@@ -2,6 +2,7 @@ export { handleTodaysDateCheck } from './handleTodaysDateCheck';
 export { handleTransitionSpeed } from './handleTransitionSpeed';
 export { handleDayNightCheck } from './handleDayNightCheck';
 export { handleSortItemsAscending } from './handleSortItemsAscending';
+export { handleSortCalendarItemsAsc } from './handleSortCalendarItemsAsc';
 export { handleHiddenHeight } from './handleHiddenHeight';
 export { handleReminderBufferFormat } from './handleReminderBufferFormat';
 export { handleIntervalFormat } from './handleIntervalFormat';

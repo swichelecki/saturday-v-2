@@ -17,7 +17,7 @@ export default async function adminDeleteUser(
   password,
   adminId,
   userId,
-  userEmail
+  userEmail,
 ) {
   if (
     typeof password !== 'string' ||
@@ -59,9 +59,11 @@ export default async function adminDeleteUser(
     await connectDB();
 
     const { password } = zodPassword;
-    const admin = await User.findOne({ _id: adminId });
+    const admin = await User.findOne({ _id: cookieAdminId });
 
-    if (admin && (await bcrypt.compare(password, admin.password))) {
+    if (!admin?.admin) return { status: 403 };
+
+    if (await bcrypt.compare(password, admin.password)) {
       await Task.deleteMany({ userId });
       await Reminder.deleteMany({ userId });
       await Category.deleteMany({ userId });
@@ -79,17 +81,16 @@ export default async function adminDeleteUser(
       if (customerId) {
         const customerWithSubscriptions = await stripe.customers.retrieve(
           customerId,
-          { expand: ['subscriptions'] }
+          { expand: ['subscriptions'] },
         );
 
         if (customerWithSubscriptions.subscriptions.data.length > 0) {
           const subscriptionId =
             customerWithSubscriptions.subscriptions.data[0].id;
-          const canceledSubscription = await stripe.subscriptions.cancel(
-            subscriptionId
-          );
+          const canceledSubscription =
+            await stripe.subscriptions.cancel(subscriptionId);
           console.log(
-            `Subscription with id of ${canceledSubscription.id} canceled`
+            `Subscription with id of ${canceledSubscription.id} canceled`,
           );
         }
       }

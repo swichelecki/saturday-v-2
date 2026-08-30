@@ -2,6 +2,7 @@
 
 import connectDB from '../../config/db';
 import User from '../../models/User';
+import Category from '../../models/Category';
 import { headers } from 'next/headers';
 import bcrypt from 'bcryptjs';
 import {
@@ -72,12 +73,21 @@ export default async function createUserAccount(formData) {
 
     const passwordSsalt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, passwordSsalt);
-    await User.create({
+    const newUser = await User.create({
       email,
       password: hashedPassword,
       timezone,
       twoFactorAuthCode: hashedtwoFactorAuthCode,
       enable2FA,
+    });
+
+    // Add default 'Miscellaneous' category for new user
+    const { _id } = newUser;
+    await Category.create({
+      userId: _id,
+      priority: 1,
+      title: 'Miscellaneous',
+      confirmDeletion: true,
     });
 
     // send new-user email to admin

@@ -5,7 +5,7 @@ import Category from '../../models/Category';
 import Reminder from '../../models/Reminder';
 import Holiday from '../../models/Holiday';
 import {
-  handleSortItemsAscending,
+  handleSortCalendarItemsAsc,
   handleDateToYearMonthDay,
 } from '../../utilities';
 import { getUserFromCookie } from '../../utilities/getUserFromCookie';
@@ -95,25 +95,20 @@ async function DashboardWithData() {
   for (const item of tasks) {
     for (const column of columnsData) {
       if (Object.keys(column)[0] === item?.type) {
-        Object.values(column)[0].push(item);
+        Object.values(column)[0].push({
+          ...item,
+          date: item?.date
+            ? new Date(item?.date).toISOString().split('T')[0]
+            : null,
+        });
       }
     }
   }
 
-  // sort arrays by date asc when date is present
+  // sort calendar items by date asc
   for (const item of columnsData) {
-    if (
-      Object.values(item)[0]?.length &&
-      Object.values(item)[0][0]['date'] !== null
-    ) {
-      const itemsWithDatesSortedAsc = handleSortItemsAscending(
-        Object.values(item)[0],
-        'date',
-      );
-
-      Object.values(item)[0].length = 0;
-      Object.values(item)[0].push(...itemsWithDatesSortedAsc);
-      calendarItems.push(...itemsWithDatesSortedAsc);
+    if (Object.values(item)[0]?.length) {
+      calendarItems.push(...handleSortCalendarItemsAsc(Object.values(item)[0]));
     }
   }
 

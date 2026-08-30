@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FormTextField, FormCheckboxField, CTA } from '../../components';
+import { FormTextField, CTA } from '../../components';
 import dynamic from 'next/dynamic';
 import { createCategory, updateCategory } from '../../actions';
 import { useAppContext } from '../../context';
@@ -21,10 +21,11 @@ const ModalCategory = ({
   userId,
   setItems,
   itemToUpdate,
-  newUser,
+  /* newUser, */
   numberOfItems,
 }) => {
-  const { setShowModal, setShowToast, setIsDashboardPrompt } = useAppContext();
+  const { setShowModal, setShowToast /* setIsDashboardPrompt */ } =
+    useAppContext();
 
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
@@ -36,7 +37,6 @@ const ModalCategory = ({
     userId: itemToUpdate?.userId ?? userId,
     priority: itemToUpdate?.priority ?? '',
     title: itemToUpdate?.title ?? '',
-    mandatoryDate: itemToUpdate?.mandatoryDate ?? false,
     confirmDeletion: itemToUpdate?.confirmDeletion ?? true,
     itemLimit: isUpdate ? numberOfItems - 1 : numberOfItems,
   });
@@ -57,10 +57,6 @@ const ModalCategory = ({
     if (errorMessage[e.target.name]) {
       setErrorMessage({ ...errorMessage, [e.target.name]: '' });
     }
-  };
-
-  const handleMandatoryDate = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.checked });
   };
 
   // create or update category
@@ -95,7 +91,6 @@ const ModalCategory = ({
                   return {
                     ...item,
                     title: res?.item?.title,
-                    mandatoryDate: res?.item?.mandatoryDate,
                   };
                 } else {
                   return item;
@@ -125,9 +120,8 @@ const ModalCategory = ({
               userId,
               priority: '',
               title: '',
-              mandatoryDate: false,
             });
-            if (newUser) setIsDashboardPrompt(true);
+            //if (newUser) setIsDashboardPrompt(true);
             if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
           }
 
@@ -152,7 +146,6 @@ const ModalCategory = ({
       userId,
       priority: '',
       title: '',
-      mandatoryDate: false,
       confirmDeletion: true,
     });
     setErrorMessage({ title: '' });
@@ -170,14 +163,6 @@ const ModalCategory = ({
         value={form?.title}
         onChangeHandler={handleForm}
         errorMessage={errorMessage.title}
-      />
-      <FormCheckboxField
-        label='Date or Date & Time'
-        subLabel='Check the box if this category requires dates or dates and times. If a simple to-do list will suffice, leave the box unchecked.'
-        id='categoryDateTimeCheckbox'
-        name='mandatoryDate'
-        checked={form?.mandatoryDate}
-        onChangeHandler={handleMandatoryDate}
       />
       <div className='modal__modal-button-wrapper'>
         <CTA

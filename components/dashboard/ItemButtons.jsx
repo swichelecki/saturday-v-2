@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useInnerWidth } from '../../hooks';
 import { MdEdit } from 'react-icons/md';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
@@ -9,8 +8,6 @@ import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { MOBILE_BREAKPOINT } from '../../constants';
 
 const ItemButtons = ({
-  date,
-  dateAndTime,
   description,
   confirmDeletion,
   setIsOpen,
@@ -58,14 +55,6 @@ const ItemButtons = ({
         >
           {isOpen ? <FaArrowUp /> : <FaArrowDown />}
         </button>
-      ) : (date || dateAndTime) && !description ? (
-        <Link
-          href={`/details/${itemId}`}
-          className={`list-item__edit-button ${handleEditButtonClass()}`}
-          ref={mobileUpdateOrDetailsButtonRef}
-        >
-          <MdEdit />
-        </Link>
       ) : (
         <button
           onClick={() => {

@@ -17,7 +17,12 @@ export default async function getCategory(id, userId) {
   }
 
   try {
-    const result = await Category.find({ _id: id });
+    const result = await Category.find({ _id: id, userId: cookieUserId });
+
+    if (!result[0]) {
+      return { status: 404, error: 'Category not found' };
+    }
+
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

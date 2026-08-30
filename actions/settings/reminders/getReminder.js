@@ -17,7 +17,12 @@ export default async function getReminder(userId, id) {
   }
 
   try {
-    const result = await Reminder.findOne({ _id: id });
+    const result = await Reminder.findOne({ _id: id, userId: cookieUserId });
+
+    if (!result) {
+      return { status: 404, error: 'Reminder not found' };
+    }
+
     const item = JSON.parse(JSON.stringify(result));
     item.reminderDate = item.reminderDate?.replace('Z', '');
     item.reminderSortDate = item.reminderSortDate?.replace('Z', '');

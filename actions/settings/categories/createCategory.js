@@ -44,11 +44,10 @@ export default async function createCategory(item) {
   }
 
   try {
-    const { userId, priority, mandatoryDate, title, confirmDeletion } = zodData;
+    const { priority, title, confirmDeletion } = zodData;
     const result = await Category.create({
-      userId,
+      userId: cookieUserId,
       priority,
-      mandatoryDate,
       title,
       confirmDeletion,
     });

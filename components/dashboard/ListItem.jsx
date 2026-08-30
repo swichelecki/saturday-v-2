@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import { useInnerWidth, useIsMounted } from '../../hooks';
@@ -71,6 +70,8 @@ const ItemList = ({
   const animationXIdRef = useRef(null);
   const animationYIdRef = useRef(null);
   const arrayOfListItemsRef = useRef(null);
+  const itemOrderRef = useRef(null);
+  const itemHeightsRef = useRef(null);
   const currentTranslateXRef = useRef(null);
   const currentTranslateYRef = useRef(null);
   const mobileUpdateOrDetailsButtonRef = useRef(null);
@@ -87,7 +88,6 @@ const ItemList = ({
   const [startTime, setStartTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [listItemYPositionOnStart, setListItemYPositionOnStart] = useState(0);
-  const [listItemId, setListItemId] = useState('');
 
   // get array of column list items for touch y-axis dom manipulation
   useEffect(() => {
@@ -305,24 +305,31 @@ const ItemList = ({
     setStartYPosition(
       e.type.includes('mouse') ? e.pageY : e.touches[0].clientY,
     );
-    setListItemYPositionOnStart(listItemRef.current.clientHeight * index);
-    setListItemId(listItemRef.current.id);
     startingIndexRef.current = index;
 
-    // set height of list item wrapper
-    const handleWrapperHeight = (numberOfItems) => {
-      return numberOfItems * listItemRef.current.clientHeight;
-    };
+    // measure every item up front - the first absolute item drops the rest out of flow
+    const listItems = arrayOfListItemsRef.current ?? [];
+    const heights = new Map(listItems.map((item) => [item, item.offsetHeight]));
+
+    let listItemWrapperHeight = 0;
+    const tops = listItems.map((item) => {
+      const top = listItemWrapperHeight;
+      listItemWrapperHeight += heights.get(item);
+      return top;
+    });
+
+    itemOrderRef.current = [...listItems];
+    itemHeightsRef.current = heights;
+    setListItemYPositionOnStart(tops[index]);
 
     listItemWrapperRef.current.setAttribute(
       'style',
-      `height: ${handleWrapperHeight(numberOfItemsInColumn)}px`,
+      `height: ${listItemWrapperHeight}px`,
     );
 
-    // make each item absolutely positioned
-    arrayOfListItemsRef.current?.forEach((item, i) => {
+    listItems.forEach((item, i) => {
       item.style.position = 'absolute';
-      item.style.top = `${item.clientHeight * i}px`;
+      item.style.top = `${tops[i]}px`;
       item.style.left = '0';
       item.style.right = '0';
       item.style.zIndex = '1';
@@ -337,6 +344,14 @@ const ItemList = ({
   const handleDragYMove = (e) => {
     if (isOpen) return;
 
+    const order = itemOrderRef.current;
+    const heights = itemHeightsRef.current;
+    if (!order || !heights) return;
+
+    const draggedItem = listItemRef.current;
+    const draggedHeight = heights.get(draggedItem);
+    const totalHeight = order.reduce((sum, item) => sum + heights.get(item), 0);
+
     let currentPosition = e.type.includes('mouse')
       ? e.pageY
       : e.touches[0].clientY;
@@ -345,78 +360,57 @@ const ItemList = ({
       0,
       Math.min(
         listItemYPositionOnStart + currentPosition - startYPosition,
-        listItemWrapperRef.current.clientHeight -
-          listItemRef.current.clientHeight,
+        totalHeight - draggedHeight,
       ),
     );
 
     animationYIdRef.current = requestAnimationFrame(animationY);
 
-    // move up and trigger array resort and dom update
-    if (
-      currentTranslateYRef.current > 0 &&
-      currentTranslateYRef.current <
-        listItemRef.current.clientHeight * (startingIndexRef.current - 1) +
-          listItemRef.current.clientHeight / 2
-    ) {
-      startingIndexRef.current -= 1;
-      handleDragEnter(startingIndexRef.current);
+    const topOf = (position) => {
+      let top = 0;
+      for (let i = 0; i < position; i++) top += heights.get(order[i]);
+      return top;
+    };
 
-      arrayOfListItemsRef.current?.forEach((item) => {
-        // moves item down when item dragged over it
-        if (parseInt(item.dataset.listItemIndex) === startingIndexRef.current) {
-          item.style.top = `${
-            item.clientHeight * (parseInt(item.dataset.listItemIndex) + 1)
-          }px`;
-          item.setAttribute(
-            'data-list-item-index',
-            parseInt(item.dataset.listItemIndex) + 1,
-          );
-        }
+    const draggedTop = currentTranslateYRef.current;
+    let newIndex = order.indexOf(draggedItem);
+    let moved = false;
 
-        // sets new index for item being dragged
-        if (listItemId === item.id) {
-          item.setAttribute(
-            'data-list-item-index',
-            parseInt(item.dataset.listItemIndex) - 1,
-          );
-        }
-      });
+    // step past a neighbour as soon as the dragged edge clears that neighbour's midpoint
+    while (newIndex > 0) {
+      const previous = order[newIndex - 1];
+      if (draggedTop >= topOf(newIndex - 1) + heights.get(previous) / 2) break;
+      order.splice(newIndex, 1);
+      order.splice(newIndex - 1, 0, draggedItem);
+      newIndex -= 1;
+      moved = true;
     }
 
-    // move down and trigger array resort and dom update
-    if (
-      currentTranslateYRef.current <
-        listItemWrapperRef.current.clientHeight -
-          listItemRef.current.clientHeight &&
-      currentTranslateYRef.current >
-        listItemRef.current.clientHeight * startingIndexRef.current +
-          listItemRef.current.clientHeight / 2
-    ) {
-      startingIndexRef.current += 1;
-      handleDragEnter(startingIndexRef.current);
-
-      arrayOfListItemsRef.current?.forEach((item) => {
-        // moves item up when item dragged over it
-        if (parseInt(item.dataset.listItemIndex) === startingIndexRef.current) {
-          item.style.top = `${
-            item.clientHeight * (parseInt(item.dataset.listItemIndex) - 1)
-          }px`;
-          item.setAttribute(
-            'data-list-item-index',
-            parseInt(item.dataset.listItemIndex) - 1,
-          );
-        }
-
-        // sets new index for item being dragged
-        if (listItemId === item.id) {
-          item.setAttribute(
-            'data-list-item-index',
-            parseInt(item.dataset.listItemIndex) + 1,
-          );
-        }
-      });
+    while (newIndex < order.length - 1) {
+      const next = order[newIndex + 1];
+      if (
+        draggedTop + draggedHeight <=
+        topOf(newIndex + 1) + heights.get(next) / 2
+      )
+        break;
+      order.splice(newIndex, 1);
+      order.splice(newIndex + 1, 0, draggedItem);
+      newIndex += 1;
+      moved = true;
     }
+
+    if (!moved) return;
+
+    startingIndexRef.current = newIndex;
+    handleDragEnter(newIndex);
+
+    // relayout everything except the item tracking the pointer
+    let top = 0;
+    order.forEach((item, i) => {
+      if (item !== draggedItem) item.style.top = `${top}px`;
+      item.setAttribute('data-list-item-index', i);
+      top += heights.get(item);
+    });
   };
 
   // animate y-axis
@@ -442,16 +436,14 @@ const ItemList = ({
       item.setAttribute('data-list-item-index', parseInt(i));
     });
 
+    itemOrderRef.current = null;
+    itemHeightsRef.current = null;
+
     if (e.type.includes('mouse')) e.target.style.cursor = 'grab';
   };
 
-  const isToday = item?.mandatoryDate
-    ? handleTodaysDateCheck(item?.date)
-    : false;
-
-  const isPastDue = item?.mandatoryDate
-    ? handleItemPastDueCheck(item?.date)
-    : false;
+  const isToday = item?.date ? handleTodaysDateCheck(item?.date) : false;
+  const isPastDue = item?.date ? handleItemPastDueCheck(item?.date) : false;
 
   return (
     <div
@@ -501,7 +493,7 @@ const ItemList = ({
           className='list-item__item'
           id={`list-item-inner_${item?._id}`}
         >
-          {((!item?.mandatoryDate && itemType === ITEM_TYPE_DASHBOARD) ||
+          {(itemType === ITEM_TYPE_DASHBOARD ||
             itemType === ITEM_TYPE_CATEGORY) && (
             <div
               className='list-item__item-drag-zone'
@@ -522,7 +514,7 @@ const ItemList = ({
               <GrDrag />
             </div>
           )}
-          {!item?.mandatoryDate && itemType === ITEM_TYPE_NOTE && (
+          {itemType === ITEM_TYPE_NOTE && (
             <div className='list-item__item-pin-zone'>
               <button
                 onClick={() => {
@@ -553,11 +545,7 @@ const ItemList = ({
             </div>
           )}
           <div
-            className={`list-item__item-swipe-zone ${
-              item?.mandatoryDate && itemType === ITEM_TYPE_DASHBOARD
-                ? 'list-item__item-swipe-zone--upcoming'
-                : ''
-            }`}
+            className='list-item__item-swipe-zone'
             onTouchStart={handleSwipeXStart}
             onTouchMove={handleSwipeXMove}
             onTouchEnd={handleSwipeXEnd}
@@ -568,8 +556,6 @@ const ItemList = ({
           <div className='list-item__item-right'>
             {isMounted && width > MOBILE_BREAKPOINT && (
               <ItemButtons
-                date={item?.date}
-                dateAndTime={item?.dateAndTime}
                 description={item?.description}
                 confirmDeletion={item?.confirmDeletion}
                 setIsOpen={setIsOpen}
@@ -610,29 +596,19 @@ const ItemList = ({
               />
             )}
             <div className='list-item__details-controls-left'>
-              {itemType !== ITEM_TYPE_NOTE && (
-                <Link
-                  href={`/details/${item?._id}`}
-                  className='list-item__edit-button list-item__edit-button--desktop'
-                >
+              <button
+                onClick={() => {
+                  getItemToUpdate(item?._id);
+                }}
+                type='button'
+                className='list-item__edit-button list-item__edit-button--desktop'
+              >
+                {isAwaitingEditResponse && itemToUpdateId === item?._id ? (
+                  <div className='loader'></div>
+                ) : (
                   <MdEdit />
-                </Link>
-              )}
-              {itemType === ITEM_TYPE_NOTE && (
-                <button
-                  onClick={() => {
-                    getItemToUpdate(item?._id);
-                  }}
-                  type='button'
-                  className='list-item__edit-button list-item__edit-button--desktop'
-                >
-                  {isAwaitingEditResponse && itemToUpdateId === item?._id ? (
-                    <div className='loader'></div>
-                  ) : (
-                    <MdEdit />
-                  )}
-                </button>
-              )}
+                )}
+              </button>
             </div>
           </div>
         </div>
@@ -646,8 +622,6 @@ const ItemList = ({
       >
         {isMounted && width <= MOBILE_BREAKPOINT && (
           <ItemButtons
-            date={item?.date}
-            dateAndTime={item?.dateAndTime}
             description={item?.description}
             confirmDeletion={item?.confirmDeletion}
             setIsOpen={setIsOpen}

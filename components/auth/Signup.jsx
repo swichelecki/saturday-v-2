@@ -59,7 +59,7 @@ const Signup = () => {
 
       loginUser(zodFormData).then((res) => {
         if (res.status === 200) {
-          router.push('/settings');
+          router.push('/dashboard');
         } else if (res.status === 403 || res.status === 410) {
           setisAwaitingLogInResponse(false);
           setErrorMessage({

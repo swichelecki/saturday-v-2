@@ -24,6 +24,21 @@
   &--full {
     width: 100%;
   }
+  &--icon {
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 2rem; // 32px
+    span {
+      svg {
+        font-size: 2rem; // 32px
+      }
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem; // 16px;
+      color: $font;
+    }
+  }
   &--purple {
     background-color: $button-purple-dark;
     color: $button-purple;

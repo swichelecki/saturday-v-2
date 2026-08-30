@@ -17,7 +17,12 @@ export default async function getNote(id, userId) {
   }
 
   try {
-    const result = await Note.find({ _id: id });
+    const result = await Note.find({ _id: id, userId: cookieUserId });
+
+    if (!result[0]) {
+      return { status: 404, error: 'Note not found' };
+    }
+
     return { status: 200, item: JSON.parse(JSON.stringify(result[0])) };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);
