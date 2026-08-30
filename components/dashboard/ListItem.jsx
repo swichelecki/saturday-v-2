@@ -556,8 +556,6 @@ const ItemList = ({
           <div className='list-item__item-right'>
             {isMounted && width > MOBILE_BREAKPOINT && (
               <ItemButtons
-                date={item?.date}
-                dateAndTime={item?.dateAndTime}
                 description={item?.description}
                 confirmDeletion={item?.confirmDeletion}
                 setIsOpen={setIsOpen}
@@ -611,7 +609,6 @@ const ItemList = ({
                   <MdEdit />
                 )}
               </button>
-              {/*   )} */}
             </div>
           </div>
         </div>
@@ -625,8 +622,6 @@ const ItemList = ({
       >
         {isMounted && width <= MOBILE_BREAKPOINT && (
           <ItemButtons
-            date={item?.date}
-            dateAndTime={item?.dateAndTime}
             description={item?.description}
             confirmDeletion={item?.confirmDeletion}
             setIsOpen={setIsOpen}

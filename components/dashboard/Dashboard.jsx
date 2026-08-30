@@ -9,7 +9,6 @@ import {
   CTA,
   Modal,
   ModalCreateItem,
-  ModalUpdateItem,
   ModalConfirm,
   ModalSubscribe,
   FormErrorMessage,
@@ -54,8 +53,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   const listItemLimit = isSubscribed
     ? LIST_ITEM_LIMIT
     : UNSUBSCRIBED_LIST_ITEM_LIMIT;
-
-  let allItems = [];
 
   // build masonry
   useEffect(() => {
@@ -158,12 +155,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
               calendarItems={calendarItems}
               setCalendarItems={setCalendarItems}
             />
-            {/*  <ModalUpdateItem
-              itemToUpdate={res.item}
-              items={listItems}
-              setItems={setListItems}
-              totalNumberOfItems={totalNumberOfItems}
-            /> */}
           </Modal>,
         );
       }
@@ -193,27 +184,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
     }
 
     setIsAwaitingDeleteResponse(true);
-
-    // Check whether item is in calendar and remove from calendar state if so
-    /*     const checkForCalendarItem = (id) => {
-      setCalendarItems(
-        calendarItems.map((item, index) => {
-          return {
-            [Object.keys(item)[index]]: Object.values(
-              item[index].filter((item) => item._id !== id),
-            ),
-          };
-        }),
-      ); */
-    /*  if (calendarItems && calendarItems?.length > 0) {
-        for (const item of calendar) {
-          if (Object.values(item)[0].find((item) => item._id === id))
-          return true;
-        }
-      } */
-
-    // return false;
-    // };
 
     deleteItem(id, userId).then((res) => {
       if (res.status === 200) {
@@ -301,7 +271,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
                   itemToUpdateId={taskToEditId}
                   isAwaitingEditResponse={isAwaitingEditResponse}
                   isAwaitingDeleteResponse={isAwaitingDeleteResponse}
-                  allItems={allItems}
                   timezone={timezone}
                   userId={userId}
                 />
