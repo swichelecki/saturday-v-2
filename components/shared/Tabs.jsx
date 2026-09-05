@@ -68,7 +68,7 @@ const Tabs = ({ tabs, panelsHeight, children }) => {
             }
             id={`tab-${index + 1}`}
           >
-            <IoClose style={isOpen && { transform: 'unset' }} />
+            <IoClose />
             <p>{title}</p>
           </button>
         ))}

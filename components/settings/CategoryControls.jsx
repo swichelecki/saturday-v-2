@@ -80,6 +80,7 @@ const CategoryControls = ({ categories, user }) => {
         <ModalCategory
           userId={userId}
           setItems={setCategoryItems}
+          categories={categories}
           newUser={newUser}
           numberOfItems={categoryItems?.length}
         />

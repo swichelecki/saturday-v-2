@@ -20,12 +20,17 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
 const ModalCategory = ({
   userId,
   setItems,
+  categories,
   itemToUpdate,
   /* newUser, */
   numberOfItems,
 }) => {
-  const { setShowModal, setShowToast /* setIsDashboardPrompt */ } =
-    useAppContext();
+  const {
+    setShowModal,
+    setShowToast,
+    setGlobalCategories,
+    /* setIsDashboardPrompt */
+  } = useAppContext();
 
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
@@ -85,6 +90,18 @@ const ModalCategory = ({
     isUpdate
       ? updateCategory(zodFormData, true).then((res) => {
           if (res.status === 200) {
+            setGlobalCategories((categories) => {
+              return categories.map((item) => {
+                if (item?._id === itemToUpdate?._id) {
+                  return {
+                    ...item,
+                    title: res?.item?.title,
+                  };
+                } else {
+                  return item;
+                }
+              });
+            });
             setItems((current) => {
               return current.map((item) => {
                 if (item?._id === itemToUpdate?._id) {
@@ -115,6 +132,7 @@ const ModalCategory = ({
         })
       : createCategory(zodFormData).then((res) => {
           if (res.status === 200) {
+            setGlobalCategories([...categories, res.item]);
             setItems((current) => [...current, res.item]);
             setForm({
               userId,

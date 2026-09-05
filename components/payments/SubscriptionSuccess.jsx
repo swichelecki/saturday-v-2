@@ -40,7 +40,7 @@ const SubscriptionSuccess = ({ userId }) => {
         <button
           onClick={handleGoToDashboard}
           type='button'
-          className='entry-form__button'
+          className='cta-button cta-button--medium cta-button--full cta-button--purple'
         >
           Dashboard
         </button>

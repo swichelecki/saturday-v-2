@@ -38,7 +38,7 @@ const SubscriptionCancel = ({ userId }) => {
         <button
           onClick={handleGoToContact}
           type='button'
-          className='entry-form__button'
+          className='cta-button cta-button--medium cta-button--full cta-button--purple'
         >
           Contact
         </button>

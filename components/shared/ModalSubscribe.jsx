@@ -42,7 +42,7 @@ const ModalSubscribe = ({ userId }) => {
       <div className='form-page__buttons-wrapper'>
         <button
           type='button'
-          className='entry-form__button'
+          className='cta-button cta-button--medium cta-button--full cta-button--purple'
           onClick={handleSubscribe}
         >
           {isAwaitingStripeResponse && <div className='loader'></div>}

@@ -55,7 +55,7 @@ const ModalCreateItem = ({
 
   const [form, setForm] = useState(() => {
     let priority = 0;
-    const type = itemToUpdate?.type ?? categories[0]['title'];
+    const type = itemToUpdate?.type ?? categories[0]['title'] ?? '';
 
     const selectedCategoryData = items.find(
       (category) => Object.keys(category)[0] === type,
@@ -187,11 +187,20 @@ const ModalCreateItem = ({
           if (res.status === 200) {
             setItems(
               items.map((item) => {
-                if (Object.keys(item)[0] === res.item.type) {
+                // Update item in same category
+                if (
+                  Object.values(item)[0].some(
+                    (item) => item._id === itemToUpdate?._id,
+                  ) &&
+                  Object.values(item)[0][0].categoryId === res.item?.categoryId
+                ) {
                   return {
                     [Object.keys(item)[0]]: Object.values(item)[0].map(
                       (item) => {
-                        if (item._id === itemToUpdate?._id) {
+                        if (
+                          item._id === itemToUpdate?._id &&
+                          item.categoryId === res.item?.categoryId
+                        ) {
                           return {
                             ...res.item,
                             date: res.item?.date
@@ -209,8 +218,29 @@ const ModalCreateItem = ({
                       },
                     ),
                   };
+                  // Put item in new category
+                } else if (
+                  !Object.values(item)[0].some(
+                    (item) => item._id === itemToUpdate?._id,
+                  ) &&
+                  Object.values(item)[0][0].categoryId === res.item.categoryId
+                ) {
+                  return {
+                    [Object.keys(item)[0]]: [
+                      ...Object.values(item)[0],
+                      {
+                        ...res.item,
+                        priority: Object.keys(item)[0].length + 1,
+                      },
+                    ],
+                  };
+                  // Add non-updated items and filter out item if category changed
                 } else {
-                  return item;
+                  return {
+                    [Object.keys(item)[0]]: Object.values(item)[0].filter(
+                      (item) => item._id !== itemToUpdate?._id,
+                    ),
+                  };
                 }
               }),
             );
