@@ -183,7 +183,7 @@ const ModalCreateItem = ({
                   Object.values(item)[0].some(
                     (item) => item._id === itemToUpdate?._id,
                   ) &&
-                  Object.values(item)[0][0].categoryId === res.item?.categoryId
+                  Object.values(item)[0][0]?.categoryId === res.item?.categoryId
                 ) {
                   return {
                     [Object.keys(item)[0]]: Object.values(item)[0].map(
@@ -214,7 +214,7 @@ const ModalCreateItem = ({
                   !Object.values(item)[0].some(
                     (item) => item._id === itemToUpdate?._id,
                   ) &&
-                  Object.values(item)[0][0].categoryId === res.item.categoryId
+                  Object.values(item)[0][0]?.categoryId === res.item.categoryId
                 ) {
                   return {
                     [Object.keys(item)[0]]: [
