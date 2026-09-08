@@ -132,6 +132,8 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
         />
       </Modal>,
     );
+
+    if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
   };
 
   // open modal for update
@@ -157,13 +159,15 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
             />
           </Modal>,
         );
+
+        setIsAwaitingEditResponse(false);
+
+        if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
       }
 
       if (res.status !== 200) {
         setShowToast(<Toast serverError={res} />);
       }
-
-      setIsAwaitingEditResponse(false);
     });
   };
 
@@ -215,17 +219,16 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
           }),
         );
 
+        setShowModal(null);
+        handleModalResetPageScrolling();
+        setIsAwaitingDeleteResponse(false);
+        handleCloseListItemsYAxis();
         if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
       }
 
       if (res.status !== 200) {
         setShowToast(<Toast serverError={res} />);
       }
-
-      setShowModal(null);
-      handleModalResetPageScrolling();
-      setIsAwaitingDeleteResponse(false);
-      handleCloseListItemsYAxis();
     });
   };
 

@@ -4,11 +4,7 @@ import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useAppContext } from '../../context';
 import { createItem, createCategory, updateItem } from '../../actions';
-import {
-  useInnerWidth,
-  useListItemsMobileReset,
-  useScrollToError,
-} from '../../hooks';
+import { useScrollToError } from '../../hooks';
 import {
   FormCheckboxField,
   FormTextField,
@@ -23,10 +19,7 @@ import {
   handleSortCalendarItemsAsc,
 } from '../../utilities';
 import { itemSchema, categorySchema } from '../../schemas/schemas';
-import {
-  MOBILE_BREAKPOINT,
-  MODAL_CATEGORY_ALREADY_EXISTS,
-} from '../../constants';
+import { MODAL_CATEGORY_ALREADY_EXISTS } from '../../constants';
 import { MdAddCircle } from 'react-icons/md';
 
 const Toast = dynamic(() => import('../shared/Toast'), {
@@ -50,8 +43,6 @@ const ModalCreateItem = ({
 
   const { setShowModal, setShowToast, globalCategories, setGlobalCategories } =
     useAppContext();
-  const width = useInnerWidth();
-  const handleListItemsMobileReset = useListItemsMobileReset();
 
   const [form, setForm] = useState(() => {
     let priority = 0;
@@ -269,7 +260,6 @@ const ModalCreateItem = ({
               }),
             );
 
-            if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
             handleCloseModal();
           }
 
@@ -320,7 +310,6 @@ const ModalCreateItem = ({
               }),
             );
 
-            if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
             handleCloseModal();
           }
 
@@ -384,7 +373,6 @@ const ModalCreateItem = ({
         }));
 
         //if (newUser) setIsDashboardPrompt(true);
-        //if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
       }
 
       if (res.status === 409) {
