@@ -31,7 +31,7 @@ const CategoryControls = ({ categories, user }) => {
   const dragOverItemRef = useRef(null);
   const categoryItemWrapperRef = useRef(null);
 
-  const { setShowToast, setShowModal } = useAppContext();
+  const { setShowToast, setShowModal, setGlobalCategories } = useAppContext();
 
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
@@ -126,15 +126,16 @@ const CategoryControls = ({ categories, user }) => {
     deleteCategory(userId, id).then((res) => {
       if (res.status === 200) {
         setCategoryItems(categoryItems.filter((item) => item._id !== id));
+        // Empty any global categories so dashboard uses freshly fetched data
+        setGlobalCategories([]);
+        setShowModal(null);
+        handleModalResetPageScrolling();
         if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
       }
 
       if (res.status !== 200) {
         setShowToast(<Toast serverError={res} />);
       }
-
-      setShowModal(null);
-      handleModalResetPageScrolling();
     });
   };
 

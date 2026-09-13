@@ -90,7 +90,7 @@ const Reminders = ({ reminders, userId, handleOpenReminderModal }) => {
           );
         } else {
           // set last day of next interval month - current calendar number not in range of next or current calendar number last day of month
-          reminderStartingDate.setTime(getLastDayOfNextMonth);
+          reminderStartingDate.setTime(lastDayOfNextMonth);
         }
       }
 

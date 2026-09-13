@@ -75,8 +75,6 @@ const ModalCategory = ({ userId, setItems, itemToUpdate, numberOfItems }) => {
     }
 
     setIsAwaitingSubmitResponse(true);
-    // Empty any global categories so dashboard uses freshly fetched data
-    setGlobalCategories([]);
 
     isUpdate
       ? updateCategory(zodFormData, true).then((res) => {
@@ -93,6 +91,9 @@ const ModalCategory = ({ userId, setItems, itemToUpdate, numberOfItems }) => {
                 }
               });
             });
+            // Empty any global categories so dashboard uses freshly fetched data
+            setGlobalCategories([]);
+            handleCloseModal();
             if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
           }
 
@@ -105,9 +106,6 @@ const ModalCategory = ({ userId, setItems, itemToUpdate, numberOfItems }) => {
           if (res.status === 500) {
             setShowToast(<Toast serverError={res} />);
           }
-
-          setIsAwaitingSubmitResponse(false);
-          handleCloseModal();
         })
       : createCategory(zodFormData).then((res) => {
           if (res.status === 200) {
@@ -117,7 +115,9 @@ const ModalCategory = ({ userId, setItems, itemToUpdate, numberOfItems }) => {
               priority: '',
               title: '',
             });
-
+            // Empty any global categories so dashboard uses freshly fetched data
+            setGlobalCategories([]);
+            handleCloseModal();
             if (width <= MOBILE_BREAKPOINT) handleListItemsMobileReset();
           }
 
@@ -130,9 +130,6 @@ const ModalCategory = ({ userId, setItems, itemToUpdate, numberOfItems }) => {
           if (res.status === 500) {
             setShowToast(<Toast serverError={res} />);
           }
-
-          setIsAwaitingSubmitResponse(false);
-          handleCloseModal();
         });
   };
 
@@ -146,6 +143,7 @@ const ModalCategory = ({ userId, setItems, itemToUpdate, numberOfItems }) => {
     });
     setErrorMessage({ title: '' });
     handleModalResetPageScrolling();
+    setIsAwaitingSubmitResponse(false);
   };
 
   return (
