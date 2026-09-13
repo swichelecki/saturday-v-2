@@ -18,7 +18,7 @@ export const metadata = {
 async function DashboardWithData() {
   await connectDB();
 
-  const { userId, timezone, isSubscribed } = await getUserFromCookie();
+  const { userId, timezone, isSubscribed, newUser } = await getUserFromCookie();
 
   const getDateFormattedForUser = (date) => {
     const today = Intl.DateTimeFormat('en-US', {
@@ -174,7 +174,7 @@ async function DashboardWithData() {
       calendar={calendarData ?? []}
       categories={categories ?? []}
       reminders={remindersData ?? []}
-      user={{ userId, timezone, isSubscribed }}
+      user={{ userId, timezone, isSubscribed, newUser }}
     />
   );
 }

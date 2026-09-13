@@ -5,11 +5,6 @@ export const AppContext = createContext();
 export function AppWrapper({ children }) {
   const [toast, setShowToast] = useState(null);
   const [modal, setShowModal] = useState(null);
-  /* const [prompt, setShowPrompt] = useState(null);
-  const [isCategoriesPrompt, setIsCategoriesPrompt] = useState(false);
-  const [isRemindersPrompt, setIsRemindersPrompt] = useState(false);
-  const [isDashboardPrompt, setIsDashboardPrompt] = useState(false);
-  const [isNotesPrompt, setIsNotesPrompt] = useState(false); */
   const [listItemsMobileReset, setListItemsMobileReset] = useState(false);
   const [closeListItemsYAxis, setCloseListItemsYAxis] = useState(false);
   const [globalCategories, setGlobalCategories] = useState([]);
@@ -21,20 +16,10 @@ export function AppWrapper({ children }) {
         setShowToast,
         modal,
         setShowModal,
-        /* prompt,
-        setShowPrompt,
-        isCategoriesPrompt,
-        setIsCategoriesPrompt,
-        isRemindersPrompt,
-        setIsRemindersPrompt,
-        isDashboardPrompt,
-        setIsDashboardPrompt, */
         listItemsMobileReset,
         setListItemsMobileReset,
         closeListItemsYAxis,
         setCloseListItemsYAxis,
-        /* isNotesPrompt,
-        setIsNotesPrompt, */
         globalCategories,
         setGlobalCategories,
       }}

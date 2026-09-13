@@ -3,10 +3,13 @@
   flex-direction: column;
   align-items: center;
   gap: 24px;
+  position: relative;
 }
 
-.dashboard-button-wrapper {
-  max-width: 150px;
+.dashboard-reminders-button-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
   width: 100%;
 }
 
@@ -40,6 +43,10 @@
 
   .dashboard-button-wrapper {
     padding: 24px 0;
+  }
+
+  .dashboard-reminders-button-wrapper {
+    padding: 6px 0 14px 0;
   }
 
   .items-masonry-column {

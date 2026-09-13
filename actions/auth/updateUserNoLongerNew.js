@@ -21,16 +21,15 @@ export default async function updateUserNoLongerNew(userId) {
 
   try {
     await User.updateOne(
-      { _id: userId },
+      { _id: cookieUserId },
       {
         newUser: false,
-      }
+      },
     );
 
-    const { _id, timezone, admin, newUser, newNotesUser, isSubscribed } =
-      await User.findOne({
-        _id: userId,
-      });
+    const { _id, timezone, admin, newUser, isSubscribed } = await User.findOne({
+      _id: cookieUserId,
+    });
 
     (await cookies()).delete('saturday');
 
@@ -40,7 +39,6 @@ export default async function updateUserNoLongerNew(userId) {
       timezone,
       admin,
       newUser,
-      newNotesUser,
       isSubscribed,
     })
       .setExpirationTime('7d')

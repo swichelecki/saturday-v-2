@@ -68,8 +68,10 @@ export default function RootLayout({ children }) {
           }}
         />
         <GloablContext>
-          <Header />
-          <Layout>{children}</Layout>
+          <div className='app-wrapper'>
+            <Header />
+            <Layout>{children}</Layout>
+          </div>
         </GloablContext>
       </body>
     </html>

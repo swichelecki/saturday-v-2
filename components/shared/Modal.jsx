@@ -39,7 +39,7 @@ const Modal = ({
         document.removeEventListener('keydown', handleKeyDown);
         document.removeEventListener(
           'click',
-          handleCloseModalWhenClickingOutside
+          handleCloseModalWhenClickingOutside,
         );
       };
     }
@@ -54,7 +54,7 @@ const Modal = ({
       const pageScrollingRestrictedHeight = modalHeight + 32;
       appWrapper.setAttribute(
         'style',
-        `height: ${pageScrollingRestrictedHeight}px; overflow: hidden;`
+        `height: ${pageScrollingRestrictedHeight}px; overflow: hidden;`,
       );
     }
 
@@ -62,7 +62,7 @@ const Modal = ({
     if (innerHeight && modalHeight < innerHeight) {
       appWrapper.setAttribute(
         'style',
-        `height: ${innerHeight}px; overflow: hidden;`
+        `height: ${innerHeight}px; overflow: hidden;`,
       );
     }
   }, [innerHeight]);

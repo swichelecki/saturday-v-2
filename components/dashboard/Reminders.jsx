@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
-import { RemindersItem, Modal, ModalConfirm } from '../../components';
+import { RemindersItem, Modal, ModalConfirm, CTA } from '../../components';
 import { getReminder, updateReminder } from '../../actions';
 import { useInnerWidth } from '../../hooks';
 import { handleModalResetPageScrolling } from '../../utilities';
@@ -18,7 +18,7 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
 
-const Reminders = ({ reminders, userId }) => {
+const Reminders = ({ reminders, userId, handleOpenReminderModal }) => {
   const { setShowToast, setShowModal } = useAppContext();
 
   const width = useInnerWidth();
@@ -26,8 +26,7 @@ const Reminders = ({ reminders, userId }) => {
   const remindersWrapperRef = useRef(null);
   const remindersCarouselRef = useRef(null);
   const carouselPositionRef = useRef(null);
-
-  const [remindersItems, setReminders] = useState(reminders ?? []);
+  const [remindersItems, setRemindersItems] = useState(reminders ?? []);
   const [reminderToUpdate, setReminderToUpdate] = useState({});
   const [showScrollButtons, setShowScrollButtons] = useState(false);
   const [remindersWrapperClientRectRight, setRemindersWrapperClientRectRight] =
@@ -104,12 +103,12 @@ const Reminders = ({ reminders, userId }) => {
         displayReminder: false,
         reminderDate: nextDate,
         reminderSortDate: nextDate,
-        itemLimit: reminders?.length,
+        itemLimit: remindersItems?.length,
       };
 
       updateReminder(copyOfReminderToUpdate).then((res) => {
         if (res.status === 200) {
-          setReminders(
+          setRemindersItems(
             remindersItems.filter((item) => item._id !== reminderToUpdate._id),
           );
         }
@@ -250,12 +249,31 @@ const Reminders = ({ reminders, userId }) => {
     remindersCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
   };
 
-  if (!remindersItems || !remindersItems?.length) return <></>;
+  if (!remindersItems?.length) {
+    return (
+      <div className='dashboard-reminders-button-wrapper'>
+        <CTA
+          text='Create Recurring Reminder'
+          className='cta-button cta-button--small cta-button--cancel'
+          ariaLabel='Create recurring reminder item for dashboard'
+          handleClick={handleOpenReminderModal}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className='reminders__outer-wrapper'>
       <div className='reminders__wrapper'>
-        <h2>Recurring Reminders</h2>
+        <h2>
+          Recurring Reminders{' '}
+          <CTA
+            text='Create Reminder'
+            className='cta-button cta-button--x-small cta-button--cancel'
+            ariaLabel='Create recurring reminder item for dashboard'
+            handleClick={handleOpenReminderModal}
+          />
+        </h2>
         <div className='reminders__reminders-wrapper' ref={remindersWrapperRef}>
           <div
             className='reminders__reminders-carousel'

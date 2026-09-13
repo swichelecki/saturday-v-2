@@ -51,7 +51,7 @@ export default async function changeUserTimezone(formData) {
       { _id: userId },
       {
         timezone,
-      }
+      },
     );
 
     const userUpdated = await User.findOne({ _id: userId });
@@ -64,7 +64,6 @@ export default async function changeUserTimezone(formData) {
       timezone: userUpdated.timezone,
       admin: userUpdated.admin,
       newUser: userUpdated.newUser,
-      newNotesUser: userUpdated.newNotesUser,
       isSubscribed: userUpdated.isSubscribed,
     })
       .setExpirationTime('7d')

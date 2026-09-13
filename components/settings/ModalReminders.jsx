@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { FormTextField, FormSelectField, CTA, Tooltip } from '../../components';
 import { createReminder, updateReminder } from '../../actions';
@@ -28,6 +29,7 @@ const ModalReminder = ({
   setItems,
   itemToUpdate,
   numberOfReminders,
+  isDashboard = false,
 }) => {
   const { setShowModal, setShowToast } = useAppContext();
 
@@ -160,42 +162,46 @@ const ModalReminder = ({
     isUpdate
       ? updateReminder(zodFormData).then((res) => {
           if (res.status === 200) {
-            setItems(
-              handleSortItemsAscending(
-                items?.map((item) => {
-                  if (item?._id === itemToUpdate?._id) {
-                    return res?.item;
-                  } else {
-                    return item;
-                  }
-                }),
-                'reminderDate',
-              ),
-            );
+            if (!isDashboard) {
+              setItems(
+                handleSortItemsAscending(
+                  items?.map((item) => {
+                    if (item?._id === itemToUpdate?._id) {
+                      return res?.item;
+                    } else {
+                      return item;
+                    }
+                  }),
+                  'reminderDate',
+                ),
+              );
+            }
+
+            handleCloseModal();
           }
 
           if (res.status !== 200) {
             setShowToast(<Toast serverError={res} />);
           }
-
-          handleCloseModal();
         })
       : createReminder(zodFormData).then((res) => {
           if (res.status === 200) {
-            const copyOfRemindersItems = [...items];
-            setItems(
-              handleSortItemsAscending(
-                [...copyOfRemindersItems, res.item],
-                'reminderDate',
-              ),
-            );
+            if (!isDashboard) {
+              const copyOfRemindersItems = [...items];
+              setItems(
+                handleSortItemsAscending(
+                  [...copyOfRemindersItems, res.item],
+                  'reminderDate',
+                ),
+              );
+            }
+
+            handleCloseModal();
           }
 
           if (res.status !== 200) {
             setShowToast(<Toast serverError={res} />);
           }
-
-          handleCloseModal();
         });
   };
 
@@ -309,6 +315,20 @@ const ModalReminder = ({
         errorMessage={errorMessage.recurrenceBuffer}
         disabled={!form?.exactRecurringDate}
       />
+      {/* Manage Recurring Reminders */}
+      {isDashboard && (
+        <Link
+          href='/settings#reminders'
+          onClick={() => handleCloseModal()}
+          className='cta-text-link'
+          style={{
+            position: 'relative',
+            top: '-18px',
+          }}
+        >
+          Manage Recurring Reminders
+        </Link>
+      )}
       <div className='modal__modal-button-wrapper'>
         <CTA
           text='Cancel'

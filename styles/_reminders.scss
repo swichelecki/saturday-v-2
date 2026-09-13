@@ -7,6 +7,10 @@
     width: 100%;
     overflow: hidden;
     h2 {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
       padding: 16px;
       border-radius: 8px;
       background-color: $background-accent;

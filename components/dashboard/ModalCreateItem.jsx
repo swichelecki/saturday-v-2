@@ -11,6 +11,7 @@ import {
   CTA,
   Tabs,
   FormWYSIWYGField,
+  Tooltip,
 } from '..';
 import dynamic from 'next/dynamic';
 import {
@@ -21,6 +22,7 @@ import {
 import { itemSchema, categorySchema } from '../../schemas/schemas';
 import { MODAL_CATEGORY_ALREADY_EXISTS } from '../../constants';
 import { MdAddCircle } from 'react-icons/md';
+import { BsQuestionCircleFill } from 'react-icons/bs';
 
 const Toast = dynamic(() => import('../shared/Toast'), {
   ssr: false,
@@ -46,7 +48,9 @@ const ModalCreateItem = ({
 
   const [form, setForm] = useState(() => {
     let priority = 0;
-    const type = itemToUpdate?.type ?? categories[0]['title'] ?? '';
+    const type =
+      itemToUpdate?.type ??
+      (categories?.length > 0 ? categories[0]['title'] : '');
 
     const selectedCategoryData = items.find(
       (category) => Object.keys(category)[0] === type,
@@ -61,7 +65,9 @@ const ModalCreateItem = ({
     return {
       _id: itemToUpdate?._id ?? '',
       userId: itemToUpdate?.userId ?? userId,
-      categoryId: itemToUpdate?.categoryId ?? categories[0]['_id'],
+      categoryId:
+        itemToUpdate?.categoryId ??
+        (categories?.length > 0 ? categories[0]['_id'] : ''),
       title: itemToUpdate?.title ?? '',
       description: itemToUpdate.description ?? '',
       confirmDeletion: itemToUpdate?.confirmDeletion ?? false,
@@ -69,7 +75,9 @@ const ModalCreateItem = ({
       dateAndTime: itemToUpdate?.dateAndTime ?? '',
       priority: itemToUpdate?.priority ?? priority,
       type: itemToUpdate.type ?? type,
-      column: itemToUpdate?.column ?? categories[0]['priority'],
+      column:
+        itemToUpdate?.column ??
+        (categories?.length > 0 ? categories[0]['priority'] : 0),
       itemLimit: isUpdate ? totalNumberOfItems - 1 : totalNumberOfItems,
     };
   });
@@ -371,8 +379,6 @@ const ModalCreateItem = ({
           column: res.item.priority,
           categoryId: res.item._id,
         }));
-
-        //if (newUser) setIsDashboardPrompt(true);
       }
 
       if (res.status === 409) {
@@ -440,7 +446,16 @@ const ModalCreateItem = ({
             {/* Create New Category */}
             <div className='form-page__list-items-controls-icon-wrapper'>
               <FormTextField
-                label='Or Create New Category'
+                label={
+                  <span className='form-field__label-with-tooltip'>
+                    <span>Or Create New Category</span>
+                    <Tooltip icon={<BsQuestionCircleFill />}>
+                      <p className='form-field__label-with-tooltip-message'>
+                        Items are organized in columns under category headings.
+                      </p>
+                    </Tooltip>
+                  </span>
+                }
                 type='text'
                 id='category'
                 name='title'
@@ -460,12 +475,11 @@ const ModalCreateItem = ({
             {/* Manage Categories */}
             <Link
               href='/settings'
-              onClick={() => setShowModal(null)}
+              onClick={() => handleCloseModal()}
               className='cta-text-link'
               style={{
                 position: 'relative',
                 top: '-24px',
-                textDecoration: 'underline',
               }}
             >
               Manage Categories

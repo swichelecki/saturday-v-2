@@ -57,7 +57,6 @@ export default async function loginUser(formData) {
           timezone: user.timezone,
           admin: user.admin,
           newUser: user.newUser,
-          newNotesUser: user.newNotesUser,
           isSubscribed: user.isSubscribed,
           enable2FA: user.enable2FA,
         })
@@ -89,7 +88,6 @@ export default async function loginUser(formData) {
         timezone: user.timezone,
         admin: user.admin,
         newUser: user.newUser,
-        newNotesUser: user.newNotesUser,
         isSubscribed: user.isSubscribed,
         enable2FA: user.enable2FA,
       })

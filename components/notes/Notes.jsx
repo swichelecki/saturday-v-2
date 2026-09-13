@@ -7,7 +7,6 @@ import {
   useInnerWidth,
   useCloseListItemsYAxis,
   useListItemsMobileReset,
-  //usePrompt,
 } from '../../hooks';
 import { deleteNote, getNote, pinNote } from '../../actions';
 import {
@@ -34,19 +33,12 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
 const Notes = ({ notes, user, notesCount }) => {
   const closeButtonRef = useRef(null);
 
-  const { userId, /* newNotesUser, */ isSubscribed } = user;
-  const {
-    setShowModal,
-    setShowToast,
-    //prompt,
-    //isNotesPrompt,
-    //setIsNotesPrompt,
-  } = useAppContext();
+  const { userId, isSubscribed } = user;
+  const { setShowModal, setShowToast } = useAppContext();
 
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
   const handleCloseListItemsYAxis = useCloseListItemsYAxis();
-  //usePrompt(userId, newNotesUser);
 
   const notesLimit = isSubscribed
     ? NOTES_ITEM_LIMIT
@@ -68,10 +60,6 @@ const Notes = ({ notes, user, notesCount }) => {
       setAtNotesLimit(false);
     }
   }, [atNotesLimit, currentNoteCount]);
-
-  /*  useEffect(() => {
-    if (newNotesUser) setIsNotesPrompt(true);
-  }, []); */
 
   // clear searched items state on create, update or delete
   const handleClearSearch = () => {
@@ -219,7 +207,6 @@ const Notes = ({ notes, user, notesCount }) => {
         <h1 className='form-page__h2'>Notes</h1>
       </div>
       <div className='form-page__list-items-controls-wrapper'>
-        {/* {isNotesPrompt && prompt} */}
         <CTA
           text='Create'
           className='cta-button cta-button--medium cta-button--purple'

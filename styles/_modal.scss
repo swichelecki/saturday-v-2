@@ -82,6 +82,43 @@ dialog {
   }
 }
 
+.new-user-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  h2 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 2.25rem; // 36px
+    text-align: center;
+  }
+  &__features-list {
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      li {
+        display: flex;
+        align-items: start;
+        position: relative;
+        padding-left: 34px;
+        color: $font;
+        font-size: 1.125rem; // 18px
+        svg {
+          position: absolute;
+          top: 2px;
+          left: 0;
+          font-size: 1.5rem; // 24px
+          fill: $button-purple;
+        }
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 1080px) {
   dialog.modal.modal__image-modal {
     & > button {
@@ -113,6 +150,27 @@ dialog {
   dialog.modal.modal__form-modal--large,
   dialog.modal.modal__form-modal--small {
     width: 90%;
+  }
+
+  .new-user-modal {
+    gap: 24px;
+    h2 {
+      font-size: 1.5rem; // 24px;
+    }
+    &__features-list {
+      ul {
+        li {
+          font-size: 1rem; // 18px
+          svg {
+            position: absolute;
+            top: 2px;
+            left: 0;
+            font-size: 1.5rem; // 24px
+            fill: $button-purple;
+          }
+        }
+      }
+    }
   }
 
   /*   dialog.modal .modal__inner-wrapper button {

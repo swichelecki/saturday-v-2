@@ -25,11 +25,6 @@ const UserSchema = new Schema(
       required: true,
       default: true,
     },
-    newNotesUser: {
-      type: Boolean,
-      required: true,
-      default: true,
-    },
     isSubscribed: {
       type: Boolean,
       required: true,

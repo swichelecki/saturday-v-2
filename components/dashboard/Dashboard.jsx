@@ -5,12 +5,15 @@ import dynamic from 'next/dynamic';
 import { useAppContext } from '../../context';
 import {
   Week,
+  Reminders,
   ItemsColumn,
   CTA,
   Modal,
   ModalCreateItem,
   ModalConfirm,
+  ModalReminders,
   ModalSubscribe,
+  ModalNewUser,
   FormErrorMessage,
 } from '../../components';
 import {
@@ -24,15 +27,16 @@ import {
   MOBILE_BREAKPOINT,
   LIST_ITEM_LIMIT,
   UNSUBSCRIBED_LIST_ITEM_LIMIT,
+  REMINDERS_ITEM_LIMIT,
+  UNSUBSCRIBED_REMINDERS_ITEM_LIMIT,
 } from '../../constants';
 
-const Reminders = dynamic(() => import('../../components/dashboard/Reminders'));
 const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
 
 const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
-  const { userId, timezone, isSubscribed } = user;
+  const { userId, timezone, isSubscribed, newUser } = user;
 
   const { setShowToast, setShowModal } = useAppContext();
 
@@ -49,10 +53,32 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   const [isAwaitingDeleteResponse, setIsAwaitingDeleteResponse] =
     useState(false);
   const [atItemsLimit, setAtItemsLimit] = useState(false);
+  const [atRemindersLimit, setAtRemindersLimit] = useState(false);
 
   const listItemLimit = isSubscribed
     ? LIST_ITEM_LIMIT
     : UNSUBSCRIBED_LIST_ITEM_LIMIT;
+
+  const remindersLimit = isSubscribed
+    ? REMINDERS_ITEM_LIMIT
+    : UNSUBSCRIBED_REMINDERS_ITEM_LIMIT;
+
+  // New user modal
+  useEffect(() => {
+    if (!newUser) return;
+    const showNewUserModal = setTimeout(() => {
+      setShowModal(
+        <Modal
+          showCloseButton={false}
+          className='modal modal__form-modal--small'
+        >
+          <ModalNewUser userId={userId} />
+        </Modal>,
+      );
+    }, 500);
+
+    return () => clearTimeout(showNewUserModal);
+  }, []);
 
   // build masonry
   useEffect(() => {
@@ -102,6 +128,14 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
       setAtItemsLimit(false);
     }
   }, [totalNumberOfItems]);
+
+  // remove at-reminders-limit message after reminder deletion
+  useEffect(() => {
+    if (reminders?.length < remindersLimit && atRemindersLimit) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setAtRemindersLimit(false);
+    }
+  }, [reminders]);
 
   // open modal for create
   const handleOpenCreateItemModal = () => {
@@ -232,32 +266,66 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
     });
   };
 
+  // Open modal for creating recurring reminders
+  const handleOpenReminderModal = () => {
+    if (reminders?.length >= remindersLimit) {
+      setAtRemindersLimit(true);
+      setShowModal(
+        <Modal className='modal modal__form-modal--small modal__subscription-modal'>
+          <ModalSubscribe userId={userId} />
+        </Modal>,
+      );
+      return;
+    }
+
+    setShowModal(
+      <Modal className='modal modal__form-modal--large'>
+        <h2>Create Reminder</h2>
+        <ModalReminders
+          userId={userId}
+          numberOfReminders={reminders?.length}
+          isDashboard
+        />
+      </Modal>,
+    );
+  };
+
   return (
     <div className='content-container'>
+      {/* At Limit Warning */}
       {atItemsLimit && (
         <FormErrorMessage
           errorMessage={`Limit ${listItemLimit} Items!`}
           className='form-error-message form-error-message--position-static'
         />
       )}
+
+      {/* Create Item */}
       <CTA
         text='Create Item'
         className='cta-button cta-button--medium cta-button--purple'
         ariaLabel='Create dashboard item'
         handleClick={handleOpenCreateItemModal}
       />
+
+      {/* Week */}
       <Week
         timezone={timezone}
         userId={userId}
         calendarItems={calendarItems}
         setCalendarItems={setCalendarItems}
       />
-      {reminders && reminders?.length > 0 && (
-        <Reminders reminders={reminders} userId={userId} />
-      )}
+
+      {/* Recurring Reminders */}
+      <Reminders
+        reminders={reminders}
+        userId={userId}
+        handleOpenReminderModal={handleOpenReminderModal}
+      />
+
+      {/* Items */}
       <div className='items-column-wrapper'>
-        {masonryItems &&
-          masonryItems?.length > 0 &&
+        {masonryItems?.length > 0 &&
           masonryItems.map((columnData, index) => (
             <div
               className='items-masonry-column'

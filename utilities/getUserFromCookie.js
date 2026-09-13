@@ -11,7 +11,6 @@ export const getUserFromCookie = async () => {
   let userId;
   let timezone;
   let newUser;
-  let newNotesUser;
   let admin;
   let isSubscribed;
   let enable2FA;
@@ -30,7 +29,6 @@ export const getUserFromCookie = async () => {
       userId = payload?.id;
       timezone = payload?.timezone;
       newUser = payload?.newUser;
-      newNotesUser = payload?.newNotesUser;
       admin = payload?.admin;
       isSubscribed = payload?.isSubscribed;
       enable2FA = payload?.enable2FA;
@@ -54,7 +52,6 @@ export const getUserFromCookie = async () => {
     userId,
     timezone,
     newUser,
-    newNotesUser,
     admin,
     isSubscribed,
     enable2FA,

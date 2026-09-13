@@ -64,7 +64,6 @@ export default async function changeUser2FA(formData) {
       timezone: userUpdated.timezone,
       admin: userUpdated.admin,
       newUser: userUpdated.newUser,
-      newNotesUser: userUpdated.newNotesUser,
       isSubscribed: userUpdated.isSubscribed,
       enable2FA: userUpdated.enable2FA,
     })

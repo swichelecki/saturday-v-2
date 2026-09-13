@@ -22,7 +22,6 @@ export { default as FormErrorMessage } from './forms/FormErrorMessage';
 export { default as Settings } from './settings/Settings';
 export { default as CategoryControls } from './settings/CategoryControls';
 export { default as ModalCategory } from './settings/ModalCategory';
-/* export { default as Prompt } from './shared/Prompt'; */
 export { default as RemindersControls } from './settings/RemindersControls';
 export { default as ModalReminders } from './settings/ModalReminders';
 export { default as Tooltip } from './shared/Tooltip';
@@ -50,4 +49,5 @@ export { default as ModalAdminDeleteUser } from './admin/ModalAdminDeleteUser';
 export { default as Modal } from './shared/Modal';
 export { default as ModalConfirm } from './shared/ModalConfirm';
 export { default as ModalSubscribe } from './shared/ModalSubscribe';
+export { default as ModalNewUser } from './shared/ModalNewUser';
 export { default as Tabs } from './shared/Tabs';

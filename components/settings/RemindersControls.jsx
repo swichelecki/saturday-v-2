@@ -25,8 +25,7 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
 });
 
 const RemindersControls = ({ reminders, user }) => {
-  const { setShowToast, setShowModal /* isRemindersPrompt, prompt */ } =
-    useAppContext();
+  const { setShowToast, setShowModal } = useAppContext();
 
   const { userId, isSubscribed } = user;
 
@@ -41,6 +40,15 @@ const RemindersControls = ({ reminders, user }) => {
   const remindersLimit = isSubscribed
     ? REMINDERS_ITEM_LIMIT
     : UNSUBSCRIBED_REMINDERS_ITEM_LIMIT;
+
+  // the page streams in via Suspense, so the browser's own hash scroll fires before this exists
+  useEffect(() => {
+    if (window.location.hash === '#reminders') {
+      document.getElementById('reminders')?.scrollIntoView();
+
+      window.history.replaceState({}, '', window.location.href.split('#')[0]);
+    }
+  }, []);
 
   // remove at-reminders-limit message after reminder deletion
   useEffect(() => {
@@ -135,11 +143,10 @@ const RemindersControls = ({ reminders, user }) => {
 
   return (
     <>
-      <div className='form-page__list-items-heading-wrapper'>
+      <div className='form-page__list-items-heading-wrapper' id='reminders'>
         <h1 className='form-page__h2'>Recurring Reminders</h1>
       </div>
       <div className='settings-controls'>
-        {/* {isRemindersPrompt && prompt} */}
         <div className='settings-controls__button-wrapper'>
           <CTA
             text='Create'

@@ -31,18 +31,12 @@ const CategoryControls = ({ categories, user }) => {
   const dragOverItemRef = useRef(null);
   const categoryItemWrapperRef = useRef(null);
 
-  const {
-    setShowToast,
-    setShowModal,
-    //isCategoriesPrompt,
-    //isDashboardPrompt,
-    //prompt,
-  } = useAppContext();
+  const { setShowToast, setShowModal } = useAppContext();
 
   const width = useInnerWidth();
   const handleListItemsMobileReset = useListItemsMobileReset();
 
-  const { userId, newUser, isSubscribed } = user;
+  const { userId, isSubscribed } = user;
 
   const [categoryItems, setCategoryItems] = useState(categories ?? []);
   const [draggableCategories, setDraggableCategories] = useState([]);
@@ -80,8 +74,6 @@ const CategoryControls = ({ categories, user }) => {
         <ModalCategory
           userId={userId}
           setItems={setCategoryItems}
-          categories={categories}
-          newUser={newUser}
           numberOfItems={categoryItems?.length}
         />
       </Modal>,
@@ -203,8 +195,6 @@ const CategoryControls = ({ categories, user }) => {
         <h1 className='form-page__h2'>Categories</h1>
       </div>
       <div className='settings-controls'>
-        {/* {isCategoriesPrompt && prompt}
-        {isDashboardPrompt && prompt} */}
         <div className='settings-controls__button-wrapper'>
           <CTA
             text='Create'

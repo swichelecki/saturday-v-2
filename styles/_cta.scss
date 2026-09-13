@@ -6,6 +6,12 @@
   gap: 6px;
   font-weight: 600;
   transition: all 0.3s;
+  &--x-small {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 400;
+    font-size: 1rem;
+  }
   &--small {
     min-width: 74px;
     padding: 8px 18px;
@@ -115,6 +121,8 @@
 
 .cta-text-link {
   color: $button-purple;
+  text-decoration: underline;
+  font-weight: 400;
 }
 
 @media screen and (max-width: 600px) {

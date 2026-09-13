@@ -11,7 +11,7 @@ export const metadata = {
 async function NotesWithData() {
   await connectDB();
 
-  const { userId, newNotesUser, isSubscribed } = await getUserFromCookie();
+  const { userId, isSubscribed } = await getUserFromCookie();
 
   const notesRaw = await Note.find({ userId }).sort({ date: -1 });
   const notes = JSON.parse(JSON.stringify(notesRaw));
@@ -66,7 +66,7 @@ async function NotesWithData() {
   return (
     <Notes
       notes={notesData ?? []}
-      user={{ userId, newNotesUser, isSubscribed }}
+      user={{ userId, isSubscribed }}
       notesCount={notesCount ?? 0}
     />
   );
