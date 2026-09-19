@@ -13,7 +13,6 @@ import {
   ModalConfirm,
   ModalReminders,
   ModalSubscribe,
-  ModalNewUser,
   FormErrorMessage,
 } from '../../components';
 import {
@@ -34,6 +33,9 @@ import {
 const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
+const ModalNewUser = dynamic(
+  () => import('../../components/shared/ModalNewUser'),
+);
 
 const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   const { userId, timezone, isSubscribed, newUser } = user;
@@ -280,7 +282,6 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
 
     setShowModal(
       <Modal className='modal modal__form-modal--large'>
-        <h2>Create Reminder</h2>
         <ModalReminders
           userId={userId}
           numberOfReminders={reminders?.length}

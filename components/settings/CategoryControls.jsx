@@ -70,7 +70,6 @@ const CategoryControls = ({ categories, user }) => {
 
     setShowModal(
       <Modal className='modal modal__form-modal--small'>
-        <h2>Create Category</h2>
         <ModalCategory
           userId={userId}
           setItems={setCategoryItems}
@@ -88,7 +87,6 @@ const CategoryControls = ({ categories, user }) => {
       if (res.status === 200) {
         setShowModal(
           <Modal className='modal modal__form-modal--small'>
-            <h2>Update Category</h2>
             <ModalCategory
               userId={userId}
               setItems={setCategoryItems}

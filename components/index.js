@@ -49,5 +49,4 @@ export { default as ModalAdminDeleteUser } from './admin/ModalAdminDeleteUser';
 export { default as Modal } from './shared/Modal';
 export { default as ModalConfirm } from './shared/ModalConfirm';
 export { default as ModalSubscribe } from './shared/ModalSubscribe';
-export { default as ModalNewUser } from './shared/ModalNewUser';
 export { default as Tabs } from './shared/Tabs';

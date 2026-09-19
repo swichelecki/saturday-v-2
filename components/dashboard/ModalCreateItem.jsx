@@ -46,11 +46,15 @@ const ModalCreateItem = ({
   const { setShowModal, setShowToast, globalCategories, setGlobalCategories } =
     useAppContext();
 
+  const [dashboardItems, setDashboardItems] = useState(items);
+  const [categoryItems, setCategoryItems] = useState(
+    globalCategories?.length > 0 ? globalCategories : categories,
+  );
   const [form, setForm] = useState(() => {
     let priority = 0;
     const type =
       itemToUpdate?.type ??
-      (categories?.length > 0 ? categories[0]['title'] : '');
+      (categoryItems?.length > 0 ? categoryItems[0]['title'] : '');
 
     const selectedCategoryData = items.find(
       (category) => Object.keys(category)[0] === type,
@@ -67,7 +71,7 @@ const ModalCreateItem = ({
       userId: itemToUpdate?.userId ?? userId,
       categoryId:
         itemToUpdate?.categoryId ??
-        (categories?.length > 0 ? categories[0]['_id'] : ''),
+        (categoryItems?.length > 0 ? categoryItems[0]['_id'] : ''),
       title: itemToUpdate?.title ?? '',
       description: itemToUpdate.description ?? '',
       confirmDeletion: itemToUpdate?.confirmDeletion ?? false,
@@ -77,7 +81,7 @@ const ModalCreateItem = ({
       type: itemToUpdate.type ?? type,
       column:
         itemToUpdate?.column ??
-        (categories?.length > 0 ? categories[0]['priority'] : 0),
+        (categoryItems?.length > 0 ? categoryItems[0]['priority'] : 0),
       itemLimit: isUpdate ? totalNumberOfItems - 1 : totalNumberOfItems,
     };
   });
@@ -88,10 +92,6 @@ const ModalCreateItem = ({
     dateAndTime: '',
     itemLimit: '',
   });
-  const [dashboardItems, setDashboardItems] = useState(items);
-  const [categoryItems, setCategoryItems] = useState(
-    globalCategories?.length > 0 ? globalCategories : categories,
-  );
   const [categoryForm, setCategoryForm] = useState({
     _id: '',
     userId,

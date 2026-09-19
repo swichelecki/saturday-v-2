@@ -72,7 +72,6 @@ const RemindersControls = ({ reminders, user }) => {
 
     setShowModal(
       <Modal className='modal modal__form-modal--large'>
-        <h2>Create Reminder</h2>
         <ModalReminders
           userId={userId}
           items={remindersItems}
@@ -92,7 +91,6 @@ const RemindersControls = ({ reminders, user }) => {
       if (res.status === 200) {
         setShowModal(
           <Modal className='modal modal__form-modal--large'>
-            <h2>Update Reminder</h2>
             <ModalReminders
               userId={userId}
               items={remindersItems}
