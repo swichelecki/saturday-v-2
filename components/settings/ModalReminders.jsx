@@ -229,6 +229,9 @@ const ModalReminder = ({
     handleModalResetPageScrolling();
   };
 
+  console.log('form ', form);
+  console.log('lenght ', form?.recurrenceInterval);
+
   return (
     <form onSubmit={onSubmit} ref={pageRef}>
       <FormTextField
@@ -313,7 +316,10 @@ const ModalReminder = ({
         onChangeHandler={handleFormSelectField}
         options={FORM_REMINDER_BUFFER_OPTIONS}
         errorMessage={errorMessage.recurrenceBuffer}
-        disabled={!form?.exactRecurringDate}
+        disabled={
+          !form?.exactRecurringDate ||
+          Math.abs(form?.recurrenceInterval).toString().length > 2
+        }
       />
       {/* Manage Recurring Reminders */}
       {isDashboard && (

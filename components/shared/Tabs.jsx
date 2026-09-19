@@ -26,6 +26,47 @@ const Tabs = ({ tabs, panelsHeight, children }) => {
     }
   }, []);
 
+  // Handle panel tabbing
+  useEffect(() => {
+    const panels = Array.from(panelsRef.current.children);
+    for (const panel of panels) {
+      const inputs = Array.from(
+        panel.querySelectorAll('input, button, select, a'),
+      );
+      for (const input of inputs) {
+        input.setAttribute('tabIndex', isOpen ? '0' : '-1');
+      }
+    }
+
+    // Quill
+    const quillWrapper = document?.querySelector(
+      '.form-field__quill-wrapper--toolbar',
+    );
+    if (!quillWrapper) return;
+
+    const handleQuillTabbing = () => {
+      const inputs = Array.from(
+        quillWrapper?.querySelectorAll('input, button, select, a'),
+      );
+      if (!inputs?.length) return;
+      for (const input of inputs) {
+        input.setAttribute('tabIndex', isOpen ? '0' : '-1');
+      }
+      const quillTextArea = quillWrapper.querySelector('.ql-editor');
+      quillTextArea.setAttribute('contenteditable', isOpen ? 'true' : 'false');
+    };
+
+    handleQuillTabbing();
+
+    const observer = new MutationObserver(() => {
+      handleQuillTabbing();
+    });
+
+    observer.observe(quillWrapper, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [isOpen]);
+
   // Switch tab view & open and close tab wrapper
   const handleCloseOpenTabs = (e) => {
     const panels = Array.from(panelsRef.current.children);

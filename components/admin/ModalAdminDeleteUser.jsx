@@ -6,6 +6,7 @@ import { useAppContext } from '../../context';
 import { FormTextField, CTA } from '../../components';
 import { adminDeleteUser } from '../../actions';
 import { adminDeleteUserSchema } from '../../schemas/schemas';
+import { handleModalResetPageScrolling } from '../../utilities';
 import { FORM_ERROR_INCORRECT_PASSWORD } from '../../constants';
 
 const Toast = dynamic(() => import('../../components/shared/Toast'), {
@@ -55,6 +56,7 @@ const ModalAdminDeleteUser = ({ adminId, userId, userEmail }) => {
     setShowModal(null);
     setPassword('');
     setErrorMessage('');
+    handleModalResetPageScrolling();
   };
 
   return (
