@@ -30,11 +30,11 @@ const Tabs = ({ tabs, panelsHeight, children }) => {
   useEffect(() => {
     const panels = Array.from(panelsRef.current.children);
     for (const panel of panels) {
-      const inputs = Array.from(
+      const tabbableElements = Array.from(
         panel.querySelectorAll('input, button, select, a'),
       );
-      for (const input of inputs) {
-        input.setAttribute('tabIndex', isOpen ? '0' : '-1');
+      for (const item of tabbableElements) {
+        item.setAttribute('tabIndex', isOpen ? '0' : '-1');
       }
     }
 
@@ -45,12 +45,12 @@ const Tabs = ({ tabs, panelsHeight, children }) => {
     if (!quillWrapper) return;
 
     const handleQuillTabbing = () => {
-      const inputs = Array.from(
+      const tabbableElements = Array.from(
         quillWrapper?.querySelectorAll('input, button, select, a'),
       );
-      if (!inputs?.length) return;
-      for (const input of inputs) {
-        input.setAttribute('tabIndex', isOpen ? '0' : '-1');
+      if (!tabbableElements?.length) return;
+      for (const item of tabbableElements) {
+        item.setAttribute('tabIndex', isOpen ? '0' : '-1');
       }
       const quillTextArea = quillWrapper.querySelector('.ql-editor');
       quillTextArea.setAttribute('contenteditable', isOpen ? 'true' : 'false');

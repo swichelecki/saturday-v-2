@@ -24,7 +24,7 @@ export async function GET() {
       const nextOccurrance = reminderStartingDate.getTime();
       const interval = item?.recurrenceInterval;
 
-      // dispaly general reminders
+      // display general reminders
       if (nextOccurrance <= Date.now() && !item?.displayReminder) {
         try {
           await Reminder.updateOne(
@@ -34,7 +34,7 @@ export async function GET() {
             },
           );
         } catch (e) {
-          console.error('Error dispalying general reminder: ', e);
+          console.error('Error displaying general reminder: ', e);
         }
       }
 
@@ -58,7 +58,7 @@ export async function GET() {
             },
           );
         } catch (e) {
-          console.error('Error updating by-week reminders not reset: ', e);
+          console.error('Error updating by-week reminder not reset: ', e);
         }
       }
 
@@ -112,7 +112,7 @@ export async function GET() {
             },
           );
         } catch (e) {
-          console.error('Error updating by-month reminders not reset: ', e);
+          console.error('Error updating by-month reminder not reset: ', e);
         }
       }
     }
@@ -203,7 +203,7 @@ export async function GET() {
           );
         } catch (e) {
           console.error(
-            'Error rescheduling reminder with exact recurring dates: ',
+            'Error rescheduling reminder with exact recurring date: ',
             e,
           );
         }
