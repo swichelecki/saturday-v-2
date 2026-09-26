@@ -1,7 +1,7 @@
 import connectDB from '../../../../config/db';
 import Reminder from '../../../../models/Reminder';
 import Holiday from '../../../../models/Holiday';
-import { BY_WEEK_INTERVALS, TWENTYFOUR_HOURS } from '../../../../constants';
+import { TWENTYFOUR_HOURS } from '../../../../constants';
 
 export async function GET() {
   await connectDB();
@@ -17,196 +17,221 @@ export async function GET() {
       : generalReminders.push(item);
   }
 
-  // handle general reminders
-  if (generalReminders?.length > 0) {
-    for (const item of generalReminders) {
-      const reminderStartingDate = new Date(item?.reminderDate);
-      const nextOccurrance = reminderStartingDate.getTime();
-      const interval = item?.recurrenceInterval;
+  // handle manually reset reminders
+  for (const item of generalReminders) {
+    const reminderStartingDate = new Date(item?.reminderDate);
+    const reminderDate = reminderStartingDate.getTime();
+    const interval = item?.recurrenceInterval;
 
-      // display general reminders
-      if (nextOccurrance <= Date.now() && !item?.displayReminder) {
-        try {
-          await Reminder.updateOne(
-            { _id: item._id },
-            {
-              displayReminder: true,
-            },
-          );
-        } catch (e) {
-          console.error('Error displaying general reminder: ', e);
-        }
+    // display general reminders
+    if (reminderDate <= Date.now() && !item?.displayReminder) {
+      try {
+        await Reminder.updateOne(
+          { _id: item._id },
+          {
+            displayReminder: true,
+          },
+        );
+      } catch (e) {
+        console.error('Error displaying general reminder: ', e);
       }
+    }
 
-      // add interval to by-week reminders not reset before next interval start date begins
-      if (
-        BY_WEEK_INTERVALS.includes(interval) &&
-        nextOccurrance + interval <= Date.now() &&
-        item?.displayReminder
-      ) {
-        try {
-          reminderStartingDate.setTime(
-            reminderStartingDate.getTime() + interval,
-          );
-          const nextDate = reminderStartingDate.toISOString();
+    // add interval to by-week reminders not reset before next interval start date begins
+    if (
+      Math.abs(interval).toString().length > 2 &&
+      reminderDate + interval <= Date.now() &&
+      item?.displayReminder
+    ) {
+      try {
+        reminderStartingDate.setTime(reminderStartingDate.getTime() + interval);
+        const nextDate = reminderStartingDate.toISOString().split('T')[0];
 
-          await Reminder.updateOne(
-            { _id: item._id },
-            {
-              reminderDate: nextDate,
-              reminderSortDate: nextDate,
-            },
-          );
-        } catch (e) {
-          console.error('Error updating by-week reminder not reset: ', e);
-        }
+        await Reminder.updateOne(
+          { _id: item._id },
+          {
+            reminderDate: nextDate,
+            reminderSortDate: nextDate,
+          },
+        );
+      } catch (e) {
+        console.error('Error updating by-week reminder not reset: ', e);
       }
+    }
 
-      // add interval to by-month reminders not reset before next interval start date begins
-      if (
-        !BY_WEEK_INTERVALS.includes(interval) &&
-        reminderStartingDate.setUTCMonth(
-          reminderStartingDate.getUTCMonth() + interval,
-        ) <= Date.now() &&
-        item?.displayReminder
-      ) {
-        try {
-          const interval = item?.recurrenceInterval;
-          const date = new Date(item?.reminderDate);
+    // add interval to by-month reminders not reset before next interval start date begins
+    if (
+      !Math.abs(interval).toString().length > 2 &&
+      reminderStartingDate.setUTCMonth(
+        reminderStartingDate.getUTCMonth() + interval,
+      ) <= Date.now() &&
+      item?.displayReminder
+    ) {
+      try {
+        const interval = item?.recurrenceInterval;
+        const date = new Date(item?.reminderDate);
 
-          const reminderDay = date.getUTCDate();
-          const reminderMonth = date.getUTCMonth();
-          const reminderYear = date.getUTCFullYear();
+        const reminderDay = date.getUTCDate();
+        const reminderMonth = date.getUTCMonth();
+        const reminderYear = date.getUTCFullYear();
 
-          // get last day of the current reminder's month
-          const lastDayOfReminderMonth = new Date(
-            Date.UTC(reminderYear, reminderMonth + 1, 0),
-          ).getUTCDate();
+        // get last day of the current reminder's month
+        const lastDayOfReminderMonth = new Date(
+          Date.UTC(reminderYear, reminderMonth + 1, 0),
+        ).getUTCDate();
 
-          const lastDayOfMonth = reminderDay === lastDayOfReminderMonth;
+        const lastDayOfMonth = reminderDay === lastDayOfReminderMonth;
 
-          // get last day of the next scheduled month
-          const lastDayOfNextMonth = new Date(
-            Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
-          ).getUTCDate();
+        // get last day of the next scheduled month
+        const lastDayOfNextMonth = new Date(
+          Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
+        ).getUTCDate();
 
-          // next interval calendar number is within current calendar number range and not last day
-          if (reminderDay <= lastDayOfNextMonth && !lastDayOfMonth) {
-            date.setUTCMonth(date.getUTCMonth() + interval);
-          } else {
-            // set last day of next interval month - current calendar number not in range of next or current calendar number last day of month
-            date.setTime(
-              new Date(
-                Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
-              ).getTime(),
-            );
-          }
-
-          const nextDate = date.toISOString().split('T')[0];
-
-          await Reminder.updateOne(
-            { _id: item._id },
-            {
-              reminderDate: nextDate,
-              reminderSortDate: nextDate,
-            },
+        // next interval calendar number is within current calendar number range and not last day
+        if (reminderDay <= lastDayOfNextMonth && !lastDayOfMonth) {
+          date.setUTCMonth(date.getUTCMonth() + interval);
+        } else {
+          // set last day of next interval month - current calendar number not in range of next or current calendar number last day of month
+          date.setTime(
+            new Date(
+              Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
+            ).getTime(),
           );
-        } catch (e) {
-          console.error('Error updating by-month reminder not reset: ', e);
         }
+
+        const nextDate = date.toISOString().split('T')[0];
+
+        await Reminder.updateOne(
+          { _id: item._id },
+          {
+            reminderDate: nextDate,
+            reminderSortDate: nextDate,
+          },
+        );
+      } catch (e) {
+        console.error('Error updating by-month reminder not reset: ', e);
       }
     }
   }
 
-  // handle reminders with exact recurring date
-  if (exactRecurringDateReminders?.length > 0) {
-    for (const item of exactRecurringDateReminders) {
-      const today = new Date().getTime();
-      const nextOccurrance = new Date(item?.reminderDate).getTime();
-      const reminderDateObject = new Date(item?.reminderDate);
-      const reminderDateMinusBuffer = reminderDateObject.setDate(
-        reminderDateObject.getDate() - item?.recurrenceBuffer,
-      );
+  // handle automatically reset reminders
+  for (const item of exactRecurringDateReminders) {
+    const today = new Date().getTime();
+    const reminderDate = new Date(item?.reminderDate).getTime();
+    const reminderDateObject = new Date(item?.reminderDate);
+    const reminderDateMinusBuffer = reminderDateObject.setDate(
+      reminderDateObject.getDate() - item?.recurrenceBuffer,
+    );
+    const interval = item?.recurrenceInterval;
 
-      // display reminders with exact recurring date
-      if (
-        nextOccurrance > Date.now() &&
-        reminderDateMinusBuffer <= today &&
-        !item?.displayReminder
-      ) {
-        try {
-          await Reminder.updateOne(
-            { _id: item._id },
-            {
-              displayReminder: true,
-            },
-          );
-        } catch (e) {
-          console.error(
-            'Error displaying reminder with exact recurring date',
-            e,
-          );
-        }
+    // display reminders with automatic reset
+    if (
+      reminderDate > Date.now() &&
+      reminderDateMinusBuffer <= today &&
+      !item?.displayReminder
+    ) {
+      try {
+        await Reminder.updateOne(
+          { _id: item._id },
+          {
+            displayReminder: true,
+          },
+        );
+      } catch (e) {
+        console.error('Error displaying reminder with exact recurring date', e);
       }
+    }
 
-      // reschedule reminders with exact recurring date
-      if (
-        nextOccurrance + TWENTYFOUR_HOURS < Date.now() &&
-        item?.displayReminder
-      ) {
-        try {
-          const interval = item?.recurrenceInterval;
-          const date = new Date(item?.reminderDate);
+    // reschedule automatically reset reminders - recurrence in 1 to 4 weeks
+    if (
+      Math.abs(interval).toString().length > 2 &&
+      reminderDate + TWENTYFOUR_HOURS < Date.now() &&
+      item?.displayReminder
+    ) {
+      try {
+        const reminderStartingDate = new Date(item?.reminderDate);
+        reminderStartingDate.setTime(reminderStartingDate.getTime() + interval);
+        const nextDate = reminderStartingDate.toISOString().split('T')[0];
 
-          const reminderDay = date.getUTCDate();
-          const reminderMonth = date.getUTCMonth();
-          const reminderYear = date.getUTCFullYear();
+        // get new sort date - date minus recurrenceBuffer
+        const sortDate = new Date(nextDate);
+        sortDate.setUTCDate(sortDate.getUTCDate() - item.recurrenceBuffer);
+        const newReminderSortDate = sortDate.toISOString().split('T')[0];
 
-          // get last day of the current reminder's month
-          const lastDayOfReminderMonth = new Date(
-            Date.UTC(reminderYear, reminderMonth + 1, 0),
-          ).getUTCDate();
+        await Reminder.updateOne(
+          { _id: item._id },
+          {
+            reminderDate: nextDate,
+            reminderSortDate: newReminderSortDate,
+            displayReminder: sortDate <= today ? true : false,
+          },
+        );
+      } catch (e) {
+        console.error(
+          'Error rescheduling reminder with exact recurring date - recurrence in 1 to 4 weeks: ',
+          e,
+        );
+      }
+    }
 
-          const lastDayOfMonth = reminderDay === lastDayOfReminderMonth;
+    // reschedule automatically reset reminders - recurrance in months / annual
+    if (
+      !Math.abs(interval).toString().length > 2 &&
+      reminderDate + TWENTYFOUR_HOURS < Date.now() &&
+      item?.displayReminder
+    ) {
+      try {
+        const interval = item?.recurrenceInterval;
+        const date = new Date(item?.reminderDate);
 
-          // get last day of the next scheduled month
-          const lastDayOfNextMonth = new Date(
-            Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
-          ).getUTCDate();
+        const reminderDay = date.getUTCDate();
+        const reminderMonth = date.getUTCMonth();
+        const reminderYear = date.getUTCFullYear();
 
-          // next interval calendar number is within current calendar number range and not last day
-          if (reminderDay <= lastDayOfNextMonth && !lastDayOfMonth) {
-            date.setUTCMonth(date.getUTCMonth() + interval);
-          } else {
-            // set last day of next interval month - current calendar number not in range of next or current calendar number last day of month
-            date.setTime(
-              new Date(
-                Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
-              ).getTime(),
-            );
-          }
+        // get last day of the current reminder's month
+        const lastDayOfReminderMonth = new Date(
+          Date.UTC(reminderYear, reminderMonth + 1, 0),
+        ).getUTCDate();
 
-          const nextDate = date.toISOString().split('T')[0];
+        const lastDayOfMonth = reminderDay === lastDayOfReminderMonth;
 
-          // get new sort date - date minus recurrenceBuffer
-          const sortDate = new Date(date);
-          sortDate.setUTCDate(sortDate.getUTCDate() - item.recurrenceBuffer);
-          const newReminderSortDate = sortDate.toISOString().split('T')[0];
+        // get last day of the next scheduled month
+        const lastDayOfNextMonth = new Date(
+          Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
+        ).getUTCDate();
 
-          await Reminder.updateOne(
-            { _id: item._id },
-            {
-              reminderDate: nextDate,
-              reminderSortDate: newReminderSortDate,
-              displayReminder: false,
-            },
-          );
-        } catch (e) {
-          console.error(
-            'Error rescheduling reminder with exact recurring date: ',
-            e,
+        // next interval calendar number is within current calendar number range and not last day
+        if (reminderDay <= lastDayOfNextMonth && !lastDayOfMonth) {
+          date.setUTCMonth(date.getUTCMonth() + interval);
+        } else {
+          // set last day of next interval month - current calendar number not in range of next or current calendar number last day of month
+          date.setTime(
+            new Date(
+              Date.UTC(reminderYear, reminderMonth + interval + 1, 0),
+            ).getTime(),
           );
         }
+
+        const nextDate = date.toISOString().split('T')[0];
+
+        // get new sort date - date minus recurrenceBuffer
+        const sortDate = new Date(date);
+        sortDate.setUTCDate(sortDate.getUTCDate() - item.recurrenceBuffer);
+        const newReminderSortDate = sortDate.toISOString().split('T')[0];
+
+        await Reminder.updateOne(
+          { _id: item._id },
+          {
+            reminderDate: nextDate,
+            reminderSortDate: newReminderSortDate,
+            displayReminder: false,
+          },
+        );
+      } catch (e) {
+        console.error(
+          'Error rescheduling reminder with exact recurring date - recurrance in months / annual: ',
+          e,
+        );
       }
     }
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, startTransition } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { FormTextField, FormSelectField, CTA, Tooltip } from '../../components';
@@ -77,13 +77,37 @@ const ModalReminder = ({
       .toISOString()
       .split('T')[0];
 
-    setForm((curr) => {
-      return {
-        ...curr,
-        reminderSortDate: reminderSortDateForState,
-      };
+    startTransition(() => {
+      setForm((curr) => {
+        return {
+          ...curr,
+          reminderSortDate: reminderSortDateForState,
+        };
+      });
     });
   }, [form.reminderDate, form.recurrenceBuffer]);
+
+  // If reminder has early display that is less than now save reminder with displayReminder: true
+  useEffect(() => {
+    if (
+      !form.exactRecurringDate ||
+      !form.reminderDate ||
+      !form.recurrenceBuffer
+    )
+      return;
+
+    const reminderDateObj = new Date(form.reminderDate);
+    const reminderDateMinusBuffer = reminderDateObj.setDate(
+      reminderDateObj.getDate() - form?.recurrenceBuffer,
+    );
+
+    startTransition(() => {
+      setForm({
+        ...form,
+        displayReminder: reminderDateMinusBuffer < Date.now() ? true : false,
+      });
+    });
+  }, [form.reminderDate, form.recurrenceBuffer, form.recurrenceInterval]);
 
   // state handlers
   const handleForm = (e) => {
@@ -162,20 +186,18 @@ const ModalReminder = ({
     isUpdate
       ? updateReminder(zodFormData).then((res) => {
           if (res.status === 200) {
-            if (!isDashboard) {
-              setItems(
-                handleSortItemsAscending(
-                  items?.map((item) => {
-                    if (item?._id === itemToUpdate?._id) {
-                      return res?.item;
-                    } else {
-                      return item;
-                    }
-                  }),
-                  'reminderDate',
-                ),
-              );
-            }
+            setItems(
+              handleSortItemsAscending(
+                items?.map((item) => {
+                  if (item?._id === itemToUpdate?._id) {
+                    return res?.item;
+                  } else {
+                    return item;
+                  }
+                }),
+                'reminderDate',
+              ),
+            );
 
             handleCloseModal();
           }
@@ -186,15 +208,14 @@ const ModalReminder = ({
         })
       : createReminder(zodFormData).then((res) => {
           if (res.status === 200) {
-            if (!isDashboard) {
-              const copyOfRemindersItems = [...items];
-              setItems(
-                handleSortItemsAscending(
-                  [...copyOfRemindersItems, res.item],
-                  'reminderDate',
-                ),
-              );
-            }
+            const copyOfRemindersItems = [...items];
+
+            setItems(
+              handleSortItemsAscending(
+                [...copyOfRemindersItems, res.item],
+                'reminderDate',
+              ),
+            );
 
             handleCloseModal();
           }
@@ -229,11 +250,9 @@ const ModalReminder = ({
     handleModalResetPageScrolling();
   };
 
-  console.log('form ', form);
-  console.log('lenght ', form?.recurrenceInterval);
-
   return (
     <form onSubmit={onSubmit} ref={pageRef}>
+      {/* Title */}
       <FormTextField
         label='Reminder Name'
         subLabel={`${
@@ -248,6 +267,8 @@ const ModalReminder = ({
         onChangeHandler={handleForm}
         errorMessage={errorMessage.title}
       />
+
+      {/* Date */}
       <FormTextField
         label={`${
           !isUpdate ? 'First Recurrence Date' : 'Next Recurrence Date'
@@ -262,6 +283,8 @@ const ModalReminder = ({
         onChangeHandler={handleForm}
         errorMessage={errorMessage.reminderDate}
       />
+
+      {/* Recurrence Interval */}
       <FormSelectField
         label='Recurrence Interval'
         subLabel={`${
@@ -274,6 +297,8 @@ const ModalReminder = ({
         options={FORM_REMINDER_INTERVAL_OPTIONS}
         errorMessage={errorMessage.recurrenceInterval}
       />
+
+      {/* Manual or Automatic Reset */}
       <FormSelectField
         label={
           <span className='form-field__label-with-tooltip'>
@@ -296,6 +321,8 @@ const ModalReminder = ({
         options={FORM_REMINDER_RESET_OPTIONS}
         errorMessage={errorMessage.exactRecurringDate}
       />
+
+      {/* Early Reminder Display */}
       <FormSelectField
         label={
           <span className='form-field__label-with-tooltip'>
@@ -314,13 +341,17 @@ const ModalReminder = ({
         name='recurrenceBuffer'
         value={form?.recurrenceBuffer}
         onChangeHandler={handleFormSelectField}
-        options={FORM_REMINDER_BUFFER_OPTIONS}
-        errorMessage={errorMessage.recurrenceBuffer}
-        disabled={
-          !form?.exactRecurringDate ||
-          Math.abs(form?.recurrenceInterval).toString().length > 2
+        options={
+          form.recurrenceInterval === 604800000
+            ? FORM_REMINDER_BUFFER_OPTIONS.slice(0, 1)
+            : form.recurrenceInterval === 1209600000
+              ? FORM_REMINDER_BUFFER_OPTIONS.slice(0, 2)
+              : FORM_REMINDER_BUFFER_OPTIONS
         }
+        errorMessage={errorMessage.recurrenceBuffer}
+        disabled={!form?.exactRecurringDate}
       />
+
       {/* Manage Recurring Reminders */}
       {isDashboard && (
         <Link
@@ -335,6 +366,7 @@ const ModalReminder = ({
           Manage Recurring Reminders
         </Link>
       )}
+
       <div className='modal__modal-button-wrapper'>
         <CTA
           text='Cancel'

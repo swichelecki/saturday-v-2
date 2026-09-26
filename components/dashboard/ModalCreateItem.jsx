@@ -12,7 +12,7 @@ import {
   Tabs,
   FormWYSIWYGField,
   Tooltip,
-} from '..';
+} from '../../components';
 import dynamic from 'next/dynamic';
 import {
   handleModalResetPageScrolling,

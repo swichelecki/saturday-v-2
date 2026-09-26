@@ -49,6 +49,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
   const [totalNumberOfItems, setTotalNumberOfItems] = useState(0);
   const [listItems, setListItems] = useState(tasks);
   const [calendarItems, setCalendarItems] = useState(calendar);
+  const [reminderItems, setReminderItems] = useState(reminders);
   const [masonryItems, setMasonryItems] = useState([]);
   const [taskToEditId, setTaskToEditId] = useState('');
   const [isAwaitingEditResponse, setIsAwaitingEditResponse] = useState(false);
@@ -133,11 +134,11 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
 
   // remove at-reminders-limit message after reminder deletion
   useEffect(() => {
-    if (reminders?.length < remindersLimit && atRemindersLimit) {
+    if (reminderItems?.length < remindersLimit && atRemindersLimit) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setAtRemindersLimit(false);
     }
-  }, [reminders]);
+  }, [reminderItems]);
 
   // open modal for create
   const handleOpenCreateItemModal = () => {
@@ -270,7 +271,7 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
 
   // Open modal for creating recurring reminders
   const handleOpenReminderModal = () => {
-    if (reminders?.length >= remindersLimit) {
+    if (reminderItems?.length >= remindersLimit) {
       setAtRemindersLimit(true);
       setShowModal(
         <Modal className='modal modal__form-modal--small modal__subscription-modal'>
@@ -283,8 +284,10 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
     setShowModal(
       <Modal className='modal modal__form-modal--large'>
         <ModalReminders
+          items={reminderItems}
+          setItems={setReminderItems}
           userId={userId}
-          numberOfReminders={reminders?.length}
+          numberOfReminders={reminderItems?.length}
           isDashboard
         />
       </Modal>,
@@ -319,7 +322,8 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
 
       {/* Recurring Reminders */}
       <Reminders
-        reminders={reminders}
+        reminderItems={reminderItems}
+        setReminderItems={setReminderItems}
         userId={userId}
         handleOpenReminderModal={handleOpenReminderModal}
       />

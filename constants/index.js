@@ -57,9 +57,6 @@ export const FORM_ERROR_MISSING_REMINDER_RESET = 'Reminder Reset Required';
 export const FORM_ERROR_MISSING_REMINDER_BUFFER = 'Reminder Buffer Required';
 export const FORM_ERROR_MISSING_SUBJECT = 'Subject Required';
 export const FORM_ERROR_MISSING_MESSAGE = 'Message Required';
-export const BY_WEEK_INTERVALS = [
-  604800000, 1209600000, 1814400000, 2419200000,
-];
 export const FORM_REMINDER_INTERVAL_OPTIONS = [
   { title: 'Weekly', name: 'recurrenceInterval', value: 604800000 },
   { title: 'Every Two Weeks', name: 'recurrenceInterval', value: 1209600000 },

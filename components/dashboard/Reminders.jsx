@@ -9,7 +9,6 @@ import { useInnerWidth } from '../../hooks';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
   MOBILE_BREAKPOINT,
-  BY_WEEK_INTERVALS,
   SKIP_TO_NEXT_REMINDER_THRESHOLD,
 } from '../../constants';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
@@ -18,7 +17,12 @@ const Toast = dynamic(() => import('../../components/shared/Toast'), {
   ssr: false,
 });
 
-const Reminders = ({ reminders, userId, handleOpenReminderModal }) => {
+const Reminders = ({
+  reminderItems,
+  setReminderItems,
+  userId,
+  handleOpenReminderModal,
+}) => {
   const { setShowToast, setShowModal } = useAppContext();
 
   const width = useInnerWidth();
@@ -26,7 +30,6 @@ const Reminders = ({ reminders, userId, handleOpenReminderModal }) => {
   const remindersWrapperRef = useRef(null);
   const remindersCarouselRef = useRef(null);
   const carouselPositionRef = useRef(null);
-  const [remindersItems, setRemindersItems] = useState(reminders ?? []);
   const [reminderToUpdate, setReminderToUpdate] = useState({});
   const [showScrollButtons, setShowScrollButtons] = useState(false);
   const [remindersWrapperClientRectRight, setRemindersWrapperClientRectRight] =
@@ -52,7 +55,7 @@ const Reminders = ({ reminders, userId, handleOpenReminderModal }) => {
       remindersCarouselRef.current.style.transform = 'translateX(0)';
       carouselPositionRef.current = 0;
     }
-  }, [width]);
+  }, [width, reminderItems]);
 
   // set next reminder date
   useEffect(() => {
@@ -62,7 +65,7 @@ const Reminders = ({ reminders, userId, handleOpenReminderModal }) => {
       const interval = copyOfReminderToUpdate?.recurrenceInterval;
       const reminderStartingDate = new Date(startingDate);
 
-      if (BY_WEEK_INTERVALS.includes(interval)) {
+      if (Math.abs(interval).toString().length > 2) {
         // set weekly reminder
         reminderStartingDate.setTime(reminderStartingDate.getTime() + interval);
       } else {
@@ -103,13 +106,13 @@ const Reminders = ({ reminders, userId, handleOpenReminderModal }) => {
         displayReminder: false,
         reminderDate: nextDate,
         reminderSortDate: nextDate,
-        itemLimit: remindersItems?.length,
+        itemLimit: reminderItems?.length,
       };
 
       updateReminder(copyOfReminderToUpdate).then((res) => {
         if (res.status === 200) {
-          setRemindersItems(
-            remindersItems.filter((item) => item._id !== reminderToUpdate._id),
+          setReminderItems(
+            reminderItems.filter((item) => item._id !== reminderToUpdate._id),
           );
         }
 
@@ -135,7 +138,7 @@ const Reminders = ({ reminders, userId, handleOpenReminderModal }) => {
       remindersCarouselRef.current.style.transform = 'translateX(0)';
       carouselPositionRef.current = 0;
     }
-  }, [remindersItems]);
+  }, [reminderItems]);
 
   // get reminder to update
   const handleResetReminder = (id, confirmUpdate) => {
@@ -249,7 +252,7 @@ const Reminders = ({ reminders, userId, handleOpenReminderModal }) => {
     remindersCarouselRef.current.style.transform = `translateX(-${carouselPositionRef.current}px)`;
   };
 
-  if (!remindersItems?.length) {
+  if (!reminderItems?.length) {
     return (
       <div className='dashboard-reminders-button-wrapper'>
         <CTA
@@ -279,7 +282,7 @@ const Reminders = ({ reminders, userId, handleOpenReminderModal }) => {
             className='reminders__reminders-carousel'
             ref={remindersCarouselRef}
           >
-            {remindersItems?.map((item, index) => (
+            {reminderItems?.map((item, index) => (
               <RemindersItem
                 key={`reminder-item__${index}`}
                 id={item?._id}
