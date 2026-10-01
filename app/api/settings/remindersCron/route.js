@@ -61,7 +61,7 @@ export async function GET() {
 
     // add interval to by-month reminders not reset before next interval start date begins
     if (
-      !Math.abs(interval).toString().length > 2 &&
+      Math.abs(interval).toString().length <= 2 &&
       reminderStartingDate.setUTCMonth(
         reminderStartingDate.getUTCMonth() + interval,
       ) <= Date.now() &&
@@ -176,7 +176,7 @@ export async function GET() {
 
     // reschedule automatically reset reminders - recurrance in months / annual
     if (
-      !Math.abs(interval).toString().length > 2 &&
+      Math.abs(interval).toString().length <= 2 &&
       reminderDate + TWENTYFOUR_HOURS < Date.now() &&
       item?.displayReminder
     ) {
