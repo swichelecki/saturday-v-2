@@ -289,6 +289,8 @@ const Dashboard = ({ tasks, calendar, categories, reminders, user }) => {
           userId={userId}
           numberOfReminders={reminderItems?.length}
           isDashboard
+          calendarItems={calendarItems}
+          setCalendarItems={setCalendarItems}
         />
       </Modal>,
     );

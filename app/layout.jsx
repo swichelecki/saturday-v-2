@@ -25,6 +25,7 @@ export const metadata = {
     'todo list',
     'notes',
     'no AI',
+    'new Luddites',
   ],
   metadataBase: new URL(process.env.NEXT_PUBLIC_URL),
   openGraph: {

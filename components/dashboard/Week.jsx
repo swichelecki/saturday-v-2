@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { handleDateToYearMonthDay } from '../../utilities';
+import {
+  handleDateToYearMonthDay,
+  handleSortCalendarItemsAsc,
+} from '../../utilities';
 import { WeekItem } from '../../components';
 import dynamic from 'next/dynamic';
 import { useInnerWidth } from '../../hooks';
@@ -130,15 +133,17 @@ const Week = ({ timezone, userId, calendarItems, setCalendarItems }) => {
           const yearMonthDay = handleDateToYearMonthDay(day);
           calendarDays.push({
             [yearMonthDay]: [
-              ...res.calendarItems?.filter((calItem) => {
-                const calItemDate = new Date(
-                  calItem?.date ? calItem?.date : calItem?.reminderDate,
-                );
-                const calItemYearMonthDay = calItemDate
-                  .toISOString()
-                  .split('T')[0];
-                if (calItemYearMonthDay === yearMonthDay) return calItem;
-              }),
+              ...handleSortCalendarItemsAsc(
+                res.calendarItems?.filter((calItem) => {
+                  const calItemDate = new Date(
+                    calItem?.date ? calItem?.date : calItem?.reminderDate,
+                  );
+                  const calItemYearMonthDay = calItemDate
+                    .toISOString()
+                    .split('T')[0];
+                  if (calItemYearMonthDay === yearMonthDay) return calItem;
+                }),
+              ),
             ],
           });
 

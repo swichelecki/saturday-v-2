@@ -10,6 +10,7 @@ import { useScrollToError } from '../../hooks';
 import {
   handleSortItemsAscending,
   handleModalResetPageScrolling,
+  handleSortCalendarItemsAsc,
 } from '../../utilities';
 import { reminderSchema } from '../../schemas/schemas';
 import {
@@ -30,6 +31,8 @@ const ModalReminder = ({
   itemToUpdate,
   numberOfReminders,
   isDashboard = false,
+  calendarItems,
+  setCalendarItems,
 }) => {
   const { setShowModal, setShowToast } = useAppContext();
 
@@ -215,6 +218,29 @@ const ModalReminder = ({
                 [...copyOfRemindersItems, res.item],
                 'reminderDate',
               ),
+            );
+
+            // Add date key to reminder so it can be sorted with other item types
+            const reminderWithDate = {
+              ...res.item,
+              date: new Date(res.item.reminderDate).toISOString().split('T')[0],
+            };
+
+            setCalendarItems(
+              calendarItems.map((item) => {
+                if (
+                  reminderWithDate.date?.split('T')[0] === Object.keys(item)[0]
+                ) {
+                  return {
+                    [Object.keys(item)[0]]: handleSortCalendarItemsAsc([
+                      ...Object.values(item)[0],
+                      reminderWithDate,
+                    ]),
+                  };
+                } else {
+                  return item;
+                }
+              }),
             );
 
             handleCloseModal();

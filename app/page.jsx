@@ -35,9 +35,7 @@ export default function Home() {
         <div className='homepage__benefits-wrapper'>
           <div className='homepage__benefit'>
             <h3>No AI Slop</h3>
-            <p>
-              Escape AI overload while supporting a human-made web application.
-            </p>
+            <p>Escape AI overload with a classic web experience.</p>
           </div>
           <div className='homepage__benefit'>
             <h3>Never Miss a Beat</h3>

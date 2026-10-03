@@ -108,7 +108,7 @@ async function DashboardWithData() {
   // sort calendar items by date asc
   for (const item of columnsData) {
     if (Object.values(item)[0]?.length) {
-      calendarItems.push(...handleSortCalendarItemsAsc(Object.values(item)[0]));
+      calendarItems.push(...Object.values(item)[0]);
     }
   }
 
@@ -139,11 +139,13 @@ async function DashboardWithData() {
     const yearMonthDay = handleDateToYearMonthDay(day);
     calendarDays.push({
       [yearMonthDay]: [
-        ...calendarItems?.filter((calItem) => {
-          const calItemDate = new Date(calItem?.date);
-          const calItemYearMonthDay = calItemDate.toISOString().split('T')[0];
-          if (calItemYearMonthDay === yearMonthDay) return calItem;
-        }),
+        ...handleSortCalendarItemsAsc(
+          calendarItems?.filter((calItem) => {
+            const calItemDate = new Date(calItem?.date);
+            const calItemYearMonthDay = calItemDate.toISOString().split('T')[0];
+            if (calItemYearMonthDay === yearMonthDay) return calItem;
+          }),
+        ),
       ],
     });
 
