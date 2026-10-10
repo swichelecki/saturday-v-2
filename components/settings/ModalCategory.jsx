@@ -77,7 +77,7 @@ const ModalCategory = ({ userId, setItems, itemToUpdate, numberOfItems }) => {
     setIsAwaitingSubmitResponse(true);
 
     isUpdate
-      ? updateCategory(zodFormData, true).then((res) => {
+      ? updateCategory(userId, zodFormData).then((res) => {
           if (res.status === 200) {
             setItems((current) => {
               return current.map((item) => {

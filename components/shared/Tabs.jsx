@@ -67,6 +67,24 @@ const Tabs = ({ tabs, panelsHeight, children }) => {
     return () => observer.disconnect();
   }, [isOpen]);
 
+  useEffect(() => {
+    let frameId = null;
+    if (frameId) cancelAnimationFrame(frameId);
+
+    let height = isOpen ? `${panelsHeight}px` : '0px';
+
+    function animate() {
+      if (!panelsRef.current) return;
+      panelsRef.current.style.height = height;
+    }
+
+    frameId = requestAnimationFrame(animate);
+
+    return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+    };
+  }, [isOpen, panelsHeight]);
+
   // Switch tab view & open and close tab wrapper
   const handleCloseOpenTabs = (e) => {
     const panels = Array.from(panelsRef.current.children);
@@ -114,17 +132,7 @@ const Tabs = ({ tabs, panelsHeight, children }) => {
           </button>
         ))}
       </div>
-      <div
-        ref={panelsRef}
-        className='tabs__panels-wrapper'
-        style={
-          isOpen
-            ? {
-                height: `${panelsHeight}px`,
-              }
-            : { height: '0px' }
-        }
-      >
+      <div ref={panelsRef} className='tabs__panels-wrapper'>
         {children}
       </div>
     </div>

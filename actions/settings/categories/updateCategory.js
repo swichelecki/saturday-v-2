@@ -6,7 +6,7 @@ import { handleServerErrorMessage } from '../../../utilities';
 import { getUserFromCookie } from '../../../utilities/getUserFromCookie';
 import { categorySchema } from '../../../schemas/schemas';
 
-export default async function updateCategory(item, isFormUpdate) {
+export default async function updateCategory(userId, item) {
   if (!(item instanceof Object)) {
     return {
       status: 400,
@@ -18,17 +18,11 @@ export default async function updateCategory(item, isFormUpdate) {
   const { userId: cookieUserId, cookieError } = await getUserFromCookie();
   if (cookieError) return cookieError;
 
-  const { userId, title } = item;
   if (!userId || userId !== cookieUserId) {
     return {
       status: 400,
       error: 'Unauthorized',
     };
-  }
-
-  if (isFormUpdate) {
-    const categoryExists = await Category.findOne({ userId, title });
-    if (categoryExists) return { status: 409 };
   }
 
   // check that data shape is correct
@@ -48,19 +42,12 @@ export default async function updateCategory(item, isFormUpdate) {
 
   try {
     // update category - either by draggig to change order in list or using update modal
-    const {
-      _id: categoryId,
-      priority: categoryPriority,
-      title: categoryTitle,
-      confirmDeletion: categoryConfirmDeletion,
-    } = zodData;
+    const { _id: categoryId, title: categoryTitle } = zodData;
 
     const { matchedCount } = await Category.updateOne(
       { _id: categoryId, userId: cookieUserId },
       {
-        priority: categoryPriority,
         title: categoryTitle,
-        confirmDeletion: categoryConfirmDeletion,
       },
     );
 
@@ -68,12 +55,10 @@ export default async function updateCategory(item, isFormUpdate) {
       return { status: 404, error: 'Category not found' };
     }
 
-    let updatedCategory;
-    if (isFormUpdate)
-      updatedCategory = await Category.find({
-        _id: categoryId,
-        userId: cookieUserId,
-      });
+    const updatedCategory = await Category.find({
+      _id: categoryId,
+      userId: cookieUserId,
+    });
 
     // update all tasks associated with category
     const itemsOfCategoryType = await Task.find({
@@ -81,39 +66,22 @@ export default async function updateCategory(item, isFormUpdate) {
       userId: cookieUserId,
     });
 
-    itemsOfCategoryType.forEach(async (item) => {
-      const {
-        _id,
-        userId,
-        categoryId,
-        priority,
-        title,
-        description,
-        confirmDeletion,
-        date,
-        dateAndTime,
-      } = item;
-
-      await Task.updateOne(
-        { _id: _id },
-        {
-          userId,
-          categoryId,
-          priority,
-          column: categoryPriority,
-          type: categoryTitle,
-          title,
-          description,
-          confirmDeletion,
-          date,
-          dateAndTime,
-        },
+    if (itemsOfCategoryType?.length > 0) {
+      await Task.bulkWrite(
+        itemsOfCategoryType.map(({ _id }) => ({
+          updateOne: {
+            filter: { _id, userId: cookieUserId },
+            update: {
+              $set: { type: categoryTitle },
+            },
+          },
+        })),
       );
-    });
+    }
 
     return {
       status: 200,
-      item: isFormUpdate ? JSON.parse(JSON.stringify(updatedCategory[0])) : '',
+      item: JSON.parse(JSON.stringify(updatedCategory[0])),
     };
   } catch (error) {
     const errorMessage = handleServerErrorMessage(error);

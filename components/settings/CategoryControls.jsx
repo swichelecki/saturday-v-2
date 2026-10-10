@@ -13,7 +13,11 @@ import {
   ModalConfirm,
   FormErrorMessage,
 } from '../../components';
-import { deleteCategory, updateCategory, getCategory } from '../../actions';
+import {
+  deleteCategory,
+  updateCategoryPriorities,
+  getCategory,
+} from '../../actions';
 import { handleModalResetPageScrolling } from '../../utilities';
 import {
   CATEGORY_ITEM_LIMIT,
@@ -177,12 +181,18 @@ const CategoryControls = ({ categories, user }) => {
       }),
     );
 
-    draggableCategoriesWithNewPriorities?.forEach((item) => {
-      updateCategory(item, false).then((res) => {
-        if (res.status !== 200) {
-          setShowToast(<Toast serverError={res} />);
-        }
-      });
+    if (!draggableCategoriesWithNewPriorities?.length) return;
+
+    updateCategoryPriorities(
+      userId,
+      draggableCategoriesWithNewPriorities.map(({ _id, priority }) => ({
+        _id,
+        priority,
+      })),
+    ).then((res) => {
+      if (res.status !== 200) {
+        setShowToast(<Toast serverError={res} />);
+      }
     });
 
     setCategoryItems([...draggableCategoriesWithNewPriorities]);
