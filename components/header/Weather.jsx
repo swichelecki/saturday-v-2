@@ -13,7 +13,7 @@ import {
   BsFillCloudMoonFill,
 } from 'react-icons/bs';
 
-async function getWeatherData() {
+async function getWeatherData(timezone) {
   try {
     const headerList = await headers();
     let ipAddress = headerList.get('x-forwarded-for')?.split(',')[0];
@@ -37,7 +37,7 @@ async function getWeatherData() {
 
     return {
       temperature: Math.round(temperature_2m),
-      weatherCode: handleDayNightCheck(weather_code),
+      weatherCode: handleDayNightCheck(weather_code, timezone),
       todaysHigh: Math.round(temperature_2m_max),
       todaysLow: Math.round(temperature_2m_min),
       city,
@@ -49,8 +49,8 @@ async function getWeatherData() {
   }
 }
 
-const Weather = async () => {
-  const weather = await getWeatherData();
+const Weather = async ({ timezone }) => {
+  const weather = await getWeatherData(timezone);
 
   if (!weather) return null;
 
