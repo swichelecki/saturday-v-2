@@ -18,10 +18,10 @@ export const handleDayNightCheck = (weather_code, timezone) => {
   const aprilFirst = `${year}-04-01`;
   const septemberThirtieth = `${year}-09-30`;
 
-  const winterSunrise = moment('06:00:00', FORMAT_TIME);
-  const winterSunSet = moment('17:00:00', FORMAT_TIME);
-  const summerSunrise = moment('07:00:00', FORMAT_TIME);
-  const summerSunSet = moment('20:00:00', FORMAT_TIME);
+  const winterSunrise = moment('06:00:00', FORMAT_TIME).tz(timezone);
+  const winterSunSet = moment('17:00:00', FORMAT_TIME).tz(timezone);
+  const summerSunrise = moment('07:00:00', FORMAT_TIME).tz(timezone);
+  const summerSunSet = moment('20:00:00', FORMAT_TIME).tz(timezone);
 
   const isFallOrWinder =
     today.isBetween(octoberOne, decemberThirtyFirst, undefined, '[]') ||
