@@ -11,12 +11,12 @@ export const handleDayNightCheck = (weather_code, timezone) => {
   const today = moment(date).tz(timezone);
   const year = today.format('YYYY');
 
-  const octoberOne = `${year}-10-01`;
-  const decemberThirtyFirst = `${year}-12-31`;
-  const januaryFirst = `${year}-01-01`;
-  const marchThirtyFirst = `${year}-03-31`;
-  const aprilFirst = `${year}-04-01`;
-  const septemberThirtieth = `${year}-09-30`;
+  const octoberOne = moment(`${year}-10-01 00:00`).tz(timezone);
+  const decemberThirtyFirst = moment(`${year}-12-31 00:00`).tz(timezone);
+  const januaryFirst = moment(`${year}-01-01 00:00`).tz(timezone);
+  const marchThirtyFirst = moment(`${year}-03-31 00:00`).tz(timezone);
+  const aprilFirst = moment(`${year}-04-01 00:00`).tz(timezone);
+  const septemberThirtieth = moment(`${year}-09-30 00:00`).tz(timezone);
 
   const winterSunrise = moment('06:00:00', FORMAT_TIME).tz(timezone);
   const winterSunSet = moment('17:00:00', FORMAT_TIME).tz(timezone);
