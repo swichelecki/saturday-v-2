@@ -3,27 +3,34 @@ import moment from 'moment-timezone';
 export const handleDayNightCheck = (weather_code, timezone) => {
   if (weather_code > 2) return weather_code;
 
-  const FORMAT_TIME = 'HH:mm:ss';
   const MOON = 100;
   const MOON_CLOUDS = 101;
 
-  const date = new Date();
-  const today = moment(date).tz(timezone);
-  const year = today.format('YYYY');
+  const today = moment.tz(timezone);
 
-  const octoberOne = moment(`${year}-10-01 00:00`).tz(timezone);
-  const decemberThirtyFirst = moment(`${year}-12-31 00:00`).tz(timezone);
-  const januaryFirst = moment(`${year}-01-01 00:00`).tz(timezone);
-  const marchThirtyFirst = moment(`${year}-03-31 00:00`).tz(timezone);
-  const aprilFirst = moment(`${year}-04-01 00:00`).tz(timezone);
-  const septemberThirtieth = moment(`${year}-09-30 00:00`).tz(timezone);
+  // Use today.clone() so dates always stay in the user's timezone & current year
+  const octoberOne = today.clone().month(9).date(1).startOf('day'); // Oct 1, 00:00:00
+  const decemberThirtyFirst = today.clone().month(11).date(31).endOf('day'); // Dec 31, 23:59:59
+  const januaryFirst = today.clone().month(0).date(1).startOf('day'); // Jan 1, 00:00:00
+  const marchThirtyFirst = today.clone().month(2).date(31).endOf('day'); // Mar 31, 23:59:59
+  const aprilFirst = today.clone().month(3).date(1).startOf('day'); // Apr 1, 00:00:00
+  const septemberThirtieth = today.clone().month(8).date(30).endOf('day'); // Sep 30, 23:59:59
 
-  const winterSunrise = moment('06:00:00', FORMAT_TIME).tz(timezone);
-  const winterSunSet = moment('17:00:00', FORMAT_TIME).tz(timezone);
-  const summerSunrise = moment('07:00:00', FORMAT_TIME).tz(timezone);
-  const summerSunSet = moment('20:00:00', FORMAT_TIME).tz(timezone);
+  // Anchor sunrise/sunset to "today" in the user's timezone (avoids UTC date drift)
+  const winterSunrise = today
+    .clone()
+    .set({ hour: 6, minute: 0, second: 0, millisecond: 0 });
+  const winterSunset = today
+    .clone()
+    .set({ hour: 17, minute: 0, second: 0, millisecond: 0 });
+  const summerSunrise = today
+    .clone()
+    .set({ hour: 7, minute: 0, second: 0, millisecond: 0 });
+  const summerSunset = today
+    .clone()
+    .set({ hour: 20, minute: 0, second: 0, millisecond: 0 });
 
-  const isFallOrWinder =
+  const isFallOrWinter =
     today.isBetween(octoberOne, decemberThirtyFirst, undefined, '[]') ||
     today.isBetween(januaryFirst, marchThirtyFirst, undefined, '[]');
 
@@ -34,33 +41,19 @@ export const handleDayNightCheck = (weather_code, timezone) => {
     '[]',
   );
 
-  // check for fall/winter
-  if (isFallOrWinder) {
-    // check day or night
-    if (today.isBetween(winterSunrise, winterSunSet, undefined, '[]')) {
+  // Check for fall/winter
+  if (isFallOrWinter) {
+    if (today.isBetween(winterSunrise, winterSunset, undefined, '[]')) {
       return weather_code;
-    } else {
-      // check weather code for night
-      if (weather_code === 0 || weather_code === 1) {
-        return MOON;
-      } else {
-        return MOON_CLOUDS;
-      }
     }
+    return weather_code === 0 || weather_code === 1 ? MOON : MOON_CLOUDS;
   }
 
-  // check for spring/summer
+  // Check for spring/summer
   if (isSpringOrSummer) {
-    // check day or night
-    if (today.isBetween(summerSunrise, summerSunSet, undefined, '[]')) {
+    if (today.isBetween(summerSunrise, summerSunset, undefined, '[]')) {
       return weather_code;
-    } else {
-      // check weather code for night
-      if (weather_code === 0 || weather_code === 1) {
-        return MOON;
-      } else {
-        return MOON_CLOUDS;
-      }
     }
+    return weather_code === 0 || weather_code === 1 ? MOON : MOON_CLOUDS;
   }
 };
